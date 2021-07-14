@@ -5,6 +5,52 @@
     <link>https://gbeifuss.github.io/tags/</link>
     <description>Recent content in Tags on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://gbeifuss.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Wed, 14 Jul 2021 08:21:50 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker</title>
+      <link>https://gbeifuss.github.io/tags/docker/</link>
+      <pubDate>Wed, 14 Jul 2021 08:21:50 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>VSCode</title>
+      <link>https://gbeifuss.github.io/tags/vscode/</link>
+      <pubDate>Wed, 14 Jul 2021 08:21:37 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/tags/vscode/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Powershell</title>
+      <link>https://gbeifuss.github.io/tags/powershell/</link>
+      <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/tags/powershell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>API</title>
+      <link>https://gbeifuss.github.io/tags/api/</link>
+      <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/tags/api/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Netscaler</title>
+      <link>https://gbeifuss.github.io/tags/netscaler/</link>
+      <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/tags/netscaler/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
