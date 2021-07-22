@@ -6,7 +6,17 @@
     <description>Recent content in Powershell on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 14 Jul 2021 08:20:02 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 19 Jul 2021 16:53:03 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Powershell, Exchange &amp; TLS</title>
+      <link>https://gbeifuss.github.io/p/powershell-exchange-tls/</link>
+      <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
+      <description>I was recently curious about what sort of SSL/TLS connections were being used to access our Exchange cluster via. IIS. We have systems spanning twenty years: from Windows XP all the way to Windows Server 2019. Who knows what &amp;ldquo;solutions&amp;rdquo; developers or power users have come up with over the years to integrate with our mail system?
+Previously, I&amp;rsquo;d followed MS guidance in Enabling TLS 1.2 and New IIS Functionality to Help Identify Weak TLS Usage.</description>
+    </item>
+    
     <item>
       <title>VS Code Snippets</title>
       <link>https://gbeifuss.github.io/p/vs-code-snippets/</link>
@@ -32,6 +42,16 @@
       
       <guid>https://gbeifuss.github.io/p/powershell-task-scheduler/</guid>
       <description>I do a fair amount of script writing to make my life easier. If it&amp;rsquo;s a repeated job, I try and automate it so that my time is freed up for more important (interesting) things. This is especially true if the task is tedious (with many manual steps) or involves lots of waiting around (like an Exchange CU). I have a fair number of Powershell scripts which run from Task Scheduler under Windows Server 2016.</description>
+    </item>
+    
+    <item>
+      <title>Powershell &amp; PowerPlatform API</title>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api/</link>
+      <pubDate>Fri, 09 Jul 2021 16:04:57 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api/</guid>
+      <description>I found out that our netadmins are regularly checking the amount of free space we have in our Power Platform (Dynamics) subscription with the following process:
+ Launch a browser Authenticate to portal.office.com Click Admin. A new window opens. Click All Admin Centers. Click Power Apps. A new window opens. Expand Resources -&amp;gt; Capacity. Look at the Storage Capacity Usage field and make sure we&amp;rsquo;re below our capacity.  Whew! I&amp;rsquo;m tired typing that up once!</description>
     </item>
     
     <item>

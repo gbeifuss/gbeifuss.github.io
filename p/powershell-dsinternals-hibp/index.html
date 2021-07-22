@@ -59,7 +59,7 @@
                     
                     
                         
-                        <img src="/img/thundercats_hu9a24e231e64a85a7d6a9b0b68ceb2904_7602_300x0_resize_box_2.png" width="300"
+                        <img src="/img/thundercats_hu9a24e231e64a85a7d6a9b0b68ceb2904_7602_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -175,7 +175,7 @@
 <li>Load Powershell.</li>
 <li>Install the module: <code>Install-Module DSInternals -Force</code></li>
 <li>Run the cmdlets:
-<div class="highlight"><pre class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$DictFile</span> <span class="p">=</span> <span class="s2">&#34;d:\pwned-passwords-ntlm-ordered-by-hash-v5.txt&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$DictFile</span> <span class="p">=</span> <span class="s2">&#34;d:\pwned-passwords-ntlm-ordered-by-hash-v5.txt&#34;</span>
 <span class="nv">$DC</span> <span class="p">=</span> <span class="s2">&#34;dc01&#34;</span>
 <span class="nv">$Domain</span> <span class="p">=</span> <span class="s2">&#34;DC=company,DC=com&#34;</span>
 <span class="nb">Get-ADReplAccount</span> <span class="n">-All</span> <span class="n">-Server</span> <span class="nv">$DC</span> <span class="n">-NamingContext</span> <span class="nv">$Domain</span> <span class="p">|</span> <span class="nb">Test-PasswordQuality</span> <span class="n">-WeakPasswordHashesSortedFile</span> <span class="nv">$DictFile</span> <span class="n">-IncludeDisabledAccounts</span>
