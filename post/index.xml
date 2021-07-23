@@ -6,7 +6,28 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 22 Jul 2021 22:09:32 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 22 Jul 2021 22:10:02 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Array Speed in Powershell</title>
+      <link>https://gbeifuss.github.io/p/array-speed-in-powershell/</link>
+      <pubDate>Thu, 22 Jul 2021 22:10:02 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/array-speed-in-powershell/</guid>
+      <description>A popular way to work with arrays in Powershell is to use a += operation:
+$array = @() 1..10000 | Foreach-Object {$array += &amp;#34;Adding $_ to the array&amp;#34;} Let&amp;rsquo;s time this:
+$array = @() $stopwatch = [System.Diagnostics.Stopwatch]::StartNew() 1..100000 | Foreach-Object {$array += &amp;#34;Adding $_ to the array&amp;#34;} $report = &amp;#39;{0} elements collected in {1:n1} seconds&amp;#39; $report -f $array.Count, $stopwatch.Elapsed.TotalSeconds Processing these 100,000 records took my system 214.7 seconds. When Powershell code uses the += operator, it actually creates a new array that&amp;rsquo;s one record larger than the current array, copies each existing entry into the new array and then adds the newest entry into the free record.</description>
+    </item>
+    
+    <item>
+      <title>Powershell Stopwatch vs Measure-Command</title>
+      <link>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</link>
+      <pubDate>Thu, 22 Jul 2021 22:09:50 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</guid>
+      <description>Often, I&amp;rsquo;ll see scripts that use Measure-Command to calculate the length of time that code runs, while other code will use the $stopwatch = [System.Diagnostics.Stopwatch]::StartNew() method. I&amp;rsquo;d always thought that these were interchangable and practically identical, however, I&amp;rsquo;ve found out that they&amp;rsquo;re not. Depending on the code, there can be substantial time differences between the two.
+Measure-Command will discard the pipeline output, measuring only the time it takes to actually execute the command.</description>
+    </item>
+    
     <item>
       <title>Powershell &amp; Unresponsive Remote Sessions</title>
       <link>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</link>
