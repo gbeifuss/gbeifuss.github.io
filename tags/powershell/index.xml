@@ -78,6 +78,16 @@ Previously, I&amp;rsquo;d followed MS guidance in Enabling TLS 1.2 and New IIS F
     </item>
     
     <item>
+      <title>Powershell &amp; PowerPlatform API</title>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api/</link>
+      <pubDate>Fri, 09 Jul 2021 16:04:57 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api/</guid>
+      <description>I found out that our netadmins are regularly checking the amount of free space we have in our Power Platform (Dynamics) subscription with the following process:
+ Launch a browser Authenticate to portal.office.com Click Admin. A new window opens. Click All Admin Centers. Click Power Apps. A new window opens. Expand Resources -&amp;gt; Capacity. Look at the Storage Capacity Usage field and make sure we&amp;rsquo;re below our capacity.  Whew! I&amp;rsquo;m tired typing that up once!</description>
+    </item>
+    
+    <item>
       <title>Powershell &amp; Netscaler API</title>
       <link>https://gbeifuss.github.io/p/powershell-netscaler-api/</link>
       <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
