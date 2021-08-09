@@ -122,7 +122,7 @@ The only relevant entries I found were from a server that I upgraded 3 weeks ago
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Obviously, 0 is the most insecure setting, but the most compatible. If your domain ever had a domain level lower than Windows Server 2008, 0 is probably what you&amp;rsquo;ll be using. Since Windows Server 2008, the default has been 3.&lt;/p&gt;
+&lt;p&gt;Obviously, 0 is the most insecure setting, but the most compatible. If your domain ever had a Domain Level lower than Windows Server 2008, 0 is probably what you&amp;rsquo;ll be using. Since Windows Server 2008, the default has been 3.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;d previously changed our domain from 0 to 2, but now that our last NTLMv1 application is gone, I&amp;rsquo;ve set this to 3. We&amp;rsquo;re headed full speed into &lt;del&gt;the future!&lt;/del&gt; 2008.&lt;/p&gt;
 </description>
         </item>
