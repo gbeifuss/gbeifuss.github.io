@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Alternatives to using &#43;='><title>Array Speed in Powershell</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Building and Updating Content'><title>Pushing Hugo Content to GitHub</title>
 
-<link rel='canonical' href='https://gbeifuss.github.io/p/array-speed-in-powershell/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/pushing-hugo-content-to-github/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Array Speed in Powershell'>
-<meta property='og:description' content='Alternatives to using &#43;='>
-<meta property='og:url' content='https://gbeifuss.github.io/p/array-speed-in-powershell/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Pushing Hugo Content to GitHub'>
+<meta property='og:description' content='Building and Updating Content'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/pushing-hugo-content-to-github/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-07-22T22:10:02-04:00'/><meta property='article:modified_time' content='2021-07-22T22:10:02-04:00'/>
-<meta name="twitter:title" content="Array Speed in Powershell">
-<meta name="twitter:description" content="Alternatives to using &#43;=">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-08-04T07:49:02-04:00'/><meta property='article:modified_time' content='2021-08-04T07:49:02-04:00'/>
+<meta name="twitter:title" content="Pushing Hugo Content to GitHub">
+<meta name="twitter:description" content="Building and Updating Content">
     </head>
     <body class="
     article-page 
@@ -145,12 +145,12 @@
     
 
     <h2 class="article-title">
-        <a href="/p/array-speed-in-powershell/">Array Speed in Powershell</a>
+        <a href="/p/pushing-hugo-content-to-github/">Pushing Hugo Content to GitHub</a>
     </h2>
 
     
     <h3 class="article-subtitle">
-        Alternatives to using &#43;=
+        Building and Updating Content
     </h3>
     <footer class="article-time">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -161,48 +161,49 @@
 
 
 
-        <time class="article-time--published">Jul 22, 2021</time>
+        <time class="article-time--published">Aug 04, 2021</time>
     </footer></div>
 </header>
 
     <section class="article-content">
-    <p>A popular and quick way to work with arrays in Powershell is to use a <code>+=</code> operation:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$array</span> <span class="p">=</span> <span class="p">@()</span>
-<span class="n">1</span><span class="p">..</span><span class="n">10000</span> <span class="p">|</span> <span class="nb">Foreach-Object</span> <span class="p">{</span><span class="nv">$array</span> <span class="p">+=</span> <span class="s2">&#34;Adding $_ to the array&#34;</span><span class="p">}</span>
-</code></pre></div><p>Let&rsquo;s time this:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$array</span> <span class="p">=</span> <span class="p">@()</span>
-<span class="nv">$stopwatch</span> <span class="p">=</span> <span class="no">[System.Diagnostics.Stopwatch]</span><span class="p">::</span><span class="n">StartNew</span><span class="p">()</span>
-<span class="n">1</span><span class="p">..</span><span class="n">100000</span> <span class="p">|</span> <span class="nb">Foreach-Object</span> <span class="p">{</span><span class="nv">$array</span> <span class="p">+=</span> <span class="s2">&#34;Adding $_ to the array&#34;</span><span class="p">}</span>
-<span class="nv">$report</span> <span class="p">=</span> <span class="s1">&#39;{0} elements collected in {1:n1} seconds&#39;</span> 
-<span class="nv">$report</span> <span class="o">-f</span> <span class="nv">$array</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="nv">$stopwatch</span><span class="p">.</span><span class="n">Elapsed</span><span class="p">.</span><span class="n">TotalSeconds</span>
-</code></pre></div><p>Processing these 100,000 records took my system 214.7 seconds. When Powershell code uses the <code>+=</code> operator, it actually creates a new array that&rsquo;s one record larger than the current array, copies each existing entry into the new array and then adds the newest entry into the free record. It has to do this every time the <code>+=</code> operator is used, which is 100,000 times in this sample code. The last time it runs, it needs to copy 99,999 existing entries into a new array&hellip;.ouch! It&rsquo;s easy to see <em>why</em> this is so slow!</p>
-<p><img src="/array.png" alt="fantastic excel art"  /></p>
-<p>Let&rsquo;s use a .NET method to do this and see whether it&rsquo;s any faster:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$array</span> <span class="p">=</span> <span class="no">[System.Collections.ArrayList]</span><span class="p">@()</span>
-<span class="nv">$stopwatch</span> <span class="p">=</span> <span class="no">[System.Diagnostics.Stopwatch]</span><span class="p">::</span><span class="n">StartNew</span><span class="p">()</span>
-<span class="n">1</span><span class="p">..</span><span class="n">100000</span> <span class="p">|</span> <span class="nb">Foreach-Object</span> <span class="p">{</span> <span class="nv">$null</span> <span class="p">=</span> <span class="nv">$array</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s2">&#34;Adding $_ to the array&#34;</span><span class="p">)}</span>
-<span class="nv">$report</span> <span class="p">=</span> <span class="s1">&#39;{0} elements collected in {1:n1} seconds&#39;</span> 
-<span class="nv">$report</span> <span class="o">-f</span> <span class="nv">$array</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="nv">$stopwatch</span><span class="p">.</span><span class="n">Elapsed</span><span class="p">.</span><span class="n">TotalSeconds</span>
-</code></pre></div><p>Instead of 214.7 seconds, this takes 0.4 seconds - a <em>53,575% speed increase</em> with next to no extra work.</p>
-<p>You can do this in pure Powershell too, but it only handles one item per iteration. Because you&rsquo;re returning more than one element, Powershell will automatically create an array. This method also took 0.4 seconds.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$stopwatch</span> <span class="p">=</span> <span class="no">[System.Diagnostics.Stopwatch]</span><span class="p">::</span><span class="n">StartNew</span><span class="p">()</span>
-<span class="nv">$array</span> <span class="p">=</span> <span class="n">1</span><span class="p">..</span><span class="n">100000</span> <span class="p">|</span> <span class="nb">Foreach-Object</span> <span class="p">{</span><span class="s2">&#34;Adding $_ to the array&#34;</span><span class="p">}</span>
-<span class="nv">$report</span> <span class="p">=</span> <span class="s1">&#39;{0} elements collected in {1:n1} seconds&#39;</span> 
-<span class="nv">$report</span> <span class="o">-f</span> <span class="nv">$array</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="nv">$stopwatch</span><span class="p">.</span><span class="n">Elapsed</span><span class="p">.</span><span class="n">TotalSeconds</span>
-</code></pre></div><p>Both the .NET method and Powershell&rsquo;s native array-creation can append arrays without having to recreate/repopulate them. That&rsquo;s why they&rsquo;re equally fast, and both <em>far</em> faster than <code>+=</code>.</p>
-<p>Now, <code>+=</code> isn&rsquo;t always evil. It&rsquo;s useful for adding numbers. However, once you start working with array objects, you incur the performance penalty. If you use <code>+=</code> on a string, you incur the performance penalty since a string is really an <em>array of characters</em>. If you&rsquo;re working with small arrays and the performance hit is acceptable, then there&rsquo;s no real harm in using it.</p>
-
+    <p>This blog content is generated by the <a class="link" href="https://gohugo.io/"  target="_blank" rel="noopener"
+    >Hugo</a> static site generator and integrated with GitHub (which you can clearly tell by the URL), but I&rsquo;m always struggling to remember the steps in pushing the newest content publicly.</p>
+<ol>
+<li>
+<p>Change to your site&rsquo;s local directory, then tell hugo to build the content:<br>
+<code>cd myblog.dev.repo</code><br>
+<code>hugo</code></p>
+</li>
+<li>
+<p>Change to your site&rsquo;s public directory (where the new content was just generated):<br>
+<code>cd public</code></p>
+</li>
+<li>
+<p>Add all of the new files to git. This command analyzes the repository files, adding all modified and/or untracked files in the current directory and subdirectories to staged status. This prepares them for inclusion in the next <code>git commit</code>. The <code>.gitignore</code> file can be used to define any files/patterns that should be skipped:<br>
+<code>git add .</code></p>
+</li>
+<li>
+<p>Commit the locally staged files with a comment. This command will add <em>all</em> the changed files, so be aware of that if you&rsquo;re only intending to commit/push select files!:<br>
+<code>git commit -m &quot;Website update 2021-08-03&quot;</code></p>
+</li>
+<li>
+<p>Push the local content up to GitHub. <em>origin</em> is the remote repository name (alias) and <em>master</em> is the branch name. (In this case, master is the default branch that must exist on any repository):<br>
+<code>git push origin master</code></p>
+</li>
+</ol>
+<p>And here it all is in a glorious code block, so that in the future, I can just copy and paste!</p>
+<pre><code>cd myblog.dev.repo
+hugo
+cd public
+git add .
+git commit -m &quot;Website update 2021-08-03&quot;
+git push origin master
+</code></pre>
 </section>
 
 
     <footer class="article-footer">
     
-    <section class="article-tags">
-        
-            <a href="/tags/powershell/">Powershell</a>
-        
-    </section>
-
 
     
     <section class="article-copyright">

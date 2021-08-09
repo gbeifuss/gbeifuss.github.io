@@ -6,13 +6,173 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Thu, 22 Jul 2021 22:10:02 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 05 Aug 2021 11:11:56 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Powershell &amp; NTMLv1 use</title>
+        <link>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</link>
+        <pubDate>Thu, 05 Aug 2021 11:11:56 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;m in the midst of trying to phase out non-Kerberos authentication traffic in our domain, because &lt;em&gt;it&amp;rsquo;s time&lt;/em&gt;. MS has offered Kerberos since Windows 2000, and the pre-Kerberos options (LANMan, NTLMv1, NTLMv2) are woefully insecure. In fact, MS stopped recommending NTLM for use in applications in 2010. It&amp;rsquo;s still widely in use for compatibility reasons.&lt;/p&gt;
+&lt;h2 id=&#34;the-protocols&#34;&gt;The Protocols&lt;/h2&gt;
+&lt;h3 id=&#34;lanman&#34;&gt;LANMan&lt;/h3&gt;
+&lt;p&gt;LANMan, or LAN Manager, was offered in 1987 and can be easily broken. Among other issues:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A LANMan password is not case-sensitive. Everything is cast to uppercase before the hash is created. This dramatically reduces the characters that need to be bruteforced, as lowercase isn&amp;rsquo;t a required set (reducing the total characters by 26).&lt;/li&gt;
+&lt;li&gt;When first created, the implementation presumed that passwords woud never be longer than 7 characters, so a total of eight bytes are used to store it - the seven password characters plus a parity byte. Of course, this quickly became a problem, so the password length was increased to use 16 bytes. But in order to remain backwards compatible, this is implemented as 2x 8-byte fields (7 password characters + 1 parity byte). Any password shorter than 14 charafters will have unused bytes filled with &lt;em&gt;NULLs&lt;/em&gt;.&lt;br&gt;
+If the password is seven characters or less, the entire second 8-byte field will be full of &lt;em&gt;NULLs&lt;/em&gt;, which means the attacker only has to break one 7-character password. Even if the password takes a full 14 characters, the attacker doesn&amp;rsquo;t have to break that, they are actually breaking 2 separate seven-character passwords, which is magnitudes of order faster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;ntlm-v1&#34;&gt;NTLM v1&lt;/h3&gt;
+&lt;p&gt;New Technology LAN Manager (NTLM) is the default authentication protocol for NT 4.0. It&amp;rsquo;s a challenge/response-based protocol but has issues as well:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The challenge issued by NTLMv1 is always a 16-byte random number.&lt;/li&gt;
+&lt;li&gt;It used a DES algorithm for encryption of the challenge (with the user&amp;rsquo;s hash). DES is built for speed, which makes decryption by an attacker fast as well.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As of 2019, every possible 8-character NTLM password hash can be enumerated by modern hardware in about 2.5 hours. It&amp;rsquo;s even faster if you use rainbow tables, which exist for all 8 and 9-character passwords.&lt;/p&gt;
+&lt;h3 id=&#34;ntlm-v2&#34;&gt;NTLM v2&lt;/h3&gt;
+&lt;p&gt;A number of the NTLM v1 weaknesses are corrected in v2:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The challenge is a variable-length challenge.&lt;/li&gt;
+&lt;li&gt;HMAC-MD5 is used instead of DES. It&amp;rsquo;s slower, so brute force isn&amp;rsquo;t a practical option&amp;hellip; at least until quantum computers become available!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;NTLM remains vulnerable to &lt;em&gt;pass the hash&lt;/em&gt; attacks, in addition to not supporting modern encryption algorithms (AES, SHA-256).&lt;/p&gt;
+&lt;h2 id=&#34;decommissioning-ntlm-and-lanman&#34;&gt;Decommissioning NTLM and LANMan&lt;/h2&gt;
+&lt;p&gt;Now that it&amp;rsquo;s clear why NTLM is a terrible modern choice for authentication, let&amp;rsquo;s sort out how to get rid of it. Many older devices may only support NTLM, so we need to identify any devices currently using it.&lt;/p&gt;
+&lt;h3 id=&#34;audit&#34;&gt;Audit&lt;/h3&gt;
+&lt;p&gt;First, enable NTLM auditing on your Domain Controllers. This will create &lt;em&gt;Event ID 4624&lt;/em&gt; in the Security Event log. This event will note which authentication method was used: KERBEROS or NTLM. If it&amp;rsquo;s NTLM, a subfield will tell whether it&amp;rsquo;s LM, V1 or V2.&lt;/p&gt;
+&lt;p&gt;I created a GPO for my DCs and set these values under &lt;em&gt;Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options&lt;/em&gt;:&lt;br&gt;
+&lt;strong&gt;Network Security: Restrict NTLM: Audit NTLM authentication in this domain&lt;/strong&gt; to &lt;em&gt;Enable all&lt;/em&gt;&lt;br&gt;
+&lt;strong&gt;Network security: Restrict NTLM: Audit Incoming NTLM Traffic&lt;/strong&gt; to &lt;em&gt;Enable auditing for all accounts&lt;/em&gt;&lt;br&gt;
+&lt;strong&gt;Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers&lt;/strong&gt; to &lt;em&gt;Audit all&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Now I have Event ID 4624 showing up in my logs. I want to find if there&amp;rsquo;s any NTLM v1 or LM traffic. Let&amp;rsquo;s parse this with with a custom XML filter for all records matching Event ID 4624 that don&amp;rsquo;t contain &amp;lsquo;NTLM v2&amp;rsquo;, &amp;lsquo;Kerberos&amp;rsquo; or &amp;lsquo;-&amp;rsquo; authentication types.&lt;br&gt;
+NOTE: This is the relevant part of my code for the filtering. The full script does some other things like emailing me a report, which is why there are other functions and variables referenced:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;
+&lt;span class=&#34;k&#34;&gt;foreach&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$domaincontroller&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$domaincontrollers&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+
+    &lt;span class=&#34;nb&#34;&gt;Clear-Variable&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;eventlog&lt;/span&gt;
+ 
+    &lt;span class=&#34;nv&#34;&gt;$query&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;sh&#34;&gt;@&amp;#34;
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;	&amp;lt;QueryList&amp;gt; 
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;           &amp;lt;Query Id=&amp;#34;0&amp;#34;&amp;gt; 
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;              &amp;lt;Select Path=&amp;#34;Security&amp;#34;&amp;gt; 
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;                *[System[(EventID=&amp;#39;4624&amp;#39;)]]
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;	      &amp;lt;/Select&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;	      &amp;lt;Suppress Path=&amp;#34;Security&amp;#34;&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;                *[EventData[Data[@Name=&amp;#39;AuthenticationPackageName&amp;#39;] and (Data=&amp;#39;NTLM v2&amp;#39;)]] or
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;                *[EventData[Data[@Name=&amp;#39;AuthenticationPackageName&amp;#39;] and (Data=&amp;#39;Kerberos&amp;#39;)]] or
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;                *[EventData[Data[@Name=&amp;#39;AuthenticationPackageName&amp;#39;] and (Data=&amp;#39;-&amp;#39;)]]
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;               &amp;lt;/Suppress&amp;gt; 
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;           &amp;lt;/Query&amp;gt; 
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;	&amp;lt;/QueryList&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;sh&#34;&gt;&amp;#34;@&lt;/span&gt;
+    &lt;span class=&#34;nv&#34;&gt;$eventlog&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-WinEvent&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-FilterXml&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$query&lt;/span&gt;
+
+    &lt;span class=&#34;nv&#34;&gt;$MyReport&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-CustomHeader&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;NTLMv1 Events on domain controller $domaincontroller&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;nv&#34;&gt;$MyReport&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-HtmlTable&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$eventlog&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ID&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4624&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Select-Object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;TimeCreated&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Message&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;nv&#34;&gt;$MyReport&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-CustomHeaderClose&lt;/span&gt;
+
+    &lt;span class=&#34;nv&#34;&gt;$MyReport&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-CustomHeader0Close&lt;/span&gt;
+    &lt;span class=&#34;nv&#34;&gt;$MyReport&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-CustomHTMLClose&lt;/span&gt;
+
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Good!&lt;br&gt;
+The only relevant entries I found were from a server that I upgraded 3 weeks ago, specifically because it was using NTLM for an obsolete application. After tossing on a supported OS and upgrading to the current application version, NTLMv1 authentication from this server stopped.&lt;/p&gt;
+&lt;h3 id=&#34;block&#34;&gt;Block&lt;/h3&gt;
+&lt;p&gt;MS exposes a GPO value to control the NTLM authentication methods available on the domain. &lt;strong&gt;Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options\&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-lan-manager-authentication-level&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Network security: LAN Manager authentication level&lt;/a&gt;&lt;/strong&gt; will enforce these behaviours:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Setting&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Registry security level&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Send LM &amp;amp; NTLM responses&lt;/td&gt;
+&lt;td&gt;Client devices use LM and NTLM authentication, and they never use NTLMv2 session security. Domain controllers accept LM, NTLM, and NTLMv2 authentication.&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Send LM &amp;amp; NTLM – use NTLMv2 session security if negotiated&lt;/td&gt;
+&lt;td&gt;Client devices use LM and NTLM authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Send NTLM response only&lt;/td&gt;
+&lt;td&gt;Client devices use NTLMv1 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Send NTLMv2 response only&lt;/td&gt;
+&lt;td&gt;Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Send NTLMv2 response only. Refuse LM&lt;/td&gt;
+&lt;td&gt;Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM authentication, and they will accept only NTLM and NTLMv2 authentication.&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Send NTLMv2 response only. Refuse LM &amp;amp; NTLM&lt;/td&gt;
+&lt;td&gt;Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM and NTLM authentication, and they will accept only NTLMv2 authentication.&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Obviously, 0 is the most insecure setting, but the most compatible. If your domain ever had a domain level lower than Windows Server 2008, 0 is probably what you&amp;rsquo;ll be using. Since Windows Server 2008, the default has been 3.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;d previously changed our domain from 0 to 2, but now that our last NTLMv1 application is gone, I&amp;rsquo;ve set this to 3. We&amp;rsquo;re headed full speed into &lt;del&gt;the future!&lt;/del&gt; 2008.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Pushing Hugo Content to GitHub</title>
+        <link>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</link>
+        <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
+        <description>&lt;p&gt;This blog content is generated by the &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hugo&lt;/a&gt; static site generator and integrated with GitHub (which you can clearly tell by the URL), but I&amp;rsquo;m always struggling to remember the steps in pushing the newest content publicly.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Change to your site&amp;rsquo;s local directory, then tell hugo to build the content:&lt;br&gt;
+&lt;code&gt;cd myblog.dev.repo&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;hugo&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Change to your site&amp;rsquo;s public directory (where the new content was just generated):&lt;br&gt;
+&lt;code&gt;cd public&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add all of the new files to git. This command analyzes the repository files, adding all modified and/or untracked files in the current directory and subdirectories to staged status. This prepares them for inclusion in the next &lt;code&gt;git commit&lt;/code&gt;. The &lt;code&gt;.gitignore&lt;/code&gt; file can be used to define any files/patterns that should be skipped:&lt;br&gt;
+&lt;code&gt;git add .&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Commit the locally staged files with a comment. This command will add &lt;em&gt;all&lt;/em&gt; the changed files, so be aware of that if you&amp;rsquo;re only intending to commit/push select files!:&lt;br&gt;
+&lt;code&gt;git commit -m &amp;quot;Website update 2021-08-03&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Push the local content up to GitHub. &lt;em&gt;origin&lt;/em&gt; is the remote repository name (alias) and &lt;em&gt;master&lt;/em&gt; is the branch name. (In this case, master is the default branch that must exist on any repository):&lt;br&gt;
+&lt;code&gt;git push origin master&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And here it all is in a glorious code block, so that in the future, I can just copy and paste!&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cd myblog.dev.repo
+hugo
+cd public
+git add .
+git commit -m &amp;quot;Website update 2021-08-03&amp;quot;
+git push origin master
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
         <title>Array Speed in Powershell</title>
         <link>https://gbeifuss.github.io/p/array-speed-in-powershell/</link>
         <pubDate>Thu, 22 Jul 2021 22:10:02 -0400</pubDate>
         
         <guid>https://gbeifuss.github.io/p/array-speed-in-powershell/</guid>
-        <description>&lt;p&gt;A popular way to work with arrays in Powershell is to use a &lt;code&gt;+=&lt;/code&gt; operation:&lt;/p&gt;
+        <description>&lt;p&gt;A popular and quick way to work with arrays in Powershell is to use a &lt;code&gt;+=&lt;/code&gt; operation:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;@()&lt;/span&gt;
 &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;..&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;10000&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Foreach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Adding $_ to the array&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Let&amp;rsquo;s time this:&lt;/p&gt;
@@ -29,7 +189,7 @@
 &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;..&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;100000&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Foreach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$null&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;Adding $_ to the array&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)}&lt;/span&gt;
 &lt;span class=&#34;nv&#34;&gt;$report&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;{0} elements collected in {1:n1} seconds&amp;#39;&lt;/span&gt; 
 &lt;span class=&#34;nv&#34;&gt;$report&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-f&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$stopwatch&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Elapsed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;TotalSeconds&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Instead of 1.7 seconds, this takes 0.4 seconds - a &lt;em&gt;53,575% speed increase&lt;/em&gt; with next to no extra work.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Instead of 214.7 seconds, this takes 0.4 seconds - a &lt;em&gt;53,575% speed increase&lt;/em&gt; with next to no extra work.&lt;/p&gt;
 &lt;p&gt;You can do this in pure Powershell too, but it only handles one item per iteration. Because you&amp;rsquo;re returning more than one element, Powershell will automatically create an array. This method also took 0.4 seconds.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$stopwatch&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;no&#34;&gt;[System.Diagnostics.Stopwatch]&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;StartNew&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
 &lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;..&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;100000&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Foreach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;Adding $_ to the array&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
