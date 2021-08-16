@@ -6,7 +6,131 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Thu, 05 Aug 2021 11:11:56 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 11 Aug 2021 15:01:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Exchange &amp; -DeleteContent</title>
+        <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
+        <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
+        <description>&lt;p&gt;Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to&lt;br&gt;
+a) quantify how many other people in our organization had that particular email in their mailbox, and&lt;br&gt;
+b) administratively remove it.&lt;/p&gt;
+&lt;p&gt;This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.&lt;/p&gt;
+&lt;p&gt;To start, I got the message details. When I&amp;rsquo;m not familiar with the information I&amp;rsquo;ll get back, I like to store the output in a variable before manipulating it. It saves time because I don&amp;rsquo;t need to requery the information (all Exchange mailboxes in this case). I then used the &lt;code&gt;Search-Mailbox&lt;/code&gt; cmdlet to track it down:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;get-mailbox&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Search-Mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-SearchQuery&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;subject:Attention: John Doe AND from:customer@gmail.com AND received:07/28/2021&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Well that&amp;rsquo;s not good. There were no results. This time, I&amp;rsquo;ll look for the specific attachment that contained the PII, then display any results that have a resultcount &amp;gt; 0 (that is, a message with the attachment was found):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;get-mailbox&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Search-Mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-SearchQuery&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;attachment:tax_07-10-2021-080049.pdf&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-EstimateResultOnly&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;where &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resultitemscount&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;select &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;identity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resultitemscount&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ft &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-a&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;Identity&lt;/span&gt;                                   &lt;span class=&#34;n&#34;&gt;ResultItemsCount&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;--------&lt;/span&gt;                                   &lt;span class=&#34;p&#34;&gt;----------------&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;company&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Corporate&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;JDoe&lt;/span&gt;                &lt;span class=&#34;n&#34;&gt;3&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;company&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Corporate&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;GWashington&lt;/span&gt;         &lt;span class=&#34;n&#34;&gt;2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Much better! 5 messages found across Exchange. Now, let&amp;rsquo;s purge them from JDoe&amp;rsquo;s mailbox, but leave them in GWashington&amp;rsquo;s mailbox. We need the -DeleteContent switch for that:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;JDoe&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Search-Mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-SearchQuery&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;attachment:tax_07-10-2021-080049.pdf&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-DeleteContent&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Network Troubleshooting and MTU</title>
+        <link>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</link>
+        <pubDate>Wed, 11 Aug 2021 14:57:19 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</guid>
+        <description>&lt;p&gt;These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&amp;rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&amp;rsquo;s not super advanced work.&lt;/p&gt;
+&lt;p&gt;For about 8 months now, we&amp;rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&amp;rsquo;s still not in use because of &lt;em&gt;problems&lt;/em&gt;. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. &lt;code&gt;Ping&lt;/code&gt; to any system works, but protocols like RDP, SMB and replication (AD &amp;amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&amp;rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site AND I could ping all the other DCs, &lt;code&gt;repadmin /replsummary&lt;/code&gt; showed that replication was no longer working.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s a simple topology diagram in ASCII art:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Head Office core switch - Head Office firewall - VPN Tunnel over internet - SiteA firewall - SiteA core switch
+vs.
+Head Office core switch - dedicated L2 link - SiteA core switch
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I knew this was going to be a pain to troubleshoot, especially since I couldn&amp;rsquo;t take the whole DR site offline whenever I wanted during the day to conduct tests. I quintuple checked the configuration and didn&amp;rsquo;t find any errors. I compared it line-by-line to another site we have this same setup (dedicated link between core switches) and everything was configured correctly.&lt;/p&gt;
+&lt;p&gt;I finally decided to bite the bullet spend a couple of late nights trying to gather information so that I could quantify the precise problem. Because the physical layer was out of my control, the data link layer seemed fine (also out of my control&amp;hellip;mostly) and &lt;code&gt;ping&lt;/code&gt; worked (layer 3), I was pretty confident the issue originated at the Network layer, or higher.&lt;/p&gt;
+&lt;p&gt;I started by looking at the packet sizes. I knew that ping was a tiny packet, while things like replication and SMB would probably exceed the MTU. I ran some tests with the &lt;code&gt;ping -f -l&lt;/code&gt; to determine the maximum packet size that could successfully transit the link.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;No.     Time           Source                Destination           Protocol Length ICMP Length Info
+      1 0.000000       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37568/49298, ttl=128 (reply in 2)
+      2 0.005320       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37568/49298, ttl=126 (request in 1)
+      3 1.005759       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37569/49554, ttl=128 (reply in 4)
+      4 1.011053       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37569/49554, ttl=126 (request in 3)
+      5 2.011301       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37570/49810, ttl=128 (reply in 6)
+      6 2.016662       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37570/49810, ttl=126 (request in 5)
+      7 3.017966       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37571/50066, ttl=128 (reply in 8)
+      8 3.023353       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37571/50066, ttl=126 (request in 7)
+      9 16.070931      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37576/51346, ttl=128 (reply in 10)
+     10 16.076166      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37576/51346, ttl=126 (request in 9)
+     11 17.075444      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37577/51602, ttl=128 (reply in 12)
+     12 17.080656      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37577/51602, ttl=126 (request in 11)
+     13 18.082161      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37578/51858, ttl=128 (reply in 14)
+     14 18.087498      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37578/51858, ttl=126 (request in 13)
+     15 19.087735      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37579/52114, ttl=128 (reply in 16)
+     16 19.093044      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37579/52114, ttl=126 (request in 15)
+     17 26.901887      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37580/52370, ttl=128 (no response found!)
+     18 31.753228      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37581/52626, ttl=128 (no response found!)
+     19 36.753276      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37582/52882, ttl=128 (no response found!)
+     20 41.753263      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37583/53138, ttl=128 (no response found!)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I found that where the size was &amp;lt;= 1468, the ping succeeded. At 1469-1472 bytes, there was no response. And at sizes &amp;gt;= 1473, ping helpfully told me that the &lt;code&gt;Packet needs to be fragmented but DF set.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Okay! We&amp;rsquo;re making progress! &amp;hellip;Maybe. Still working on the MTU theory, I took a look at all the network devices that these packets would transit:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ServerA&lt;/li&gt;
+&lt;li&gt;Hyper-V host server&lt;/li&gt;
+&lt;li&gt;Remote site core switch&lt;br&gt;
+&amp;hellip; L2 Dedicated Link beyond my control&amp;hellip;&lt;/li&gt;
+&lt;li&gt;Head Office core switch&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Both switches were set with an MTU of 1500 bytes, which is pretty standard. The Hyper-V host server used the Windows default of 1500, as did ServerA. So it looked like MTUs haven&amp;rsquo;t been altered in a meaningful way.&lt;/p&gt;
+&lt;p&gt;I ran a series of packet captures to see if anything looked unusual. Nothing jumped out at me, but I did notice that whenever the packet size exceeded 1500-ish bytes, there were lots of retranmissions and/or errors.&lt;/p&gt;
+&lt;p&gt;Wait! How is it that a server with an MTU of 1500 is sending packets that are 2600 bytes?&lt;/p&gt;
+&lt;p&gt;Wireshark uses winpcap (or libpcap) to grab the data &lt;em&gt;before&lt;/em&gt; it&amp;rsquo;s handed to the NIC:&lt;br&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/wireshark.png&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;
+&lt;p&gt;Many OS and NIC drivers support &lt;em&gt;TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload&lt;/em&gt; which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&amp;hellip; with offloading enabled, this task is now completed &lt;em&gt;after&lt;/em&gt; Wireshark has grabbed the data, so it&amp;rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.&lt;/p&gt;
+&lt;p&gt;Back to my regularly scheduled commentary&amp;hellip;&lt;/p&gt;
+&lt;p&gt;Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&amp;rsquo;s 1468, which is the largest setting that worked with the Don&amp;rsquo;tFragment flag set, plus the 28 byte IP header. Let&amp;rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:&lt;br&gt;
+&lt;code&gt;netsh int ipv4 show sub&lt;/code&gt; (the full command is &lt;em&gt;netsh interface ipv4 show subinterfaces&lt;/em&gt;, but I generally use the shorthand).&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;C:\Users&amp;gt;netsh int ipv4 show sub
+
+   MTU  MediaSenseState   Bytes In  Bytes Out  Interface
+------  ---------------  ---------  ---------  -------------
+4294967295                1          0      52364  Loopback Pseudo-Interface 1
+  1500                1  550194231  647147510  Ethernet 2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s update this:&lt;br&gt;
+&lt;code&gt;netsh in ipv4 set sub &amp;quot;Ethernet 2&amp;quot; mtu=1496 store=persistent&lt;/code&gt; (&lt;em&gt;netsh interface ipv4 set subinterface &amp;ldquo;Ethernet 2&amp;rdquo; mtu=1496 store=persistent&lt;/em&gt;)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;C:\Users&amp;gt;netsh int ipv4 show sub
+
+   MTU  MediaSenseState   Bytes In  Bytes Out  Interface
+------  ---------------  ---------  ---------  -------------
+4294967295                1          0      52364  Loopback Pseudo-Interface 1
+  1496                1  55025789  647165843  Ethernet 2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;On Windows 2019, this took effect immediately. If it doesn&amp;rsquo;t, a reboot should ensure it applies.&lt;br&gt;
+AD replication - which had been failing - picked right back up as soon as I entered this command.&lt;/p&gt;
+&lt;p&gt;Now, I&amp;rsquo;ve proved that it&amp;rsquo;s an MTU issue, so I&amp;rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp;amp; EType field in the frame. This resulting QinQ frame is often referred to as &amp;lsquo;double tagged&amp;rsquo;.&lt;br&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/qinq.png&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;
+&lt;p&gt;You can read more about QinQ in the Cisco article &lt;a class=&#34;link&#34; href=&#34;http://www.cisco.com/en/US/tech/tk389/tk689/technologies_tech_note09186a0080094665.shtml&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Inter-Switch Link and IEEE 802.1Q Frame Format&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Pushing to GitHub via. Git</title>
+        <link>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</link>
+        <pubDate>Mon, 09 Aug 2021 14:00:25 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</guid>
+        <description>&lt;p&gt;When I first committed to actually publishing a blog and settled on using Hugo and Github, I ran into a problem when trying to actually synchronize my local repository with Github: I kept getting a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error when I pushed the content up to Github. After some Google-fu, I found that the error was because I didn&amp;rsquo;t have any SSH keys setup on my Windows 10 system and it couldn&amp;rsquo;t communicate securely with GitHub.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s how I fixed that:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open &lt;code&gt;git bash&lt;/code&gt;. I could have done this in Windows Terminal (by creating a new profile linked to git bash), but since this is a one-time task, I didn&amp;rsquo;t bother.&lt;/li&gt;
+&lt;li&gt;Type &lt;code&gt;cd ~/.ssh&lt;/code&gt;. This will take you to the root directory for Git (likely C:\Users\username\.ssh\)&lt;/li&gt;
+&lt;li&gt;Within the &lt;code&gt;.ssh&lt;/code&gt; folder, there should be two files: &lt;code&gt;id_rsa&lt;/code&gt; and &lt;code&gt;id_rsa.pub&lt;/code&gt;. Type &lt;code&gt;ls&lt;/code&gt; to see a directory listing. These are the files that tell your computer how to communicate with GitHub. If those two files don&amp;rsquo;t show up, continue to #4.&lt;br&gt;
+NOTE: Your SSH keys must be named id_rsa and id_rsa.pub in order for Git and GitHub to recognize them by default.&lt;/li&gt;
+&lt;li&gt;Since the SSH keys don&amp;rsquo;t exist yet, create thethem: type &lt;code&gt;ssh-keygen -t rsa -C &amp;quot;you@email.com&amp;quot;&lt;/code&gt;. This will create both the &lt;code&gt;id_rsa&lt;/code&gt; and &lt;code&gt;id_rsa.pub&lt;/code&gt; files.&lt;/li&gt;
+&lt;li&gt;Open &lt;code&gt;id_rsa.pub&lt;/code&gt; in &lt;del&gt;your favorite text editor&lt;/del&gt; Notepad.&lt;/li&gt;
+&lt;li&gt;Copy the contents (exactly as it appears, with no extra spaces or lines) of &lt;code&gt;id_rsa.pub&lt;/code&gt; and paste it into GitHub under the Account Settings &amp;gt; SSH Keys page.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now that you&amp;rsquo;ve added your public key to Github, try to &lt;code&gt;git push&lt;/code&gt; again and see if it works. It should!&lt;/p&gt;
+&lt;p&gt;A step-by-step rundown of this process (and more!) is also on the GitHub site: &lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Connecting to GitHub with SSH&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Powershell &amp; NTMLv1 use</title>
         <link>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</link>
         <pubDate>Thu, 05 Aug 2021 11:11:56 -0400</pubDate>
@@ -610,7 +734,7 @@ I must confess that in the process of using Remote Repository access this week, 
         <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
         
         <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
-        <description>&lt;p&gt;I&amp;rsquo;ve worked with computers for a couple of decades now, and I love notepad&amp;hellip; #sorrynotsorry, &lt;code&gt;git&lt;/code&gt; fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown.
+        <description>&lt;p&gt;I&amp;rsquo;ve worked with computers for a couple of decades now, and I love Notepad&amp;hellip; #sorrynotsorry, &lt;code&gt;vim&lt;/code&gt; fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown.
 My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature. Word&amp;rsquo;s &lt;em&gt;insert date/time&lt;/em&gt; function pales in comparison to the elegant simplicty of F5. Even trying to use keyboard shortcuts isn&amp;rsquo;t fast, when it should be.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;

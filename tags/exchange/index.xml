@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Exchange on Greg Beifuss</title>
+    <link>https://gbeifuss.github.io/tags/exchange/</link>
+    <description>Recent content in Exchange on Greg Beifuss</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 11 Aug 2021 15:01:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/exchange/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exchange &amp; -DeleteContent</title>
+      <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
+      <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
+      <description>Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to
+a) quantify how many other people in our organization had that particular email in their mailbox, and
+b) administratively remove it.
+This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.
+To start, I got the message details.</description>
+    </item>
+    
+    <item>
+      <title>Powershell, Exchange &amp; TLS</title>
+      <link>https://gbeifuss.github.io/p/powershell-exchange-tls/</link>
+      <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
+      <description>I was recently curious about what sort of SSL/TLS connections were being used to access our Exchange cluster via. IIS. We have systems spanning twenty years: from Windows XP all the way to Windows Server 2019. Who knows what &amp;ldquo;solutions&amp;rdquo; developers or power users have come up with over the years to integrate with our mail system?
+Previously, I&amp;rsquo;d followed MS guidance in Enabling TLS 1.2 and New IIS Functionality to Help Identify Weak TLS Usage.</description>
+    </item>
+    
+  </channel>
+</rss>

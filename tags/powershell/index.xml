@@ -6,7 +6,20 @@
     <description>Recent content in Powershell on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Aug 2021 11:11:56 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 11 Aug 2021 15:01:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exchange &amp; -DeleteContent</title>
+      <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
+      <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
+      <description>Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to
+a) quantify how many other people in our organization had that particular email in their mailbox, and
+b) administratively remove it.
+This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.
+To start, I got the message details.</description>
+    </item>
+    
     <item>
       <title>Powershell &amp; NTMLv1 use</title>
       <link>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</link>
@@ -66,7 +79,7 @@ Previously, I&amp;rsquo;d followed MS guidance in Enabling TLS 1.2 and New IIS F
       <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
-      <description>I&amp;rsquo;ve worked with computers for a couple of decades now, and I love notepad&amp;hellip; #sorrynotsorry, git fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown. My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature.</description>
+      <description>I&amp;rsquo;ve worked with computers for a couple of decades now, and I love Notepad&amp;hellip; #sorrynotsorry, vim fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown. My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature.</description>
     </item>
     
     <item>

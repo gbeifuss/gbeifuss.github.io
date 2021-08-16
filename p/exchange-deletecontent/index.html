@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Writing custom snippets in VS Code'><title>VS Code Snippets</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Administratively deleting content from an Exchange Mailbox'><title>Exchange &amp; -DeleteContent</title>
 
-<link rel='canonical' href='https://gbeifuss.github.io/p/vs-code-snippets/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/exchange-deletecontent/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='VS Code Snippets'>
-<meta property='og:description' content='Writing custom snippets in VS Code'>
-<meta property='og:url' content='https://gbeifuss.github.io/p/vs-code-snippets/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Exchange &amp; -DeleteContent'>
+<meta property='og:description' content='Administratively deleting content from an Exchange Mailbox'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/exchange-deletecontent/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='VSCode' /><meta property='article:published_time' content='2021-07-14T08:20:02-04:00'/><meta property='article:modified_time' content='2021-07-14T08:20:02-04:00'/>
-<meta name="twitter:title" content="VS Code Snippets">
-<meta name="twitter:description" content="Writing custom snippets in VS Code">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Exchange' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-08-11T15:01:20-04:00'/><meta property='article:modified_time' content='2021-08-11T15:01:20-04:00'/>
+<meta name="twitter:title" content="Exchange &amp; -DeleteContent">
+<meta name="twitter:description" content="Administratively deleting content from an Exchange Mailbox">
     </head>
     <body class="
     article-page 
@@ -145,12 +145,12 @@
     
 
     <h2 class="article-title">
-        <a href="/p/vs-code-snippets/">VS Code Snippets</a>
+        <a href="/p/exchange-deletecontent/">Exchange &amp; -DeleteContent</a>
     </h2>
 
     
     <h3 class="article-subtitle">
-        Writing custom snippets in VS Code
+        Administratively deleting content from an Exchange Mailbox
     </h3>
     <footer class="article-time">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -161,92 +161,30 @@
 
 
 
-        <time class="article-time--published">Jul 14, 2021</time>
+        <time class="article-time--published">Aug 11, 2021</time>
     </footer></div>
 </header>
 
     <section class="article-content">
-    <p>I&rsquo;ve worked with computers for a couple of decades now, and I love Notepad&hellip; #sorrynotsorry, <code>vim</code> fans. It&rsquo;s fantastic for writing - there&rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&rsquo;s usable for a variety of tasks. It&rsquo;s like the pre-markdown version of markdown.
-My favourite feature of Notepad is the ability to insert the date &amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature. Word&rsquo;s <em>insert date/time</em> function pales in comparison to the elegant simplicty of F5. Even trying to use keyboard shortcuts isn&rsquo;t fast, when it should be.</p>
-<table>
-<thead>
-<tr>
-<th>Notepad</th>
-<th>Word GUI</th>
-<th>Work shortcuts</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>F5</td>
-<td>click <em>Insert</em></td>
-<td>ALT+I</td>
-</tr>
-<tr>
-<td></td>
-<td>click <em>Date/Time</em></td>
-<td>D</td>
-</tr>
-<tr>
-<td></td>
-<td>read the menu</td>
-<td>read the menu</td>
-</tr>
-<tr>
-<td></td>
-<td>double-click choice</td>
-<td>UP/DOWN ARROW to choice</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>ENTER</td>
-</tr>
-</tbody>
-</table>
-<p>When I write Powershell scripts in VS Code, I had been manually typing in the date until I decided to write a custom snippet that would insert a header with all the things I normally add: script name, date/time, comments, my name. It&rsquo;s automatically populated whenever I type in <code>header &lt;ENTER&gt;</code></p>
-<ol>
-<li>Open the Command Palette (View, Command Palette&hellip;. or CTRL+SHIFT+P)</li>
-<li>Select <code>Preferences: Configure User Snippets</code></li>
-<li>Select <code>Powershell</code> from the list</li>
-<li>Add the snippet:
-<pre><code> &quot;File Header&quot;: {
-    &quot;prefix&quot;: &quot;header&quot;,
-    &quot;description&quot;: &quot;Output a file header with the file name, comment field, author and date&quot;,
-    &quot;body&quot;: [
-        &quot;#$TM_FILENAME&quot;,
-        &quot;&quot;,
-        &quot;&lt;#&quot;,
-        &quot;&quot;,
-        &quot;&quot;,
-        &quot;Greg Beifuss&quot;,
-        &quot;$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE&quot;,
-        &quot;#&gt;&quot;,
-        &quot;&quot;,
-        &quot;&quot;,
-    ]
-}
-</code></pre></li>
-</ol>
-<p>Since I&rsquo;m using VS Code to write markdown now, I decided to do a similar thing to reproduce Notepad&rsquo;s F5 feature:</p>
-<ol>
-<li>Open the Command Palette (View, Command Palette&hellip;. or CTRL+SHIFT+P)</li>
-<li>Select <code>Preferences: Configure User Snippets</code></li>
-<li>Select <code>Markdown</code> from the list</li>
-<li>Add the snippet:
-<pre><code>&quot;Current Date and Time&quot;: {
-    &quot;prefix&quot;: &quot;datetime&quot;,
-    &quot;description&quot;: &quot;Add Current date &amp; time&quot;,
-    &quot;body&quot;: [
-        &quot;$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE&quot;
-    ]
-}
-</code></pre></li>
-</ol>
-<p>This snippet seems to be more tempermental - when I type in <code>datetime &lt;ENTER&gt;</code>, usually it&rsquo;s not replaced with the date/timestamp. I resort to:</p>
-<pre><code>1. CTRL+I
-2. datetime &lt;ENTER&gt;
-</code></pre>
+    <p>Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to<br>
+a) quantify how many other people in our organization had that particular email in their mailbox, and<br>
+b) administratively remove it.</p>
+<p>This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.</p>
+<p>To start, I got the message details. When I&rsquo;m not familiar with the information I&rsquo;ll get back, I like to store the output in a variable before manipulating it. It saves time because I don&rsquo;t need to requery the information (all Exchange mailboxes in this case). I then used the <code>Search-Mailbox</code> cmdlet to track it down:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="p">&gt;</span> <span class="nv">$results</span> <span class="p">=</span> <span class="nb">get-mailbox</span> <span class="p">|</span> <span class="nb">Search-Mailbox</span> <span class="n">-SearchQuery</span> <span class="s2">&#34;subject:Attention: John Doe AND from:customer@gmail.com AND received:07/28/2021&#34;</span>
+<span class="p">&gt;</span> <span class="nv">$results</span>
+<span class="p">&gt;</span>
+</code></pre></div><p>Well that&rsquo;s not good. There were no results. This time, I&rsquo;ll look for the specific attachment that contained the PII, then display any results that have a resultcount &gt; 0 (that is, a message with the attachment was found):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="p">&gt;</span> <span class="nv">$results</span> <span class="p">=</span> <span class="nb">get-mailbox</span> <span class="p">|</span> <span class="nb">Search-Mailbox</span> <span class="n">-SearchQuery</span> <span class="s2">&#34;attachment:tax_07-10-2021-080049.pdf&#34;</span> <span class="n">-EstimateResultOnly</span>
+<span class="p">&gt;</span> <span class="nv">$results</span> <span class="p">|</span> <span class="nb">where </span><span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="n">resultitemscount</span> <span class="o">-ne</span> <span class="n">0</span><span class="p">}</span> <span class="p">|</span> <span class="nb">select </span><span class="n">identity</span><span class="p">,</span><span class="n">resultitemscount</span> <span class="p">|</span> <span class="nb">ft </span><span class="n">-a</span>
+
+<span class="n">Identity</span>                                   <span class="n">ResultItemsCount</span>
+<span class="p">--------</span>                                   <span class="p">----------------</span>
+<span class="n">company</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Corporate</span> <span class="n">Users</span><span class="p">/</span><span class="n">JDoe</span>                <span class="n">3</span>
+<span class="n">company</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Corporate</span> <span class="n">Users</span><span class="p">/</span><span class="n">GWashington</span>         <span class="n">2</span>
+</code></pre></div><p>Much better! 5 messages found across Exchange. Now, let&rsquo;s purge them from JDoe&rsquo;s mailbox, but leave them in GWashington&rsquo;s mailbox. We need the -DeleteContent switch for that:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="p">&gt;</span> <span class="s2">&#34;JDoe&#34;</span> <span class="p">|</span> <span class="nb">Search-Mailbox</span> <span class="n">-SearchQuery</span> <span class="s2">&#34;attachment:tax_07-10-2021-080049.pdf&#34;</span> <span class="n">-DeleteContent</span>
+</code></pre></div>
 </section>
 
 
@@ -254,9 +192,9 @@ My favourite feature of Notepad is the ability to insert the date &amp; time via
     
     <section class="article-tags">
         
-            <a href="/tags/powershell/">Powershell</a>
+            <a href="/tags/exchange/">Exchange</a>
         
-            <a href="/tags/vscode/">VSCode</a>
+            <a href="/tags/powershell/">Powershell</a>
         
     </section>
 
@@ -280,6 +218,25 @@ My favourite feature of Notepad is the ability to insert the date &amp; time via
 
     <aside class="related-contents--wrapper">
     
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="">
+    <a href="/p/powershell-exchange-tls/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Powershell, Exchange &amp; TLS</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
     
 </aside>
 

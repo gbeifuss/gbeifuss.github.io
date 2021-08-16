@@ -6,7 +6,38 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Aug 2021 11:11:56 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 11 Aug 2021 15:01:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exchange &amp; -DeleteContent</title>
+      <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
+      <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
+      <description>Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to
+a) quantify how many other people in our organization had that particular email in their mailbox, and
+b) administratively remove it.
+This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.
+To start, I got the message details.</description>
+    </item>
+    
+    <item>
+      <title>Network Troubleshooting and MTU</title>
+      <link>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</link>
+      <pubDate>Wed, 11 Aug 2021 14:57:19 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</guid>
+      <description>These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&amp;rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&amp;rsquo;s not super advanced work.</description>
+    </item>
+    
+    <item>
+      <title>Pushing to GitHub via. Git</title>
+      <link>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</link>
+      <pubDate>Mon, 09 Aug 2021 14:00:25 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</guid>
+      <description>When I first committed to actually publishing a blog and settled on using Hugo and Github, I ran into a problem when trying to actually synchronize my local repository with Github: I kept getting a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error when I pushed the content up to Github. After some Google-fu, I found that the error was because I didn&amp;rsquo;t have any SSH keys setup on my Windows 10 system and it couldn&amp;rsquo;t communicate securely with GitHub.</description>
+    </item>
+    
     <item>
       <title>Powershell &amp; NTMLv1 use</title>
       <link>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</link>
@@ -102,7 +133,7 @@ In any case, I was watching An Introduction to Visual Studio Code and GitHub whe
       <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
-      <description>I&amp;rsquo;ve worked with computers for a couple of decades now, and I love notepad&amp;hellip; #sorrynotsorry, git fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown. My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature.</description>
+      <description>I&amp;rsquo;ve worked with computers for a couple of decades now, and I love Notepad&amp;hellip; #sorrynotsorry, vim fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown. My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature.</description>
     </item>
     
     <item>

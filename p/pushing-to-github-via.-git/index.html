@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Writing custom snippets in VS Code'><title>VS Code Snippets</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Resolving a &#39;Permission Denied (publickey)&#39; error'><title>Pushing to GitHub via. Git</title>
 
-<link rel='canonical' href='https://gbeifuss.github.io/p/vs-code-snippets/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/pushing-to-github-via.-git/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='VS Code Snippets'>
-<meta property='og:description' content='Writing custom snippets in VS Code'>
-<meta property='og:url' content='https://gbeifuss.github.io/p/vs-code-snippets/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Pushing to GitHub via. Git'>
+<meta property='og:description' content='Resolving a &#39;Permission Denied (publickey)&#39; error'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/pushing-to-github-via.-git/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='VSCode' /><meta property='article:published_time' content='2021-07-14T08:20:02-04:00'/><meta property='article:modified_time' content='2021-07-14T08:20:02-04:00'/>
-<meta name="twitter:title" content="VS Code Snippets">
-<meta name="twitter:description" content="Writing custom snippets in VS Code">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-08-09T14:00:25-04:00'/><meta property='article:modified_time' content='2021-08-09T14:00:25-04:00'/>
+<meta name="twitter:title" content="Pushing to GitHub via. Git">
+<meta name="twitter:description" content="Resolving a &#39;Permission Denied (publickey)&#39; error">
     </head>
     <body class="
     article-page 
@@ -145,12 +145,12 @@
     
 
     <h2 class="article-title">
-        <a href="/p/vs-code-snippets/">VS Code Snippets</a>
+        <a href="/p/pushing-to-github-via.-git/">Pushing to GitHub via. Git</a>
     </h2>
 
     
     <h3 class="article-subtitle">
-        Writing custom snippets in VS Code
+        Resolving a &#39;Permission Denied (publickey)&#39; error
     </h3>
     <footer class="article-time">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -161,105 +161,31 @@
 
 
 
-        <time class="article-time--published">Jul 14, 2021</time>
+        <time class="article-time--published">Aug 09, 2021</time>
     </footer></div>
 </header>
 
     <section class="article-content">
-    <p>I&rsquo;ve worked with computers for a couple of decades now, and I love Notepad&hellip; #sorrynotsorry, <code>vim</code> fans. It&rsquo;s fantastic for writing - there&rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&rsquo;s usable for a variety of tasks. It&rsquo;s like the pre-markdown version of markdown.
-My favourite feature of Notepad is the ability to insert the date &amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature. Word&rsquo;s <em>insert date/time</em> function pales in comparison to the elegant simplicty of F5. Even trying to use keyboard shortcuts isn&rsquo;t fast, when it should be.</p>
-<table>
-<thead>
-<tr>
-<th>Notepad</th>
-<th>Word GUI</th>
-<th>Work shortcuts</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>F5</td>
-<td>click <em>Insert</em></td>
-<td>ALT+I</td>
-</tr>
-<tr>
-<td></td>
-<td>click <em>Date/Time</em></td>
-<td>D</td>
-</tr>
-<tr>
-<td></td>
-<td>read the menu</td>
-<td>read the menu</td>
-</tr>
-<tr>
-<td></td>
-<td>double-click choice</td>
-<td>UP/DOWN ARROW to choice</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>ENTER</td>
-</tr>
-</tbody>
-</table>
-<p>When I write Powershell scripts in VS Code, I had been manually typing in the date until I decided to write a custom snippet that would insert a header with all the things I normally add: script name, date/time, comments, my name. It&rsquo;s automatically populated whenever I type in <code>header &lt;ENTER&gt;</code></p>
+    <p>When I first committed to actually publishing a blog and settled on using Hugo and Github, I ran into a problem when trying to actually synchronize my local repository with Github: I kept getting a &lsquo;Permission Denied (publickey)&rsquo; error when I pushed the content up to Github. After some Google-fu, I found that the error was because I didn&rsquo;t have any SSH keys setup on my Windows 10 system and it couldn&rsquo;t communicate securely with GitHub.</p>
+<p>Here&rsquo;s how I fixed that:</p>
 <ol>
-<li>Open the Command Palette (View, Command Palette&hellip;. or CTRL+SHIFT+P)</li>
-<li>Select <code>Preferences: Configure User Snippets</code></li>
-<li>Select <code>Powershell</code> from the list</li>
-<li>Add the snippet:
-<pre><code> &quot;File Header&quot;: {
-    &quot;prefix&quot;: &quot;header&quot;,
-    &quot;description&quot;: &quot;Output a file header with the file name, comment field, author and date&quot;,
-    &quot;body&quot;: [
-        &quot;#$TM_FILENAME&quot;,
-        &quot;&quot;,
-        &quot;&lt;#&quot;,
-        &quot;&quot;,
-        &quot;&quot;,
-        &quot;Greg Beifuss&quot;,
-        &quot;$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE&quot;,
-        &quot;#&gt;&quot;,
-        &quot;&quot;,
-        &quot;&quot;,
-    ]
-}
-</code></pre></li>
+<li>Open <code>git bash</code>. I could have done this in Windows Terminal (by creating a new profile linked to git bash), but since this is a one-time task, I didn&rsquo;t bother.</li>
+<li>Type <code>cd ~/.ssh</code>. This will take you to the root directory for Git (likely C:\Users\username\.ssh\)</li>
+<li>Within the <code>.ssh</code> folder, there should be two files: <code>id_rsa</code> and <code>id_rsa.pub</code>. Type <code>ls</code> to see a directory listing. These are the files that tell your computer how to communicate with GitHub. If those two files don&rsquo;t show up, continue to #4.<br>
+NOTE: Your SSH keys must be named id_rsa and id_rsa.pub in order for Git and GitHub to recognize them by default.</li>
+<li>Since the SSH keys don&rsquo;t exist yet, create thethem: type <code>ssh-keygen -t rsa -C &quot;you@email.com&quot;</code>. This will create both the <code>id_rsa</code> and <code>id_rsa.pub</code> files.</li>
+<li>Open <code>id_rsa.pub</code> in <del>your favorite text editor</del> Notepad.</li>
+<li>Copy the contents (exactly as it appears, with no extra spaces or lines) of <code>id_rsa.pub</code> and paste it into GitHub under the Account Settings &gt; SSH Keys page.</li>
 </ol>
-<p>Since I&rsquo;m using VS Code to write markdown now, I decided to do a similar thing to reproduce Notepad&rsquo;s F5 feature:</p>
-<ol>
-<li>Open the Command Palette (View, Command Palette&hellip;. or CTRL+SHIFT+P)</li>
-<li>Select <code>Preferences: Configure User Snippets</code></li>
-<li>Select <code>Markdown</code> from the list</li>
-<li>Add the snippet:
-<pre><code>&quot;Current Date and Time&quot;: {
-    &quot;prefix&quot;: &quot;datetime&quot;,
-    &quot;description&quot;: &quot;Add Current date &amp; time&quot;,
-    &quot;body&quot;: [
-        &quot;$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE&quot;
-    ]
-}
-</code></pre></li>
-</ol>
-<p>This snippet seems to be more tempermental - when I type in <code>datetime &lt;ENTER&gt;</code>, usually it&rsquo;s not replaced with the date/timestamp. I resort to:</p>
-<pre><code>1. CTRL+I
-2. datetime &lt;ENTER&gt;
-</code></pre>
+<p>Now that you&rsquo;ve added your public key to Github, try to <code>git push</code> again and see if it works. It should!</p>
+<p>A step-by-step rundown of this process (and more!) is also on the GitHub site: <a class="link" href="https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh"  target="_blank" rel="noopener"
+    >Connecting to GitHub with SSH</a></p>
+
 </section>
 
 
     <footer class="article-footer">
     
-    <section class="article-tags">
-        
-            <a href="/tags/powershell/">Powershell</a>
-        
-            <a href="/tags/vscode/">VSCode</a>
-        
-    </section>
-
 
     
     <section class="article-copyright">
