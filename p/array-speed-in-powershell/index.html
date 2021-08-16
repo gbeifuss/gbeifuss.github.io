@@ -176,7 +176,7 @@
 <span class="nv">$report</span> <span class="p">=</span> <span class="s1">&#39;{0} elements collected in {1:n1} seconds&#39;</span> 
 <span class="nv">$report</span> <span class="o">-f</span> <span class="nv">$array</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="nv">$stopwatch</span><span class="p">.</span><span class="n">Elapsed</span><span class="p">.</span><span class="n">TotalSeconds</span>
 </code></pre></div><p>Processing these 100,000 records took my system 214.7 seconds. When Powershell code uses the <code>+=</code> operator, it actually creates a new array that&rsquo;s one record larger than the current array, copies each existing entry into the new array and then adds the newest entry into the free record. It has to do this every time the <code>+=</code> operator is used, which is 100,000 times in this sample code. The last time it runs, it needs to copy 99,999 existing entries into a new array&hellip;.ouch! It&rsquo;s easy to see <em>why</em> this is so slow!</p>
-<p><img src="/array.png" alt="fantastic excel art"  /></p>
+<p><img src="/img/array.png" alt="fantastic excel art"  /></p>
 <p>Let&rsquo;s use a .NET method to do this and see whether it&rsquo;s any faster:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$array</span> <span class="p">=</span> <span class="no">[System.Collections.ArrayList]</span><span class="p">@()</span>
 <span class="nv">$stopwatch</span> <span class="p">=</span> <span class="no">[System.Diagnostics.Stopwatch]</span><span class="p">::</span><span class="n">StartNew</span><span class="p">()</span>
