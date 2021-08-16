@@ -209,7 +209,7 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 <p>I ran a series of packet captures to see if anything looked unusual. Nothing jumped out at me, but I did notice that whenever the packet size exceeded 1500-ish bytes, there were lots of retranmissions and/or errors.</p>
 <p>Wait! How is it that a server with an MTU of 1500 is sending packets that are 2600 bytes?</p>
 <p>Wireshark uses winpcap (or libpcap) to grab the data <em>before</em> it&rsquo;s handed to the NIC:<br>
-<img src="/wireshark.png" alt=""  /></p>
+<img src="/img/wireshark.png" alt=""  /></p>
 <p>Many OS and NIC drivers support <em>TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload</em> which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&hellip; with offloading enabled, this task is now completed <em>after</em> Wireshark has grabbed the data, so it&rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.</p>
 <p>Back to my regularly scheduled commentary&hellip;</p>
 <p>Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&rsquo;s 1468, which is the largest setting that worked with the Don&rsquo;tFragment flag set, plus the 28 byte IP header. Let&rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:<br>
@@ -231,7 +231,7 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 </code></pre><p>On Windows 2019, this took effect immediately. If it doesn&rsquo;t, a reboot should ensure it applies.<br>
 AD replication - which had been failing - picked right back up as soon as I entered this command.</p>
 <p>Now, I&rsquo;ve proved that it&rsquo;s an MTU issue, so I&rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp; EType field in the frame. This resulting QinQ frame is often referred to as &lsquo;double tagged&rsquo;.<br>
-<img src="/qinq.png" alt=""  /></p>
+<img src="/img/qinq.png" alt=""  /></p>
 <p>You can read more about QinQ in the Cisco article <a class="link" href="http://www.cisco.com/en/US/tech/tk389/tk689/technologies_tech_note09186a0080094665.shtml"  target="_blank" rel="noopener"
     >Inter-Switch Link and IEEE 802.1Q Frame Format</a></p>
 
