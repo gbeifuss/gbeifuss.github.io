@@ -277,8 +277,8 @@ The only relevant entries I found were from a server that I upgraded 3 weeks ago
 &lt;code&gt;git commit -m &amp;quot;Website update 2021-08-03&amp;quot;&lt;/code&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Push the local content up to GitHub. &lt;em&gt;origin&lt;/em&gt; is the remote repository name (alias) and &lt;em&gt;master&lt;/em&gt; is the branch name. (In this case, master is the default branch that must exist on any repository):&lt;br&gt;
-&lt;code&gt;git push origin master&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Push the local content up to GitHub. &lt;em&gt;origin&lt;/em&gt; is the remote repository name (alias) and &lt;em&gt;main&lt;/em&gt; is the branch name. (Since October 2020, main is the default branch that must exist on any repository):&lt;br&gt;
+&lt;code&gt;git push origin main&lt;/code&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;And here it all is in a glorious code block, so that in the future, I can just copy and paste!&lt;/p&gt;
@@ -287,7 +287,7 @@ hugo
 cd public
 git add .
 git commit -m &amp;quot;Website update 2021-08-03&amp;quot;
-git push origin master
+git push origin main
 &lt;/code&gt;&lt;/pre&gt;</description>
         </item>
         <item>

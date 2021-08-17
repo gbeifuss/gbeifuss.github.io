@@ -9,7 +9,7 @@
 <meta property='og:description' content='Building and Updating Content'>
 <meta property='og:url' content='https://gbeifuss.github.io/p/pushing-hugo-content-to-github/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-08-04T07:49:02-04:00'/><meta property='article:modified_time' content='2021-08-04T07:49:02-04:00'/>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='git' /><meta property='article:published_time' content='2021-08-04T07:49:02-04:00'/><meta property='article:modified_time' content='2021-08-04T07:49:02-04:00'/>
 <meta name="twitter:title" content="Pushing Hugo Content to GitHub">
 <meta name="twitter:description" content="Building and Updating Content">
     </head>
@@ -187,8 +187,8 @@
 <code>git commit -m &quot;Website update 2021-08-03&quot;</code></p>
 </li>
 <li>
-<p>Push the local content up to GitHub. <em>origin</em> is the remote repository name (alias) and <em>master</em> is the branch name. (In this case, master is the default branch that must exist on any repository):<br>
-<code>git push origin master</code></p>
+<p>Push the local content up to GitHub. <em>origin</em> is the remote repository name (alias) and <em>main</em> is the branch name. (Since October 2020, main is the default branch that must exist on any repository):<br>
+<code>git push origin main</code></p>
 </li>
 </ol>
 <p>And here it all is in a glorious code block, so that in the future, I can just copy and paste!</p>
@@ -197,13 +197,19 @@ hugo
 cd public
 git add .
 git commit -m &quot;Website update 2021-08-03&quot;
-git push origin master
+git push origin main
 </code></pre>
 </section>
 
 
     <footer class="article-footer">
     
+    <section class="article-tags">
+        
+            <a href="/tags/git/">git</a>
+        
+    </section>
+
 
     
     <section class="article-copyright">
