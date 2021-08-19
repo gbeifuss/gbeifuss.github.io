@@ -85,7 +85,8 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 &lt;p&gt;Many OS and NIC drivers support &lt;em&gt;TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload&lt;/em&gt; which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&amp;hellip; with offloading enabled, this task is now completed &lt;em&gt;after&lt;/em&gt; Wireshark has grabbed the data, so it&amp;rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.&lt;/p&gt;
 &lt;p&gt;Back to my regularly scheduled commentary&amp;hellip;&lt;/p&gt;
 &lt;p&gt;Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&amp;rsquo;s 1468, which is the largest setting that worked with the Don&amp;rsquo;tFragment flag set, plus the 28 byte IP header. Let&amp;rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:&lt;br&gt;
-&lt;code&gt;netsh int ipv4 show sub&lt;/code&gt; (the full command is &lt;em&gt;netsh interface ipv4 show subinterfaces&lt;/em&gt;, but I generally use the shorthand).&lt;/p&gt;
+&lt;code&gt;netsh int ipv4 show sub&lt;/code&gt;&lt;br&gt;
+(the full command is &lt;em&gt;netsh interface ipv4 show subinterfaces&lt;/em&gt;, but I generally use the shorthand).&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;C:\Users&amp;gt;netsh int ipv4 show sub
 
    MTU  MediaSenseState   Bytes In  Bytes Out  Interface
@@ -93,7 +94,8 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 4294967295                1          0      52364  Loopback Pseudo-Interface 1
   1500                1  550194231  647147510  Ethernet 2
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s update this:&lt;br&gt;
-&lt;code&gt;netsh in ipv4 set sub &amp;quot;Ethernet 2&amp;quot; mtu=1496 store=persistent&lt;/code&gt; (&lt;em&gt;netsh interface ipv4 set subinterface &amp;ldquo;Ethernet 2&amp;rdquo; mtu=1496 store=persistent&lt;/em&gt;)&lt;/p&gt;
+&lt;code&gt;netsh in ipv4 set sub &amp;quot;Ethernet 2&amp;quot; mtu=1496 store=persistent&lt;/code&gt;&lt;br&gt;
+(&lt;em&gt;netsh interface ipv4 set subinterface &amp;ldquo;Ethernet 2&amp;rdquo; mtu=1496 store=persistent&lt;/em&gt;)&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;C:\Users&amp;gt;netsh int ipv4 show sub
 
    MTU  MediaSenseState   Bytes In  Bytes Out  Interface
@@ -852,9 +854,9 @@ My favourite feature of Notepad is the ability to insert the date &amp;amp; time
 &lt;li&gt;Click &lt;code&gt;Create Task&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Under the &lt;strong&gt;General&lt;/strong&gt; tab, fill in a &lt;em&gt;Name&lt;/em&gt; and &lt;em&gt;Description&lt;/em&gt;. We&amp;rsquo;ll circle back to the other options at the end.&lt;/li&gt;
 &lt;li&gt;Click &lt;strong&gt;Triggers&lt;/strong&gt;. Most of my jobs run on a time-based schedule, not events (like computer startup). Setup the schedule that you need.&lt;/li&gt;
-&lt;li&gt;Under the &lt;strong&gt;Actions&lt;/strong&gt; tab, click &lt;em&gt;New&lt;/em&gt;. Another window will appear. Leave the &lt;em&gt;Action&lt;/em&gt; as &lt;code&gt;Start a program&lt;/code&gt;.
-If the script runs under Powershell 5.1, add &lt;code&gt;Powershell&lt;/code&gt; to the &lt;em&gt;Program/Script&lt;/em&gt; field.
-If the script runs under Powershell 7, add &lt;code&gt;&amp;quot;C:\Program Files\PowerShell\7\pwsh.exe&amp;quot;&lt;/code&gt; to the  &lt;em&gt;Program/Script&lt;/em&gt; field. It&amp;rsquo;s important to have the quotes so that the parser doesn&amp;rsquo;t freak out over the space in &amp;lsquo;Program Files&amp;rsquo;.
+&lt;li&gt;Under the &lt;strong&gt;Actions&lt;/strong&gt; tab, click &lt;em&gt;New&lt;/em&gt;. Another window will appear. Leave the &lt;em&gt;Action&lt;/em&gt; as &lt;code&gt;Start a program&lt;/code&gt;.&lt;br&gt;
+If the script runs under Powershell 5.1, add &lt;code&gt;Powershell&lt;/code&gt; to the &lt;em&gt;Program/Script&lt;/em&gt; field.&lt;br&gt;
+If the script runs under Powershell 7, add &lt;code&gt;&amp;quot;C:\Program Files\PowerShell\7\pwsh.exe&amp;quot;&lt;/code&gt; to the  &lt;em&gt;Program/Script&lt;/em&gt; field. It&amp;rsquo;s important to have the quotes so that the parser doesn&amp;rsquo;t freak out over the space in &amp;lsquo;Program Files&amp;rsquo;.&lt;br&gt;
 Add the following &lt;em&gt;Arguments&lt;/em&gt;: &lt;code&gt;-executionpolicy bypass -command &amp;quot;&amp;amp; &#39;\\SERVER\SCRIPT REPOSITORY \script.ps1&#39;&amp;quot;&lt;/code&gt;. Again, I need double quotes around my UNC because of the space.&lt;/li&gt;
 &lt;li&gt;I usually clear the &lt;em&gt;Power&lt;/em&gt; options under the &lt;strong&gt;Conditions&lt;/strong&gt; tab. If the OS thinks that our server is now running on battery power, we have bigger issues.&lt;/li&gt;
 &lt;li&gt;Under &lt;strong&gt;Settings&lt;/strong&gt;, I usually adjust &lt;em&gt;Stop the task if it runs longer than&amp;hellip;&lt;/em&gt; field to something appropriate for the job schedule.&lt;/li&gt;
@@ -862,7 +864,7 @@ Add the following &lt;em&gt;Arguments&lt;/em&gt;: &lt;code&gt;-executionpolicy b
 &lt;li&gt;Click &lt;code&gt;OK&lt;/code&gt;. You&amp;rsquo;ll be prompted for the password of the credentials you used in #8.
 At the end of all this, I like to manually run the task by right-clicking it. This is a final sanity check that everything works. It&amp;rsquo;s easier for me to check at the time of setup (instead of the first time it runs) because my brain is already in that space.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;Since I promised the cheatcode way of doing this, here&amp;rsquo;s how I like to add new tasks that are similar to existing ones. Since most of mine are scripts, they are pretty much identical. This method helps avoid problems when editing the &lt;em&gt;Arguments&lt;/em&gt; field - the string is so long and the field window is so small that I always have to scroll and I hate trying to figure out if I&amp;rsquo;ve keyed things in properly.&lt;/p&gt;
+&lt;p&gt;Since I promised the cheatcode way of doing this, here&amp;rsquo;s how I like to add new tasks that are similar to existing ones. Since most of mine are scripts, the Task Scheduler settings are pretty much identical. This method helps avoid problems when editing the &lt;em&gt;Arguments&lt;/em&gt; field - the string is so long and the field window is so small that I always have to scroll and I hate trying to figure out if I&amp;rsquo;ve keyed things in properly.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;In Task Scheduler, Find a task that closely matches the new one you&amp;rsquo;re implementing.&lt;/li&gt;
 &lt;li&gt;Select it, right-click and choose &lt;code&gt;Export&lt;/code&gt;.&lt;/li&gt;

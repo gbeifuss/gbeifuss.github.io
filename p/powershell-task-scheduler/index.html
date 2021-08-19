@@ -172,9 +172,9 @@
 <li>Click <code>Create Task</code></li>
 <li>Under the <strong>General</strong> tab, fill in a <em>Name</em> and <em>Description</em>. We&rsquo;ll circle back to the other options at the end.</li>
 <li>Click <strong>Triggers</strong>. Most of my jobs run on a time-based schedule, not events (like computer startup). Setup the schedule that you need.</li>
-<li>Under the <strong>Actions</strong> tab, click <em>New</em>. Another window will appear. Leave the <em>Action</em> as <code>Start a program</code>.
-If the script runs under Powershell 5.1, add <code>Powershell</code> to the <em>Program/Script</em> field.
-If the script runs under Powershell 7, add <code>&quot;C:\Program Files\PowerShell\7\pwsh.exe&quot;</code> to the  <em>Program/Script</em> field. It&rsquo;s important to have the quotes so that the parser doesn&rsquo;t freak out over the space in &lsquo;Program Files&rsquo;.
+<li>Under the <strong>Actions</strong> tab, click <em>New</em>. Another window will appear. Leave the <em>Action</em> as <code>Start a program</code>.<br>
+If the script runs under Powershell 5.1, add <code>Powershell</code> to the <em>Program/Script</em> field.<br>
+If the script runs under Powershell 7, add <code>&quot;C:\Program Files\PowerShell\7\pwsh.exe&quot;</code> to the  <em>Program/Script</em> field. It&rsquo;s important to have the quotes so that the parser doesn&rsquo;t freak out over the space in &lsquo;Program Files&rsquo;.<br>
 Add the following <em>Arguments</em>: <code>-executionpolicy bypass -command &quot;&amp; '\\SERVER\SCRIPT REPOSITORY \script.ps1'&quot;</code>. Again, I need double quotes around my UNC because of the space.</li>
 <li>I usually clear the <em>Power</em> options under the <strong>Conditions</strong> tab. If the OS thinks that our server is now running on battery power, we have bigger issues.</li>
 <li>Under <strong>Settings</strong>, I usually adjust <em>Stop the task if it runs longer than&hellip;</em> field to something appropriate for the job schedule.</li>
@@ -182,7 +182,7 @@ Add the following <em>Arguments</em>: <code>-executionpolicy bypass -command &qu
 <li>Click <code>OK</code>. You&rsquo;ll be prompted for the password of the credentials you used in #8.
 At the end of all this, I like to manually run the task by right-clicking it. This is a final sanity check that everything works. It&rsquo;s easier for me to check at the time of setup (instead of the first time it runs) because my brain is already in that space.</li>
 </ol>
-<p>Since I promised the cheatcode way of doing this, here&rsquo;s how I like to add new tasks that are similar to existing ones. Since most of mine are scripts, they are pretty much identical. This method helps avoid problems when editing the <em>Arguments</em> field - the string is so long and the field window is so small that I always have to scroll and I hate trying to figure out if I&rsquo;ve keyed things in properly.</p>
+<p>Since I promised the cheatcode way of doing this, here&rsquo;s how I like to add new tasks that are similar to existing ones. Since most of mine are scripts, the Task Scheduler settings are pretty much identical. This method helps avoid problems when editing the <em>Arguments</em> field - the string is so long and the field window is so small that I always have to scroll and I hate trying to figure out if I&rsquo;ve keyed things in properly.</p>
 <ol>
 <li>In Task Scheduler, Find a task that closely matches the new one you&rsquo;re implementing.</li>
 <li>Select it, right-click and choose <code>Export</code>.</li>

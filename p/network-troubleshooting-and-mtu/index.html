@@ -213,7 +213,8 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 <p>Many OS and NIC drivers support <em>TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload</em> which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&hellip; with offloading enabled, this task is now completed <em>after</em> Wireshark has grabbed the data, so it&rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.</p>
 <p>Back to my regularly scheduled commentary&hellip;</p>
 <p>Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&rsquo;s 1468, which is the largest setting that worked with the Don&rsquo;tFragment flag set, plus the 28 byte IP header. Let&rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:<br>
-<code>netsh int ipv4 show sub</code> (the full command is <em>netsh interface ipv4 show subinterfaces</em>, but I generally use the shorthand).</p>
+<code>netsh int ipv4 show sub</code><br>
+(the full command is <em>netsh interface ipv4 show subinterfaces</em>, but I generally use the shorthand).</p>
 <pre><code>C:\Users&gt;netsh int ipv4 show sub
 
    MTU  MediaSenseState   Bytes In  Bytes Out  Interface
@@ -221,7 +222,8 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 4294967295                1          0      52364  Loopback Pseudo-Interface 1
   1500                1  550194231  647147510  Ethernet 2
 </code></pre><p>Let&rsquo;s update this:<br>
-<code>netsh in ipv4 set sub &quot;Ethernet 2&quot; mtu=1496 store=persistent</code> (<em>netsh interface ipv4 set subinterface &ldquo;Ethernet 2&rdquo; mtu=1496 store=persistent</em>)</p>
+<code>netsh in ipv4 set sub &quot;Ethernet 2&quot; mtu=1496 store=persistent</code><br>
+(<em>netsh interface ipv4 set subinterface &ldquo;Ethernet 2&rdquo; mtu=1496 store=persistent</em>)</p>
 <pre><code>C:\Users&gt;netsh int ipv4 show sub
 
    MTU  MediaSenseState   Bytes In  Bytes Out  Interface
