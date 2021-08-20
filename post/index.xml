@@ -6,7 +6,17 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Aug 2021 15:01:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 20 Aug 2021 11:02:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Adding TLS 1.2 support for Powershell</title>
+      <link>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</link>
+      <pubDate>Fri, 20 Aug 2021 11:02:12 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</guid>
+      <description>Sometimes I try to setup PSWindowsUpdate (an amazing module from the Powershell Gallery) and receive an error like this one:
+WARNING: Source Location ‘https://www.powershellgallery.com/api/v2/package/PSWindowsUpdate/2.2.0.2&amp;#39; is not valid. PackageManagement\Install-Package : Package ‘PSWindowsUpdate&amp;#39; failed to download. At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm1:1772 char:21 + … $null = PackageManagement\Install-Package @PSBoundParameters + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ + CategoryInfo : ResourceUnavailable: (C:\Users\... :String) [Install-Package], Exception + FullyQualifiedErrorId : PackageFailedInstallOrDownload,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage A similar issue arises with using the Invoke-WebRequest cmdlet. The root cause is that Powershell is trying to connect to a site and there&amp;rsquo;s no agreement on the encryption protocol to use.</description>
+    </item>
+    
     <item>
       <title>Exchange &amp; -DeleteContent</title>
       <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
