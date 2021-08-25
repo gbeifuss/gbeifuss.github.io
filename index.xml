@@ -12,7 +12,7 @@
         <pubDate>Wed, 25 Aug 2021 14:19:31 -0400</pubDate>
         
         <guid>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</guid>
-        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/powershell-scheduling-tasks.md&#34; &gt;Running Powershell scripts with Task Scheduler&lt;/a&gt;, but I solved a Task Scheduler problem the other day with Powershell and want to write about it.&lt;/p&gt;
+        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/&#34; &gt;Running Powershell scripts with Task Scheduler&lt;/a&gt;, but I solved a Task Scheduler problem the other day with Powershell and want to write about it.&lt;/p&gt;
 &lt;p&gt;I love to use Powershell to solve problems and questions that I have. These are questions that are, for all intents and purposes, impossible to do manually because of the time that it would take.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;ve undertaken a project to implement rotating the local Administrator passwords on our work servers. One of the things that I realized, as I was doing the preliminary investigation, is that there are quite a few scheduled jobs that run as .\Administrator in the Task Scheduler. I wondered:&lt;/p&gt;
 &lt;ul&gt;
