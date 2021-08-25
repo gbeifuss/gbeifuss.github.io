@@ -13,11 +13,7 @@
       <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
-      <description>Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to
-a) quantify how many other people in our organization had that particular email in their mailbox, and
-b) administratively remove it.
-This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.
-To start, I got the message details.</description>
+      <description>Administratively deleting content from an Exchange Mailbox with Powershell</description>
     </item>
     
     <item>
@@ -26,8 +22,7 @@ To start, I got the message details.</description>
       <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
-      <description>I was recently curious about what sort of SSL/TLS connections were being used to access our Exchange cluster via. IIS. We have systems spanning twenty years: from Windows XP all the way to Windows Server 2019. Who knows what &amp;ldquo;solutions&amp;rdquo; developers or power users have come up with over the years to integrate with our mail system?
-Previously, I&amp;rsquo;d followed MS guidance in Enabling TLS 1.2 and New IIS Functionality to Help Identify Weak TLS Usage.</description>
+      <description>Using Powershell to find the TLS versions used to connect to Exchange</description>
     </item>
     
   </channel>

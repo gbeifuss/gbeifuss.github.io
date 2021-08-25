@@ -6,15 +6,32 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Aug 2021 11:02:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 20 Aug 2021 14:12:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hugo troubleshooting</title>
+      <link>https://gbeifuss.github.io/p/hugo-troubleshooting/</link>
+      <pubDate>Fri, 20 Aug 2021 14:12:12 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/hugo-troubleshooting/</guid>
+      <description>Fix the Hugo error &amp;ldquo;Port 1313 already in use&amp;rdquo; by freeing it up</description>
+    </item>
+    
     <item>
       <title>Adding TLS 1.2 support for Powershell</title>
       <link>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</link>
       <pubDate>Fri, 20 Aug 2021 11:02:12 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</guid>
-      <description>Sometimes I try to setup PSWindowsUpdate (an amazing module from the Powershell Gallery) and receive an error like this one:
-WARNING: Source Location ‘https://www.powershellgallery.com/api/v2/package/PSWindowsUpdate/2.2.0.2&amp;#39; is not valid. PackageManagement\Install-Package : Package ‘PSWindowsUpdate&amp;#39; failed to download. At C:\Program Files\WindowsPowerShell\Modules\PowerShellGet\1.0.0.1\PSModule.psm1:1772 char:21 + … $null = PackageManagement\Install-Package @PSBoundParameters + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ + CategoryInfo : ResourceUnavailable: (C:\Users\... :String) [Install-Package], Exception + FullyQualifiedErrorId : PackageFailedInstallOrDownload,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage A similar issue arises with using the Invoke-WebRequest cmdlet. The root cause is that Powershell is trying to connect to a site and there&amp;rsquo;s no agreement on the encryption protocol to use.</description>
+      <description>Update Powershell to use TLS 1.2, and configure Windows to use TLS 1.2 as well</description>
+    </item>
+    
+    <item>
+      <title>Enter-PSSession, WinRM &amp; NLA</title>
+      <link>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</link>
+      <pubDate>Wed, 18 Aug 2021 07:50:51 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</guid>
+      <description>Troubleshooting and resolving the Powershell error &amp;ldquo;WinRM cannot complete the operation&amp;rdquo;</description>
     </item>
     
     <item>
@@ -23,11 +40,7 @@ WARNING: Source Location ‘https://www.powershellgallery.com/api/v2/package/PSW
       <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
-      <description>Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to
-a) quantify how many other people in our organization had that particular email in their mailbox, and
-b) administratively remove it.
-This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.
-To start, I got the message details.</description>
+      <description>Administratively deleting content from an Exchange Mailbox with Powershell</description>
     </item>
     
     <item>
@@ -36,7 +49,7 @@ To start, I got the message details.</description>
       <pubDate>Wed, 11 Aug 2021 14:57:19 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</guid>
-      <description>These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&amp;rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&amp;rsquo;s not super advanced work.</description>
+      <description>Diagnosing and resolving an MTU issue over a L2 link</description>
     </item>
     
     <item>
@@ -45,7 +58,7 @@ To start, I got the message details.</description>
       <pubDate>Mon, 09 Aug 2021 14:00:25 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</guid>
-      <description>When I first committed to actually publishing a blog and settled on using Hugo and Github, I ran into a problem when trying to actually synchronize my local repository with Github: I kept getting a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error when I pushed the content up to Github. After some Google-fu, I found that the error was because I didn&amp;rsquo;t have any SSH keys setup on my Windows 10 system and it couldn&amp;rsquo;t communicate securely with GitHub.</description>
+      <description>Resolving a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error in git, when pushing to github</description>
     </item>
     
     <item>
@@ -54,8 +67,7 @@ To start, I got the message details.</description>
       <pubDate>Thu, 05 Aug 2021 11:11:56 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</guid>
-      <description>I&amp;rsquo;m in the midst of trying to phase out non-Kerberos authentication traffic in our domain, because it&amp;rsquo;s time. MS has offered Kerberos since Windows 2000, and the pre-Kerberos options (LANMan, NTLMv1, NTLMv2) are woefully insecure. In fact, MS stopped recommending NTLM for use in applications in 2010. It&amp;rsquo;s still widely in use for compatibility reasons.
-The Protocols LANMan LANMan, or LAN Manager, was offered in 1987 and can be easily broken.</description>
+      <description>Find NTLM traffic authenticating to domain controllers with Powershell</description>
     </item>
     
     <item>
@@ -64,11 +76,7 @@ The Protocols LANMan LANMan, or LAN Manager, was offered in 1987 and can be easi
       <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
-      <description>This blog content is generated by the Hugo static site generator and integrated with GitHub (which you can clearly tell by the URL), but I&amp;rsquo;m always struggling to remember the steps in pushing the newest content publicly.
-  Change to your site&amp;rsquo;s local directory, then tell hugo to build the content:
-cd myblog.dev.repo
-hugo
-  Change to your site&amp;rsquo;s public directory (where the new content was just generated):</description>
+      <description>Have Hugo generate your site content and use git to push up to github.io</description>
     </item>
     
     <item>
@@ -77,9 +85,7 @@ hugo
       <pubDate>Thu, 22 Jul 2021 22:10:02 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/array-speed-in-powershell/</guid>
-      <description>A popular and quick way to work with arrays in Powershell is to use a += operation:
-$array = @() 1..10000 | Foreach-Object {$array += &amp;#34;Adding $_ to the array&amp;#34;} Let&amp;rsquo;s time this:
-$array = @() $stopwatch = [System.Diagnostics.Stopwatch]::StartNew() 1..100000 | Foreach-Object {$array += &amp;#34;Adding $_ to the array&amp;#34;} $report = &amp;#39;{0} elements collected in {1:n1} seconds&amp;#39; $report -f $array.Count, $stopwatch.Elapsed.TotalSeconds Processing these 100,000 records took my system 214.7 seconds. When Powershell code uses the += operator, it actually creates a new array that&amp;rsquo;s one record larger than the current array, copies each existing entry into the new array and then adds the newest entry into the free record.</description>
+      <description>Powershell has a number of ways to reference arrays, some that are faster than others. += is terribly slow compared to ArrayList</description>
     </item>
     
     <item>
@@ -88,8 +94,7 @@ $array = @() $stopwatch = [System.Diagnostics.Stopwatch]::StartNew() 1..100000 |
       <pubDate>Thu, 22 Jul 2021 22:09:50 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</guid>
-      <description>Often, I&amp;rsquo;ll see scripts that use Measure-Command to calculate the length of time that code runs, while other code will use the $stopwatch = [System.Diagnostics.Stopwatch]::StartNew() method. I&amp;rsquo;d always thought that these were interchangable and practically identical, however, I&amp;rsquo;ve found out that they&amp;rsquo;re not. Depending on the code, there can be substantial time differences between the two.
-Measure-Command will discard the pipeline output, measuring only the time it takes to actually execute the command.</description>
+      <description>What&amp;rsquo;s the difference between Stopwatch and Measure-Command?</description>
     </item>
     
     <item>
@@ -98,10 +103,7 @@ Measure-Command will discard the pipeline output, measuring only the time it tak
       <pubDate>Thu, 22 Jul 2021 22:09:32 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</guid>
-      <description>The other day I started a remote powershell session with Invoke-Command and my script ran&amp;hellip;
-and ran&amp;hellip;
-and ran&amp;hellip;
-I finally tired of waiting, so I decided that I&amp;rsquo;d RDP in and get the information via. GUI, but the server was sluggish. This isn&amp;rsquo;t an underspec&amp;rsquo;ed server where routine use might cause a small but noticable performance hit. I took a look at taskman and saw the wsmprovhost.exe process consuming 50/64GB RAM.</description>
+      <description>Elegantly killing a CPU-consuming remote Powershell session</description>
     </item>
     
     <item>
@@ -110,8 +112,7 @@ I finally tired of waiting, so I decided that I&amp;rsquo;d RDP in and get the i
       <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
-      <description>I was recently curious about what sort of SSL/TLS connections were being used to access our Exchange cluster via. IIS. We have systems spanning twenty years: from Windows XP all the way to Windows Server 2019. Who knows what &amp;ldquo;solutions&amp;rdquo; developers or power users have come up with over the years to integrate with our mail system?
-Previously, I&amp;rsquo;d followed MS guidance in Enabling TLS 1.2 and New IIS Functionality to Help Identify Weak TLS Usage.</description>
+      <description>Using Powershell to find the TLS versions used to connect to Exchange</description>
     </item>
     
     <item>
@@ -120,11 +121,7 @@ Previously, I&amp;rsquo;d followed MS guidance in Enabling TLS 1.2 and New IIS F
       <pubDate>Wed, 14 Jul 2021 08:21:50 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/docker-printnightmare/</guid>
-      <description>Since CVE-2021 is the news item of the week, I decided that I should scan our infrastructure using byt3bl33d3r&amp;rsquo;s CVE-2021-34527 Python Scanner. I learned Docker basics on the fly with this.
-  Download Docker Desktop for Windows. Reboot if necessary.
-  Install WSL2, as prompted. Reboot if necessary.
-  Create a new directory from the CLI and clone the repo: git clone https://github.com/byt3bl33d3r/ItWasAllADream
-This gave me a small problem:</description>
+      <description>Using Docker for Windows to scan for PrintNightmare (CVE-2021-34527)</description>
     </item>
     
     <item>
@@ -133,8 +130,7 @@ This gave me a small problem:</description>
       <pubDate>Wed, 14 Jul 2021 08:21:37 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/vs-code-remote-repositories/</guid>
-      <description>I spend a lot of my day in VS Code, but not too much in GitHub because I don&amp;rsquo;t work on any joint projects. I do use a local Git repository for my code. It&amp;rsquo;s easy to see when others have made changes so that I can hunt them down speak politely to them about stopping.
-In any case, I was watching An Introduction to Visual Studio Code and GitHub when I learned about the Remote Repositories (GitHub) extension for VS Code.</description>
+      <description>Using the Remote Repositories Extension in VS Code to update github content</description>
     </item>
     
     <item>
@@ -143,7 +139,7 @@ In any case, I was watching An Introduction to Visual Studio Code and GitHub whe
       <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
-      <description>I&amp;rsquo;ve worked with computers for a couple of decades now, and I love Notepad&amp;hellip; #sorrynotsorry, vim fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown. My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature.</description>
+      <description>Creating custom snippets in VS Code to simplify writing code</description>
     </item>
     
     <item>
@@ -152,7 +148,7 @@ In any case, I was watching An Introduction to Visual Studio Code and GitHub whe
       <pubDate>Mon, 12 Jul 2021 15:38:54 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</guid>
-      <description>I&amp;rsquo;m a big fan of Michael Grafnetter&amp;rsquo;s excellent DSInternals module for Powershell. I periodically use it to audit our AD instance, and pass the results along to our Security Admin for any followup that needs to happen. I usually use Have I Been Pwned&amp;rsquo;s password dump, but you can provide any file containing passwords. The scariest part is that it takes &amp;lt;5 minutes to compare your AD records against 613 million passwords&amp;hellip; and most of that time is enumerating the AD accounts.</description>
+      <description>Auditing AD passwords against Have I Been Pwned? by using Powershell</description>
     </item>
     
     <item>
@@ -161,7 +157,7 @@ In any case, I was watching An Introduction to Visual Studio Code and GitHub whe
       <pubDate>Fri, 09 Jul 2021 16:08:41 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-task-scheduler/</guid>
-      <description>I do a fair amount of script writing to make my life easier. If it&amp;rsquo;s a repeated job, I try and automate it so that my time is freed up for more important (interesting) things. This is especially true if the task is tedious (with many manual steps) or involves lots of waiting around (like an Exchange CU). I have a fair number of Powershell scripts which run from Task Scheduler under Windows Server 2016.</description>
+      <description>Scheduling a Powershell script in Task Scheduler via. GUI, and a shortcut to doing it repeatedly.</description>
     </item>
     
     <item>
@@ -170,8 +166,7 @@ In any case, I was watching An Introduction to Visual Studio Code and GitHub whe
       <pubDate>Fri, 09 Jul 2021 16:04:57 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api/</guid>
-      <description>I found out that our netadmins are regularly checking the amount of free space we have in our Power Platform (Dynamics) subscription with the following process:
- Launch a browser Authenticate to portal.office.com Click Admin. A new window opens. Click All Admin Centers. Click Power Apps. A new window opens. Expand Resources -&amp;gt; Capacity. Look at the Storage Capacity Usage field and make sure we&amp;rsquo;re below our capacity.  Whew! I&amp;rsquo;m tired typing that up once!</description>
+      <description>Querying the Microsoft PowerPlatform API with Powershell</description>
     </item>
     
     <item>
@@ -180,8 +175,7 @@ In any case, I was watching An Introduction to Visual Studio Code and GitHub whe
       <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-netscaler-api/</guid>
-      <description>I&amp;rsquo;ve been learning how to use Powershell to work with APIs, so I decided to write a quick script that will query our two Netscaler devices for the running configuration, and dump it. This is a quick way to backup the configuration regularly, because I often forget to grab a copy for backup purposes (unless I&amp;rsquo;m performing extensive work, or upgrading the firmware).
-#These credentials are encrypted by ServiceAccount on Server $credFilePath = &amp;#39;\\SERVER\PATH\creds.</description>
+      <description>Saving a Netscaler configuration via. API with Powershell</description>
     </item>
     
   </channel>

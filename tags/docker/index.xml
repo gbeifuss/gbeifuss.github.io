@@ -13,11 +13,7 @@
       <pubDate>Wed, 14 Jul 2021 08:21:50 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/docker-printnightmare/</guid>
-      <description>Since CVE-2021 is the news item of the week, I decided that I should scan our infrastructure using byt3bl33d3r&amp;rsquo;s CVE-2021-34527 Python Scanner. I learned Docker basics on the fly with this.
-  Download Docker Desktop for Windows. Reboot if necessary.
-  Install WSL2, as prompted. Reboot if necessary.
-  Create a new directory from the CLI and clone the repo: git clone https://github.com/byt3bl33d3r/ItWasAllADream
-This gave me a small problem:</description>
+      <description>Using Docker for Windows to scan for PrintNightmare (CVE-2021-34527)</description>
     </item>
     
   </channel>

@@ -13,8 +13,7 @@
       <pubDate>Fri, 09 Jul 2021 16:04:57 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api/</guid>
-      <description>I found out that our netadmins are regularly checking the amount of free space we have in our Power Platform (Dynamics) subscription with the following process:
- Launch a browser Authenticate to portal.office.com Click Admin. A new window opens. Click All Admin Centers. Click Power Apps. A new window opens. Expand Resources -&amp;gt; Capacity. Look at the Storage Capacity Usage field and make sure we&amp;rsquo;re below our capacity.  Whew! I&amp;rsquo;m tired typing that up once!</description>
+      <description>Querying the Microsoft PowerPlatform API with Powershell</description>
     </item>
     
     <item>
@@ -23,8 +22,7 @@
       <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/p/powershell-netscaler-api/</guid>
-      <description>I&amp;rsquo;ve been learning how to use Powershell to work with APIs, so I decided to write a quick script that will query our two Netscaler devices for the running configuration, and dump it. This is a quick way to backup the configuration regularly, because I often forget to grab a copy for backup purposes (unless I&amp;rsquo;m performing extensive work, or upgrading the firmware).
-#These credentials are encrypted by ServiceAccount on Server $credFilePath = &amp;#39;\\SERVER\PATH\creds.</description>
+      <description>Saving a Netscaler configuration via. API with Powershell</description>
     </item>
     
   </channel>

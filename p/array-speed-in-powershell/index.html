@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Alternatives to using &#43;='><title>Array Speed in Powershell</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Powershell has a number of ways to reference arrays, some that are faster than others. &#43;= is terribly slow compared to ArrayList'><title>Array Speed in Powershell</title>
 
 <link rel='canonical' href='https://gbeifuss.github.io/p/array-speed-in-powershell/'>
 
@@ -183,7 +183,8 @@
 <span class="n">1</span><span class="p">..</span><span class="n">100000</span> <span class="p">|</span> <span class="nb">Foreach-Object</span> <span class="p">{</span> <span class="nv">$null</span> <span class="p">=</span> <span class="nv">$array</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s2">&#34;Adding $_ to the array&#34;</span><span class="p">)}</span>
 <span class="nv">$report</span> <span class="p">=</span> <span class="s1">&#39;{0} elements collected in {1:n1} seconds&#39;</span> 
 <span class="nv">$report</span> <span class="o">-f</span> <span class="nv">$array</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="nv">$stopwatch</span><span class="p">.</span><span class="n">Elapsed</span><span class="p">.</span><span class="n">TotalSeconds</span>
-</code></pre></div><p>Instead of 214.7 seconds, this takes 0.4 seconds - a <em>53,575% speed increase</em> with next to no extra work.</p>
+</code></pre></div><p>Instead of 214.7 seconds, this takes 0.4 seconds - a <em>53,575% speed increase</em> with next to no extra work.<br>
+<em>Technically, I should have used <code>[System.Collections.Generic.List]</code> instead, as that&rsquo;s what Microsoft recommends.</em></p>
 <p>You can do this in pure Powershell too, but it only handles one item per iteration. Because you&rsquo;re returning more than one element, Powershell will automatically create an array. This method also took 0.4 seconds.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$stopwatch</span> <span class="p">=</span> <span class="no">[System.Diagnostics.Stopwatch]</span><span class="p">::</span><span class="n">StartNew</span><span class="p">()</span>
 <span class="nv">$array</span> <span class="p">=</span> <span class="n">1</span><span class="p">..</span><span class="n">100000</span> <span class="p">|</span> <span class="nb">Foreach-Object</span> <span class="p">{</span><span class="s2">&#34;Adding $_ to the array&#34;</span><span class="p">}</span>

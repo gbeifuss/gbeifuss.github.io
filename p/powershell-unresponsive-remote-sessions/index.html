@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Killing A Remote Powershell Session'><title>Powershell &amp; Unresponsive Remote Sessions</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Elegantly killing a CPU-consuming remote Powershell session'><title>Powershell &amp; Unresponsive Remote Sessions</title>
 
 <link rel='canonical' href='https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/'>
 
@@ -169,7 +169,7 @@
     <p>The other day I started a remote powershell session with <code>Invoke-Command</code> and my script ran&hellip;<br>
 and ran&hellip;<br>
 and ran&hellip;<br>
-I finally tired of waiting, so I decided that I&rsquo;d RDP in and get the information via. GUI, but the server was sluggish. This isn&rsquo;t an underspec&rsquo;ed server where routine use might cause a small but noticable performance hit. I took a look at taskman and saw the wsmprovhost.exe process consuming 50/64GB RAM.</p>
+I finally tired of waiting, so I decided that I&rsquo;d RDP in and get the information via. GUI, but the server was sluggish. This isn&rsquo;t an underspec&rsquo;ed server where routine use might cause a small but noticable performance hit. I took a look at taskman and saw that the wsmprovhost.exe process was consuming 50/64GB RAM.</p>
 <p>It turns out that this is the process responsible for remote Powershell sessions. While I could just kill it, I wanted to see what is going on behind the scenes.</p>
 <p>First, I grabbed the URI for WSMan connections:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="nv">$URI</span> <span class="p">=</span> <span class="p">(</span><span class="s1">&#39;http://{0}:5985/wsman&#39;</span> <span class="o">-f</span> <span class="nv">$env:computername</span><span class="p">);</span> <span class="nv">$URI</span>
