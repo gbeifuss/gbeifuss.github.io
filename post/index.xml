@@ -6,14 +6,32 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Aug 2021 14:12:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Aug 2021 14:19:31 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Hugo troubleshooting</title>
-      <link>https://gbeifuss.github.io/p/hugo-troubleshooting/</link>
+      <title>Using Powershell to interact with Task Scheduler</title>
+      <link>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</link>
+      <pubDate>Wed, 25 Aug 2021 14:19:31 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</guid>
+      <description>Using Powershell to query Task Scheduler across the domain. Also, using Powershell to change Task properties for select Tasks.</description>
+    </item>
+    
+    <item>
+      <title>Use .Summary in Hugo with the Stack theme</title>
+      <link>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</link>
+      <pubDate>Wed, 25 Aug 2021 08:15:17 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</guid>
+      <description>Edit Hugo&amp;rsquo;s configuration to make use of the .summary Front Matter with the Stack theme</description>
+    </item>
+    
+    <item>
+      <title>Troubleshooting Hugo&#39;s &#39;Port 1313 already in use&#39; error</title>
+      <link>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</link>
       <pubDate>Fri, 20 Aug 2021 14:12:12 -0400</pubDate>
       
-      <guid>https://gbeifuss.github.io/p/hugo-troubleshooting/</guid>
-      <description>Fix the Hugo error &amp;ldquo;Port 1313 already in use&amp;rdquo; by freeing it up</description>
+      <guid>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</guid>
+      <description>Fix the Hugo error &amp;ldquo;Port 1313 already in use&amp;rdquo; by freeing it up. WinNAT was the culprit.</description>
     </item>
     
     <item>
@@ -152,11 +170,11 @@
     </item>
     
     <item>
-      <title>Powershell &amp; Task Scheduler</title>
-      <link>https://gbeifuss.github.io/p/powershell-task-scheduler/</link>
+      <title>Running Powershell scripts with Task Scheduler</title>
+      <link>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</link>
       <pubDate>Fri, 09 Jul 2021 16:08:41 -0400</pubDate>
       
-      <guid>https://gbeifuss.github.io/p/powershell-task-scheduler/</guid>
+      <guid>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</guid>
       <description>Scheduling a Powershell script in Task Scheduler via. GUI, and a shortcut to doing it repeatedly.</description>
     </item>
     
