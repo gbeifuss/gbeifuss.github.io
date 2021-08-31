@@ -6,7 +6,16 @@
     <description>Recent content in Dynamics on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 09 Jul 2021 16:04:57 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/dynamics/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 30 Aug 2021 22:37:13 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/dynamics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Powershell &amp; PowerPlatform API ... now with the Graph API</title>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-with-the-graph-api/</link>
+      <pubDate>Mon, 30 Aug 2021 22:37:13 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-with-the-graph-api/</guid>
+      <description>Querying the Microsoft PowerPlatform API with Powershell and the Graph API. Also, using fixed-width font in an email with Powershell output.</description>
+    </item>
+    
     <item>
       <title>Powershell &amp; PowerPlatform API</title>
       <link>https://gbeifuss.github.io/p/powershell-powerplatform-api/</link>
