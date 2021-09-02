@@ -6,7 +6,16 @@
     <description>Recent content in git on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 09 Aug 2021 14:00:25 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 02 Sep 2021 07:37:36 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Amending a Git Commit Statement</title>
+      <link>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</link>
+      <pubDate>Thu, 02 Sep 2021 07:37:36 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</guid>
+      <description>How to quickly change the git commit message before a push has occurred</description>
+    </item>
+    
     <item>
       <title>Pushing to GitHub via. Git</title>
       <link>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</link>

@@ -2,22 +2,47 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://gbeifuss.github.io/</loc>
+    <lastmod>2021-09-02T07:37:44-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/hugo/</loc>
+    <lastmod>2021-09-02T07:37:44-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/page-references-in-hugo/</loc>
+    <lastmod>2021-09-02T07:37:44-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/post/</loc>
+    <lastmod>2021-09-02T07:37:44-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2021-09-02T07:37:44-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</loc>
+    <lastmod>2021-09-02T07:37:36-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/git/</loc>
+    <lastmod>2021-09-02T07:37:36-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://gbeifuss.github.io/tags/api/</loc>
     <lastmod>2021-08-30T22:37:13-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/tags/dynamics/</loc>
-    <lastmod>2021-08-30T22:37:13-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2021-08-30T22:37:13-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/post/</loc>
     <lastmod>2021-08-30T22:37:13-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -32,18 +57,8 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
-    <lastmod>2021-08-30T22:37:13-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</loc>
     <lastmod>2021-08-25T14:19:31-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/hugo/</loc>
-    <lastmod>2021-08-25T08:15:17-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -79,11 +94,6 @@
   </url><url>
     <loc>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</loc>
     <lastmod>2021-08-11T14:57:19-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/git/</loc>
-    <lastmod>2021-08-09T14:00:25-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
