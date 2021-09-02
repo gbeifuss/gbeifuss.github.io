@@ -16,16 +16,16 @@
 &lt;p&gt;I originally learned this when I wanted to include a link to another post I&amp;rsquo;d written. I used a &lt;em&gt;reference&lt;/em&gt; shortcode (&lt;code&gt;ref&lt;/code&gt;) for this:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;[Querying PowerPlatform API via. Powershell]( {{&amp;lt; ref &amp;quot;powershell-powerplatform-api.md&amp;quot; &amp;gt;}})&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Links to other artifacts in your site can be done with &lt;code&gt;ref&lt;/code&gt; (reference) or &lt;code&gt;relref&lt;/code&gt; (relative reference). The only difference between them is whether the resulting URL is absolute (&lt;a class=&#34;link&#34; href=&#34;http://site.com/about/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;http://site.com/about/&lt;/a&gt;) or relative (/about/). The ref and relref shortcodes require a single parameter: the path to a content document, with or without a file extension, with or without an anchor. Hugo will try to match the parameter to content in your site. The &lt;em&gt;relref&lt;/em&gt; shortcode is handy when you have two pages with the same name, but in different locations, so that Hugo knows which one you want to refer to.&lt;/p&gt;
-&lt;p&gt;Links to a heading on the current page, or a completely difference page, can be specified with an &lt;em&gt;anchor&lt;/em&gt;, which are specified with a pound/hashtag symbol (#).
-Link to a heading on the current page: &lt;code&gt;{{&amp;lt; ref &amp;quot;#reference&amp;quot; &amp;gt;}}&lt;/code&gt;
+    &gt;http://site.com/about/&lt;/a&gt;) or relative (/about/). The &lt;em&gt;ref&lt;/em&gt; and &lt;em&gt;relref&lt;/em&gt; shortcodes require a single parameter: the path to a content document, with or without a file extension, with or without an anchor. Hugo will try to match the parameter to content in your site. The &lt;em&gt;relref&lt;/em&gt; shortcode is handy when you have two pages with the same name, but in different locations, so that Hugo knows which one you want to refer to.&lt;/p&gt;
+&lt;p&gt;Links to a heading on the current page, or a completely difference page, can be specified with an &lt;em&gt;anchor&lt;/em&gt;, which are specified with a pound/hashtag symbol (#).&lt;br&gt;
+Link to a heading on the current page: &lt;code&gt;{{&amp;lt; ref &amp;quot;#reference&amp;quot; &amp;gt;}}&lt;/code&gt;&lt;br&gt;
 Link to a heading on a different page: &lt;code&gt;{{&amp;lt; ref &amp;quot;document.md#reference&amp;quot; &amp;gt;}}&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This can all be found in the official Hugo documentation &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/content-management/cross-references/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Shortcodes for creating links to documents&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Another shortcode trick I learned when writing this is that escaping curly braces &lt;code&gt;{{&lt;/code&gt; in Hugo can be tricky when using the escape character. Using the backslash will result in some variation of this:&lt;br&gt;
-&lt;code&gt;\{{&amp;amp;lt; myshortcode &amp;amp;gt;\}}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Another shortcode trick I learned when writing this post is that escaping curly braces &lt;code&gt;{{&lt;/code&gt; in Hugo can be tricky when using the escape character. Using the backslash will result in some variation of this:&lt;br&gt;
+&lt;code&gt;\{{&amp;lt; myshortcode &amp;gt;\}}&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;A simple way to escape this is by adding &lt;code&gt;/*&lt;/code&gt; after the opening &lt;code&gt;&amp;lt;&lt;/code&gt; and adding &lt;code&gt;*/&lt;/code&gt; after the closing &lt;code&gt;&amp;gt;&lt;/code&gt;.&lt;br&gt;
-&lt;code&gt;{{&amp;amp;lt;/* myshortcode */&amp;amp;ft;}}&lt;/code&gt; will produce &lt;code&gt;{{&amp;amp;lt;/* myshortcode */&amp;amp;gt;}}&lt;/code&gt;&lt;/p&gt;
+&lt;code&gt;{{&amp;lt;/*/* myshortcode */&amp;gt;}}&lt;/code&gt; will produce &lt;code&gt;{{&amp;lt; shortcode &amp;gt;}}&lt;/code&gt;&lt;/p&gt;
 </description>
         </item>
         <item>
@@ -41,7 +41,7 @@ git commit -m &amp;quot;Website update 2021-090-2&amp;quot;
 PANIC SETS IN
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Fortunately, it&amp;rsquo;s relatively simple to change the commit message &lt;em&gt;before&lt;/em&gt; the push has happened:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;git commit --amend -m &amp;quot;Website update 2021-09-02&amp;quot;
-git push origin master
+git push origin main
 &lt;/code&gt;&lt;/pre&gt;</description>
         </item>
         <item>

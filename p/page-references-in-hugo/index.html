@@ -170,16 +170,16 @@
 <p>I originally learned this when I wanted to include a link to another post I&rsquo;d written. I used a <em>reference</em> shortcode (<code>ref</code>) for this:</p>
 <p><code>[Querying PowerPlatform API via. Powershell]( {{&lt; ref &quot;powershell-powerplatform-api.md&quot; &gt;}})</code></p>
 <p>Links to other artifacts in your site can be done with <code>ref</code> (reference) or <code>relref</code> (relative reference). The only difference between them is whether the resulting URL is absolute (<a class="link" href="http://site.com/about/"  target="_blank" rel="noopener"
-    >http://site.com/about/</a>) or relative (/about/). The ref and relref shortcodes require a single parameter: the path to a content document, with or without a file extension, with or without an anchor. Hugo will try to match the parameter to content in your site. The <em>relref</em> shortcode is handy when you have two pages with the same name, but in different locations, so that Hugo knows which one you want to refer to.</p>
-<p>Links to a heading on the current page, or a completely difference page, can be specified with an <em>anchor</em>, which are specified with a pound/hashtag symbol (#).
-Link to a heading on the current page: <code>{{&lt; ref &quot;#reference&quot; &gt;}}</code>
+    >http://site.com/about/</a>) or relative (/about/). The <em>ref</em> and <em>relref</em> shortcodes require a single parameter: the path to a content document, with or without a file extension, with or without an anchor. Hugo will try to match the parameter to content in your site. The <em>relref</em> shortcode is handy when you have two pages with the same name, but in different locations, so that Hugo knows which one you want to refer to.</p>
+<p>Links to a heading on the current page, or a completely difference page, can be specified with an <em>anchor</em>, which are specified with a pound/hashtag symbol (#).<br>
+Link to a heading on the current page: <code>{{&lt; ref &quot;#reference&quot; &gt;}}</code><br>
 Link to a heading on a different page: <code>{{&lt; ref &quot;document.md#reference&quot; &gt;}}</code></p>
 <p>This can all be found in the official Hugo documentation <a class="link" href="https://gohugo.io/content-management/cross-references/"  target="_blank" rel="noopener"
     >Shortcodes for creating links to documents</a></p>
-<p>Another shortcode trick I learned when writing this is that escaping curly braces <code>{{</code> in Hugo can be tricky when using the escape character. Using the backslash will result in some variation of this:<br>
-<code>\{{&amp;lt; myshortcode &amp;gt;\}}</code></p>
+<p>Another shortcode trick I learned when writing this post is that escaping curly braces <code>{{</code> in Hugo can be tricky when using the escape character. Using the backslash will result in some variation of this:<br>
+<code>\{{&lt; myshortcode &gt;\}}</code></p>
 <p>A simple way to escape this is by adding <code>/*</code> after the opening <code>&lt;</code> and adding <code>*/</code> after the closing <code>&gt;</code>.<br>
-<code>{{&amp;lt;/* myshortcode */&amp;ft;}}</code> will produce <code>{{&amp;lt;/* myshortcode */&amp;gt;}}</code></p>
+<code>{{&lt;/*/* myshortcode */&gt;}}</code> will produce <code>{{&lt; shortcode &gt;}}</code></p>
 
 </section>
 
