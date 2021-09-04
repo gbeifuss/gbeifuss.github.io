@@ -177,7 +177,7 @@
 <li>CRYPT_KEYEXCHANGE_ALG_ID</li>
 </ul>
 <p>First, I needed to figure out what was actually being recorded by the logs.</p>
-<pre><code>#Date: 2021-03-04 00:00:03
+<pre tabindex="0"><code>#Date: 2021-03-04 00:00:03
 #Fields: date time s-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) cs(Referer) sc-status sc-substatus sc-win32-status time-taken crypt-protocol crypt-cipher crypt-hash crypt-keyexchange OriginalClientIP
 2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;CorrelationID=&lt;empty&gt;;&amp;cafeReqId=7a4501f0-3d61-425d-8d1f-0c3d5c9e6d13; 443 DOMAIN\webmail 10.10.1.58 ExchangeServicesClient/15.00.0913.015 - 200 0 0 38 400 660e 800c ae06 -
 2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;CorrelationID=&lt;empty&gt;;&amp;cafeReqId=42acb956-ea0a-4a32-a097-0bc73ae92860; 443 - 10.10.12.120 ExchangeServicesClient/15.00.0913.015 - 401 1 2148074254 1 400 660e 800c ae06 -

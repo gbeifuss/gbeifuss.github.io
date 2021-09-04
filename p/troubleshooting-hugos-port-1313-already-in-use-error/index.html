@@ -171,7 +171,7 @@
 &hellip; checked for patches, as usual<br>
 &hellip; checked for updated software (via chocolatey!), as usual<br>
 &hellip; started Hugo&rsquo;s local server&hellip; as not usual!</p>
-<pre><code>C:\Users\gbeifuss\blog&gt;hugo server -D -v -p 1313
+<pre tabindex="0"><code>C:\Users\gbeifuss\blog&gt;hugo server -D -v -p 1313
 port 1313 already in use, attempting to use an available port
 Start building sites …
 hugo v0.87.0-B0C541E4+extended windows/amd64 BuildDate=2021-08-03T10:57:28Z VendorInfo=gohugoio
@@ -200,11 +200,11 @@ Web Server is available at http://localhost:15823/ (bind address 127.0.0.1)
 Press Ctrl+C to stop
 </code></pre><p>This has never been a problem before. How can port 1313 already be in use? There&rsquo;s nothing else on my system configured to use that port!</p>
 <p>I pulled up <code>netstat</code> to confirm:</p>
-<pre><code>C:\Users\gbeifuss&gt;netstat -ano | find &quot;1313&quot;
+<pre tabindex="0"><code>C:\Users\gbeifuss&gt;netstat -ano | find &quot;1313&quot;
 C:\Users\gbeifuss&gt;
 </code></pre><p>Well, if nothing is using the port, then why can&rsquo;t Hugo use it? If there&rsquo;s nothing actively blocking Hugo, then Hugo must be prevented from using that port by another mechanism.</p>
 <p>I checked the reservations that Windows knows about with <code>netsh</code>:</p>
-<pre><code>C:\Users\gbeifuss\blog&gt;netsh int ipv4 show excludedportrange protocol=tcp
+<pre tabindex="0"><code>C:\Users\gbeifuss\blog&gt;netsh int ipv4 show excludedportrange protocol=tcp
 
 Protocol tcp Port Exclusion Ranges
 
@@ -229,7 +229,7 @@ I stopped <code>Docker Desktop Service</code> and made sure all the Hyper-V serv
 <p>I stopped the winnat service via. the command line (as Administrator):<br>
 <code>net stop winnat</code></p>
 <p>Then I started Hugo, which happily grabbed port 1313:</p>
-<pre><code>C:\Users\gbeifuss\blog&gt;hugo server -D
+<pre tabindex="0"><code>C:\Users\gbeifuss\blog&gt;hugo server -D
 Start building sites …
 hugo v0.87.0-B0C541E4+extended windows/amd64 BuildDate=2021-08-03T10:57:28Z VendorInfo=gohugoio
 WARN 2021/08/20 14:12:16 Search page not found. Create a page with layout: search.

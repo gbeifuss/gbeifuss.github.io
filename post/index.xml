@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 02 Sep 2021 07:37:44 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Sep 2021 21:40:09 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Truncate Exchange Transaction Logs</title>
+      <link>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</link>
+      <pubDate>Fri, 03 Sep 2021 21:40:09 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</guid>
+      <description>Using diskshadow to take a &amp;lsquo;fake backup&amp;rsquo; so that Exchange will start purging transaction logs</description>
+    </item>
+    
     <item>
       <title>Page References in Hugo</title>
       <link>https://gbeifuss.github.io/p/page-references-in-hugo/</link>

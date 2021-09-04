@@ -6,7 +6,16 @@
     <description>Recent content in Exchange on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Aug 2021 15:01:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/exchange/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Sep 2021 21:40:09 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/exchange/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Truncate Exchange Transaction Logs</title>
+      <link>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</link>
+      <pubDate>Fri, 03 Sep 2021 21:40:09 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</guid>
+      <description>Using diskshadow to take a &amp;lsquo;fake backup&amp;rsquo; so that Exchange will start purging transaction logs</description>
+    </item>
+    
     <item>
       <title>Exchange &amp; -DeleteContent</title>
       <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>

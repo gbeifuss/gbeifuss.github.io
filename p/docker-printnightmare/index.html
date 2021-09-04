@@ -179,11 +179,11 @@
 <p>Create a new directory from the CLI and clone the repo:
 <code>git clone https://github.com/byt3bl33d3r/ItWasAllADream</code></p>
 <p>This gave me a small problem:</p>
-<pre><code>D:\Docker&gt;git clone https://github.com/byt3bl33d3r/ItWasAllADream
+<pre tabindex="0"><code>D:\Docker&gt;git clone https://github.com/byt3bl33d3r/ItWasAllADream
 Cloning into 'ItWasAllADream'...
 fatal: unable to access 'https://github.com/byt3bl33d3r/ItWasAllADream/': SSL certificate problem: unable to get local issuer certificate
 </code></pre><p>Since I&rsquo;m pulling from github.com, which has a valid certificate, and not some private repo with a self-signed certificate, I realised pretty quickly that this was likely due to our corporate web-filtering software. I told git to bypass certificate checking, and everything processed properly:</p>
-<pre><code>D:\Docker&gt;git config --global http.sslVerify false
+<pre tabindex="0"><code>D:\Docker&gt;git config --global http.sslVerify false
 D:\docker&gt;git clone https://github.com/byt3bl33d3r/ItWasAllADream
 Cloning into 'ItWasAllADream'...
 remote: Enumerating objects: 57, done.
@@ -199,7 +199,7 @@ D:\docker&gt;git config --global http.sslVerify true
 <p>Build the docker container:
 <code>cd ItWasAllADream &amp;&amp; docker build -t itwasalladream .</code></p>
 <p>This gave me bigger problems:</p>
-<pre><code>D:\docker&gt;cd ItWasAllADream &amp;&amp; docker build -t itwasalladream .
+<pre tabindex="0"><code>D:\docker&gt;cd ItWasAllADream &amp;&amp; docker build -t itwasalladream .
 [+] Building 117.3s (8/8) FINISHED
 =&gt; [internal] load build definition from Dockerfile                                                                         0.1s
 =&gt; =&gt; transferring dockerfile: 329B                                                                                         0.0s
@@ -240,7 +240,7 @@ D:\docker&gt;git config --global http.sslVerify true
 ------
 executor failed running [/bin/sh -c pip3 install poetry &amp;&amp;     poetry config virtualenvs.create false &amp;&amp;     poetry install]: exit code: 1
 </code></pre><p>I realised that since this was being done outside of git, my earlier config changes would have no effect. I bypassed the web filtering software entirely (a benefit of being a sysadmin), and Docker went on its merry way:</p>
-<pre><code>D:\docker&gt;cd ItWasAllADream &amp;&amp; docker build -t itwasalladream .
+<pre tabindex="0"><code>D:\docker&gt;cd ItWasAllADream &amp;&amp; docker build -t itwasalladream .
 [+] Building 42.3s (9/9) FINISHED
 =&gt; [internal] load build definition from Dockerfile                                                                         0.0s
 =&gt; =&gt; transferring dockerfile: 329B                                                                                         0.0s
@@ -263,12 +263,12 @@ Use 'docker scan' to run Snyk tests against images to find vulnerabilities and l
 <li>
 <p>Run a scan and wait for it to finish:
 <code>docker run -it itwasalladream -u user -p password -d domain 192.168.1.0/24</code></p>
-<pre><code>[itwasalladream] INFO - report_2021_07_08_155428.csv generated successfully
+<pre tabindex="0"><code>[itwasalladream] INFO - report_2021_07_08_155428.csv generated successfully
 </code></pre></li>
 <li>
 <p>List the containers so that we can get the container name.
 <code>docker ps -a</code></p>
-<pre><code>D:\docker\ItWasAllADream&gt;docker ps -a
+<pre tabindex="0"><code>D:\docker\ItWasAllADream&gt;docker ps -a
 CONTAINER ID   IMAGE            COMMAND                  CREATED          STATUS                      PORTS     NAMES
 4793adbf54d7   itwasalladream   &quot;itwasalladream -u g…&quot;   25 minutes ago   Exited (0) 18 minutes ago             sad_taussig
 f36834af30d0   itwasalladream   &quot;itwasalladream -u g…&quot;   36 minutes ago   Exited (0) 33 minutes ago             stupefied_banach
@@ -276,7 +276,7 @@ f36834af30d0   itwasalladream   &quot;itwasalladream -u g…&quot;   36 minutes 
 </code></pre></li>
 <li>
 <p>Copy the resulting CSV out of the container and to the current local directory</p>
-<pre><code>D:\docker\ItWasAllADream&gt;docker cp sad_taussig:report_2021_07_08_155428.csv .
+<pre tabindex="0"><code>D:\docker\ItWasAllADream&gt;docker cp sad_taussig:report_2021_07_08_155428.csv .
 </code></pre></li>
 <li>
 <p>Review the CSV:

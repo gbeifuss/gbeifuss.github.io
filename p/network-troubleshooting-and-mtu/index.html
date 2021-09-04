@@ -169,13 +169,13 @@
     <p>These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&rsquo;s not super advanced work.</p>
 <p>For about 8 months now, we&rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&rsquo;s still not in use because of <em>problems</em>. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. <code>Ping</code> to any system works, but protocols like RDP, SMB and replication (AD &amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site AND I could ping all the other DCs, <code>repadmin /replsummary</code> showed that replication was no longer working.</p>
 <p>Here&rsquo;s a simple topology diagram in ASCII art:</p>
-<pre><code>Head Office core switch - Head Office firewall - VPN Tunnel over internet - SiteA firewall - SiteA core switch
+<pre tabindex="0"><code>Head Office core switch - Head Office firewall - VPN Tunnel over internet - SiteA firewall - SiteA core switch
 vs.
 Head Office core switch - dedicated L2 link - SiteA core switch
 </code></pre><p>I knew this was going to be a pain to troubleshoot, especially since I couldn&rsquo;t take the whole DR site offline whenever I wanted during the day to conduct tests. I quintuple checked the configuration and didn&rsquo;t find any errors. I compared it line-by-line to another site we have this same setup (dedicated link between core switches) and everything was configured correctly.</p>
 <p>I finally decided to bite the bullet spend a couple of late nights trying to gather information so that I could quantify the precise problem. Because the physical layer was out of my control, the data link layer seemed fine (also out of my control&hellip;mostly) and <code>ping</code> worked (layer 3), I was pretty confident the issue originated at the Network layer, or higher.</p>
 <p>I started by looking at the packet sizes. I knew that ping was a tiny packet, while things like replication and SMB would probably exceed the MTU. I ran some tests with the <code>ping -f -l</code> to determine the maximum packet size that could successfully transit the link.</p>
-<pre><code>No.     Time           Source                Destination           Protocol Length ICMP Length Info
+<pre tabindex="0"><code>No.     Time           Source                Destination           Protocol Length ICMP Length Info
       1 0.000000       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37568/49298, ttl=128 (reply in 2)
       2 0.005320       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37568/49298, ttl=126 (request in 1)
       3 1.005759       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37569/49554, ttl=128 (reply in 4)
@@ -215,7 +215,7 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 <p>Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&rsquo;s 1468, which is the largest setting that worked with the Don&rsquo;tFragment flag set, plus the 28 byte IP header. Let&rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:<br>
 <code>netsh int ipv4 show sub</code><br>
 (the full command is <em>netsh interface ipv4 show subinterfaces</em>, but I generally use the shorthand).</p>
-<pre><code>C:\Users&gt;netsh int ipv4 show sub
+<pre tabindex="0"><code>C:\Users&gt;netsh int ipv4 show sub
 
    MTU  MediaSenseState   Bytes In  Bytes Out  Interface
 ------  ---------------  ---------  ---------  -------------
@@ -224,7 +224,7 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 </code></pre><p>Let&rsquo;s update this:<br>
 <code>netsh in ipv4 set sub &quot;Ethernet 2&quot; mtu=1496 store=persistent</code><br>
 (<em>netsh interface ipv4 set subinterface &ldquo;Ethernet 2&rdquo; mtu=1496 store=persistent</em>)</p>
-<pre><code>C:\Users&gt;netsh int ipv4 show sub
+<pre tabindex="0"><code>C:\Users&gt;netsh int ipv4 show sub
 
    MTU  MediaSenseState   Bytes In  Bytes Out  Interface
 ------  ---------------  ---------  ---------  -------------
