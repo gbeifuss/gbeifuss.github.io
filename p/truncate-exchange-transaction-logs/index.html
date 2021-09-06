@@ -169,7 +169,7 @@
     <p>I received an alert today that the disk drive with our Exchange transaction logs was low on disk space. How low? 160KB free of 190GB! In fact, it was so low that Exchange dismounted the database on that server and moved it over to another host in the DAG.</p>
 <p>Something like this is usually the result of backup problems. Exchange won&rsquo;t purge transaction logs until it <em>knows</em> that they&rsquo;ve been successfully backed up, since a successful restore of backup data requires a full backup <em>plus</em> all incremental transaction logs since then.</p>
 <p>Of course, there&rsquo;s a nice little trick to tell Exchange that a full backup was just performed&hellip; without actually performing a full backup. That lets Exchange start purging the transaction logs, which frees up disk space, which means Exchange can remount your database(s). It&rsquo;s all thanks to the magic of VSS and DiskShadow.exe.</p>
-<p>This needs to be done in an elevated command prompt. If your databases and transaction logs are on different volumes, you&rsquo;ll need to add both of them. In my case, Transaction Logs are on D:\ and Databases are on E:\ .</p>
+<p>This needs to be done in an elevated command prompt <em>on the server where the databases are mounted</em>. If your databases and transaction logs are on different volumes, you&rsquo;ll need to add both of them. In my case, Transaction Logs are on D:\ and Databases are on E:\ .</p>
 <p>At a high level:</p>
 <ul>
 <li>Load diskshadow</li>
@@ -225,16 +225,368 @@ DISKSHADOW&gt; end backup
 DISKSHADOW&gt; exit
 
 C:\Windows\system32&gt;
-</code></pre><p>In short order, you should see entries in the Event Log showing:</p>
-<ol>
-<li>A Full Shadow copy was started (Event ID 2005, ESE)</li>
+</code></pre><p>The EMC/Powershell can display the last backup that Exchange is aware of:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-MailboxDatabase</span> <span class="n">-status</span> <span class="p">|</span> <span class="nb">select </span><span class="n">Name</span><span class="p">,</span> <span class="n">LastFullBackup</span> <span class="p">|</span> <span class="nb">ft
+</span><span class="nb"></span>
+<span class="n">Name</span>       <span class="n">LastFullBackup</span>
+<span class="p">----</span>       <span class="p">--------------</span>
+<span class="n">Journaling</span> <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
+<span class="nb">Tier3-C</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">07</span> <span class="n">PM</span>
+<span class="nb">Tier3-D</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
+<span class="nb">Tier3-A</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
+<span class="nb">Tier3-M</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
+<span class="nb">Tier3-X</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
+<span class="nb">Tier3-L</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
+<span class="nb">Tier3-B</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">34</span><span class="err">:</span><span class="n">48</span> <span class="n">PM</span>
+</code></pre></div><p>An alternate trick is to delete any unmounted database copies on the server that&rsquo;s out of Transaction Log space through proper Exchange methods (EAC or Powershell). Once that&rsquo;s done, delete the Transaction Logs belonging to that database. It should free up a small amount of space - perhaps enough breathing room to get a database online, users up and running again, and time for you to take proper measures.</p>
+<p>If you&rsquo;re running Exchange as a VM or the disks are on a SAN, you could also provision more disk space, then extend the volume.</p>
+<p>The DiskShadow/VSS method should result in the following entries in the Application Event Log. These are from Windows Server 2016:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Event ID</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exchange VSS Writer metadata preparation</td>
+<td>2021</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>Exchange VSS Writer database preparation</td>
+<td>2110</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>Exchange VSS Writer prepared for backup</td>
+<td>2023</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>A Full Shadow copy was started</td>
+<td>2005</td>
+<td>ESE</td>
+</tr>
+<tr>
+<td>Backup starting</td>
+<td>960</td>
+<td>ESE BACKUP</td>
+</tr>
+<tr>
+<td>Shadow copy freeze started</td>
+<td>2001</td>
+<td>ESE</td>
+</tr>
+<tr>
+<td>Exchange VSS Writer freezes databases</td>
+<td>2027</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>Shadow copy freeze ended</td>
+<td>2003</td>
+<td>ESE</td>
+</tr>
+<tr>
+<td>Exchage VSS Writer freeze ended</td>
+<td>2029</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>VSS Writer backup success</td>
+<td>2046</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>Shadow copy success</td>
+<td>2006</td>
+<td>ESE</td>
+</tr>
+<tr>
+<td>Exchange VSS Writer backup completion</td>
+<td>2033</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>Exchange VSS Writer backup ended</td>
+<td>2037</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>Exchange VSS Writer post-backup processing</td>
+<td>2035</td>
+<td>MSExchangeRepl</td>
+</tr>
+<tr>
+<td>Tombstone table cleanup</td>
+<td>40013</td>
+<td>MSExchangeIS</td>
+</tr>
+<tr>
+<td>Tombstone table cleanup complete</td>
+<td>40017</td>
+<td>MSExchange IS</td>
+</tr>
+</tbody>
+</table>
+<p>You may also see events for:</p>
+<ul>
 <li>Exchange VSS Writer preparation (Event ID 9811, MSExchangeIS)</li>
 <li>Logs are now purged (Event ID 224, ESE)</li>
 <li>Backup is now complete (Event ID 9780, MSExchangeIS)</li>
-</ol>
-<p>An alternate trick is to delete any unmounted database copies on the server that&rsquo;s out of Transaction Log space through proper Exchange methods (EAC or Powershell). Once that&rsquo;s done, delete the Transaction Logs belonging to that database. It should free up a small amount of space - perhaps enough breathing room to get a database online, users up and running again, and time for you to take proper measures.</p>
-<p>If you&rsquo;re running Exchange as a VM or the disks are on a SAN, you could also provision more disk space, then extend the volume.</p>
+</ul>
+<pre tabindex="0"><code>Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:03:28 AM
+Event ID:      2021
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer has successfully collected the metadata document in preparation for backup.
 
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:04:40 AM
+Event ID:      2110
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully prepared for a full or a copy backup of database 'Tier3-L'.  The following database will be backed up: Tier3-L.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:33 AM
+Event ID:      2023
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21) successfully prepared for backup.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 9:26:35 AM
+Event ID:      2005
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Journaling (23412,G,0,15.01.2308.014) Shadow copy instance 1 starting. This will be a Full shadow copy.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        ESE BACKUP
+Date:          9/6/2021 9:26:40 AM
+Event ID:      960
+Task Category: General
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+msexchangerepl (5596) This computer is performing a surrogate backup.  The master server is Exchange04.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 9:26:40 AM
+Event ID:      2001
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Tier3-D (37104,D,0,15.01.2308.014) Tier3-D: Shadow copy instance 1 freeze started.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:40 AM
+Event ID:      2027
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21 has successfully frozen the databases.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 9:26:42 AM
+Event ID:      2003
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Tier3-C (8036,G,0,15.01.2308.014) Shadow copy instance 1 freeze ended.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:42 AM
+Event ID:      2029
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21 has successfully thawed the databases.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2046
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully completed the backup of database 'Tier3-A'.
+
+Database log truncation has been requested for this database. Log truncation will occur on the active copy after the next log generation is created. Log truncation will occur automatically on the passive copies after that log file is copied.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2006
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Tier3-A (35276,G,0,15.01.2308.014) Shadow copy instance 1 completed successfully.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2033
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42) has successfully processed the backup completion event.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2037
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42) backup has been successfully shut down.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:42 AM
+Event ID:      2035
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21) has successfully processed the post-snapshot event.
+
+
+
+Log Name:      Application
+Source:        MSExchangeIS
+Date:          9/6/2021 9:36:15 AM
+Event ID:      40013
+Task Category: Logical Data Model
+Level:         Warning
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The tombstone table has reached an excessive number of entries and/or total size. A maintenance task has been dispatched to perform urgent cleanup.
+
+Database: Journaling (6b141c8e-f158-4dea-aede-87ea1eb83e41)
+Number of entries (estimated): 1453
+Total size of entries (estimated): 5369912232 bytes
+
+
+
+Log Name:      Application
+Source:        MSExchangeIS
+Date:          9/6/2021 9:36:26 AM
+Event ID:      40017
+Task Category: Logical Data Model
+Level:         Warning
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The urgent tombstone table cleanup task has finished executing.
+
+Database: Journaling (6b141c8e-f158-4dea-aede-87ea1eb83e41)
+Message tombstones deleted: 134
+Subobject tombstones deleted: 1315
+Total size of deleted entries: 5358535877 bytes
+Remaining number of entries (estimated): 4
+Total size of remaining entries (estimated): 11376355 bytes
+Elapsed time: 11.1328017 seconds
+Pass completed: True
+Subobjects in-use: 4
+Mailboxes quarantined: 0
+Mailboxes locked: 0
+Mailboxes should stop maintenance: 0
+</code></pre>
 </section>
 
 
