@@ -3,22 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://gbeifuss.github.io/tags/exchange/</loc>
-    <lastmod>2021-09-03T21:40:09-04:00</lastmod>
+    <lastmod>2021-09-09T09:29:17-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</loc>
+    <lastmod>2021-09-09T09:29:17-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2021-09-03T21:40:09-04:00</lastmod>
+    <lastmod>2021-09-09T09:29:17-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2021-09-03T21:40:09-04:00</lastmod>
+    <lastmod>2021-09-09T09:29:17-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/tags/</loc>
-    <lastmod>2021-09-03T21:40:09-04:00</lastmod>
+    <lastmod>2021-09-09T09:29:17-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</loc>
+    <lastmod>2021-09-06T22:12:49-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/powershell/</loc>
+    <lastmod>2021-09-06T22:12:49-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/prtg/</loc>
+    <lastmod>2021-09-06T22:12:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -57,12 +77,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/powershell/</loc>
-    <lastmod>2021-08-30T22:37:13-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-with-the-graph-api/</loc>
+    <loc>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</loc>
     <lastmod>2021-08-30T22:37:13-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

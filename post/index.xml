@@ -6,7 +6,25 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 03 Sep 2021 21:40:09 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 09 Sep 2021 09:29:17 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exchange Transaction Logs won&#39;t clear</title>
+      <link>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</link>
+      <pubDate>Thu, 09 Sep 2021 09:29:17 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</guid>
+      <description>Exchange Transaction Logs should clear after a successful backup, but what if they&amp;rsquo;re not being deleted?</description>
+    </item>
+    
+    <item>
+      <title>Exchange DAGs and Cluster Ownership</title>
+      <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>
+      <pubDate>Mon, 06 Sep 2021 22:12:49 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</guid>
+      <description>Use Powershell to change the cluster owner for &amp;lsquo;Available Storage&amp;rsquo; and &amp;lsquo;Cluster Group&amp;rsquo; in an Exchange DAG. Setup a Notification in PRTG along with a trigger to move the owner back.</description>
+    </item>
+    
     <item>
       <title>Truncate Exchange Transaction Logs</title>
       <link>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</link>
@@ -35,11 +53,11 @@
     </item>
     
     <item>
-      <title>Powershell &amp; PowerPlatform API ... now with the Graph API</title>
-      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-with-the-graph-api/</link>
+      <title>Powershell &amp; PowerPlatform API ... now using the Graph API</title>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</link>
       <pubDate>Mon, 30 Aug 2021 22:37:13 -0400</pubDate>
       
-      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-with-the-graph-api/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</guid>
       <description>Querying the Microsoft PowerPlatform API with Powershell and the Graph API. Also, using fixed-width font in an email with Powershell output.</description>
     </item>
     
