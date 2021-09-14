@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>VSCode on Greg Beifuss</title>
+    <title>vscode on Greg Beifuss</title>
     <link>https://gbeifuss.github.io/tags/vscode/</link>
-    <description>Recent content in VSCode on Greg Beifuss</description>
+    <description>Recent content in vscode on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 14 Jul 2021 08:21:37 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vscode/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 13 Sep 2021 23:35:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vscode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using multicursor in VS Ccode</title>
+      <link>https://gbeifuss.github.io/p/using-multicursor-in-vs-ccode/</link>
+      <pubDate>Mon, 13 Sep 2021 23:35:20 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/using-multicursor-in-vs-ccode/</guid>
+      <description>Turning on multiple cursors in Visual Studio Code for faster editing</description>
+    </item>
+    
     <item>
       <title>VS Code &amp; Remote Repositories</title>
       <link>https://gbeifuss.github.io/p/vs-code-remote-repositories/</link>

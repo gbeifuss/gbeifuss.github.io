@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Using the Remote Repositories Extension in VS Code to update github content'><title>VS Code &amp; Remote Repositories</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Resolving the Hugo error &ldquo;REF_NOT_FOUND&rdquo; when compiling a website'><title>Hugo error - REF_NOT_FOUND</title>
 
-<link rel='canonical' href='https://gbeifuss.github.io/p/vs-code-remote-repositories/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/hugo-error-ref_not_found/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='VS Code &amp; Remote Repositories'>
-<meta property='og:description' content='Using the Remote Repositories Extension in VS Code'>
-<meta property='og:url' content='https://gbeifuss.github.io/p/vs-code-remote-repositories/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Hugo error - REF_NOT_FOUND'>
+<meta property='og:description' content='Resolving the error &#34;REF_NOT_FOUND&#34; in Hugo'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/hugo-error-ref_not_found/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='VSCode' /><meta property='article:tag' content='github' /><meta property='article:published_time' content='2021-07-14T08:21:37-04:00'/><meta property='article:modified_time' content='2021-07-14T08:21:37-04:00'/>
-<meta name="twitter:title" content="VS Code &amp; Remote Repositories">
-<meta name="twitter:description" content="Using the Remote Repositories Extension in VS Code">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Hugo' /><meta property='article:published_time' content='2021-09-13T23:35:09-04:00'/><meta property='article:modified_time' content='2021-09-13T23:35:09-04:00'/>
+<meta name="twitter:title" content="Hugo error - REF_NOT_FOUND">
+<meta name="twitter:description" content="Resolving the error &#34;REF_NOT_FOUND&#34; in Hugo">
     </head>
     <body class="
     article-page 
@@ -145,12 +145,12 @@
     
 
     <h2 class="article-title">
-        <a href="/p/vs-code-remote-repositories/">VS Code &amp; Remote Repositories</a>
+        <a href="/p/hugo-error-ref_not_found/">Hugo error - REF_NOT_FOUND</a>
     </h2>
 
     
     <h3 class="article-subtitle">
-        Using the Remote Repositories Extension in VS Code
+        Resolving the error &#34;REF_NOT_FOUND&#34; in Hugo
     </h3>
     <footer class="article-time">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -161,36 +161,17 @@
 
 
 
-        <time class="article-time--published">Jul 14, 2021</time>
+        <time class="article-time--published">Sep 13, 2021</time>
     </footer></div>
 </header>
 
     <section class="article-content">
-    <p>I spend a lot of my day in VS Code, but not too much in GitHub because I don&rsquo;t work on any joint projects. I do use a local Git repository for my code. It&rsquo;s  easy to see when others have made changes so that I can <del>hunt them down</del> speak politely to them about stopping.</p>
-<p>In any case, I was watching <a class="link" href="https://mybuild.microsoft.com/sessions/0c6868e4-6a2c-4749-b3f5-b18ff76609c9?source=sessions"  target="_blank" rel="noopener"
-    >An Introduction to Visual Studio Code and GitHub</a> when I learned about the Remote Repositories (GitHub) extension for VS Code. You can directly edit a repository on GitHub without having to clone it locally.</p>
-<p><em>Disclaimer</em>
-I must confess that in the process of using Remote Repository access this week, I managed to lose/erase 6 files that I hadn&rsquo;t committed, but maybe you&rsquo;re more of a git savant than I am, and you&rsquo;ll have no problems.</p>
-<p>Let&rsquo;s look at how to get this installed and integrated with VS Code:</p>
-<ol>
-<li>Load VS Code</li>
-<li>Open Extensions (CTRL+SHIFT+X)</li>
-<li>Search for <a class="link" href="https://github.com/microsoft/vscode-remote-repositories-github"  target="_blank" rel="noopener"
-    >Remote Repositories (GitHub)</a>. Install it.</li>
-<li>Open the Command Palette (<code>CTRL+SHIFT+P</code>)</li>
-<li>Type in <code>Remote Repositories: Open Repository</code></li>
-<li>Select <code>Open Repository from GitHub</code></li>
-<li>You&rsquo;ll be prompted to allow access to GitHub. Allow it.</li>
-<li>A browser window will open. Click <code>Continue</code> to authorize access to GitHub.</li>
-<li>Sign in to GitHub. If you don&rsquo;t already have an account, there won&rsquo;t be any repositories for you to open in VS Code, will there?</li>
-<li>You should receive a &lsquo;Success!&rsquo; webpage, with an authorization token on it.
-<ul>
-<li>If your browser prompts you to Open Visual Studio Code, do so. It&rsquo;ll save you the trouble of manually entering the authorization code. Once VS Code opens again, you&rsquo;ll be prompted to <code>Allow an extension to open this URI</code>. Permit it, and VS Code will complete the link.</li>
-<li>If the browser didn&rsquo;t prompt, copy the authorization token. You&rsquo;ll have to paste it into VS Code manually. The Command Palette field should be asking for the token, so paste it in.</li>
-</ul>
-</li>
-<li>VS Code should now be able to open your repositories directly on GitHub.</li>
-</ol>
+    <p>I tried generating updated content for my website the other day and Hugo threw an error instead:</p>
+<pre tabindex="0"><code>hugo v0.88.1-5BC54738+extended windows/amd64 BuildDate=2021-09-04T09:39:19Z VendorInfo=gohugoio
+ERROR 2021/09/10 14:59:54 [en] REF_NOT_FOUND: Ref &quot;exchange-clustergroup.md&quot;: &quot;C:\myblog.dev.repo\content\post\exchange-transaction-logs.md:15:458&quot;: page not found
+</code></pre><p>I went back and triplechecked my code: the formatting of the <code>ref</code> block was proper and had no typographical errors.</p>
+<p>I finally realized that my Front Matter tag <code>draft:</code> on the destination page was set to <code>true</code>. This meant that when Hugo was building the code, the destination page wasn&rsquo;t being generated, which meant that there was no destination page for this reference to link to.</p>
+<p>Changing the Front Matter to <code>draft: false</code> allowed Hugo to generate the content properly.</p>
 
 </section>
 
@@ -199,9 +180,7 @@ I must confess that in the process of using Remote Repository access this week, 
     
     <section class="article-tags">
         
-            <a href="/tags/vscode/">vscode</a>
-        
-            <a href="/tags/github/">github</a>
+            <a href="/tags/hugo/">Hugo</a>
         
     </section>
 

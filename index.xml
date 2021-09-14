@@ -6,7 +6,32 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Thu, 09 Sep 2021 09:29:17 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 13 Sep 2021 23:35:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Using multicursor in VS Ccode</title>
+        <link>https://gbeifuss.github.io/p/using-multicursor-in-vs-ccode/</link>
+        <pubDate>Mon, 13 Sep 2021 23:35:20 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/using-multicursor-in-vs-ccode/</guid>
+        <description>&lt;p&gt;CTRL-ALT-L enables multiple cursors in Visual Studio Code.&lt;/p&gt;
+&lt;p&gt;That is all.&lt;/p&gt;
+&lt;p&gt;(Technically CTRL-ALT-L is the keyboard shortcut for &amp;lsquo;Select all occurrences of current selection&amp;rsquo;. Select a word, press CTRL-ALT-L and a cursor will appear to the left of every instance of that word. It&amp;rsquo;s a useful alternative to Find/Replace.)&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Hugo error - REF_NOT_FOUND</title>
+        <link>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</link>
+        <pubDate>Mon, 13 Sep 2021 23:35:09 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</guid>
+        <description>&lt;p&gt;I tried generating updated content for my website the other day and Hugo threw an error instead:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hugo v0.88.1-5BC54738+extended windows/amd64 BuildDate=2021-09-04T09:39:19Z VendorInfo=gohugoio
+ERROR 2021/09/10 14:59:54 [en] REF_NOT_FOUND: Ref &amp;quot;exchange-clustergroup.md&amp;quot;: &amp;quot;C:\myblog.dev.repo\content\post\exchange-transaction-logs.md:15:458&amp;quot;: page not found
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I went back and triplechecked my code: the formatting of the &lt;code&gt;ref&lt;/code&gt; block was proper and had no typographical errors.&lt;/p&gt;
+&lt;p&gt;I finally realized that my Front Matter tag &lt;code&gt;draft:&lt;/code&gt; on the destination page was set to &lt;code&gt;true&lt;/code&gt;. This meant that when Hugo was building the code, the destination page wasn&amp;rsquo;t being generated, which meant that there was no destination page for this reference to link to.&lt;/p&gt;
+&lt;p&gt;Changing the Front Matter to &lt;code&gt;draft: false&lt;/code&gt; allowed Hugo to generate the content properly.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Exchange Transaction Logs won&#39;t clear</title>
         <link>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</link>
         <pubDate>Thu, 09 Sep 2021 09:29:17 -0400</pubDate>
