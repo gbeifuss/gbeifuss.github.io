@@ -1478,13 +1478,13 @@ b) administratively remove it.&lt;/p&gt;
         
         <guid>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</guid>
         <description>&lt;p&gt;These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&amp;rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&amp;rsquo;s not super advanced work.&lt;/p&gt;
-&lt;p&gt;For about 8 months now, we&amp;rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&amp;rsquo;s still not in use because of &lt;em&gt;problems&lt;/em&gt;. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. &lt;code&gt;Ping&lt;/code&gt; to any system works, but protocols like RDP, SMB and replication (AD &amp;amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&amp;rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site AND I could ping all the other DCs, &lt;code&gt;repadmin /replsummary&lt;/code&gt; showed that replication was no longer working.&lt;/p&gt;
+&lt;p&gt;For about 8 months now, we&amp;rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&amp;rsquo;s still not in use because of &lt;em&gt;problems&lt;/em&gt;. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. &lt;code&gt;Ping&lt;/code&gt; to any system works, but protocols like RDP, SMB and replication (AD &amp;amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&amp;rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site &lt;strong&gt;and&lt;/strong&gt; I could ping all the other DCs, &lt;code&gt;repadmin /replsummary&lt;/code&gt; showed that replication was no longer working.&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s a simple topology diagram in ASCII art:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Head Office core switch - Head Office firewall - VPN Tunnel over internet - SiteA firewall - SiteA core switch
 vs.
 Head Office core switch - dedicated L2 link - SiteA core switch
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I knew this was going to be a pain to troubleshoot, especially since I couldn&amp;rsquo;t take the whole DR site offline whenever I wanted during the day to conduct tests. I quintuple checked the configuration and didn&amp;rsquo;t find any errors. I compared it line-by-line to another site we have this same setup (dedicated link between core switches) and everything was configured correctly.&lt;/p&gt;
-&lt;p&gt;I finally decided to bite the bullet spend a couple of late nights trying to gather information so that I could quantify the precise problem. Because the physical layer was out of my control, the data link layer seemed fine (also out of my control&amp;hellip;mostly) and &lt;code&gt;ping&lt;/code&gt; worked (layer 3), I was pretty confident the issue originated at the Network layer, or higher.&lt;/p&gt;
+&lt;p&gt;I finally decided to bite the bullet and spent a couple of late nights trying to gather information so that I could quantify the precise problem. Because the physical layer was out of my control, the data link layer seemed fine (also out of my control&amp;hellip;mostly) and &lt;code&gt;ping&lt;/code&gt; worked (layer 3), I was pretty confident the issue originated at the Network layer, or higher.&lt;/p&gt;
 &lt;p&gt;I started by looking at the packet sizes. I knew that ping was a tiny packet, while things like replication and SMB would probably exceed the MTU. I ran some tests with the &lt;code&gt;ping -f -l&lt;/code&gt; to determine the maximum packet size that could successfully transit the link.&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;No.     Time           Source                Destination           Protocol Length ICMP Length Info
       1 0.000000       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37568/49298, ttl=128 (reply in 2)
@@ -1512,19 +1512,19 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 &lt;ul&gt;
 &lt;li&gt;ServerA&lt;/li&gt;
 &lt;li&gt;Hyper-V host server&lt;/li&gt;
-&lt;li&gt;Remote site core switch&lt;br&gt;
+&lt;li&gt;Remote site core switch
 &amp;hellip; L2 Dedicated Link beyond my control&amp;hellip;&lt;/li&gt;
 &lt;li&gt;Head Office core switch&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Both switches were set with an MTU of 1500 bytes, which is pretty standard. The Hyper-V host server used the Windows default of 1500, as did ServerA. So it looked like MTUs haven&amp;rsquo;t been altered in a meaningful way.&lt;/p&gt;
 &lt;p&gt;I ran a series of packet captures to see if anything looked unusual. Nothing jumped out at me, but I did notice that whenever the packet size exceeded 1500-ish bytes, there were lots of retranmissions and/or errors.&lt;/p&gt;
 &lt;p&gt;Wait! How is it that a server with an MTU of 1500 is sending packets that are 2600 bytes?&lt;/p&gt;
-&lt;p&gt;Wireshark uses winpcap (or libpcap) to grab the data &lt;em&gt;before&lt;/em&gt; it&amp;rsquo;s handed to the NIC:&lt;br&gt;
+&lt;p&gt;Wireshark uses winpcap (or libpcap) to grab the data &lt;em&gt;before&lt;/em&gt; it&amp;rsquo;s handed to the NIC:
 &lt;img src=&#34;https://gbeifuss.github.io/img/wireshark.png&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;
 &lt;p&gt;Many OS and NIC drivers support &lt;em&gt;TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload&lt;/em&gt; which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&amp;hellip; with offloading enabled, this task is now completed &lt;em&gt;after&lt;/em&gt; Wireshark has grabbed the data, so it&amp;rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.&lt;/p&gt;
 &lt;p&gt;Back to my regularly scheduled commentary&amp;hellip;&lt;/p&gt;
-&lt;p&gt;Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&amp;rsquo;s 1468, which is the largest setting that worked with the Don&amp;rsquo;tFragment flag set, plus the 28 byte IP header. Let&amp;rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:&lt;br&gt;
-&lt;code&gt;netsh int ipv4 show sub&lt;/code&gt;&lt;br&gt;
+&lt;p&gt;Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&amp;rsquo;s 1468, which is the largest setting that worked with the Don&amp;rsquo;tFragment flag set, plus the 28 byte IP header. Let&amp;rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:
+&lt;code&gt;netsh int ipv4 show sub&lt;/code&gt;
 (the full command is &lt;em&gt;netsh interface ipv4 show subinterfaces&lt;/em&gt;, but I generally use the shorthand).&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users&amp;gt;netsh int ipv4 show sub
 
@@ -1532,8 +1532,8 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 ------  ---------------  ---------  ---------  -------------
 4294967295                1          0      52364  Loopback Pseudo-Interface 1
   1500                1  550194231  647147510  Ethernet 2
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s update this:&lt;br&gt;
-&lt;code&gt;netsh in ipv4 set sub &amp;quot;Ethernet 2&amp;quot; mtu=1496 store=persistent&lt;/code&gt;&lt;br&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s update this:
+&lt;code&gt;netsh in ipv4 set sub &amp;quot;Ethernet 2&amp;quot; mtu=1496 store=persistent&lt;/code&gt;
 (&lt;em&gt;netsh interface ipv4 set subinterface &amp;ldquo;Ethernet 2&amp;rdquo; mtu=1496 store=persistent&lt;/em&gt;)&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users&amp;gt;netsh int ipv4 show sub
 
@@ -1541,9 +1541,9 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 ------  ---------------  ---------  ---------  -------------
 4294967295                1          0      52364  Loopback Pseudo-Interface 1
   1496                1  55025789  647165843  Ethernet 2
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;On Windows 2019, this took effect immediately. If it doesn&amp;rsquo;t, a reboot should ensure it applies.&lt;br&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;On Windows 2019, this took effect immediately. If it doesn&amp;rsquo;t, a reboot should ensure it applies.
 AD replication - which had been failing - picked right back up as soon as I entered this command.&lt;/p&gt;
-&lt;p&gt;Now, I&amp;rsquo;ve proved that it&amp;rsquo;s an MTU issue, so I&amp;rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp;amp; EType field in the frame. This resulting QinQ frame is often referred to as &amp;lsquo;double tagged&amp;rsquo;.&lt;br&gt;
+&lt;p&gt;Now, I&amp;rsquo;ve proved that it&amp;rsquo;s an MTU issue, so I&amp;rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp;amp; EType field in the frame. This resulting QinQ frame is often referred to as &amp;lsquo;double tagged&amp;rsquo;.
 &lt;img src=&#34;https://gbeifuss.github.io/img/qinq.png&#34; alt=&#34;&#34;  /&gt;&lt;/p&gt;
 &lt;p&gt;You can read more about QinQ in the Cisco article &lt;a class=&#34;link&#34; href=&#34;http://www.cisco.com/en/US/tech/tk389/tk689/technologies_tech_note09186a0080094665.shtml&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Inter-Switch Link and IEEE 802.1Q Frame Format&lt;/a&gt;&lt;/p&gt;

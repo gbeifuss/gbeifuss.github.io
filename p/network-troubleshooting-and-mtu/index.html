@@ -167,13 +167,13 @@
 
     <section class="article-content">
     <p>These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&rsquo;s not super advanced work.</p>
-<p>For about 8 months now, we&rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&rsquo;s still not in use because of <em>problems</em>. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. <code>Ping</code> to any system works, but protocols like RDP, SMB and replication (AD &amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site AND I could ping all the other DCs, <code>repadmin /replsummary</code> showed that replication was no longer working.</p>
+<p>For about 8 months now, we&rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&rsquo;s still not in use because of <em>problems</em>. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. <code>Ping</code> to any system works, but protocols like RDP, SMB and replication (AD &amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site <strong>and</strong> I could ping all the other DCs, <code>repadmin /replsummary</code> showed that replication was no longer working.</p>
 <p>Here&rsquo;s a simple topology diagram in ASCII art:</p>
 <pre tabindex="0"><code>Head Office core switch - Head Office firewall - VPN Tunnel over internet - SiteA firewall - SiteA core switch
 vs.
 Head Office core switch - dedicated L2 link - SiteA core switch
 </code></pre><p>I knew this was going to be a pain to troubleshoot, especially since I couldn&rsquo;t take the whole DR site offline whenever I wanted during the day to conduct tests. I quintuple checked the configuration and didn&rsquo;t find any errors. I compared it line-by-line to another site we have this same setup (dedicated link between core switches) and everything was configured correctly.</p>
-<p>I finally decided to bite the bullet spend a couple of late nights trying to gather information so that I could quantify the precise problem. Because the physical layer was out of my control, the data link layer seemed fine (also out of my control&hellip;mostly) and <code>ping</code> worked (layer 3), I was pretty confident the issue originated at the Network layer, or higher.</p>
+<p>I finally decided to bite the bullet and spent a couple of late nights trying to gather information so that I could quantify the precise problem. Because the physical layer was out of my control, the data link layer seemed fine (also out of my control&hellip;mostly) and <code>ping</code> worked (layer 3), I was pretty confident the issue originated at the Network layer, or higher.</p>
 <p>I started by looking at the packet sizes. I knew that ping was a tiny packet, while things like replication and SMB would probably exceed the MTU. I ran some tests with the <code>ping -f -l</code> to determine the maximum packet size that could successfully transit the link.</p>
 <pre tabindex="0"><code>No.     Time           Source                Destination           Protocol Length ICMP Length Info
       1 0.000000       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37568/49298, ttl=128 (reply in 2)
@@ -201,19 +201,19 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 <ul>
 <li>ServerA</li>
 <li>Hyper-V host server</li>
-<li>Remote site core switch<br>
+<li>Remote site core switch
 &hellip; L2 Dedicated Link beyond my control&hellip;</li>
 <li>Head Office core switch</li>
 </ul>
 <p>Both switches were set with an MTU of 1500 bytes, which is pretty standard. The Hyper-V host server used the Windows default of 1500, as did ServerA. So it looked like MTUs haven&rsquo;t been altered in a meaningful way.</p>
 <p>I ran a series of packet captures to see if anything looked unusual. Nothing jumped out at me, but I did notice that whenever the packet size exceeded 1500-ish bytes, there were lots of retranmissions and/or errors.</p>
 <p>Wait! How is it that a server with an MTU of 1500 is sending packets that are 2600 bytes?</p>
-<p>Wireshark uses winpcap (or libpcap) to grab the data <em>before</em> it&rsquo;s handed to the NIC:<br>
+<p>Wireshark uses winpcap (or libpcap) to grab the data <em>before</em> it&rsquo;s handed to the NIC:
 <img src="/img/wireshark.png" alt=""  /></p>
 <p>Many OS and NIC drivers support <em>TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload</em> which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&hellip; with offloading enabled, this task is now completed <em>after</em> Wireshark has grabbed the data, so it&rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.</p>
 <p>Back to my regularly scheduled commentary&hellip;</p>
-<p>Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&rsquo;s 1468, which is the largest setting that worked with the Don&rsquo;tFragment flag set, plus the 28 byte IP header. Let&rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:<br>
-<code>netsh int ipv4 show sub</code><br>
+<p>Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&rsquo;s 1468, which is the largest setting that worked with the Don&rsquo;tFragment flag set, plus the 28 byte IP header. Let&rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:
+<code>netsh int ipv4 show sub</code>
 (the full command is <em>netsh interface ipv4 show subinterfaces</em>, but I generally use the shorthand).</p>
 <pre tabindex="0"><code>C:\Users&gt;netsh int ipv4 show sub
 
@@ -221,8 +221,8 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 ------  ---------------  ---------  ---------  -------------
 4294967295                1          0      52364  Loopback Pseudo-Interface 1
   1500                1  550194231  647147510  Ethernet 2
-</code></pre><p>Let&rsquo;s update this:<br>
-<code>netsh in ipv4 set sub &quot;Ethernet 2&quot; mtu=1496 store=persistent</code><br>
+</code></pre><p>Let&rsquo;s update this:
+<code>netsh in ipv4 set sub &quot;Ethernet 2&quot; mtu=1496 store=persistent</code>
 (<em>netsh interface ipv4 set subinterface &ldquo;Ethernet 2&rdquo; mtu=1496 store=persistent</em>)</p>
 <pre tabindex="0"><code>C:\Users&gt;netsh int ipv4 show sub
 
@@ -230,9 +230,9 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 ------  ---------------  ---------  ---------  -------------
 4294967295                1          0      52364  Loopback Pseudo-Interface 1
   1496                1  55025789  647165843  Ethernet 2
-</code></pre><p>On Windows 2019, this took effect immediately. If it doesn&rsquo;t, a reboot should ensure it applies.<br>
+</code></pre><p>On Windows 2019, this took effect immediately. If it doesn&rsquo;t, a reboot should ensure it applies.
 AD replication - which had been failing - picked right back up as soon as I entered this command.</p>
-<p>Now, I&rsquo;ve proved that it&rsquo;s an MTU issue, so I&rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp; EType field in the frame. This resulting QinQ frame is often referred to as &lsquo;double tagged&rsquo;.<br>
+<p>Now, I&rsquo;ve proved that it&rsquo;s an MTU issue, so I&rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp; EType field in the frame. This resulting QinQ frame is often referred to as &lsquo;double tagged&rsquo;.
 <img src="/img/qinq.png" alt=""  /></p>
 <p>You can read more about QinQ in the Cisco article <a class="link" href="http://www.cisco.com/en/US/tech/tk389/tk689/technologies_tech_note09186a0080094665.shtml"  target="_blank" rel="noopener"
     >Inter-Switch Link and IEEE 802.1Q Frame Format</a></p>
