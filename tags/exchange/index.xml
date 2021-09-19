@@ -6,7 +6,16 @@
     <description>Recent content in Exchange on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 09 Sep 2021 09:29:17 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/exchange/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Sep 2021 15:49:45 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/exchange/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Remediating an Internal IP Disclosure with Netscaler</title>
+      <link>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
+      <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
+      <description>How to use Netscaler to remediate a Nessus-reported internal IP disclosure for Exchange</description>
+    </item>
+    
     <item>
       <title>Exchange Transaction Logs won&#39;t clear</title>
       <link>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</link>

@@ -6,7 +6,25 @@
     <description>Recent content in Tags on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 13 Sep 2021 23:35:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Sep 2021 15:49:45 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exchange</title>
+      <link>https://gbeifuss.github.io/tags/exchange/</link>
+      <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/tags/exchange/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Netscaler</title>
+      <link>https://gbeifuss.github.io/tags/netscaler/</link>
+      <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/tags/netscaler/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>vscode</title>
       <link>https://gbeifuss.github.io/tags/vscode/</link>
@@ -22,15 +40,6 @@
       <pubDate>Mon, 13 Sep 2021 23:35:09 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/tags/hugo/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Exchange</title>
-      <link>https://gbeifuss.github.io/tags/exchange/</link>
-      <pubDate>Thu, 09 Sep 2021 09:29:17 -0400</pubDate>
-      
-      <guid>https://gbeifuss.github.io/tags/exchange/</guid>
       <description></description>
     </item>
     
@@ -94,15 +103,6 @@
       <pubDate>Wed, 14 Jul 2021 08:21:50 -0400</pubDate>
       
       <guid>https://gbeifuss.github.io/tags/docker/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Netscaler</title>
-      <link>https://gbeifuss.github.io/tags/netscaler/</link>
-      <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
-      
-      <guid>https://gbeifuss.github.io/tags/netscaler/</guid>
       <description></description>
     </item>
     
