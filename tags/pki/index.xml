@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>PKI on Greg Beifuss</title>
+    <link>https://gbeifuss.github.io/tags/pki/</link>
+    <description>Recent content in PKI on Greg Beifuss</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 24 Sep 2021 10:12:43 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/pki/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cisco Management Tunnel - ASA Configuration</title>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</link>
+      <pubDate>Fri, 24 Sep 2021 10:12:43 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</guid>
+      <description>Configuring a Cisco ASA to support a Management Tunnel</description>
+    </item>
+    
+    <item>
+      <title>Cisco Management Tunnel - NDES Setup</title>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</link>
+      <pubDate>Fri, 24 Sep 2021 08:25:46 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</guid>
+      <description>How to configure NDES and Certificate Templates to support a Cisco Management Tunnel</description>
+    </item>
+    
+    <item>
+      <title>Cisco Management Tunnel</title>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel/</link>
+      <pubDate>Fri, 24 Sep 2021 07:26:05 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel/</guid>
+      <description>What is a Cisco AnyConnect Management Tunnel?</description>
+    </item>
+    
+  </channel>
+</rss>

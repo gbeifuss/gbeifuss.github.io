@@ -6,7 +6,16 @@
     <description>Recent content in Netscaler on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 17 Sep 2021 15:49:45 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/netscaler/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 21 Sep 2021 10:18:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/netscaler/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
+      <link>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
+      <pubDate>Tue, 21 Sep 2021 10:18:20 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
+      <description>Block HTTP/1.0 requests with Netscaler, to prevent internal IP disclosure from Exchange, by rewriting them to HTTP/1.1</description>
+    </item>
+    
     <item>
       <title>Remediating an Internal IP Disclosure with Netscaler</title>
       <link>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>

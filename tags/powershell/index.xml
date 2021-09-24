@@ -6,7 +6,16 @@
     <description>Recent content in Powershell on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Sep 2021 22:12:49 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 24 Sep 2021 08:25:46 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cisco Management Tunnel - NDES Setup</title>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</link>
+      <pubDate>Fri, 24 Sep 2021 08:25:46 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</guid>
+      <description>How to configure NDES and Certificate Templates to support a Cisco Management Tunnel</description>
+    </item>
+    
     <item>
       <title>Exchange DAGs and Cluster Ownership</title>
       <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>

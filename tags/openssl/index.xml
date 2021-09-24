@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>openssl on Greg Beifuss</title>
+    <link>https://gbeifuss.github.io/tags/openssl/</link>
+    <description>Recent content in openssl on Greg Beifuss</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 23 Sep 2021 08:43:28 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/openssl/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Installing a certificate in PowerApps</title>
+      <link>https://gbeifuss.github.io/p/installing-a-certificate-in-powerapps/</link>
+      <pubDate>Thu, 23 Sep 2021 08:43:28 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/installing-a-certificate-in-powerapps/</guid>
+      <description>Installing a TLS/SSL certificate in Microsoft Dynamics PowerApps</description>
+    </item>
+    
+  </channel>
+</rss>

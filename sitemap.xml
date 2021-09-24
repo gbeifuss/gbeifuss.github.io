@@ -2,32 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://gbeifuss.github.io/tags/exchange/</loc>
-    <lastmod>2021-09-17T15:49:45-04:00</lastmod>
+    <loc>https://gbeifuss.github.io/tags/cisco-asa/</loc>
+    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</loc>
+    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2021-09-17T15:49:45-04:00</lastmod>
+    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/netscaler/</loc>
-    <lastmod>2021-09-17T15:49:45-04:00</lastmod>
+    <loc>https://gbeifuss.github.io/tags/pki/</loc>
+    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2021-09-17T15:49:45-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</loc>
-    <lastmod>2021-09-17T15:49:45-04:00</lastmod>
+    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</loc>
+    <lastmod>2021-09-24T08:25:46-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/powershell/</loc>
+    <lastmod>2021-09-24T08:25:46-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/cisco-management-tunnel/</loc>
+    <lastmod>2021-09-24T07:26:05-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/dynamics/</loc>
+    <lastmod>2021-09-23T08:43:28-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/installing-a-certificate-in-powerapps/</loc>
+    <lastmod>2021-09-23T08:43:28-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/openssl/</loc>
+    <lastmod>2021-09-23T08:43:28-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/exchange/</loc>
+    <lastmod>2021-09-21T10:18:20-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/netscaler/</loc>
+    <lastmod>2021-09-21T10:18:20-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</loc>
+    <lastmod>2021-09-21T10:18:20-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</loc>
     <lastmod>2021-09-17T15:49:45-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -62,11 +112,6 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/powershell/</loc>
-    <lastmod>2021-09-06T22:12:49-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/tags/prtg/</loc>
     <lastmod>2021-09-06T22:12:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -93,11 +138,6 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/tags/api/</loc>
-    <lastmod>2021-08-30T22:37:13-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/dynamics/</loc>
     <lastmod>2021-08-30T22:37:13-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
