@@ -159,7 +159,8 @@ When you connect back to a User Tunnel, the Management Tunnel will disconnect an
 &lt;li&gt;Delete the certificate in Local Machine Certificates\Personal\Certificates&lt;/li&gt;
 &lt;li&gt;Start the Cisco AnyConnect service again&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;I also set &lt;code&gt;anyconnect-custom-data ManagementTunnelAllAllowed Value true/true&lt;/code&gt; based on another article I&amp;rsquo;d read, but this doesn&amp;rsquo;t seem to be necessary.&lt;/p&gt;
+&lt;p&gt;I also had to adjust the Dynamic Access Policy in use by the User Profile. We were checking for the presence of a certain AV product, but it was causing problems. Now we don&amp;rsquo;t check that, but check for other things.&lt;/p&gt;
+&lt;p&gt;I also originally set &lt;code&gt;anyconnect-custom-data ManagementTunnelAllAllowed Value true/true&lt;/code&gt; based on another article I&amp;rsquo;d read, but this is not necessary.&lt;/p&gt;
 &lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
 &lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://technook.home.blog/2019/07/11/cisco-anyconnect-managent-vpn-tunnel-microsoft-ca/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
