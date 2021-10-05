@@ -2,6 +2,61 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://gbeifuss.github.io/</loc>
+    <lastmod>2021-10-05T14:54:15-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/hugo/</loc>
+    <lastmod>2021-10-05T14:54:15-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/hugo-google-analytics/</loc>
+    <lastmod>2021-10-05T14:54:15-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/post/</loc>
+    <lastmod>2021-10-05T14:54:15-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2021-10-05T14:54:15-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/powershell/</loc>
+    <lastmod>2021-10-05T09:51:28-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/vs-code-markdown/</loc>
+    <lastmod>2021-10-05T09:51:28-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/vscode/</loc>
+    <lastmod>2021-10-05T09:51:28-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/api/</loc>
+    <lastmod>2021-10-04T15:47:05-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/netscaler/</loc>
+    <lastmod>2021-10-04T15:47:05-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/working-with-json-in-powershell/</loc>
+    <lastmod>2021-10-04T15:47:05-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://gbeifuss.github.io/tags/cisco-asa/</loc>
     <lastmod>2021-09-24T10:12:43-04:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -12,32 +67,12 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/tags/pki/</loc>
     <lastmod>2021-09-24T10:12:43-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
-    <lastmod>2021-09-24T10:12:43-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</loc>
-    <lastmod>2021-09-24T08:25:46-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/powershell/</loc>
     <lastmod>2021-09-24T08:25:46-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -67,11 +102,6 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/netscaler/</loc>
-    <lastmod>2021-09-21T10:18:20-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</loc>
     <lastmod>2021-09-21T10:18:20-04:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -82,18 +112,8 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/p/using-multicursor-in-vs-ccode/</loc>
+    <loc>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</loc>
     <lastmod>2021-09-13T23:35:20-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/vscode/</loc>
-    <lastmod>2021-09-13T23:35:20-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/hugo/</loc>
-    <lastmod>2021-09-13T23:35:09-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -134,11 +154,6 @@
   </url><url>
     <loc>https://gbeifuss.github.io/tags/git/</loc>
     <lastmod>2021-09-02T07:37:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/api/</loc>
-    <lastmod>2021-08-30T22:37:13-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>

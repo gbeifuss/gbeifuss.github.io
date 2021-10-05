@@ -6,7 +6,16 @@
     <description>Recent content in Netscaler on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Sep 2021 10:18:20 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/netscaler/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 04 Oct 2021 15:47:05 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/netscaler/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Working with JSON in Powershell</title>
+      <link>https://gbeifuss.github.io/p/working-with-json-in-powershell/</link>
+      <pubDate>Mon, 04 Oct 2021 15:47:05 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/working-with-json-in-powershell/</guid>
+      <description>Passing a Powershell object to the Netscaler API via. JSON</description>
+    </item>
+    
     <item>
       <title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
       <link>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>

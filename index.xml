@@ -6,7 +6,102 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Fri, 24 Sep 2021 10:12:43 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 05 Oct 2021 14:54:15 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Hugo &amp; Google Analytics</title>
+        <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
+        <pubDate>Tue, 05 Oct 2021 14:54:15 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/hugo-google-analytics/</guid>
+        <description>&lt;p&gt;Hugo has integrated support (via. Internal Templates) for Google Analytics. An internal template adds support for some very common use cases on static websites. For example: Google Analytics, Disqus comments, Google News, and Twitter Cards. Internal templates certainly exist in v.0.87 and higher, but I&amp;rsquo;m not sure when support for them was first added. If your install of Hugo is out of date, now might be a good time to update it.&lt;/p&gt;
+&lt;p&gt;The first step, is to sign up for Google Analytics and adding your particular site (aka. &lt;em&gt;property&lt;/em&gt;), if you&amp;rsquo;ve not done so already. I&amp;rsquo;ll wait while you do that&amp;hellip;
+&lt;em&gt;&amp;hellip;twiddles thumbs&amp;hellip;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Next, we need to find the Measurement ID (previously, &lt;em&gt;Tracking ID&lt;/em&gt;) that Google has assigned to the property that you have setup.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Click Admin&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Data Streams&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click on your property from the list&lt;/li&gt;
+&lt;li&gt;Measurement ID should appear in the upper-right portion of the panel&lt;/li&gt;
+&lt;li&gt;Copy or make a note of the Measurement ID&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Measurement ID should have the format &lt;code&gt;G-HMPAE821CR&lt;/code&gt;. The ID is unique! With this in hand, let&amp;rsquo;s tell Hugo to use it for all our webpages.&lt;/p&gt;
+&lt;p&gt;Open the &lt;code&gt;config&lt;/code&gt; file. (This will be located in the root directory of your Hugo site. The &lt;code&gt;config&lt;/code&gt; file can be variety of different formats - mine is YAML so it&amp;rsquo;s named &lt;code&gt;config.yaml&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;There will be a line that looks something like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;c&#34;&gt;# GA Tracking ID&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;googleAnalytics&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Add the Measurement ID that you&amp;rsquo;d previously noted to the &lt;code&gt;googleAnalytics:&lt;/code&gt; field:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;c&#34;&gt;# GA Tracking ID&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;googleAnalytics&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;G-HMPAE821CR&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Save the file.&lt;/p&gt;
+&lt;p&gt;That’s really all you have to do to set the Google Analytics Tracking ID in Hugo. My theme - &lt;a class=&#34;link&#34; href=&#34;https://docs.stack.jimmycai.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;hugo-stack-theme&lt;/a&gt;] - automatically has support for this internal template, so my site started sending tracking data to Google Analytics right away.&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;p&gt;An article I referenced when figuring this out was:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://cloudywithachanceofdevops.com/posts/2018/05/17/setting-up-google-analytics-on-hugo/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Setting Up Google Analytics on Hugo&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>VS Code &amp; Markdown</title>
+        <link>https://gbeifuss.github.io/p/vs-code-markdown/</link>
+        <pubDate>Tue, 05 Oct 2021 09:51:28 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vs-code-markdown/</guid>
+        <description>&lt;p&gt;VS Code automatically trims any trailing whitespace in a file, which makes sense for a lot of formats, but in markdown, a double trailing whitespace has special meaning - it acts as a &lt;code&gt;&amp;lt;BR&amp;gt;&lt;/code&gt; and creates a line break without a hard return.
+This automatic trim also occurs when formatting a file according to the language&amp;rsquo;s rules.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s configure VS Code to continue automatically trimming trailing whitespace, &lt;em&gt;except&lt;/em&gt; for markdown files:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the Command Palette (View, Command Palette…. or CTRL+SHIFT+P)&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;Preferences: Open Settings (JSON)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the snippet:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;[markdown]&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;#34;files.trimTrailingWhitespace&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;false&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Save &lt;code&gt;settings.json&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
+        <title>Working with JSON in Powershell</title>
+        <link>https://gbeifuss.github.io/p/working-with-json-in-powershell/</link>
+        <pubDate>Mon, 04 Oct 2021 15:47:05 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/working-with-json-in-powershell/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve recently been editing a Powershell script that manages our Let&amp;rsquo;s Encrypt certificates and their integration with Netscaler. I&amp;rsquo;ve been using John Billeken&amp;rsquo;s excellent &lt;a class=&#34;link&#34; href=&#34;https://github.com/j81blog/GenLeCertForNS&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GenLeCertForNS&lt;/a&gt; script to do the heavy lifting, but I&amp;rsquo;ve written a front-end wrapper for it to handle the way I need it to work in my environment. [I started using this with &lt;em&gt;v.2.63&lt;/em&gt;, which didn&amp;rsquo;t have email capabilities. My front-end wrapper adds email reporting, plus obfuscuating any credentials in the log, and loading the credentials from an encypted XML file].
+I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to update two Netscaler appliances with the same certificate: if the CN matched certain values, the script will find the same Let&amp;rsquo;s Encrypt certificate .pfx, upload it to the Netscaler at our warm Disaster Recovery site and properly bind it.&lt;/p&gt;
+&lt;p&gt;To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/powershell-netscaler-api/&#34; &gt;Powershell &amp;amp; Netscaler API&lt;/a&gt;. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.&lt;/p&gt;
+&lt;p&gt;According to the &lt;a class=&#34;link&#34; href=&#34;https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/12.1/configuration/ssl/sslcertkey/sslcertkey/#link&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Citrix ADC NITRO API Reference&lt;/a&gt;, I need:
+&lt;strong&gt;URL:&lt;/strong&gt; http://&amp;lt;Citrix-ADC-IP-address(NSIP)&amp;gt;/nitro/v1/config/sslcertkey?action=link&lt;br&gt;
+&lt;strong&gt;HTTP Method:&lt;/strong&gt; POST&lt;br&gt;
+&lt;strong&gt;Request Headers:&lt;/strong&gt; Cookie:NITRO_AUTH_TOKEN=&lt;!-- raw HTML omitted --&gt; Content-Type:application/json&lt;br&gt;
+&lt;strong&gt;Request Payload:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+    &amp;quot;sslcertkey&amp;quot;:
+  {
+    &amp;quot;certkey&amp;quot;:&amp;lt;String_value&amp;gt;,
+    &amp;quot;linkcertkeyname&amp;quot;:&amp;lt;String_value&amp;gt;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This is a JSON format. While I could just use a straight string (ie. &lt;code&gt;$string=&amp;quot;{&amp;quot;sslcertkey&amp;quot;:{&amp;quot;linkcertkeyname&amp;quot;:&amp;quot;Sectigo RSA CA 2018&amp;quot;,&amp;quot;certkey&amp;quot;:&amp;quot;sts.agricorp.com&amp;quot;}}&amp;quot;)&lt;/code&gt;) or a multiline string (ie. &lt;code&gt;$string=&amp;quot;@TEXT@&amp;quot;&lt;/code&gt;), I figured that I should take the effort to learn a bit about taking an object and converting it to JSON.&lt;/p&gt;
+&lt;p&gt;My initial attempts to get this working were all wrong. I finally managed to get the key/value pairs properly written to a hashtable, and then converted it to JSON.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;@{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;certkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;$CertificateCertKeyName&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;linkcertkeyname&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;$IntermediateCACertKeyName&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;@{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;sslcertkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;$jsonPayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ConvertTo-Json&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-InputObject&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Depth&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Compress&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output of &lt;code&gt;$jsonPayload&lt;/code&gt; looks like this:&lt;br&gt;
+&lt;code&gt;{&amp;quot;sslcertkey&amp;quot;:{&amp;quot;linkcertkeyname&amp;quot;:&amp;quot;Sectigo RSA CA 2018&amp;quot;,&amp;quot;certkey&amp;quot;:&amp;quot;sts.agricorp.com&amp;quot;}}&lt;/code&gt;&lt;br&gt;
+&amp;hellip;perfectly formatted JSON that I can pass through to the Netscaler:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$URI&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://netscaler03.corp.company.com/nitro/v1/config&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;$headers&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;@{&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;X-NITRO-USER&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;$netscalerID&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;X-NITRO-PASS&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;$netscalerPwd&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;...&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;@{&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;@{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;sslcertkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;@{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;certkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;$CertificateCertKeyName&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;linkcertkeyname&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;$IntermediateCACertKeyName&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;$jsonPayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ConvertTo-Json&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-InputObject&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Depth&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Compress&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;$response&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Invoke-RestMethod&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Method&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;POST&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Uri&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;$uri`/sslcertkey?action=link&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ContentType&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;application&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;json&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Headers&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$headers&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Body&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$JsonPayload&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
         <title>Cisco Management Tunnel - ASA Configuration</title>
         <link>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</link>
         <pubDate>Fri, 24 Sep 2021 10:12:43 -0400</pubDate>
@@ -674,11 +769,11 @@ closed
 &lt;/code&gt;&lt;/pre&gt;</description>
         </item>
         <item>
-        <title>Using multicursor in VS Ccode</title>
-        <link>https://gbeifuss.github.io/p/using-multicursor-in-vs-ccode/</link>
+        <title>Using multicursor in VS Code</title>
+        <link>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</link>
         <pubDate>Mon, 13 Sep 2021 23:35:20 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/using-multicursor-in-vs-ccode/</guid>
+        <guid>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</guid>
         <description>&lt;p&gt;CTRL-ALT-L enables multiple cursors in Visual Studio Code.&lt;/p&gt;
 &lt;p&gt;That is all.&lt;/p&gt;
 &lt;p&gt;(Technically CTRL-ALT-L is the keyboard shortcut for &amp;lsquo;Select all occurrences of current selection&amp;rsquo;. Select a word, press CTRL-ALT-L and a cursor will appear to the left of every instance of that word. It&amp;rsquo;s a useful alternative to Find/Replace.)&lt;/p&gt;
@@ -2227,7 +2322,26 @@ cd public
 git add .
 git commit -m &amp;quot;Website update 2021-08-03&amp;quot;
 git push origin main
-&lt;/code&gt;&lt;/pre&gt;</description>
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I&amp;rsquo;ve also been trying to sort out how to update the theme I use (Stack), which is periodically updated. Right now my process is to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;log into github and pull the latest release into my fork&lt;/li&gt;
+&lt;li&gt;delete the contents of &lt;code&gt;\themes\hugo-stack-theme&lt;/code&gt; on my computer&lt;/li&gt;
+&lt;li&gt;tell git to repopulate the directory:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-git&#34; data-lang=&#34;git&#34;&gt;\myblog.dev.repo\themes&amp;gt; git clone git@github.com:gbeifuss/hugo-theme-stack hugo-theme-stack
+
+Cloning into &#39;hugo-theme-stack&#39;...
+remote: Enumerating objects: 3111, done.
+remote: Counting objects: 100% (1026/1026), done.
+remote: Compressing objects: 100% (416/416), done.
+remote: Total 3111 (delta 796), reused 695 (delta 601), pack-reused 2085
+Receiving objects: 100% (3111/3111), 841.36 KiB | 2.85 MiB/s, done.
+Resolving deltas: 100% (1958/1958), done.
+
+\myblog.dev.repo\themes&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;recopy my avatar image to &lt;code&gt;\themes\hugo-stack-theme\assets\img\&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
         </item>
         <item>
         <title>Array Speed in Powershell</title>

@@ -6,7 +6,16 @@
     <description>Recent content in Hugo on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 13 Sep 2021 23:35:09 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 05 Oct 2021 14:54:15 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hugo &amp; Google Analytics</title>
+      <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
+      <pubDate>Tue, 05 Oct 2021 14:54:15 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/hugo-google-analytics/</guid>
+      <description>How to integrate Google Analytics with a Hugo website</description>
+    </item>
+    
     <item>
       <title>Hugo error - REF_NOT_FOUND</title>
       <link>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</link>

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Block HTTP/1.0 requests with Netscaler, to prevent internal IP disclosure from Exchange, by rewriting them to HTTP/1.1'><title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Prevent VS Code from automatically trimming any trailing whitespace in markdown files'><title>VS Code &amp; Markdown</title>
 
-<link rel='canonical' href='https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/vs-code-markdown/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler'>
-<meta property='og:description' content='Prevent IP disclosure to HTTP/1.0 requests from Exchange'>
-<meta property='og:url' content='https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='VS Code &amp; Markdown'>
+<meta property='og:description' content='Prevent VS Code from trimming trailing whitespace in markdown files'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/vs-code-markdown/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Exchange' /><meta property='article:tag' content='Netscaler' /><meta property='article:published_time' content='2021-09-21T10:18:20-04:00'/><meta property='article:modified_time' content='2021-09-21T10:18:20-04:00'/>
-<meta name="twitter:title" content="Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler">
-<meta name="twitter:description" content="Prevent IP disclosure to HTTP/1.0 requests from Exchange">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='vscode' /><meta property='article:published_time' content='2021-10-05T09:51:28-04:00'/><meta property='article:modified_time' content='2021-10-05T09:51:28-04:00'/>
+<meta name="twitter:title" content="VS Code &amp; Markdown">
+<meta name="twitter:description" content="Prevent VS Code from trimming trailing whitespace in markdown files">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
 <script>
 var doNotTrack = false;
@@ -156,12 +156,12 @@ if (!doNotTrack) {
     
 
     <h2 class="article-title">
-        <a href="/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/">Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</a>
+        <a href="/p/vs-code-markdown/">VS Code &amp; Markdown</a>
     </h2>
 
     
     <h3 class="article-subtitle">
-        Prevent IP disclosure to HTTP/1.0 requests from Exchange
+        Prevent VS Code from trimming trailing whitespace in markdown files
     </h3>
     <footer class="article-time">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -172,38 +172,24 @@ if (!doNotTrack) {
 
 
 
-        <time class="article-time--published">Sep 21, 2021</time>
+        <time class="article-time--published">Oct 05, 2021</time>
     </footer></div>
 </header>
 
     <section class="article-content">
-    <p>I&rsquo;ve already written about <a class="link" href="https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/" >Remediating an Internal IP Disclosure with Netscaler</a>, but I found out today that the route I&rsquo;d chosen prevents Outlook from authenticating. Oops!</p>
-<p>To summarize the earlier post, Exchange was leaking an internal IP and servername when an HTTP/1.0 packet was set <em>without a host header</em> to <code>/autodiscover/autodiscover.xml</code>. I initially tried to fix it by deleting the WWW-Authenticate and X-FEServer headers from the replies using Netscaler.</p>
-<p>However, while that prevents the information from being leaked, it also prevents Outlook from properly loading when the traffic flows through Netscaler. In our case, internal traffic was fine, but people who rely on Outlook and autodiscover outside of our network couldn&rsquo;t log in. I tested and removing the X-FEServer header permitted Outlook to load normally; it was removing the WWW-Authenticate header that caused the problem.</p>
-<p>I tried out some alternate methods of blocking an internal IP in the WWW-Authenticate field (specifically, a reply containing <code>basic realm=&quot;10.10.10.10</code>), but it seems like there&rsquo;s important authentication using that field. I came up with another approach which seems to be working: Since this vulnerability is the result of a HTTP/1.0 request, rewrite HTTP/1.0 requests to HTTP/1.1. HTTP/1.1 <em>requires</em> the host header field, which means that IIS won&rsquo;t happily disclose internal IPs in response to a missing host header. HTTP/1.1 has been a standard since 1997 and there should literally be no device in the past 20 years which does not support it.</p>
-<p>Let&rsquo;s get to work. I&rsquo;ll create a rewrite policy that looks for HTTP/1.0. If it&rsquo;s found, replace it with HTTP/1.1.</p>
-<pre tabindex="0"><code>add rewrite action RW_ACTION_HTTP1.0 replace HTTP.REQ.VERSION.MINOR &quot;\&quot;1\&quot;&quot;
-add rewrite policy RW_POLICY_HTTP1.0 &quot;HTTP.REQ.VERSION.MINOR.EQ(0)&quot; RW_ACTION_HTTP1.0
-bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_HTTP1.0 -priority 110 -gotoPriorityExpression END -type REQUEST
-</code></pre><p>Let&rsquo;s test and make sure that the internal information is no longer returned:</p>
-<pre tabindex="0"><code>GET /autodiscover/autodiscover.xml HTTP/1.0
-
-HTTP/1.1 400 Bad Request
-Content-Type: text/html; charset=us-ascii
-Server: Microsoft-HTTPAPI/2.0
-Date: Tue, 21 Sep 2021 14:16:46 GMT
-Connection: close
-Content-Length: 334
-Strict-Transport-Security: max-age=15552000
-
-&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot;&quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt;
-&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;Bad Request&lt;/TITLE&gt;
-&lt;META HTTP-EQUIV=&quot;Content-Type&quot; Content=&quot;text/html; charset=us-ascii&quot;&gt;&lt;/HEAD&gt;
-&lt;BODY&gt;&lt;h2&gt;Bad Request - Invalid Hostname&lt;/h2&gt;
-&lt;hr&gt;&lt;p&gt;HTTP Error 400. The request hostname is invalid.&lt;/p&gt;
-&lt;/BODY&gt;&lt;/HTML&gt;
-closed
-</code></pre><p>Great! The request is rejected (404) because HTTP/1.1 requires a host header, and this rewritten HTTP/1.0 request doesn&rsquo;t have one.</p>
+    <p>VS Code automatically trims any trailing whitespace in a file, which makes sense for a lot of formats, but in markdown, a double trailing whitespace has special meaning - it acts as a <code>&lt;BR&gt;</code> and creates a line break without a hard return.
+This automatic trim also occurs when formatting a file according to the language&rsquo;s rules.</p>
+<p>Let&rsquo;s configure VS Code to continue automatically trimming trailing whitespace, <em>except</em> for markdown files:</p>
+<ol>
+<li>Open the Command Palette (View, Command Palette…. or CTRL+SHIFT+P)</li>
+<li>Select <code>Preferences: Open Settings (JSON)</code></li>
+<li>Add the snippet:
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="s2">&#34;[markdown]&#34;</span><span class="err">:</span> <span class="p">{</span>
+    <span class="nt">&#34;files.trimTrailingWhitespace&#34;</span><span class="p">:</span> <span class="kc">false</span>
+<span class="p">}</span>
+</code></pre></div></li>
+<li>Save <code>settings.json</code></li>
+</ol>
 
 </section>
 
@@ -212,9 +198,9 @@ closed
     
     <section class="article-tags">
         
-            <a href="/tags/exchange/">Exchange</a>
+            <a href="/tags/powershell/">Powershell</a>
         
-            <a href="/tags/netscaler/">Netscaler</a>
+            <a href="/tags/vscode/">vscode</a>
         
     </section>
 
@@ -238,25 +224,6 @@ closed
 
     <aside class="related-contents--wrapper">
     
-    
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
-                
-                    
-<article class="">
-    <a href="/p/remediating-an-internal-ip-disclosure-with-netscaler/">
-        
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Remediating an Internal IP Disclosure with Netscaler</h2>
-        </div>
-    </a>
-</article>
-                
-            </div>
-        </div>
     
 </aside>
 

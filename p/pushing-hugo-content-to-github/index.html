@@ -70,7 +70,7 @@ if (!doNotTrack) {
                     
                     
                         
-                        <img src="/img/thundercats_hu9a24e231e64a85a7d6a9b0b68ceb2904_7602_300x0_resize_box_3.png" width="300"
+                        <img src="/img/thundercats_hu0767827710a81d51f383d224efe0e563_9082_300x0_resize_box_3.png" width="300"
                             height="300" class="site-logo" loading="lazy" alt="Avatar">
                     
                 
@@ -209,7 +209,26 @@ cd public
 git add .
 git commit -m &quot;Website update 2021-08-03&quot;
 git push origin main
-</code></pre>
+</code></pre><p>I&rsquo;ve also been trying to sort out how to update the theme I use (Stack), which is periodically updated. Right now my process is to:</p>
+<ul>
+<li>log into github and pull the latest release into my fork</li>
+<li>delete the contents of <code>\themes\hugo-stack-theme</code> on my computer</li>
+<li>tell git to repopulate the directory:
+<pre tabindex="0"><code class="language-git" data-lang="git">\myblog.dev.repo\themes&gt; git clone git@github.com:gbeifuss/hugo-theme-stack hugo-theme-stack
+
+Cloning into 'hugo-theme-stack'...
+remote: Enumerating objects: 3111, done.
+remote: Counting objects: 100% (1026/1026), done.
+remote: Compressing objects: 100% (416/416), done.
+remote: Total 3111 (delta 796), reused 695 (delta 601), pack-reused 2085
+Receiving objects: 100% (3111/3111), 841.36 KiB | 2.85 MiB/s, done.
+Resolving deltas: 100% (1958/1958), done.
+
+\myblog.dev.repo\themes&gt;
+</code></pre></li>
+<li>recopy my avatar image to <code>\themes\hugo-stack-theme\assets\img\</code></li>
+</ul>
+
 </section>
 
 
