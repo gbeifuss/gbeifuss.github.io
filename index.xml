@@ -6,7 +6,239 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Tue, 05 Oct 2021 14:54:15 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 28 Oct 2021 08:54:40 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Managing Mailbox moves in Exchange 2016</title>
+        <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>
+        <pubDate>Thu, 28 Oct 2021 08:54:40 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</guid>
+        <description>&lt;p&gt;I manage a 5-server Exchange 2016 DAG at my workplace. Recently, I needed to migrate about 60 users from one database to another. I happen to hate the browser-based Exchange Administration Console (EAC) because it&amp;rsquo;s not very helpful - there&amp;rsquo;s no way to see the status for many &amp;ldquo;in progress&amp;rdquo; tasks, and &lt;em&gt;cancelling&lt;/em&gt; a task generally means you have no way of knowing if was completely cancelled, or partially cancelled&amp;hellip; &lt;strong&gt;very frustrating!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I have a love for Powershell, so I fired up the EMC - hurrah!&lt;br&gt;
+The default number of active migrations is configurable via. Powershell, but I really don&amp;rsquo;t like changing server defaults if there&amp;rsquo;s another way to accomplish what I want. Changing server defaults means that there&amp;rsquo;s one more configuration variation that needs to be tracked in case I need to rebuild a server, or add another server to the DAG.&lt;/p&gt;
+&lt;p&gt;Generally speaking, I like to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Migrate all mailboxes&lt;/li&gt;
+&lt;li&gt;Suspend all Move Requests&lt;/li&gt;
+&lt;li&gt;Have Powershell report on the status of the migration every 30 seconds:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;k&#34;&gt;While&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;InProgress&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}){&lt;/span&gt;
+    &lt;span class=&#34;nb&#34;&gt;Clear-Host&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;InProgress&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-MoveRequestStatistics&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;sort &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;PercentComplete&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Descending&lt;/span&gt;
+    &lt;span class=&#34;nb&#34;&gt;Start-Sleep&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Seconds&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;30&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Open a second EMC instance and have Powershell ensure there are 5 migrations happening concurrently. If there aren&amp;rsquo;t, resume another one:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;k&#34;&gt;While&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;suspended&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-gt&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;){&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;If&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;inprogress&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-lt&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;){&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;suspended&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;})[&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Resume-MoveRequest&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;nb&#34;&gt;Start-Sleep&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Seconds&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;300&lt;/span&gt; 
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also like to make sure that Indexing is disabled when migrating mailboxes: &lt;code&gt;Set-MailboxDatabase tier3-d -IndexEnabled:$false&lt;/code&gt;&lt;br&gt;
+This helps to speed up the process, since Exchange isn&amp;rsquo;t trying to index the mailbox as the move is occurring.&lt;/p&gt;
+&lt;p&gt;If you don&amp;rsquo;t disable the indexing, you may see your migration slow to a crawl, with the error &lt;code&gt;StalledDueToTarget_ContentIndexing&lt;/code&gt;. Oof.&lt;/p&gt;
+&lt;p&gt;After the move is complete, be sure to enable Indexing again, or your users won&amp;rsquo;t be able to search: &lt;code&gt;Set-MailboxDatabase tier3-d -IndexEnabled:$true&lt;/code&gt;&lt;br&gt;
+Then, validate that Indexing is set correctly on all the databases: &lt;code&gt;Get-MailboxDatabase | Select Name,IndexEnabled&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux Upskill Challenge</title>
+        <link>https://gbeifuss.github.io/p/linux-upskill-challenge/</link>
+        <pubDate>Thu, 28 Oct 2021 08:54:12 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/linux-upskill-challenge/</guid>
+        <description>&lt;p&gt;I recently completed the &lt;a class=&#34;link&#34; href=&#34;https://reddit.com/r/linuxupskillchallenge&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Linux Upskill Challenge&lt;/a&gt;, a month-long, self-paced, self-led course curated on Reddit. It&amp;rsquo;s hands-on and is best run with a publically accessible remote server, so that you&amp;rsquo;re mimicing a production server that your organization might host online. (There&amp;rsquo;s &lt;em&gt;less pressure&lt;/em&gt; in administering a server that&amp;rsquo;s only locally available!)&lt;/p&gt;
+&lt;p&gt;These are my thoughts and notes about each day&amp;rsquo;s content - not formal study notes, but informal jot notes on the things I found interesting and important.&lt;/p&gt;
+&lt;h1 id=&#34;rlinuxupskillschallenge&#34;&gt;/r/linuxupskillschallenge&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;Day 0 - Getting Started&lt;/strong&gt;&lt;br&gt;
+Created new Azure Ubuntu VM. Used SSH key for authentication.&lt;br&gt;
+Azure returned a .PEM file. Kitty won&amp;rsquo;t take this - I had to use puttygen.exe to load the PEM and output a PPK. I then created a Kitty profile using this PPK (Connection -&amp;gt; SSH -&amp;gt; Auth) and username &lt;code&gt;azureuser&lt;/code&gt; (Connection -&amp;gt; Data -&amp;gt; Autologin username)&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://docs.bitnami.com/azure/faq/get-started/connect-ssh/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://docs.bitnami.com/azure/faq/get-started/connect-ssh/&lt;/a&gt;&lt;br&gt;
+&lt;em&gt;&lt;strong&gt;linux is case-sensitive&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 1 - Getting Connected&lt;/strong&gt;&lt;br&gt;
+Log in with Windows Terminal (Powershell): &lt;code&gt;ssh -i .\Downloads\Ubuntu_SSH.pem azureuser@23.96.4.131&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;uname -a&lt;/code&gt; shows some server/OS information&lt;br&gt;
+&lt;code&gt;uptime&lt;/code&gt; shows the uptime&lt;br&gt;
+&lt;code&gt;free&lt;/code&gt; shows memory information&lt;br&gt;
+&lt;code&gt;df -h&lt;/code&gt; shows disk space information&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 2 - Navigation&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;cd&lt;/code&gt; and &lt;code&gt;cd ~&lt;/code&gt; do the same thing - return you to your home directory&lt;br&gt;
+&lt;code&gt;man&lt;/code&gt; brings up the manual/help for commands&lt;br&gt;
+&lt;code&gt;pushd&lt;/code&gt; is a way to create a trail of where you&amp;rsquo;ve been. &lt;code&gt;dirs -v&lt;/code&gt; will list the trail easily. &lt;code&gt;popd&lt;/code&gt; will move you around the stack of directories&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 3 - Working as Administrator&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;/etc/shadow&lt;/code&gt; is where the hashed passwords are kept&lt;br&gt;
+&lt;code&gt;sudo&lt;/code&gt; will let you run a command as root&lt;br&gt;
+&lt;code&gt;sudo -i&lt;/code&gt; will pop an interactive sudo session if you&amp;rsquo;ve a number of commands to run. &lt;code&gt;logoff&lt;/code&gt; or &lt;code&gt;exit&lt;/code&gt; will bring you back. The command prompt will change from &lt;code&gt;$&lt;/code&gt; to &lt;code&gt;#&lt;/code&gt; to show you&amp;rsquo;re running as sudo.&lt;br&gt;
+All sudo uses are logged in &lt;code&gt;/var/log/auth.log&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;sudo hostnamectl set-hostname XXXX&lt;/code&gt; will change the hostname of the server&lt;br&gt;
+&lt;code&gt;timedatectl&lt;/code&gt; will adjust the time/date settings. &lt;code&gt;TAB&lt;/code&gt; will autocomplete and/or show other subsequent commands&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 4 - Package Management &amp;amp; File Structure&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;apt&lt;/code&gt; is the Ubuntu package manager for working with applications&lt;br&gt;
+&lt;code&gt;apt search &amp;quot;search term&amp;quot;&lt;/code&gt; will find matching packages&lt;br&gt;
+&lt;code&gt;apt list --installed&lt;/code&gt; will list all installed packages&lt;br&gt;
+&lt;code&gt;apt install &amp;quot;packagename&amp;quot;&lt;/code&gt; will install the package&lt;br&gt;
+Linux uses a different tree structure than Windows.&lt;br&gt;
+&lt;code&gt;/&lt;/code&gt; is the mountpoint - this is eqivalent to C:\&lt;br&gt;
+&lt;code&gt;/root&lt;/code&gt; is the home directory for the root user&lt;br&gt;
+&lt;code&gt;/usr/&lt;/code&gt; is where user directories are kept&lt;br&gt;
+&lt;code&gt;/var&lt;/code&gt; is where variable files are stored. &lt;code&gt;/var/log&lt;/code&gt; is primarily where logs are stored.&lt;br&gt;
+&lt;code&gt;/bin&lt;/code&gt; is where binary files (non-system level) are stored&lt;br&gt;
+&lt;code&gt;/sbin&lt;/code&gt; is where system-level binaries are stored&lt;br&gt;
+&lt;code&gt;/etc&lt;/code&gt; is where most configuration files are stored&lt;br&gt;
+&lt;code&gt;/etc/passwd&lt;/code&gt; is the file containing userids, SSIDs and passwords&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 5 - Less&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;less&lt;/code&gt; is similar to &lt;code&gt;more&lt;/code&gt;, except it doesn&amp;rsquo;t read the whole file at load. In &lt;code&gt;less&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;G&lt;/code&gt; skips to the end&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;g&lt;/code&gt; skipts to the beginning&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;q&lt;/code&gt; quits&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The bash shell stores your command history, writing it all to /usr/azureuser/.bash_history (files beginning with a &lt;code&gt;.&lt;/code&gt; are hidden). &lt;code&gt;history&lt;/code&gt; will list the contents of the file and allow you to manipulate it. Pressing &lt;code&gt;up&lt;/code&gt; or &lt;code&gt;down&lt;/code&gt; will navigate the history from the prompt.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 6 - vi and vim&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;vi&lt;/code&gt; is the classic unix editor. On most modern *nix systems, &lt;code&gt;vi&lt;/code&gt; is an alias for &lt;code&gt;vim&lt;/code&gt; - vi improved.&lt;br&gt;
+&lt;code&gt;h, j, k, l&lt;/code&gt; act as the arrow keys within vim, although modern vim instances also have support for the arrow keys&lt;br&gt;
+&lt;em&gt;vi&lt;/em&gt; has two modes: normal mode and insert mode. insert mode actually allows editing of what&amp;rsquo;s on the screen, while normal mode is used for inputing commands. &lt;code&gt;esc esc&lt;/code&gt; will always return to normal mode.&lt;br&gt;
+Many vi commands are made from an operator and a motion. For example, &lt;code&gt;dw&lt;/code&gt; will delete (&lt;code&gt;d&lt;/code&gt;) a word (&lt;code&gt;w&lt;/code&gt;). Quick list of motions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;w&lt;/code&gt; will jump to the next word&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;e&lt;/code&gt; will jump to the end of the current word&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$&lt;/code&gt; will jump to the end of the line&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Typing a number before a motion will repeat it that many times&lt;br&gt;
+&lt;code&gt;u&lt;/code&gt; will undo actions &lt;br&gt;
+&lt;code&gt;x&lt;/code&gt; will delete the character your cursor is on &lt;br&gt;
+&lt;code&gt;i&lt;/code&gt; (insert), &lt;code&gt;a&lt;/code&gt; (append), &lt;code&gt;c&lt;/code&gt; (change), &lt;code&gt;r&lt;/code&gt; (replace) &lt;br&gt;
+&lt;code&gt;ce&lt;/code&gt; will delete the remaining letters in the current word, after the cursor&lt;br&gt;
+&lt;code&gt;c$&lt;/code&gt; will delete the remaining text in the line&lt;br&gt;
+&lt;code&gt;33dd&lt;/code&gt; will cut the line 33 times (equivalent to deleting 33 rows). They can be pasted wherever your cursor is with &lt;code&gt;p&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;gg&lt;/code&gt; will jump to the start of the file, while &lt;code&gt;G&lt;/code&gt; will jump to the end.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;:s/old/new&lt;/code&gt; will substitute &amp;lsquo;new&amp;rsquo; for the first instance of &amp;lsquo;old&amp;rsquo; in the current line&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;:s/old/new/g&lt;/code&gt; will substitute &amp;lsquo;new&amp;rsquo; for all instances of &amp;lsquo;old&amp;rsquo; in the current line&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;#,#s/old/new/g&lt;/code&gt; will substitute &amp;lsquo;new&amp;rsquo; for all instances of &amp;lsquo;old&amp;rsquo; between the two line numbers provides&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;%s/old/new/g&lt;/code&gt; will substitute &amp;lsquo;new&amp;rsquo; for all instances of &amp;lsquo;old&amp;rsquo; in the file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;/SEARCHTERM&lt;/code&gt; will search for the first instance of the searchterm in the file. &lt;code&gt;n&lt;/code&gt; will jump to the next instance&lt;br&gt;
+&lt;code&gt;%&lt;/code&gt; while on any bracket/parenthesis will jump to its match&lt;br&gt;
+&lt;code&gt;v&lt;/code&gt; starts a Visual selection. Then use an operator (ie. &lt;code&gt;:w&lt;/code&gt; to write the selected text to a file)&lt;br&gt;
+&lt;code&gt;:r FILENAME&lt;/code&gt; will merge the contents of FILENAME into the open file.&lt;br&gt;
+&lt;code&gt;:r !ls&lt;/code&gt; will merge the output of &lt;code&gt;ls&lt;/code&gt; into the current file.&lt;br&gt;
+&lt;code&gt;:!COMMAND&lt;/code&gt; will execute an external program in vi. For example &lt;code&gt;:!ls&lt;/code&gt; will print the directory listing.&lt;br&gt;
+&lt;code&gt;:q!&lt;/code&gt; will quit without saving&lt;br&gt;
+&lt;code&gt;:w&lt;/code&gt; will write/save the file with the current file name. &lt;code&gt;:w FILENAME&lt;/code&gt; will save it with the specified filename.&lt;br&gt;
+&lt;code&gt;:wq&lt;/code&gt; will save and quit&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 7 - Server &amp;amp; Services&lt;/strong&gt;&lt;br&gt;
+install apache2 (&lt;em&gt;httpd&lt;/em&gt;)&lt;br&gt;
+stop the apache service: &lt;code&gt;sudo systemctl stop apache2&lt;/code&gt;&lt;br&gt;
+start the apache service: &lt;code&gt;sudo systemctl start apache2&lt;/code&gt;&lt;br&gt;
+check the status: &lt;code&gt;sudo systemctl status apache2&lt;/code&gt;. This pulls information from the logs.&lt;br&gt;
+Application configuration is controlled by files under the &lt;code&gt;/etc&lt;/code&gt; directory for most Linux distros. The Apache config is in &lt;code&gt;/etc/apache2/apache2.conf&lt;/code&gt;&lt;br&gt;
+In /etc/apache2/apache2.conf there&amp;rsquo;s the line with the text: &lt;code&gt;IncludeOptional conf-enabled/*.conf&lt;/code&gt; This tells Apache that the *.conf files in the subdirectory conf-enabled should be merged in with those from &lt;code&gt;/etc/apache2/apache2.conf&lt;/code&gt; at load.&lt;br&gt;
+The location of the default webpage is defined by the &lt;em&gt;DocumentRoot&lt;/em&gt; parameter in the file &lt;code&gt;/etc/apache2/sites-enabled/000-default.conf&lt;/code&gt; &amp;hellip; in this case, it&amp;rsquo;s &lt;code&gt;/var/www/html&lt;/code&gt;, so &lt;code&gt;/var/www/html/index.html&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;sudo apt update&lt;/code&gt;, then &lt;code&gt;sudo apt upgrade&lt;/code&gt; will install all upgraded packages for any software that&amp;rsquo;s been installed with the apt package manager.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 8 - &lt;em&gt;grep&lt;/em&gt; and others&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 9 - networking &amp;amp; ports&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;ss&lt;/code&gt; is the replacement for the &lt;code&gt;netstat&lt;/code&gt; comment. &lt;code&gt;ss -ltpn&lt;/code&gt; will print the open ports. (use &lt;code&gt;sudo&lt;/code&gt; for it to list the Processes that control these listeners)&lt;br&gt;
+&lt;code&gt;iptables&lt;/code&gt;, &lt;code&gt;nftables&lt;/code&gt; and &lt;code&gt;ufw&lt;/code&gt; are all firewall utilities for Linux.&lt;br&gt;
+&lt;code&gt;sudo iptables -L&lt;/code&gt; will list firewall rules in place.&lt;br&gt;
+Set UFW rules to allow SSH but deny HTTP: &lt;code&gt;sudo ufw allow ssh; sudo ufw deny http&lt;/code&gt;&lt;br&gt;
+Enable UFW: &lt;code&gt;sudo ufw enable&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 10 - scheduled tasks&lt;/strong&gt;&lt;br&gt;
+see your scheduled tasks with &lt;code&gt;crontab -l&lt;/code&gt;, or &lt;em&gt;root&lt;/em&gt; with &lt;code&gt;sudo crontab -l&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;/etc/cron&lt;/code&gt; lists the timing of daily, weekly &amp;amp; monthly jobs that run from &lt;code&gt;/etc/cron.daily&lt;/code&gt;, &lt;code&gt;etc/cron.weekly&lt;/code&gt;, etc.&lt;br&gt;
+&lt;code&gt;systemd&lt;/code&gt; starts and stops services, but can also be used to run tasks via. timers: &lt;code&gt;systemctl list-timers&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 11 - finding things&lt;/strong&gt;&lt;br&gt;
+&lt;em&gt;locate&lt;/em&gt; will search an index for &lt;code&gt;&amp;quot;*something*&amp;quot;&lt;/code&gt; by default. The index is built by a nightly &lt;code&gt;cron&lt;/code&gt; job but can be updated with &lt;code&gt;sudo updatedb&lt;/code&gt;&lt;br&gt;
+&lt;em&gt;find&lt;/em&gt; will try to match a file(s) based on criteria: &lt;code&gt;find /var -name access.log&lt;/code&gt; or &lt;code&gt;find /home -mtime -3&lt;/code&gt; (find any file under /home modified in the last 3 days)&lt;br&gt;
+&lt;em&gt;grep&lt;/em&gt; will search within plaintext files for specific text. &lt;code&gt;grep -R -i &amp;quot;PermitRootLogin&amp;quot; /etc/*&lt;/code&gt; will search recursively through /etc/ for files containing the case-insensitive string &amp;lsquo;permitrootlogin&amp;rsquo;&lt;br&gt;
+&lt;em&gt;which&lt;/em&gt; will list the patch from  the PATH statement that a utility runs from: &lt;code&gt;which nano&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 12 - transferring things&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;winscp&amp;gt; open sftp://azureuser@23.96.4.131 -privatekey=&amp;quot;c:\users\gbeifuss\downloads\ubuntu_ssh.ppk&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 13 - permissions&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;ls -l&lt;/code&gt; will list permissions: owner(user), group, others&lt;br&gt;
+&lt;code&gt;chmod u-w filename.txt&lt;/code&gt; will remove the W permission for the user&lt;br&gt;
+&lt;code&gt;chmod g-w filename.txt&lt;/code&gt; will remove the W permission for the group&lt;br&gt;
+&lt;code&gt;chmod o-w filename.txt&lt;/code&gt; will remove the W permission for others&lt;br&gt;
+&lt;code&gt;chmod u+w filename.txt&lt;/code&gt; will add the W permission for the user&lt;br&gt;
+&lt;code&gt;groups&lt;/code&gt; will list the groups a user belongs to&lt;br&gt;
+&lt;code&gt;groupadd&lt;/code&gt; will add a new group (&lt;code&gt;sudo groupadd newgroup&lt;/code&gt;)&lt;br&gt;
+&lt;code&gt;usermod -a -G group username&lt;/code&gt; will add &lt;em&gt;username&lt;/em&gt; to &lt;em&gt;group&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 14 - users &amp;amp; groups&lt;/strong&gt;&lt;br&gt;
+Add a new user with &lt;code&gt;sudo adduser helen&lt;/code&gt;. (If not prompted by a password, set one for helen: &lt;code&gt;sudo passwd helen&lt;/code&gt;)&lt;br&gt;
+Login as helen: &lt;code&gt;sudo su helen&lt;/code&gt;&lt;br&gt;
+Permissions for &lt;em&gt;sudo&lt;/em&gt; are controlled by the &lt;code&gt;visudo&lt;/code&gt; utility&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 15 - repositories&amp;hellip;&lt;/strong&gt;&lt;br&gt;
+Linux versions control the versions of applications that can be installed. Ubuntu 18.04 ships with Apache 2.4.29 - even if you install apache with &lt;em&gt;apt&lt;/em&gt; 5 years later, you&amp;rsquo;ll get 2.4.29 installed. (Security patches are made to repositories, but by backporting fixes (from fixed versions) into older versions).&lt;br&gt;
+&lt;code&gt;/etc/apt/sources.list&lt;/code&gt; is the default &lt;em&gt;apt&lt;/em&gt; repository source. This can be edited to enable &lt;em&gt;multiverse/universe&lt;/em&gt; repositories, which &amp;ldquo;*may contain software which has been classified as non-free &amp;hellip; and may not include security updates&amp;rdquo;.&lt;br&gt;
+Ubuntu 20.04 ships with 99589 packages (&lt;code&gt;apt-cache dump | grep &amp;quot;Package:&amp;quot; | wc -l&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 16 - archiving &amp;amp; compressing&lt;/strong&gt;&lt;br&gt;
+Unlike Windows, Linux gathers content in one step, and compresses in another.&lt;br&gt;
+&lt;code&gt;tar&lt;/code&gt; stands for &amp;lsquo;Tape ARchive&amp;rsquo;&lt;br&gt;
+&lt;code&gt;tar -cvf myinits.tar /etc/init.d&lt;/code&gt; takes a snapshof of the files currently in &lt;em&gt;/etc/init.d&lt;/em&gt;&lt;br&gt;
+This file can then be compressed: &lt;code&gt;gzip myinits.tar&lt;/code&gt;, which will create &lt;code&gt;myinits.tar.gz&lt;/code&gt;, a &lt;em&gt;tarball&lt;/em&gt;. Tarballs often use the extension .tgz&lt;br&gt;
+&lt;em&gt;.bz2&lt;/em&gt; files use a different compression than &lt;em&gt;gzip&lt;/em&gt; - it uses higher compression, but takes longer. A &lt;em&gt;.bz2&lt;/em&gt; file can only contain a single file, so it&amp;rsquo;s usually used to futher compress a tarball or other archive.
+In practice, these two steps can be condensed into on: &lt;code&gt;tar -cvzf myinits.tgz /etc/init.d&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;c = create&lt;/li&gt;
+&lt;li&gt;v = verbose&lt;/li&gt;
+&lt;li&gt;z = zip/compress&lt;/li&gt;
+&lt;li&gt;f = specify the output file&lt;/li&gt;
+&lt;li&gt;x = extract (expand)&lt;/li&gt;
+&lt;li&gt;j = uncompress a &lt;em&gt;.bz2&lt;/em&gt; file first&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Day 17 - from the source&lt;/strong&gt;&lt;br&gt;
+&lt;em&gt;build-essential&lt;/em&gt; is a standard bundle of complilers and similar tools: &lt;code&gt;sudo apt install build-essential&lt;/code&gt;&lt;br&gt;
+Download the latest nmap: &lt;code&gt;wget -v https:/nmap.org/dist/nmap-7.92.tar.bz2&lt;/code&gt;&lt;br&gt;
+Extract the files: &lt;code&gt;tar -jxvf nmap-7.92.tarb.bz2&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;./configure&lt;/code&gt;  is a script which checks the server&lt;br&gt;
+&lt;code&gt;make&lt;/code&gt; complies the software, typically via the GNU complier &lt;em&gt;gcc&lt;/em&gt;&lt;br&gt;
+&lt;code&gt;sudo make install&lt;/code&gt; will take the compiled files, install them plus documentation, and in some cases setup services and scheduled tasks.&lt;br&gt;
+Any software installed outside of &lt;em&gt;apt&lt;/em&gt; won&amp;rsquo;t be updated by &lt;code&gt;apt update&lt;/code&gt;, so new releases and security fixes need to be manually tracked.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 18 - log rotation&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;logrotate&lt;/code&gt; is used by &lt;em&gt;cron&lt;/em&gt; to rotate logs (&lt;em&gt;/etc/cron.daily/logrotate&lt;/em&gt;), (&lt;em&gt;/etc/logrotate.conf&lt;/em&gt; + &lt;em&gt;/etc/logrotate.d&lt;/em&gt;)&lt;br&gt;
+For example, edit &lt;em&gt;/etc/logrotate.d/apache2&lt;/em&gt; to adjust the configuration for all apache logs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 19 - inodes, symlinks and other shortcuts&lt;/strong&gt;&lt;br&gt;
+Linux disks use &lt;em&gt;ext3&lt;/em&gt;, &lt;em&gt;ext4&lt;/em&gt;, &lt;em&gt;zfs&lt;/em&gt;, or perhaps&lt;em&gt;ntrfs&lt;/em&gt;. Above that sits the VFS - Linux Virtual FileSystem&lt;br&gt;
+Each filename points to an inode (a numerical value), which is seen most easily in two places: &lt;code&gt;ls -i&lt;/code&gt; and &lt;code&gt;stat&lt;/code&gt;:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-linux&#34; data-lang=&#34;linux&#34;&gt;ls -li /etc/hosts
+ 35356766 -rw------- 1 root root 260 Nov 25 04:59 /etc/hosts
+ 
+stat /etc/hosts
+ File: `/etc/hosts&#39;
+ Size: 260           Blocks: 8           IO Block: 4096   regular file
+ Device: 2ch/44d     Inode: 35356766     Links: 1
+ Access: (0600/-rw-------)  Uid: (  0/   root)   Gid: (	0/	root)
+ Access: 2012-11-28 13:09:10.000000000 +0400
+ Modify: 2012-11-25 04:59:55.000000000 +0400
+ Change: 2012-11-25 04:59:55.000000000 +0400
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Several filenames could point to the same inode, and have the same contents/permissions/ownerships.dates. These attributes are stored at the inode level, &lt;em&gt;hard links&lt;/em&gt;.
+&lt;code&gt;ln&lt;/code&gt; is used to create hard and symbolic links (symlinks):&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-linux&#34; data-lang=&#34;linux&#34;&gt;ln /etc/passwd link1
+ln -s /etc/passwd link2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Hard links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;point to files, not directories&lt;/li&gt;
+&lt;li&gt;can&amp;rsquo;t reference a file on another disk/volume&lt;/li&gt;
+&lt;li&gt;link references work even if it is moved&lt;/li&gt;
+&lt;li&gt;refer to physical locations/inodes on disk&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Symbolic links (symlinks):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;can link to directories&lt;/li&gt;
+&lt;li&gt;can reference files/directories on another disk/volume&lt;/li&gt;
+&lt;li&gt;remain if the original file is deleted&lt;/li&gt;
+&lt;li&gt;will NOT reference the file anymore if it&amp;rsquo;s moved&lt;/li&gt;
+&lt;li&gt;reference abstract names and not physical locations&lt;/li&gt;
+&lt;li&gt;have their own inode&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Day 20 - scripts&lt;/strong&gt;&lt;br&gt;
+Scripts are regular files with the X permission &lt;code&gt;chmod +x filename&lt;/code&gt;&lt;br&gt;
+Scripts typically start with &lt;code&gt;#!/bin/bash&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Hugo &amp; Google Analytics</title>
         <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
         <pubDate>Tue, 05 Oct 2021 14:54:15 -0400</pubDate>
@@ -46,7 +278,7 @@
         <pubDate>Tue, 05 Oct 2021 09:51:28 -0400</pubDate>
         
         <guid>https://gbeifuss.github.io/p/vs-code-markdown/</guid>
-        <description>&lt;p&gt;VS Code automatically trims any trailing whitespace in a file, which makes sense for a lot of formats, but in markdown, a double trailing whitespace has special meaning - it acts as a &lt;code&gt;&amp;lt;BR&amp;gt;&lt;/code&gt; and creates a line break without a hard return.
+        <description>&lt;p&gt;VS Code automatically trims any trailing whitespace in a file, which makes sense for a lot of formats, but in markdown, a double trailing whitespace has special meaning - it acts as a &lt;code&gt;LF&lt;/code&gt; and creates a line break without a hard return (&lt;code&gt;CRLF&lt;/code&gt;).
 This automatic trim also occurs when formatting a file according to the language&amp;rsquo;s rules.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s configure VS Code to continue automatically trimming trailing whitespace, &lt;em&gt;except&lt;/em&gt; for markdown files:&lt;/p&gt;
 &lt;ol&gt;
@@ -2292,6 +2524,36 @@ The only relevant entries I found were from a server that I upgraded 3 weeks ago
         <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
         <description>&lt;p&gt;This blog content is generated by the &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Hugo&lt;/a&gt; static site generator and integrated with GitHub (which you can clearly tell by the URL), but I&amp;rsquo;m always struggling to remember the steps in pushing the newest content publicly.&lt;/p&gt;
+&lt;p&gt;But I&amp;rsquo;m getting ahead of myself. Before I get there, hugo and github need to be integrated. I&amp;rsquo;m using Windows 10, so I needed to start by installing git locally.
+Once that was complete, I had the &lt;em&gt;git bash shell&lt;/em&gt; that I could use to generate the SSH keys that my computer will use to connect with my github account. On Windows 10, the .ssh directory is located at C:\Users\Administrator.ssh&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Start by generating a new SSH key to use for this connection. I used the ed25519 algorithm, which is faster and more &amp;lsquo;secure&amp;rsquo; than the RSA-2048 key that&amp;rsquo;s commonly used today:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Administrator@AC08871 MINGW64 ~/.ssh
+$ ssh-keygen -t ed25519 -C &lt;span class=&#34;s2&#34;&gt;&amp;#34;email@email.com&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Then, copy the newly generated public key to the clipboard, because we&amp;rsquo;re going to paste it to github:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Administrator@AC08871 MINGW64 ~/.ssh
+$ clip &amp;lt; id_ed25519.pub
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Log into github &amp;gt; Settings &amp;gt; SSH &amp;amp; GPG Keys. Create a new SSH key, and paste in the contents of the clipboard (which is the public key I just created)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Test the connection via. &lt;em&gt;git bash shell&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;Administrator@AC08871 MINGW64 ~/.ssh
+$ ssh -T git@github.com
+Hi gbeifuss! You&lt;span class=&#34;err&#34;&gt;&amp;#39;&lt;/span&gt;ve successfully authenticated, but GitHub does not provide shell access.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now that the connection between my computer and github is established, let&amp;rsquo;s configure github as a remote repository:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Administrator\OneDrive\myblog.dev.repo\public&amp;gt; git remote add origin https://github.com/user/repo.git
+
+C:\Users\Administrator\OneDrive\myblog.dev.repo\public&amp;gt;git remote -v
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (fetch)
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (push)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Finally, I&amp;rsquo;m ready to push my content up:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Change to your site&amp;rsquo;s local directory, then tell Hugo to build the content:&lt;br&gt;

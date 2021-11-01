@@ -6,7 +6,25 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Oct 2021 14:54:15 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Oct 2021 08:54:40 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Managing Mailbox moves in Exchange 2016</title>
+      <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>
+      <pubDate>Thu, 28 Oct 2021 08:54:40 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</guid>
+      <description>Set Exchange to continually report on the status of mailbox moves and keep the queue full, via. Powershell scripts. Also, disable indexing during a migration.</description>
+    </item>
+    
+    <item>
+      <title>Linux Upskill Challenge</title>
+      <link>https://gbeifuss.github.io/p/linux-upskill-challenge/</link>
+      <pubDate>Thu, 28 Oct 2021 08:54:12 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/linux-upskill-challenge/</guid>
+      <description>Linux notes from completing /r/linuxupskillschallenge</description>
+    </item>
+    
     <item>
       <title>Hugo &amp; Google Analytics</title>
       <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
