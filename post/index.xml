@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 Oct 2021 08:54:40 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 02 Nov 2021 20:16:01 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Removing GIT History</title>
+      <link>https://gbeifuss.github.io/p/removing-git-history/</link>
+      <pubDate>Tue, 02 Nov 2021 20:16:01 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/removing-git-history/</guid>
+      <description>How to remove files completely from the history of a git repository</description>
+    </item>
+    
     <item>
       <title>Managing Mailbox moves in Exchange 2016</title>
       <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>

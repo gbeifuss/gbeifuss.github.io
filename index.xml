@@ -6,7 +6,18 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Thu, 28 Oct 2021 08:54:40 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 02 Nov 2021 20:16:01 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Removing GIT History</title>
+        <link>https://gbeifuss.github.io/p/removing-git-history/</link>
+        <pubDate>Tue, 02 Nov 2021 20:16:01 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/removing-git-history/</guid>
+        <description>&lt;p&gt;I was training a colleague on using git last week with my Powershell script repository. When I reviewed the git history, I realized that there were lots of entries that were no longer necessary: primarily scripts that I deleted because they were obsolete, or never moved past development. I wanted to find a way to purge all entries related to these files from the git repository.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git filter-branch --index-filter &amp;quot;git rm -rf --cached --ignore-unmatch FILEPATH&amp;quot; HEAD&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This took about a dozen minutes to walk through my approx. 400 commits. Each commit has to be checked, and then removed if it referenced the file.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Managing Mailbox moves in Exchange 2016</title>
         <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>
         <pubDate>Thu, 28 Oct 2021 08:54:40 -0400</pubDate>

@@ -2,12 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://gbeifuss.github.io/tags/exchange/</loc>
-    <lastmod>2021-10-28T08:54:40-04:00</lastmod>
+    <loc>https://gbeifuss.github.io/tags/git/</loc>
+    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/</loc>
+    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/post/</loc>
+    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/removing-git-history/</loc>
+    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/exchange/</loc>
     <lastmod>2021-10-28T08:54:40-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -17,17 +37,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2021-10-28T08:54:40-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/tags/powershell/</loc>
-    <lastmod>2021-10-28T08:54:40-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
     <lastmod>2021-10-28T08:54:40-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -163,11 +173,6 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</loc>
-    <lastmod>2021-09-02T07:37:36-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/git/</loc>
     <lastmod>2021-09-02T07:37:36-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
