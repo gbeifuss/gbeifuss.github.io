@@ -6,7 +6,52 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 02 Nov 2021 20:16:01 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 27 Dec 2021 00:09:54 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Resolving HP iLO NAND Error</title>
+      <link>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</link>
+      <pubDate>Mon, 27 Dec 2021 00:09:54 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</guid>
+      <description>Resolve an HP iLO &amp;ldquo;Embedded Flash\NAND error&amp;rdquo; alarm by formatting NAND</description>
+    </item>
+    
+    <item>
+      <title>HP iLO C7000 Credential Reset</title>
+      <link>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</link>
+      <pubDate>Mon, 27 Dec 2021 00:09:41 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</guid>
+      <description>Forcibly reset C7000 Onboard Administrator credentials via. script on USB key</description>
+    </item>
+    
+    <item>
+      <title>Remediating Log4j in VMWare VCenter 6.5</title>
+      <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
+      <pubDate>Wed, 22 Dec 2021 16:17:50 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
+      <description>Step-by-step instructions for mitigating log4j on VMWare VCenter 6.5</description>
+    </item>
+    
+    <item>
+      <title>ESXi 6.0 to 6.5 Upgrade</title>
+      <link>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</link>
+      <pubDate>Mon, 20 Dec 2021 23:38:30 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</guid>
+      <description>Upgrading ESXi 6.0 to 6.5, step-by-step</description>
+    </item>
+    
+    <item>
+      <title>Forcibly Remove Computer from Domain</title>
+      <link>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</link>
+      <pubDate>Thu, 04 Nov 2021 20:52:28 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</guid>
+      <description>Use Command Prompt to remove a computer from a domain, when you cannot contact the domain</description>
+    </item>
+    
     <item>
       <title>Removing GIT History</title>
       <link>https://gbeifuss.github.io/p/removing-git-history/</link>

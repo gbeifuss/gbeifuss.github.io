@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>VMWare on Greg Beifuss</title>
+    <link>https://gbeifuss.github.io/tags/vmware/</link>
+    <description>Recent content in VMWare on Greg Beifuss</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 22 Dec 2021 16:17:50 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Remediating Log4j in VMWare VCenter 6.5</title>
+      <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
+      <pubDate>Wed, 22 Dec 2021 16:17:50 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
+      <description>Step-by-step instructions for mitigating log4j on VMWare VCenter 6.5</description>
+    </item>
+    
+    <item>
+      <title>ESXi 6.0 to 6.5 Upgrade</title>
+      <link>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</link>
+      <pubDate>Mon, 20 Dec 2021 23:38:30 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</guid>
+      <description>Upgrading ESXi 6.0 to 6.5, step-by-step</description>
+    </item>
+    
+  </channel>
+</rss>

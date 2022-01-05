@@ -6,7 +6,223 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Tue, 02 Nov 2021 20:16:01 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 27 Dec 2021 00:09:54 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Resolving HP iLO NAND Error</title>
+        <link>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</link>
+        <pubDate>Mon, 27 Dec 2021 00:09:54 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</guid>
+        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where patches had been sorely neglected for a couple of years. There were a number of HP DL380 G9 servers still running iLO 1.4. Once I gained access to iLO, I started by upgrading those HP servers to iLO 2.79, the most recent version.&lt;/p&gt;
+&lt;p&gt;After the mandatory reboot to apply the new iLO firmware, 2/3 of the servers now displayed an iLO login screen warning of &lt;code&gt;Embedded Flash\NAND error&lt;/code&gt;:
+&lt;img src=&#34;https://gbeifuss.github.io/img/iLO-nand-error.png&#34; alt=&#34;fantastic excel art&#34;  /&gt;&lt;/p&gt;
+&lt;p&gt;I found HP Knowledge Base article &lt;code&gt;Document ID: c04996097&lt;/code&gt; outlining my symptoms.&lt;/p&gt;
+&lt;p&gt;I started by resetting iLO and cycling the server, which had no effect.&lt;br&gt;
+The next step was to format the NAND:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Log into iLO&lt;/li&gt;
+&lt;li&gt;Expand &lt;code&gt;Information &amp;gt; Diagnostics&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;code&gt;iLO Health&lt;/code&gt;. The status should read something like:&lt;br&gt;
+&lt;code&gt;Embedded Flash/SD-CARD | Controller firmware revision 2.10.00 Embedded media initialization failed due to media write-verify test failure&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Read the warning:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;WARNING: Formatting the Embedded Flash erases all data on the iLO partition and cannot be undone. External providers (like BIOS, Intelligent Provisioning, OneView and FLM) will need to be re-configured.
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;code&gt;Format Embedded Flash and reset iLO&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Accept the confirmation. iLO will reset.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After the mandatory reboot, the same error was displayed on the iLO login page.
+The next suggestion in the article (if the NAND reset didn&amp;rsquo;t work) was to perform a cold boot of the server. I shut down the server, removed the power cord for 15 seconds, plugged in the cord again and started the server.&lt;/p&gt;
+&lt;p&gt;This time iLO didn&amp;rsquo;t complain about problems with the flash memory. Hurrah!&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;p&gt;The articles I referenced when figuring this out were:
+&lt;a class=&#34;link&#34; href=&#34;https://support.hpe.com/hpesc/public/docDisplay?docId=emr_na-c04996097&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;HPE Integrated Lights-Out 4 (iLO 4) - HPE Active Health System (AHS) Logs and HPE OneView Profiles May Be Unavailable Causing iLO Self-Test Error 8192, Embedded Media Manager and Other Errors&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://support.hpe.com/hpesc/public/docDisplay?docId=emr_na-a00048622en_us&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;HPE Integrated Lights-Out 4 (iLO 4) - How to Format the NAND Used to Store AHS logs, OneView Profiles, and Intelligent Provisioning&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>HP iLO C7000 Credential Reset</title>
+        <link>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</link>
+        <pubDate>Mon, 27 Dec 2021 00:09:41 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</guid>
+        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where some administrative passwords that weren&amp;rsquo;t known. In particular, there were two HP Blade C7000 chassis with no credentials for the Blade Onboard Administrator.&lt;/p&gt;
+&lt;p&gt;The easiest way to reset the Administrator credential is by plugging a USB key (with a reset script) in the chassis, then use the Insight LCD to run the script.&lt;/p&gt;
+&lt;p&gt;Create a new text file containing only the following string: &lt;code&gt;SET USER PASSWORD &amp;quot;Administrator&amp;quot; &amp;quot;password&amp;quot;&lt;/code&gt; and save it with a .cfg extension on a USB key.
+On the Insight LCD, select &lt;code&gt;USB Menu &amp;gt; Restore Configuration &amp;gt; usb://d1/resetadmin.cfg&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This will reset the Administrator password to &lt;code&gt;password&lt;/code&gt;. Launch your browser of choice, connect to the BOA and log in with &lt;code&gt;Administrator: password&lt;/code&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;resetadmin.cfg
+
+SET USER PASSWORD &amp;quot;Administrator&amp;quot; &amp;quot;password&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
+        <title>Remediating Log4j in VMWare VCenter 6.5</title>
+        <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
+        <pubDate>Wed, 22 Dec 2021 16:17:50 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
+        <description>&lt;p&gt;The log3j vulnerability in an Apache Java component is one of the more serious and widespread software/security flaws to be identified in some time&amp;hellip; although, it does seem like that&amp;rsquo;s said every few months.
+Basically, the flaw is triggered when a specific string is sent to the logging module. This string can be used to trigger a lookup on a remote server, returning a Java script that is then injected into the process. This then lets the attacker execute commands at the same privilege level as the application using the logging library. In short, it allows for remote code execution, and complete control by an attacker.&lt;/p&gt;
+&lt;p&gt;I had a number of ESXi 6.5 servers that needed to be patched. Fortunately, VMWare has a Python script that can be used for automated remediation.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Enable SSH login on the VCenter appliance:&lt;br&gt;
+Browse to https://vcenterappliance:5480/, then choose &lt;code&gt;Access &amp;gt; Edit &amp;gt; Enable SSH login&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Download the current Python script from VMWare:&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/87081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Workaround instructions to address CVE-2021-44228 and CVE-2021-45046 in vCenter Server and vCenter Cloud Gateway (87081)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Launch Kitty, or your SSH application of choice. Connect to your VCenter appliance and load the shell:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;login as: root
+Pre-authentication banner message from server:
+| VMware vCenter Server Appliance 6.5.0.35000
+|
+| Type: vCenter Server with an embedded Platform Services Controller
+End of banner message from server
+Keyboard-interactive authentication prompts from server:
+| Password:
+End of keyboard-interactive prompts from server
+Connected to service
+
+* List APIS: &amp;quot;help api list&amp;quot;
+* List Plugins: &amp;quot;help pi list&amp;quot;
+* Launch BASH: &amp;quot;shell&amp;quot;
+
+Command&amp;gt; shell
+Shell access is granted to root
+root@servername [ ~ ]#
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Create a new file in VI. Press &lt;code&gt;I&lt;/code&gt; for Insert mode, then paste in the script contents that were downloaded from VMWare by right-clicking in the terminal. After the paste is complete, press &lt;code&gt;ESC&lt;/code&gt;, then &lt;code&gt;:wq&lt;/code&gt; to save the file and quit VI. I also validate the size of the new file:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root@servername [ ~ ]# vi /tmp/vmsa-2021-0028-kb87081.py
+root@servername [ ~ ]# ls /tmp/vmsa* -l
+-rw-r--r-- 1 root root 44290 Dec 21 20:43 /tmp/vmsa-2021-0028-kb87081.py
+root@servername [ ~ ]#
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Run the script with the command &lt;code&gt;python /tmp/vmsa-2021-0028-kb87081.py&lt;/code&gt;:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root@servername [ ~ ]# python /tmp/vmsa-2021-0028-kb87081.py
+2021-12-21T20:45:37 INFO main: Script version: 1.6.0
+2021-12-21T20:45:37 INFO main: VCenter type: Version: 6.5.0.35000; Build: 179949
+27; Deployment type: embedded; Gateway: False; VCHA: False; Windows: False;
+A service stop and start is required to complete this operation. Continue? [y] y
+2021-12-21T20:45:44 INFO Stop: stopping services
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;The script will run for some time. After it&amp;rsquo;s complete, review the output to make sure it completed successfully.&lt;/li&gt;
+&lt;li&gt;For my own sanity, I run the script a second time with the &lt;code&gt;-r&lt;/code&gt; flag in order to validate the results:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root@servername [ ~ ] python /tmp/vmsa-2021-0028-ib87081.py -r
+2021-12-21T20:55:17 INFO main: Script version: 1.6.0
+2021-12-21T20:55:17 INFO main: vCenter type: Version: 6.5.0.35000: Build: 17994927: Deployment type: embedded: Ga
+teway: False: VCHA: False: Windows: False:
+2021-12-21T20:55:17 INFO main: Running in dryrun mode.
+2021-12-21T20:56:01 INFO print_summary:
+Summary
+No vulnerable files found!
+Total found: 0
+Log file: /var/log/vmsa-2021-0028_2021_12_21_20_55_17.log
+2021-12-21T20:56:01 INFO main: Done.
+ROOT@servername [ ~ ]:
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;p&gt;The articles I referenced when figuring this out were:&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/87081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Workaround instructions to address CVE-2021-44228 and CVE-2021-45046 in vCenter Server and vCenter Cloud Gateway (87081)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.virtubytes.com/2021/12/15/mitigate-log4j-vmware-vulnerability-workaround&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to Mitigate Log4j VMware Vulnerability – Workaround&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ESXi 6.0 to 6.5 Upgrade</title>
+        <link>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</link>
+        <pubDate>Mon, 20 Dec 2021 23:38:30 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</guid>
+        <description>&lt;p&gt;Almost two months ago, I assumed responsibility for a new site. It turned out that no one had really performed any administration at the site in about two years and there was a lot of basic work to do. There were failed UPSes, cables left hanging from racks when servers had been decommissioned, no administrative IDs for some hardware (iLO and iDRAC) and no patching. They had several ESXi clusters still running 6.0 (which has no HTML 5 support) so access and administration was a nightmare, to say nothing of the security risks. Updating to 6.5 was high on my priority list!&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Download the offline bundle ZIP from VMWare for my HP DL380 G9 hardware.&lt;/li&gt;
+&lt;li&gt;Upload the offline bundle zip to a datastore accessible by the host via. VCenter GUI&lt;/li&gt;
+&lt;li&gt;Enable SSH mode for the host hardware. This can be done in the VCenter GUI via. Settings -&amp;gt; Configure -&amp;gt; System/Services/SSH.&lt;/li&gt;
+&lt;li&gt;SSH to the host with your terminal of choice and sign in. I&amp;rsquo;m partial to &lt;a class=&#34;link&#34; href=&#34;https://github.com/kovidgoyal/kitty&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Kitty&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;If you haven&amp;rsquo;t already done so, move all guests to other hosts, then place the host server in Migration Mode:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli system maintenanceMode set --enable true
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;Update the software:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli software vib update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip
+
+[DependencyError]
+
+VIB VMW_bootbank_ehci-ehci-hcd_1.0-4vmw.650.0.14.5146846 requires com.vmware.usb-10.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ata-pata-pdc2027x_1.0-3vmw.650.0.0.4564106 requires com.vmware.libata-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB Intel_bootbank_net-igb_5.2.10-1OEM.550.0.0.1331820 requires com.vmware.driverAPI-9.2.2.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB Broadcom_bootbank_scsi-bnx2fc_1.710.70.v55.3-1OEM.550.0.0.1331820 requires com.vmware.libfc-9.2.2.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ata-pata-serverworks_0.4.3-3vmw.650.0.0.4564106 requires com.vmware.driverAPI-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ipmi-ipmi-msghandler_39.1-5vmw.650.2.50.8294253 requires com.vmware.driverAPI-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Ugh. Of course this can&amp;rsquo;t be a straightforward upgrade!
+I tried to work around the error. A quick search revealed that apparently, if I specify the profile, I can override these prerequistes. First, I determined the profile in the package, then tried to update the profile by using the &lt;em&gt;-p&lt;/em&gt; flag:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli software sources profile list -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip
+
+Name                                                       Vendor                      Acceptance Level
+
+---------------------------------------------------------  --------------------------  ----------------
+
+HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36  Hewlett Packard Enterprise  PartnerSupported
+
+
+[root@vsphere-sap01:~] esxcli software profile update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip -p HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36
+
+[InstallationError]
+
+(&#39;VMware_bootbank_esx-ui_1.34.2-16361878&#39;, &#39;Could not find a trusted signer.&#39;)
+
+       vibs = VMware_bootbank_esx-ui_1.34.2-16361878
+
+Please refer to the log file for more details.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;That clearly didn&amp;rsquo;t work. I decided to tell ESXi to ignore the signing errors with the &amp;ndash;no-sig-check flag and tried again to update the profile:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli software profile update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip -p HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36 --no-sig-check
+
+Update Result
+
+   Message: The update completed successfully, but the system needs to be rebooted for the changes to be effective.
+
+   Reboot Required: true
+
+   VIBs Installed: Avago_bootbank_lsi-mr3_7.706.09.00-1OEM.650.0.0.4598673, Avago_bootbank_scsi-mpt2sas_15.10.07.00-1OEM.550.0.0.1331820, BCM_bootbank_bnxtnet_218.0.38.0-1OEM.650.0.0.4598673, BCM_bootbank_bnxtroce_218.0.16.0-1OEM.650.0.0.4598673, ELX_bootbank_elx-esx-libelxima.so_12.0.1108.0-03, EMU_bootbank_brcmfcoe_12.0.1278.0-1OEM.650.0.0.4598673, EMU_bootbank_elxiscsi_12.0.1108.0-1OEM.650.0.0.4598673, EMU_bootbank_elxnet_12.0.1216.4-1OEM.650.0.0.4598673, EMU_bootbank_lpfc_12.8.317.0-1OEM.650.0.0.4598673, HPE_bootbank_amsd_650.11.8.0.15-1.4240417, HPE_bootbank_amshelpr_650.11.8.0.8-1.4240417, HPE_bootbank_bootcfg_6.0.0.02-06.00.16.2494585, HPE_bootbank_conrep_650.10.8.0.12-6.5.0.2494585, HPE_bootbank_cru_650.6.5.10.4-1OEM.650.0.0.4240417, HPE_bootbank_fc-enablement_650.3.8.0.6-4240417, HPE_bootbank_hponcfg_6.0.0.5.5-0.37.2494585, HPE_bootbank_ilo_650.10.7.5.2-1OEM.650.0.0.4240417, HPE_bootbank_ilorest_650.3.3.0.2-4240417, HPE_bootbank_oem-build_650.U3.10.8.0.2-4240417, HPE_bootbank_scsi-hpdsa_6.0.0.76-1OEM.600.0.0.2494585, HPE_bootbank_scsi-hpvsa_5.5.0.102-1OEM.550.0.0.1331820, HPE_bootbank_smx-provider_650.03.16.00.4-4240417, HPE_bootbank_sut_6.5.0.2.9.0.0-23, HPE_bootbank_sutesxcli_6.5.0.2.9.0.0-18, HPE_bootbank_testevent_6.5.0.02-01.00.9.4240417, INT_bootbank_i40en_1.10.6-1OEM.650.0.0.4598673, INT_bootbank_icen_1.5.5.0-1OEM.650.0.0.4598673, INT_bootbank_igbn_1.5.2.0-1OEM.650.0.0.4598673, INT_bootbank_ixgben_1.9.11.0-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-core_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-en_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-rdma_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx5-core_4.16.71.1-1OEM.650.0.0.4598673, MEL_bootbank_nmlx5-rdma_4.16.71.1-1OEM.650.0.0.4598673, MEL_bootbank_nmst_4.12.0.105-1OEM.650.0.0.4598673, MIS_bootbank_hpessacli_5.20.8.0-6.5.0.4240417.oem, MSCC_bootbank_smartpqi_65.4150.0.119-1OEM.650.0.0.4598673, Microsemi_bootbank_nhpsa_65.0072.0.149-1OEM.650.0.0.4598673, PEN_bootbank_ionic-en_18.0.0-1OEM.650.0.0.4598673, QLC_bootbank_qcnic_1.0.59.0-1OEM.650.0.0.4598673, QLC_bootbank_qedentv_3.11.16.0-1OEM.650.0.0.4598673, QLC_bootbank_qedf_1.3.42.50-1OEM.600.0.0.2768847, QLC_bootbank_qedrntv_3.11.16.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3_1.1.17.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3f_1.1.25.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3i_1.1.5.0-1OEM.650.0.0.4598673, QLC_bootbank_scsi-qedil_1.15.15.0-1OEM.600.0.0.2494585, QLogic_bootbank_qlnativefc_2.1.101.0-1OEM.600.0.0.2768847, VMW_bootbank_ata-libata-92_3.00.9.2-16vmw.650.0.0.4564106, VMW_bootbank_ata-pata-amd_0.3.10-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-atiixp_0.4.6-4vmw.650.0.0.4564106, VMW_bootbank_ata-pata-cmd64x_0.2.5-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-hpt3x2n_0.3.4-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-pdc2027x_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-serverworks_0.4.3-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-sil680_0.4.8-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-via_0.3.3-2vmw.650.0.0.4564106, VMW_bootbank_block-cciss_3.6.14-10vmw.650.0.0.4564106, VMW_bootbank_char-random_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ehci-ehci-hcd_1.0-4vmw.650.0.14.5146846, VMW_bootbank_hid-hid_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ipmi-ipmi-devintf_39.1-5vmw.650.2.50.8294253, VMW_bootbank_ipmi-ipmi-msghandler_39.1-5vmw.650.2.50.8294253, VMW_bootbank_ipmi-ipmi-si-drv_39.1-4vmw.650.0.0.4564106, VMW_bootbank_lsi-msgpt35_09.00.00.00-5vmw.650.3.96.13932383, VMW_bootbank_lsi-msgpt3_17.00.02.00-1vmw.650.3.96.13932383, VMW_bootbank_misc-drivers_6.5.0-3.96.13932383, VMW_bootbank_mtip32xx-native_3.9.5-1vmw.650.0.0.4564106, VMW_bootbank_ne1000_0.8.3-8vmw.650.2.75.10884925, VMW_bootbank_nenic_1.0.29.0-1vmw.650.3.96.13932383, VMW_bootbank_net-cdc-ether_1.0-3vmw.650.0.0.4564106, VMW_bootbank_net-e1000_8.0.3.1-5vmw.650.3.153.17459147, VMW_bootbank_net-e1000e_3.2.2.1-2vmw.650.0.0.4564106, VMW_bootbank_net-enic_2.1.2.38-2vmw.650.0.0.4564106, VMW_bootbank_net-fcoe_1.0.29.9.3-7vmw.650.0.0.4564106, VMW_bootbank_net-forcedeth_0.61-2vmw.650.0.0.4564106, VMW_bootbank_net-libfcoe-92_1.0.24.9.4-8vmw.650.0.0.4564106, VMW_bootbank_net-usbnet_1.0-3vmw.650.0.0.4564106, VMW_bootbank_net-vmxnet3_1.1.3.0-3vmw.650.3.138.16576891, VMW_bootbank_ntg3_4.1.3.2-1vmw.650.2.75.10884925, VMW_bootbank_nvme_1.2.2.28-5vmw.650.3.170.18678235, VMW_bootbank_nvmxnet3_2.0.0.23-1vmw.650.1.36.7388607, VMW_bootbank_ohci-usb-ohci_1.0-3vmw.650.0.0.4564106, VMW_bootbank_pvscsi_0.1-1vmw.650.1.26.5969303, VMW_bootbank_qflge_1.1.0.3-1vmw.650.0.0.4564106, VMW_bootbank_sata-ahci_3.0-26vmw.650.1.26.5969303, VMW_bootbank_sata-ata-piix_2.12-10vmw.650.0.0.4564106, VMW_bootbank_sata-sata-nv_3.5-4vmw.650.0.0.4564106, VMW_bootbank_sata-sata-promise_2.12-3vmw.650.0.0.4564106, VMW_bootbank_sata-sata-sil24_1.1-1vmw.650.0.0.4564106, VMW_bootbank_sata-sata-sil_2.3-4vmw.650.0.0.4564106, VMW_bootbank_sata-sata-svw_2.3-3vmw.650.0.0.4564106, VMW_bootbank_scsi-aacraid_1.1.5.1-9vmw.650.0.0.4564106, VMW_bootbank_scsi-adp94xx_1.0.8.12-6vmw.650.0.0.4564106, VMW_bootbank_scsi-aic79xx_3.1-5vmw.650.0.0.4564106, VMW_bootbank_scsi-fnic_1.5.0.45-3vmw.650.0.0.4564106, VMW_bootbank_scsi-ips_7.12.05-4vmw.650.0.0.4564106, VMW_bootbank_scsi-iscsi-linux-92_1.0.0.2-3vmw.650.0.0.4564106, VMW_bootbank_scsi-libfc-92_1.0.40.9.3-5vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid-mbox_2.20.5.1-6vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid-sas_6.603.55.00-2vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid2_2.00.4-9vmw.650.0.0.4564106, VMW_bootbank_scsi-mptsas_4.23.01.00-10vmw.650.0.0.4564106, VMW_bootbank_scsi-mptspi_4.23.01.00-10vmw.650.0.0.4564106, VMW_bootbank_shim-iscsi-linux-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-iscsi-linux-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libata-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libata-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfc-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfc-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfcoe-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfcoe-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-3-0_6.5.0-0.0.4564106, VMW_bootbank_uhci-usb-uhci_1.0-3vmw.650.0.0.4564106, VMW_bootbank_usb-storage-usb-storage_1.0-3vmw.650.0.0.4564106, VMW_bootbank_usbcore-usb_1.0-3vmw.650.2.50.8294253, VMW_bootbank_vmkata_0.1-1vmw.650.1.36.7388607, VMW_bootbank_vmkplexer-vmkplexer_6.5.0-0.0.4564106, VMW_bootbank_vmkusb_0.1-1vmw.650.3.170.18678235, VMW_bootbank_vmw-ahci_1.1.6-1vmw.650.3.96.13932383, VMW_bootbank_xhci-xhci_1.0-3vmw.650.0.0.4564106, VMware_bootbank_cpu-microcode_6.5.0-3.134.16576879, VMware_bootbank_emulex-esx-elxnetcli_11.1.28.0-0.0.4564106, VMware_bootbank_esx-base_6.5.0-3.170.18678235, VMware_bootbank_esx-dvfilter-generic-fastpath_6.5.0-1.36.7388607, VMware_bootbank_esx-tboot_6.5.0-3.170.18678235, VMware_bootbank_esx-ui_1.34.2-16361878, VMware_bootbank_esx-xserver_6.5.0-3.120.15256549, VMware_bootbank_lsu-hp-hpsa-plugin_2.0.0-16vmw.650.3.96.13932383, VMware_bootbank_lsu-lsi-drivers-plugin_1.0.0-1vmw.650.2.79.11925212, VMware_bootbank_lsu-lsi-lsi-mr3-plugin_1.0.0-11vmw.650.2.75.10884925, VMware_bootbank_lsu-lsi-lsi-msgpt3-plugin_1.0.0-8vmw.650.2.79.11925212, VMware_bootbank_lsu-lsi-megaraid-sas-plugin_1.0.0-8vmw.650.1.26.5969303, VMware_bootbank_lsu-lsi-mpt2sas-plugin_2.0.0-6vmw.650.1.26.5969303, VMware_bootbank_native-misc-drivers_6.5.0-3.120.15256549, VMware_bootbank_rste_2.0.2.0088-4vmw.650.0.0.4564106, VMware_bootbank_vmware-esx-esxcli-nvme-plugin_1.2.0.36-3.96.13932383, VMware_bootbank_vsan_6.5.0-3.170.18569621, VMware_bootbank_vsanhealth_6.5.0-3.170.18569625, VMware_locker_tools-light_6.5.0-3.166.18677441
+
+   VIBs Removed: EMU_bootbank_lpfc_10.4.236.0-1OEM.600.0.0.2159203, Emulex_bootbank_elxnet_10.5.65.4-1OEM.550.0.0.1331820, Hewlett-Packard_bootbank_char-hpcru_6.0.6.14-1OEM.600.0.0.2159203, Hewlett-Packard_bootbank_char-hpilo_600.9.0.2.8-1OEM.600.0.0.2159203, Hewlett-Packard_bootbank_hp-ams_600.10.2.0-22.2159203, Hewlett-Packard_bootbank_hp-build_600.9.3.30.2-2159203, Hewlett-Packard_bootbank_hp-conrep_6.0.0.1-0.0.13.2159203, Hewlett-Packard_bootbank_hp-esxi-fc-enablement_550.2.3.16-1198610, Hewlett-Packard_bootbank_hp-smx-provider_600.03.08.00.13-2159203, Hewlett-Packard_bootbank_hpbootcfg_6.0.0.02-01.00.11.2159203, Hewlett-Packard_bootbank_hponcfg_6.0.0.04-00.13.17.2159203, Hewlett-Packard_bootbank_hpssacli_2.20.11.0-6.0.0.2159203, Hewlett-Packard_bootbank_hptestevent_6.0.0.01-00.00.8.2159203, Hewlett-Packard_bootbank_scsi-hpdsa_5.5.0.36-1OEM.550.0.0.1331820, Hewlett-Packard_bootbank_scsi-hpvsa_5.5.0.100-1OEM.550.0.0.1331820, LSI_bootbank_scsi-mpt2sas_15.10.06.00.1vmw-1OEM.550.0.0.1198610, QLogic_bootbank_qlnativefc_2.1.20.0-1OEM.600.0.0.2159203, VMWARE_bootbank_mtip32xx-native_3.8.5-1vmw.600.0.0.2494585, VMware_bootbank_ata-pata-serverworks_0.4.3-3vmw.600.0.0.2494585, VMware_bootbank_ata-pata-sil680_0.4.8-3vmw.600.0.0.2494585, VMware_bootbank_ata-pata-via_0.3.3-2vmw.600.0.0.2494585, VMware_bootbank_block-cciss_3.6.14-10vmw.600.0.0.2494585, VMware_bootbank_cpu-microcode_6.0.0-0.0.2494585, VMware_bootbank_ehci-ehci-hcd_1.0-3vmw.600.2.52.4600944, VMware_bootbank_emulex-esx-elxnetcli_10.2.309.6v-0.0.2494585, VMware_bootbank_esx-base_6.0.0-2.52.4600944, VMware_bootbank_esx-dvfilter-generic-fastpath_6.0.0-0.0.2494585, VMware_bootbank_esx-tboot_6.0.0-2.34.3620759, VMware_bootbank_esx-ui_1.9.0-4392584, VMware_bootbank_esx-xserver_6.0.0-0.0.2494585, VMware_bootbank_ipmi-ipmi-devintf_39.1-4vmw.600.0.0.2494585, VMware_bootbank_ipmi-ipmi-msghandler_39.1-4vmw.600.0.0.2494585, VMware_bootbank_ipmi-ipmi-si-drv_39.1-4vmw.600.0.0.2494585, VMware_bootbank_lsi-mr3_6.605.08.00-7vmw.600.1.17.3029758, VMware_bootbank_lsi-msgpt3_06.255.12.00-8vmw.600.1.17.3029758, VMware_bootbank_lsu-hp-hpsa-plugin_2.0.0-3vmw.600.2.52.4600944, VMware_bootbank_lsu-lsi-lsi-mr3-plugin_1.0.0-2vmw.600.0.11.2809209, VMware_bootbank_lsu-lsi-lsi-msgpt3-plugin_1.0.0-1vmw.600.0.0.2494585, VMware_bootbank_lsu-lsi-megaraid-sas-plugin_1.0.0-2vmw.600.0.11.2809209, VMware_bootbank_lsu-lsi-mpt2sas-plugin_1.0.0-4vmw.600.1.17.3029758, VMware_bootbank_misc-drivers_6.0.0-2.52.4600944, VMware_bootbank_net-e1000_8.0.3.1-5vmw.600.0.0.2494585, VMware_bootbank_net-e1000e_3.2.2.1-1vmw.600.1.26.3380124, VMware_bootbank_net-forcedeth_0.61-2vmw.600.0.0.2494585, VMware_bootbank_nmlx4-core_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nmlx4-en_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nmlx4-rdma_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nvme_1.0e.0.35-1vmw.600.2.34.3620759, VMware_bootbank_ohci-usb-ohci_1.0-3vmw.600.0.0.2494585, VMware_bootbank_rste_2.0.2.0088-4vmw.600.0.0.2494585, VMware_bootbank_sata-ahci_3.0-22vmw.600.2.34.3620759, VMware_bootbank_sata-ata-piix_2.12-10vmw.600.0.0.2494585, VMware_bootbank_sata-sata-nv_3.5-4vmw.600.0.0.2494585, VMware_bootbank_sata-sata-sil24_1.1-1vmw.600.0.0.2494585, VMware_bootbank_sata-sata-sil_2.3-4vmw.600.0.0.2494585, VMware_bootbank_scsi-aacraid_1.1.5.1-9vmw.600.0.0.2494585, VMware_bootbank_scsi-adp94xx_1.0.8.12-6vmw.600.0.0.2494585, VMware_bootbank_scsi-aic79xx_3.1-5vmw.600.0.0.2494585, VMware_bootbank_scsi-fnic_1.5.0.45-3vmw.600.0.0.2494585, VMware_bootbank_scsi-ips_7.12.05-4vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid-mbox_2.20.5.1-6vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid-sas_6.603.55.00-2vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid2_2.00.4-9vmw.600.0.0.2494585, VMware_bootbank_scsi-mptsas_4.23.01.00-9vmw.600.0.0.2494585, VMware_bootbank_vsan_6.0.0-2.52.4590152, VMware_bootbank_vsanhealth_6.0.0-3000000.3.0.2.52.4527730, VMware_bootbank_xhci-xhci_1.0-3vmw.600.2.52.4600944, VMware_locker_tools-light_6.0.0-2.43.4192238
+
+   VIBs Skipped: VMW_bootbank_ima-qla4xxx_2.02.18-1vmw.650.0.0.4564106, VMW_bootbank_net-nx-nic_5.0.621-5vmw.650.0.0.4564106, VMW_bootbank_net-tg3_3.131d.v60.4-2vmw.650.0.0.4564106, VMW_bootbank_scsi-qla4xxx_5.01.03.2-7vmw.650.0.0.4564106
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Much better. Let&amp;rsquo;s issue the reboot:&lt;br&gt;
+&lt;code&gt;[root@vsphere-sap01:~] reboot&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&amp;hellip; and validate the version after the system comes back online:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] vmware -v
+VMware ESXi 6.5.0 build-18678235
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Since it&amp;rsquo;s been two years since this cluster had any attention, there must be patches that should be applied. Since the host is already in maintenance mode with the guests hosted elsewhere, let&amp;rsquo;s take advantage and use the GUI to patch this system.&lt;/p&gt;
+&lt;p&gt;Once all the patching and rebooting is finished, exit maintenance mode:&lt;br&gt;
+&lt;code&gt;[root@vsphere-sap01:~] esxcli system maintenanceMode set --enable false&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Forcibly Remove Computer from Domain</title>
+        <link>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</link>
+        <pubDate>Thu, 04 Nov 2021 20:52:28 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</guid>
+        <description>&lt;p&gt;I ran into an issue earlier this week where I had to remove a computer from a particular domain&amp;hellip; but the domain no longer existed. This meant that I couldn&amp;rsquo;t provide &amp;lsquo;domain admin&amp;rsquo; credentials to nicely remove the computer and join it back to WORKGROUP.&lt;/p&gt;
+&lt;p&gt;Fortunately, this can be done from the command prompt via. WMI.&lt;br&gt;
+I started by logging into the computer as a local administrator.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;start /B /W wmic.exe /interactive:off ComputerSystem Where &amp;quot;Name=&#39;%computername%&#39;&amp;quot; Call UnJoinDomainOrWorkgroup FUnjoinOptions=0
+start /B /W wmic.exe /interactive:off ComputerSystem Where &amp;quot;Name=&#39;%computername%&#39;&amp;quot; Call JoinDomainOrWorkgroup name=&amp;quot;WORKGROUP&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After a reboot, the computer was no longer a domain member, but a member of WORKGROUP.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Removing GIT History</title>
         <link>https://gbeifuss.github.io/p/removing-git-history/</link>
         <pubDate>Tue, 02 Nov 2021 20:16:01 -0400</pubDate>

@@ -2,27 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://gbeifuss.github.io/</loc>
+    <lastmod>2021-12-27T00:09:54-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/hp-ilo/</loc>
+    <lastmod>2021-12-27T00:09:54-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/post/</loc>
+    <lastmod>2021-12-27T00:09:54-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</loc>
+    <lastmod>2021-12-27T00:09:54-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2021-12-27T00:09:54-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</loc>
+    <lastmod>2021-12-27T00:09:41-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</loc>
+    <lastmod>2021-12-22T16:17:50-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
+    <lastmod>2021-12-22T16:17:50-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</loc>
+    <lastmod>2021-12-20T23:38:30-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</loc>
+    <lastmod>2021-11-04T20:52:28-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://gbeifuss.github.io/tags/git/</loc>
     <lastmod>2021-11-02T20:16:01-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/removing-git-history/</loc>
-    <lastmod>2021-11-02T20:16:01-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
     <lastmod>2021-11-02T20:16:01-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
