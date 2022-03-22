@@ -197,22 +197,22 @@ if (!doNotTrack) {
     <section class="article-content">
     <p>We run Exchange on a multiserver DAG, which behaves similarly to a cluster. It&rsquo;s built on the same principles as a cluster, but it&rsquo;s technically not a cluster and is administered differently than a cluster. It&rsquo;s &hellip; <em>clusterish</em>.</p>
 <p>One of the issues that we run in to occasionally is that Cluster Owner changes to another DAG member server, which causes problems with our backup software. (The backup software can&rsquo;t truely handle a cluster and wants to connect to the IP of a single server). The fix is pretty simple - change the owner back to the server it should be! Powershell makes this really easy:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell">
-<span class="nb">PS </span><span class="n">H:</span><span class="p">\&gt;</span> <span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Move-ClusterGroup</span> <span class="n">-Node</span> <span class="n">Exchange05</span>
-
-<span class="n">Name</span>                                    <span class="n">OwnerNode</span>                               <span class="n">State</span>
-<span class="p">----</span>                                    <span class="p">---------</span>                               <span class="p">-----</span>
-<span class="n">Available</span> <span class="n">Storage</span>                       <span class="n">EXCHANGE04</span>                              <span class="n">Offline</span>
-<span class="n">Cluster</span> <span class="nb">Group </span>                          <span class="n">Exchange03</span>                              <span class="n">Offline</span>
-
-
-<span class="nb">PS </span><span class="n">H:</span><span class="p">\&gt;</span> <span class="nb">Get-ClusterGroup</span>
-
-<span class="n">Name</span>                                    <span class="n">OwnerNode</span>                               <span class="n">State</span>
-<span class="p">----</span>                                    <span class="p">---------</span>                               <span class="p">-----</span>
-<span class="n">Available</span> <span class="n">Storage</span>                       <span class="n">Exchange05</span>                              <span class="n">Offline</span>
-<span class="n">Cluster</span> <span class="nb">Group </span>                          <span class="n">Exchange05</span>                              <span class="n">Online</span>
-</code></pre></div><p>To prevent any complications with our backups, I would like:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">H:</span><span class="p">\&gt;</span> <span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Move-ClusterGroup</span> <span class="n">-Node</span> <span class="n">Exchange05</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>                                    <span class="n">OwnerNode</span>                               <span class="n">State</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                                    <span class="p">---------</span>                               <span class="p">-----</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span>                       <span class="n">EXCHANGE04</span>                              <span class="n">Offline</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>                          <span class="n">Exchange03</span>                              <span class="n">Offline</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">H:</span><span class="p">\&gt;</span> <span class="nb">Get-ClusterGroup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>                                    <span class="n">OwnerNode</span>                               <span class="n">State</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                                    <span class="p">---------</span>                               <span class="p">-----</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span>                       <span class="n">Exchange05</span>                              <span class="n">Offline</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>                          <span class="n">Exchange05</span>                              <span class="n">Online</span>
+</span></span></code></pre></div><p>To prevent any complications with our backups, I would like:</p>
 <ol>
 <li>The Owner Node to be monitored</li>
 <li>The Owner Node to be corrected to the proper values, if it&rsquo;s not on Exchange05.</li>
@@ -221,21 +221,21 @@ if (!doNotTrack) {
     >Monitoring Active Cluster Nodes With PRTG</a> outlines the process. I only used this as a guide, as I ended up sourcing Jannos-443&rsquo;s <a class="link" href="https://github.com/Jannos-443/PRTG-MSCluster-PrefNodes"  target="_blank" rel="noopener"
     >PRTG-MSCluster-PrefNodes.ps1</a> script.</p>
 <p>I started by checking the Preferred Node setting for these two cluster objects:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Get-ClusterOwnerNode</span>
-
-<span class="n">ClusterObject</span>     <span class="n">OwnerNodes</span>
-<span class="p">-------------</span>     <span class="p">----------</span>
-<span class="n">Available</span> <span class="n">Storage</span> <span class="p">{}</span>
-<span class="n">Cluster</span> <span class="nb">Group </span>    <span class="p">{}</span>
-</code></pre></div><p>Just peachy. Neither object has a preferred owner. Let&rsquo;s fix that:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">set-ClusterOwnerNode</span> <span class="n">Exchange05</span><span class="p">.</span><span class="n">corp</span><span class="p">.</span><span class="n">agricorp</span><span class="p">.</span><span class="n">com</span>
-<span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Get-ClusterOwnerNode</span>
-
-<span class="n">ClusterObject</span>     <span class="n">OwnerNodes</span>
-<span class="p">-------------</span>     <span class="p">----------</span>
-<span class="n">Available</span> <span class="n">Storage</span> <span class="p">{</span><span class="n">Exchange05</span><span class="p">}</span>
-<span class="n">Cluster</span> <span class="nb">Group </span>    <span class="p">{</span><span class="n">Exchange05</span><span class="p">}</span>
-</code></pre></div><p>That&rsquo;s better. With that out of the way, I created a new PRTG sensor to monitor that the Cluster was Owned by the Preferred Node:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Get-ClusterOwnerNode</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ClusterObject</span>     <span class="n">OwnerNodes</span>
+</span></span><span class="line"><span class="cl"><span class="p">-------------</span>     <span class="p">----------</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>    <span class="p">{}</span>
+</span></span></code></pre></div><p>Just peachy. Neither object has a preferred owner. Let&rsquo;s fix that:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">set-ClusterOwnerNode</span> <span class="n">Exchange05</span><span class="p">.</span><span class="n">corp</span><span class="p">.</span><span class="n">agricorp</span><span class="p">.</span><span class="n">com</span>
+</span></span><span class="line"><span class="cl"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Get-ClusterOwnerNode</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ClusterObject</span>     <span class="n">OwnerNodes</span>
+</span></span><span class="line"><span class="cl"><span class="p">-------------</span>     <span class="p">----------</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span> <span class="p">{</span><span class="n">Exchange05</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>    <span class="p">{</span><span class="n">Exchange05</span><span class="p">}</span>
+</span></span></code></pre></div><p>That&rsquo;s better. With that out of the way, I created a new PRTG sensor to monitor that the Cluster was Owned by the Preferred Node:</p>
 <ol>
 <li>Save the Cluster-checking script to <code>${env:ProgramFiles(x86)}\PRTG Network Monitor\Custom Sensors\EXEXML</code> on the PRTG probe server.</li>
 <li>Open PRTG and browsed to the Exchange05 server object. This is the server that should be the Owner</li>
@@ -245,38 +245,38 @@ if (!doNotTrack) {
 <li>Save changes. Query the sensor a couple of times to make sure that it&rsquo;s working properly. When one or more nodes isn&rsquo;t on the Preferred Node, then the sensor will change to &lsquo;Warning&rsquo;.</li>
 </ol>
 <p>Next, I want PRTG&rsquo;s Notification action to correct the Owner of the cluster object. We&rsquo;ll create a custom notification that will run a short Powershell script I wrote:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="cm">&lt;#
-</span><span class="cm">    </span><span class="sd">.SYNOPSIS</span><span class="cm">
-</span><span class="cm">    Force Cluster Owner to a specific server
-</span><span class="cm">
-</span><span class="cm">    </span><span class="sd">.DESCRIPTION</span><span class="cm">
-</span><span class="cm">    https://kb.paessler.com/en/topic/40713-can-i-automatically-restart-a-windows-service-with-prtg
-</span><span class="cm">    Copy this script to the main PRTG server&#39;s Notifications\EXE scripts folder (${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE)
-</span><span class="cm">    and create a new Notification Template &gt; Execute Program. Choose this script from the dropdown and provide the SERVERNAME as a parameter.
-</span><span class="cm">    The Credentials need to be generated under the instance that PRTG is running as (NT Authority\System). These domain creds allow PRTG
-</span><span class="cm">    to remotely run code on the remote system and manipulate the Cluster Groups.
-</span><span class="cm">
-</span><span class="cm">    </span><span class="sd">.PARAMETER</span><span class="cm"> Server
-</span><span class="cm">    Server FQDN or NetBIOS Name
-</span><span class="cm">
-</span><span class="cm">    </span><span class="sd">.EXAMPLE</span><span class="cm">
-</span><span class="cm">    Sample call from PRTG EXE/Script Advanced
-</span><span class="cm">    PRTG-MSCluster-MoveClusterGroup.ps1 EXCHANGE01
-</span><span class="cm">
-</span><span class="cm">    Author:  Greg Beifuss
-</span><span class="cm">    7:48 AM 9/8/2021
-</span><span class="cm">#&gt;</span>
-
-<span class="k">param</span><span class="p">(</span>
-    <span class="no">[string]</span><span class="nv">$Server</span> <span class="p">=</span> <span class="nv">$null</span>
-<span class="p">)</span>
-
-<span class="nv">$id</span> <span class="p">=</span> <span class="nb">Import-Clixml</span> <span class="s2">&#34;C:\Program Files (x86)\PRTG Network Monitor\Notifications\EXE\powershell.xml&#34;</span>
-<span class="nv">$Scriptblock</span> <span class="p">=</span> <span class="p">{</span>
-<span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Move-ClusterGroup</span> <span class="n">-Node</span> <span class="nv">$env:COMPUTERNAME</span>
-<span class="p">}</span>
-<span class="nb">Invoke-Command</span> <span class="n">-ComputerName</span> <span class="nv">$Server</span> <span class="n">-ScriptBlock</span> <span class="nv">$Scriptblock</span> <span class="n">-Credential</span> <span class="nv">$id</span>
-</code></pre></div><ol start="0">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="cm">&lt;#
+</span></span></span><span class="line"><span class="cl"><span class="cm">    </span><span class="sd">.SYNOPSIS</span><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Force Cluster Owner to a specific server
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    </span><span class="sd">.DESCRIPTION</span><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    https://kb.paessler.com/en/topic/40713-can-i-automatically-restart-a-windows-service-with-prtg
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Copy this script to the main PRTG server&#39;s Notifications\EXE scripts folder (${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE)
+</span></span></span><span class="line"><span class="cl"><span class="cm">    and create a new Notification Template &gt; Execute Program. Choose this script from the dropdown and provide the SERVERNAME as a parameter.
+</span></span></span><span class="line"><span class="cl"><span class="cm">    The Credentials need to be generated under the instance that PRTG is running as (NT Authority\System). These domain creds allow PRTG
+</span></span></span><span class="line"><span class="cl"><span class="cm">    to remotely run code on the remote system and manipulate the Cluster Groups.
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    </span><span class="sd">.PARAMETER</span><span class="cm"> Server
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Server FQDN or NetBIOS Name
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    </span><span class="sd">.EXAMPLE</span><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Sample call from PRTG EXE/Script Advanced
+</span></span></span><span class="line"><span class="cl"><span class="cm">    PRTG-MSCluster-MoveClusterGroup.ps1 EXCHANGE01
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Author:  Greg Beifuss
+</span></span></span><span class="line"><span class="cl"><span class="cm">    7:48 AM 9/8/2021
+</span></span></span><span class="line"><span class="cl"><span class="cm">#&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">param</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="no">[string]</span><span class="nv">$Server</span> <span class="p">=</span> <span class="nv">$null</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$id</span> <span class="p">=</span> <span class="nb">Import-Clixml</span> <span class="s2">&#34;C:\Program Files (x86)\PRTG Network Monitor\Notifications\EXE\powershell.xml&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$Scriptblock</span> <span class="p">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Move-ClusterGroup</span> <span class="n">-Node</span> <span class="nv">$env:COMPUTERNAME</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-Command</span> <span class="n">-ComputerName</span> <span class="nv">$Server</span> <span class="n">-ScriptBlock</span> <span class="nv">$Scriptblock</span> <span class="n">-Credential</span> <span class="nv">$id</span>
+</span></span></code></pre></div><ol start="0">
 <li>Use <code>Export-CLIXML</code> to store credentials that can log into the destination server (in my case, Exchange05)</li>
 <li>Save this script to <code>${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE</code>)` on the main PRTG server. This is the server that Notifications run from - the other PRTG servers simply won&rsquo;t have the Notifications directory.</li>
 <li>Create a new Notification Template in PRTG. Choose &lsquo;Execute Program&rsquo;, and select the PRTG-MSCluster-MoveClusterGroup.ps1 script. Provide a cluster member server name as the parameter. This will be passed into the script. Save.</li>

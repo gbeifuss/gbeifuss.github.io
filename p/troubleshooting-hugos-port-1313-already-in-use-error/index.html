@@ -222,14 +222,14 @@ WARN 2021/08/20 11:20:57 Archives page not found. Create a page with layout: arc
 Built in 135 ms
 Watching for changes in C:\Users\gbeifuss\blog\{archetypes,content,data,layouts,static,themes}
 Watching for config changes in C:\Users\gbeifuss\blog\config.yaml
-Environment: &quot;development&quot;
+Environment: &#34;development&#34;
 Serving pages from memory
 Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
 Web Server is available at http://localhost:15823/ (bind address 127.0.0.1)
 Press Ctrl+C to stop
 </code></pre><p>This has never been a problem before. How can port 1313 already be in use? There&rsquo;s nothing else on my system configured to use that port!</p>
 <p>I pulled up <code>netstat</code> to confirm:</p>
-<pre tabindex="0"><code>C:\Users\gbeifuss&gt;netstat -ano | find &quot;1313&quot;
+<pre tabindex="0"><code>C:\Users\gbeifuss&gt;netstat -ano | find &#34;1313&#34;
 C:\Users\gbeifuss&gt;
 </code></pre><p>Well, if nothing is using the port, then why can&rsquo;t Hugo use it? If there&rsquo;s nothing actively blocking Hugo, then Hugo must be prevented from using that port by another mechanism.</p>
 <p>I checked the reservations that Windows knows about with <code>netsh</code>:</p>
@@ -278,7 +278,7 @@ WARN 2021/08/20 14:12:16 Archives page not found. Create a page with layout: arc
 Built in 481 ms
 Watching for changes in C:\Users\gbeifuss\blog\{archetypes,content,data,layouts,static,themes}
 Watching for config changes in C:\Users\gbeifuss\blog\config.yaml
-Environment: &quot;development&quot;
+Environment: &#34;development&#34;
 Serving pages from memory
 Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
 Web Server is available at http://localhost:1313/ (bind address 127.0.0.1)

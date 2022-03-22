@@ -130,38 +130,38 @@ If the password is seven characters or less, the entire second 8-byte field will
 <strong>Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers</strong> to <em>Audit all</em></p>
 <p>Now I have Event ID 4624 showing up in my logs. I want to find if there&rsquo;s any NTLM v1 or LM traffic. Let&rsquo;s parse this with with a custom XML filter for all records matching Event ID 4624 that don&rsquo;t contain &lsquo;NTLM v2&rsquo;, &lsquo;Kerberos&rsquo; or &lsquo;-&rsquo; authentication types.<br>
 NOTE: This is the relevant part of my code for the filtering. The full script does some other things like emailing me a report, which is why there are other functions and variables referenced:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell">
-<span class="k">foreach</span> <span class="p">(</span><span class="nv">$domaincontroller</span> <span class="k">in</span> <span class="nv">$domaincontrollers</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="nb">Clear-Variable</span> <span class="n">-Name</span> <span class="n">eventlog</span>
- 
-    <span class="nv">$query</span> <span class="p">=</span> <span class="sh">@&#34;
-</span><span class="sh">
-</span><span class="sh">	&lt;QueryList&gt; 
-</span><span class="sh">           &lt;Query Id=&#34;0&#34;&gt; 
-</span><span class="sh">              &lt;Select Path=&#34;Security&#34;&gt; 
-</span><span class="sh">                *[System[(EventID=&#39;4624&#39;)]]
-</span><span class="sh">	      &lt;/Select&gt;
-</span><span class="sh">	      &lt;Suppress Path=&#34;Security&#34;&gt;
-</span><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;NTLM v2&#39;)]] or
-</span><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;Kerberos&#39;)]] or
-</span><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;-&#39;)]]
-</span><span class="sh">               &lt;/Suppress&gt; 
-</span><span class="sh">           &lt;/Query&gt; 
-</span><span class="sh">	&lt;/QueryList&gt;
-</span><span class="sh">
-</span><span class="sh">&#34;@</span>
-    <span class="nv">$eventlog</span> <span class="p">=</span> <span class="nb">Get-WinEvent</span> <span class="n">-FilterXml</span> <span class="nv">$query</span>
-
-    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeader</span> <span class="s2">&#34;1&#34;</span> <span class="s2">&#34;NTLMv1 Events on domain controller $domaincontroller&#34;</span>
-    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-HtmlTable</span> <span class="p">(</span><span class="nv">$eventlog</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ID</span> <span class="o">-eq</span> <span class="s2">&#34;4624&#34;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">TimeCreated</span><span class="p">,</span> <span class="n">Message</span><span class="p">)</span>
-    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeaderClose</span>
-
-    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeader0Close</span>
-    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHTMLClose</span>
-
-<span class="p">}</span>
-</code></pre></div><p>Good!<br>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$domaincontroller</span> <span class="k">in</span> <span class="nv">$domaincontrollers</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nb">Clear-Variable</span> <span class="n">-Name</span> <span class="n">eventlog</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="nv">$query</span> <span class="p">=</span> <span class="sh">@&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sh">
+</span></span></span><span class="line"><span class="cl"><span class="sh">	&lt;QueryList&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">           &lt;Query Id=&#34;0&#34;&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">              &lt;Select Path=&#34;Security&#34;&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[System[(EventID=&#39;4624&#39;)]]
+</span></span></span><span class="line"><span class="cl"><span class="sh">	      &lt;/Select&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sh">	      &lt;Suppress Path=&#34;Security&#34;&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;NTLM v2&#39;)]] or
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;Kerberos&#39;)]] or
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;-&#39;)]]
+</span></span></span><span class="line"><span class="cl"><span class="sh">               &lt;/Suppress&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">           &lt;/Query&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">	&lt;/QueryList&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sh">
+</span></span></span><span class="line"><span class="cl"><span class="sh">&#34;@</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$eventlog</span> <span class="p">=</span> <span class="nb">Get-WinEvent</span> <span class="n">-FilterXml</span> <span class="nv">$query</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeader</span> <span class="s2">&#34;1&#34;</span> <span class="s2">&#34;NTLMv1 Events on domain controller $domaincontroller&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-HtmlTable</span> <span class="p">(</span><span class="nv">$eventlog</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ID</span> <span class="o">-eq</span> <span class="s2">&#34;4624&#34;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">TimeCreated</span><span class="p">,</span> <span class="n">Message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeaderClose</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeader0Close</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHTMLClose</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Good!<br>
 The only relevant entries I found were from a server that I upgraded 3 weeks ago, specifically because it was using NTLM for an obsolete application. After tossing on a supported OS and upgrading to the current application version, NTLMv1 authentication from this server stopped.</p>
 <h3 id="block">Block</h3>
 <p>MS exposes a GPO value to control the NTLM authentication methods available on the domain. <strong>Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options\<a class="link" href="https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-lan-manager-authentication-level"  target="_blank" rel="noopener"

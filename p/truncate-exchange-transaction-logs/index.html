@@ -255,19 +255,19 @@ DISKSHADOW&gt; exit
 
 C:\Windows\system32&gt;
 </code></pre><p>The EMC/Powershell can display the last backup that Exchange is aware of:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-MailboxDatabase</span> <span class="n">-status</span> <span class="p">|</span> <span class="nb">select </span><span class="n">Name</span><span class="p">,</span> <span class="n">LastFullBackup</span> <span class="p">|</span> <span class="nb">ft
-</span><span class="nb"></span>
-<span class="n">Name</span>       <span class="n">LastFullBackup</span>
-<span class="p">----</span>       <span class="p">--------------</span>
-<span class="n">Journaling</span> <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
-<span class="nb">Tier3-C</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">07</span> <span class="n">PM</span>
-<span class="nb">Tier3-D</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
-<span class="nb">Tier3-A</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
-<span class="nb">Tier3-M</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
-<span class="nb">Tier3-X</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
-<span class="nb">Tier3-L</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
-<span class="nb">Tier3-B</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">34</span><span class="err">:</span><span class="n">48</span> <span class="n">PM</span>
-</code></pre></div><p>An alternate trick is to delete any unmounted database copies on the server that&rsquo;s out of Transaction Log space through proper Exchange methods (EAC or Powershell). Once that&rsquo;s done, delete the Transaction Logs belonging to that database. It should free up a small amount of space - perhaps enough breathing room to get a database online, users up and running again, and time for you to take proper measures.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="no">[PS]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-MailboxDatabase</span> <span class="n">-status</span> <span class="p">|</span> <span class="nb">select </span><span class="n">Name</span><span class="p">,</span> <span class="n">LastFullBackup</span> <span class="p">|</span> <span class="nb">ft
+</span></span></span><span class="line"><span class="cl"><span class="nb"></span>
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>       <span class="n">LastFullBackup</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>       <span class="p">--------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">Journaling</span> <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Tier3-C</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">07</span> <span class="n">PM</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Tier3-D</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Tier3-A</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Tier3-M</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Tier3-X</span>    <span class="n">9</span><span class="p">/</span><span class="n">6</span><span class="p">/</span><span class="n">2021</span> <span class="n">10</span><span class="err">:</span><span class="n">04</span><span class="err">:</span><span class="n">43</span> <span class="n">AM</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Tier3-L</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">35</span><span class="err">:</span><span class="n">06</span> <span class="n">PM</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Tier3-B</span>    <span class="n">9</span><span class="p">/</span><span class="n">5</span><span class="p">/</span><span class="n">2021</span> <span class="n">5</span><span class="err">:</span><span class="n">34</span><span class="err">:</span><span class="n">48</span> <span class="n">PM</span>
+</span></span></code></pre></div><p>An alternate trick is to delete any unmounted database copies on the server that&rsquo;s out of Transaction Log space through proper Exchange methods (EAC or Powershell). Once that&rsquo;s done, delete the Transaction Logs belonging to that database. It should free up a small amount of space - perhaps enough breathing room to get a database online, users up and running again, and time for you to take proper measures.</p>
 <p>If you&rsquo;re running Exchange as a VM or the disks are on a SAN, you could also provision more disk space, then extend the volume.</p>
 <p>The DiskShadow/VSS method should result in the following entries in the Application Event Log. These are from Windows Server 2016:</p>
 <table>
@@ -391,7 +391,7 @@ Keywords:      Classic
 User:          N/A
 Computer:      Exchange04.company.com
 Description:
-The Microsoft Exchange VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully prepared for a full or a copy backup of database 'Tier3-L'.  The following database will be backed up: Tier3-L.
+The Microsoft Exchange VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully prepared for a full or a copy backup of database &#39;Tier3-L&#39;.  The following database will be backed up: Tier3-L.
 
 
 
@@ -509,7 +509,7 @@ Keywords:      Classic
 User:          N/A
 Computer:      Exchange04.company.com
 Description:
-The Microsoft Exchange Replication service VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully completed the backup of database 'Tier3-A'.
+The Microsoft Exchange Replication service VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully completed the backup of database &#39;Tier3-A&#39;.
 
 Database log truncation has been requested for this database. Log truncation will occur on the active copy after the next log generation is created. Log truncation will occur automatically on the passive copies after that log file is copied.
 

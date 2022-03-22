@@ -197,7 +197,7 @@ if (!doNotTrack) {
     <section class="article-content">
     <p>I tried generating updated content for my website the other day and Hugo threw an error instead:</p>
 <pre tabindex="0"><code>hugo v0.88.1-5BC54738+extended windows/amd64 BuildDate=2021-09-04T09:39:19Z VendorInfo=gohugoio
-ERROR 2021/09/10 14:59:54 [en] REF_NOT_FOUND: Ref &quot;exchange-clustergroup.md&quot;: &quot;C:\myblog.dev.repo\content\post\exchange-transaction-logs.md:15:458&quot;: page not found
+ERROR 2021/09/10 14:59:54 [en] REF_NOT_FOUND: Ref &#34;exchange-clustergroup.md&#34;: &#34;C:\myblog.dev.repo\content\post\exchange-transaction-logs.md:15:458&#34;: page not found
 </code></pre><p>I went back and triplechecked my code: the formatting of the <code>ref</code> block was proper and had no typographical errors.</p>
 <p>I finally realized that my Front Matter tag <code>draft:</code> on the destination page was set to <code>true</code>. This meant that when Hugo was building the code, the destination page wasn&rsquo;t being generated, which meant that there was no destination page for this reference to link to.</p>
 <p>Changing the Front Matter to <code>draft: false</code> allowed Hugo to generate the content properly.</p>

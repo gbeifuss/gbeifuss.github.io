@@ -202,23 +202,23 @@ Once that was complete, I had the <em>git bash shell</em> that I could use to ge
 <ol>
 <li>
 <p>Start by generating a new SSH key to use for this connection. I used the ed25519 algorithm, which is faster and more &lsquo;secure&rsquo; than the RSA-2048 key that&rsquo;s commonly used today:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">Administrator@AC08871 MINGW64 ~/.ssh
-$ ssh-keygen -t ed25519 -C <span class="s2">&#34;email@email.com&#34;</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Administrator@AC08871 MINGW64 ~/.ssh
+</span></span><span class="line"><span class="cl">$ ssh-keygen -t ed25519 -C <span class="s2">&#34;email@email.com&#34;</span>
+</span></span></code></pre></div></li>
 <li>
 <p>Then, copy the newly generated public key to the clipboard, because we&rsquo;re going to paste it to github:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">Administrator@AC08871 MINGW64 ~/.ssh
-$ clip &lt; id_ed25519.pub
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Administrator@AC08871 MINGW64 ~/.ssh
+</span></span><span class="line"><span class="cl">$ clip &lt; id_ed25519.pub
+</span></span></code></pre></div></li>
 <li>
 <p>Log into github &gt; Settings &gt; SSH &amp; GPG Keys. Create a new SSH key, and paste in the contents of the clipboard (which is the public key I just created)</p>
 </li>
 <li>
 <p>Test the connection via. <em>git bash shell</em>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">Administrator@AC08871 MINGW64 ~/.ssh
-$ ssh -T git@github.com
-Hi gbeifuss! You<span class="err">&#39;</span>ve successfully authenticated, but GitHub does not provide shell access.
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Administrator@AC08871 MINGW64 ~/.ssh
+</span></span><span class="line"><span class="cl">$ ssh -T git@github.com
+</span></span><span class="line"><span class="cl">Hi gbeifuss! You<span class="err">&#39;</span>ve successfully authenticated, but GitHub does not provide shell access.
+</span></span></code></pre></div></li>
 </ol>
 <p>Now that the connection between my computer and github is established, let&rsquo;s configure github as a remote repository:</p>
 <pre tabindex="0"><code>C:\Users\Administrator\OneDrive\myblog.dev.repo\public&gt; git remote add origin https://github.com/user/repo.git
@@ -255,7 +255,7 @@ origin  https://github.com/gbeifuss/gbeifuss.github.io.git (push)
 hugo
 cd public
 git add .
-git commit -m &quot;Website update 2021-08-03&quot;
+git commit -m &#34;Website update 2021-08-03&#34;
 git push origin main
 </code></pre><p>I&rsquo;ve also been trying to sort out how to update the theme I use (Stack), which is periodically updated. Right now my process is to:</p>
 <ul>
@@ -264,7 +264,7 @@ git push origin main
 <li>tell git to repopulate the directory:
 <pre tabindex="0"><code class="language-git" data-lang="git">\myblog.dev.repo\themes&gt; git clone git@github.com:gbeifuss/hugo-theme-stack hugo-theme-stack
 
-Cloning into 'hugo-theme-stack'...
+Cloning into &#39;hugo-theme-stack&#39;...
 remote: Enumerating objects: 3111, done.
 remote: Counting objects: 100% (1026/1026), done.
 remote: Compressing objects: 100% (416/416), done.

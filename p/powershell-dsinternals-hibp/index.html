@@ -204,11 +204,11 @@ if (!doNotTrack) {
 <li>Load Powershell.</li>
 <li>Install the module: <code>Install-Module DSInternals -Force</code></li>
 <li>Run the cmdlets:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="nv">$DictFile</span> <span class="p">=</span> <span class="s2">&#34;d:\pwned-passwords-ntlm-ordered-by-hash-v5.txt&#34;</span>
-<span class="nv">$DC</span> <span class="p">=</span> <span class="s2">&#34;dc01&#34;</span>
-<span class="nv">$Domain</span> <span class="p">=</span> <span class="s2">&#34;DC=company,DC=com&#34;</span>
-<span class="nb">Get-ADReplAccount</span> <span class="n">-All</span> <span class="n">-Server</span> <span class="nv">$DC</span> <span class="n">-NamingContext</span> <span class="nv">$Domain</span> <span class="p">|</span> <span class="nb">Test-PasswordQuality</span> <span class="n">-WeakPasswordHashesSortedFile</span> <span class="nv">$DictFile</span> <span class="n">-IncludeDisabledAccounts</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$DictFile</span> <span class="p">=</span> <span class="s2">&#34;d:\pwned-passwords-ntlm-ordered-by-hash-v5.txt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$DC</span> <span class="p">=</span> <span class="s2">&#34;dc01&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$Domain</span> <span class="p">=</span> <span class="s2">&#34;DC=company,DC=com&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ADReplAccount</span> <span class="n">-All</span> <span class="n">-Server</span> <span class="nv">$DC</span> <span class="n">-NamingContext</span> <span class="nv">$Domain</span> <span class="p">|</span> <span class="nb">Test-PasswordQuality</span> <span class="n">-WeakPasswordHashesSortedFile</span> <span class="nv">$DictFile</span> <span class="n">-IncludeDisabledAccounts</span>
+</span></span></code></pre></div></li>
 </ol>
 <p>Older versions of the tool used to output the passwords that were found in the dictionary you provided (ie. the HIBP dump), but no longer.</p>
 

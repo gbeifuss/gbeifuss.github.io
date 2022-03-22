@@ -200,8 +200,8 @@ if (!doNotTrack) {
 <p>However, while that prevents the information from being leaked, it also prevents Outlook from properly loading when the traffic flows through Netscaler. In our case, internal traffic was fine, but people who rely on Outlook and autodiscover outside of our network couldn&rsquo;t log in. I tested and removing the X-FEServer header permitted Outlook to load normally; it was removing the WWW-Authenticate header that caused the problem.</p>
 <p>I tried out some alternate methods of blocking an internal IP in the WWW-Authenticate field (specifically, a reply containing <code>basic realm=&quot;10.10.10.10</code>), but it seems like there&rsquo;s important authentication using that field. I came up with another approach which seems to be working: Since this vulnerability is the result of a HTTP/1.0 request, rewrite HTTP/1.0 requests to HTTP/1.1. HTTP/1.1 <em>requires</em> the host header field, which means that IIS won&rsquo;t happily disclose internal IPs in response to a missing host header. HTTP/1.1 has been a standard since 1997 and there should literally be no device in the past 20 years which does not support it.</p>
 <p>Let&rsquo;s get to work. I&rsquo;ll create a rewrite policy that looks for HTTP/1.0. If it&rsquo;s found, replace it with HTTP/1.1.</p>
-<pre tabindex="0"><code>add rewrite action RW_ACTION_HTTP1.0 replace HTTP.REQ.VERSION.MINOR &quot;\&quot;1\&quot;&quot;
-add rewrite policy RW_POLICY_HTTP1.0 &quot;HTTP.REQ.VERSION.MINOR.EQ(0)&quot; RW_ACTION_HTTP1.0
+<pre tabindex="0"><code>add rewrite action RW_ACTION_HTTP1.0 replace HTTP.REQ.VERSION.MINOR &#34;\&#34;1\&#34;&#34;
+add rewrite policy RW_POLICY_HTTP1.0 &#34;HTTP.REQ.VERSION.MINOR.EQ(0)&#34; RW_ACTION_HTTP1.0
 bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_HTTP1.0 -priority 110 -gotoPriorityExpression END -type REQUEST
 </code></pre><p>Let&rsquo;s test and make sure that the internal information is no longer returned:</p>
 <pre tabindex="0"><code>GET /autodiscover/autodiscover.xml HTTP/1.0
@@ -214,9 +214,9 @@ Connection: close
 Content-Length: 334
 Strict-Transport-Security: max-age=15552000
 
-&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot;&quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt;
+&lt;!DOCTYPE HTML PUBLIC &#34;-//W3C//DTD HTML 4.01//EN&#34;&#34;http://www.w3.org/TR/html4/strict.dtd&#34;&gt;
 &lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;Bad Request&lt;/TITLE&gt;
-&lt;META HTTP-EQUIV=&quot;Content-Type&quot; Content=&quot;text/html; charset=us-ascii&quot;&gt;&lt;/HEAD&gt;
+&lt;META HTTP-EQUIV=&#34;Content-Type&#34; Content=&#34;text/html; charset=us-ascii&#34;&gt;&lt;/HEAD&gt;
 &lt;BODY&gt;&lt;h2&gt;Bad Request - Invalid Hostname&lt;/h2&gt;
 &lt;hr&gt;&lt;p&gt;HTTP Error 400. The request hostname is invalid.&lt;/p&gt;
 &lt;/BODY&gt;&lt;/HTML&gt;

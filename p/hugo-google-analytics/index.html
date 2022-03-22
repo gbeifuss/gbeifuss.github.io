@@ -209,12 +209,12 @@ if (!doNotTrack) {
 <p>The Measurement ID should have the format <code>G-HMPAE821CR</code>. The ID is unique! With this in hand, let&rsquo;s tell Hugo to use it for all our webpages.</p>
 <p>Open the <code>config</code> file. (This will be located in the root directory of your Hugo site. The <code>config</code> file can be variety of different formats - mine is YAML so it&rsquo;s named <code>config.yaml</code>).</p>
 <p>There will be a line that looks something like this:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># GA Tracking ID</span><span class="w">
-</span><span class="w"></span><span class="nt">googleAnalytics</span><span class="p">:</span><span class="w">
-</span></code></pre></div><p>Add the Measurement ID that you&rsquo;d previously noted to the <code>googleAnalytics:</code> field:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># GA Tracking ID</span><span class="w">
-</span><span class="w"></span><span class="nt">googleAnalytics</span><span class="p">:</span><span class="w"> </span><span class="l">G-HMPAE821CR</span><span class="w">
-</span></code></pre></div><p>Save the file.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># GA Tracking ID</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">googleAnalytics</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></div><p>Add the Measurement ID that you&rsquo;d previously noted to the <code>googleAnalytics:</code> field:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># GA Tracking ID</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">googleAnalytics</span><span class="p">:</span><span class="w"> </span><span class="l">G-HMPAE821CR</span><span class="w">
+</span></span></span></code></pre></div><p>Save the file.</p>
 <p>That’s really all you have to do to set the Google Analytics Tracking ID in Hugo. My theme - <a class="link" href="https://docs.stack.jimmycai.com/"  target="_blank" rel="noopener"
     >hugo-stack-theme</a>] - automatically has support for this internal template, so my site started sending tracking data to Google Analytics right away.</p>
 <h2 id="references">References</h2>

@@ -222,7 +222,7 @@ Which returned the following IP address :
 <pre tabindex="0"><code>C:\Program Files\OpenSSL-Win64\bin&gt;openssl s_client -host 206.98.14.28 -port 443
 
 CONNECTED(00000130)
-Can't use SSL_get_servername
+Can&#39;t use SSL_get_servername
 depth=1 C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
 verify error:num=20:unable to get local issuer certificate
 verify return:1
@@ -311,7 +311,7 @@ WWW-Authenticate: Negotiate
 WWW-Authenticate: NTLM
 X-Powered-By: ASP.NET
 X-FEServer: EXCHANGE02
-WWW-Authenticate: Basic realm=&quot;10.1.0.31&quot;
+WWW-Authenticate: Basic realm=&#34;10.1.0.31&#34;
 Date: Fri, 17 Sep 2021 19:04:53 GMT
 Connection: keep-alive
 Content-Length: 0
@@ -333,8 +333,8 @@ closed
 <p>I accomplished this with a couple of Responder Policies in Netscaler:</p>
 <pre tabindex="0"><code>add rewrite action RW_ACTION_OWA_FEServer delete_http_header X-FEServer
 add rewrite action RW_ACTION_OWA_WWWAuthenticate delete_http_header WWW-Authenticate
-add rewrite policy RW_POLICY_OWA_FEServer &quot;HTTP.RES.HEADER(\&quot;X-FEServer\&quot;).EXISTS&quot; RW_ACTION_OWA_FEServer NOREWRITE
-add rewrite policy RW_POLICY_OWA_WWWAuthenticate &quot;HTTP.RES.HEADER(\&quot;WWW-Authenticate\&quot;).EXISTS&quot; RW_ACTION_OWA_WWWAuthenticate NOREWRITE
+add rewrite policy RW_POLICY_OWA_FEServer &#34;HTTP.RES.HEADER(\&#34;X-FEServer\&#34;).EXISTS&#34; RW_ACTION_OWA_FEServer NOREWRITE
+add rewrite policy RW_POLICY_OWA_WWWAuthenticate &#34;HTTP.RES.HEADER(\&#34;WWW-Authenticate\&#34;).EXISTS&#34; RW_ACTION_OWA_WWWAuthenticate NOREWRITE
 
 bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_WWWAuthenticate -priority 100 -gotoPriorityExpression NEXT -type RESPONSE
 bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_FEServer -priority 110 -gotoPriorityExpression END -type RESPONSE

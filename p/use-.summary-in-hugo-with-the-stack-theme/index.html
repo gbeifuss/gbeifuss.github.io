@@ -199,70 +199,70 @@ if (!doNotTrack) {
     >Stack</a>, does pull the .Description
 field from Front Matter, BUT it also uses the .Description field to populate a brief summary of the article on the home page. I don&rsquo;t want SEO-friendly content displaying as a summary on my home page, so I decided to use another Front Matter field and update the theme to use that for the <code>meta description</code>.</p>
 <p>First, I edited the default markdown archetype (<code>/archetypes/default.md</code>) in Hugo to include the .summary field:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown">---
-title: {{ replace .Name &#34;-&#34; &#34; &#34; | title }}
-date: {{ .Date }}
-description:
-summary:
-draft: true
-tags:
----
-</code></pre></div><p>With that done, I needed to tell Hugo that when it generates the web content, it should populate the <code>meta description</code> field with .summary. This way the .description Front Matter can still be used by the theme to populate the subtitles on my home page, while using the .summary field to generate text for SEO:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">---
+</span></span><span class="line"><span class="cl">title: {{ replace .Name &#34;-&#34; &#34; &#34; | title }}
+</span></span><span class="line"><span class="cl">date: {{ .Date }}
+</span></span><span class="line"><span class="cl">description:
+</span></span><span class="line"><span class="cl">summary:
+</span></span><span class="line"><span class="cl">draft: true
+</span></span><span class="line"><span class="cl">tags:
+</span></span><span class="line"><span class="cl">---
+</span></span></code></pre></div><p>With that done, I needed to tell Hugo that when it generates the web content, it should populate the <code>meta description</code> field with .summary. This way the .description Front Matter can still be used by the theme to populate the subtitles on my home page, while using the .summary field to generate text for SEO:</p>
 <p>Here&rsquo;s the original <code>layouts\partials\head\head.html</code> contents:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;viewport&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">&gt;</span>
-
-{{- $description := partialCached &#34;data/description&#34; . .RelPermalink -}}
-<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;description&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;{{ .description }}&#39;</span><span class="p">&gt;</span>
-
-{{- $title := partialCached &#34;data/title&#34; . .RelPermalink -}}
-<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{{ $title }}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
-
-<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#39;canonical&#39;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#39;{{ .Permalink }}&#39;</span><span class="p">&gt;</span>
-
-{{- partial &#34;head/style.html&#34; . -}}
-{{- partial &#34;head/script.html&#34; . -}}
-{{- partial &#34;head/opengraph/include.html&#34; . -}}
-
-{{- range .AlternativeOutputFormats -}}
-    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;{{ .Rel }}&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;{{ .MediaType.Type }}&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ .Permalink | safeURL }}&#34;</span><span class="p">&gt;</span>
-{{- end -}}
-
-{{ with .Site.Params.favicon }}
-    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;shortcut icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ . }}&#34;</span> <span class="p">/&gt;</span>
-{{ end }}
-
-{{- template &#34;_internal/google_analytics.html&#34; . -}}
-{{- partial &#34;head/custom.html&#34; . -}}
-</code></pre></div><p>I replaced the line <code>&lt;meta name='description' content='{{ .description }}'&gt;</code> with <code>&lt;meta name='description' content='{{ .summary | truncate 130 }}'&gt;</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;viewport&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- $description := partialCached &#34;data/description&#34; . .RelPermalink -}}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;description&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;{{ .description }}&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- $title := partialCached &#34;data/title&#34; . .RelPermalink -}}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{{ $title }}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#39;canonical&#39;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#39;{{ .Permalink }}&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/style.html&#34; . -}}
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/script.html&#34; . -}}
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/opengraph/include.html&#34; . -}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- range .AlternativeOutputFormats -}}
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;{{ .Rel }}&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;{{ .MediaType.Type }}&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ .Permalink | safeURL }}&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">{{- end -}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{ with .Site.Params.favicon }}
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;shortcut icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ . }}&#34;</span> <span class="p">/&gt;</span>
+</span></span><span class="line"><span class="cl">{{ end }}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- template &#34;_internal/google_analytics.html&#34; . -}}
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/custom.html&#34; . -}}
+</span></span></code></pre></div><p>I replaced the line <code>&lt;meta name='description' content='{{ .description }}'&gt;</code> with <code>&lt;meta name='description' content='{{ .summary | truncate 130 }}'&gt;</code></p>
 <p>This tells Hugo to refer to the .Summary Front Matter field, and not the .Description, when generating the meta description. I also capped the meta description at 130 characters, just in case I write more than that. Search Engines typically consider somewhere between 25-160 characters, but check with your specific search engine for the exact values.</p>
 <p>This is my final <code>layouts\partials\head\head.html</code> file:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;viewport&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">&gt;</span>
-
-{{- $description := partialCached &#34;data/description&#34; . .RelPermalink -}}
-<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;description&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;{{ .summary | truncate 130 }}&#39;</span><span class="p">&gt;</span>
-
-{{- $title := partialCached &#34;data/title&#34; . .RelPermalink -}}
-<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{{ $title }}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
-
-<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#39;canonical&#39;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#39;{{ .Permalink }}&#39;</span><span class="p">&gt;</span>
-
-{{- partial &#34;head/style.html&#34; . -}}
-{{- partial &#34;head/script.html&#34; . -}}
-{{- partial &#34;head/opengraph/include.html&#34; . -}}
-
-{{- range .AlternativeOutputFormats -}}
-    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;{{ .Rel }}&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;{{ .MediaType.Type }}&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ .Permalink | safeURL }}&#34;</span><span class="p">&gt;</span>
-{{- end -}}
-
-{{ with .Site.Params.favicon }}
-    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;shortcut icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ . }}&#34;</span> <span class="p">/&gt;</span>
-{{ end }}
-
-{{- template &#34;_internal/google_analytics.html&#34; . -}}
-{{- partial &#34;head/custom.html&#34; . -}}
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;viewport&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- $description := partialCached &#34;data/description&#34; . .RelPermalink -}}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;description&#39;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#39;{{ .summary | truncate 130 }}&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- $title := partialCached &#34;data/title&#34; . .RelPermalink -}}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{{ $title }}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#39;canonical&#39;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#39;{{ .Permalink }}&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/style.html&#34; . -}}
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/script.html&#34; . -}}
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/opengraph/include.html&#34; . -}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- range .AlternativeOutputFormats -}}
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;{{ .Rel }}&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;{{ .MediaType.Type }}&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ .Permalink | safeURL }}&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">{{- end -}}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{ with .Site.Params.favicon }}
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;shortcut icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{ . }}&#34;</span> <span class="p">/&gt;</span>
+</span></span><span class="line"><span class="cl">{{ end }}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{{- template &#34;_internal/google_analytics.html&#34; . -}}
+</span></span><span class="line"><span class="cl">{{- partial &#34;head/custom.html&#34; . -}}
+</span></span></code></pre></div>
 </section>
 
 

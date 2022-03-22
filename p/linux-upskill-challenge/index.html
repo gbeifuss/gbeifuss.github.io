@@ -263,10 +263,10 @@ Many vi commands are made from an operator and a motion. For example, <code>dw</
 <code>33dd</code> will cut the line 33 times (equivalent to deleting 33 rows). They can be pasted wherever your cursor is with <code>p</code><br>
 <code>gg</code> will jump to the start of the file, while <code>G</code> will jump to the end.</p>
 <ul>
-<li><code>:s/old/new</code> will substitute &lsquo;new&rsquo; for the first instance of &lsquo;old&rsquo; in the current line</li>
-<li><code>:s/old/new/g</code> will substitute &lsquo;new&rsquo; for all instances of &lsquo;old&rsquo; in the current line</li>
-<li><code>#,#s/old/new/g</code> will substitute &lsquo;new&rsquo; for all instances of &lsquo;old&rsquo; between the two line numbers provides</li>
-<li><code>%s/old/new/g</code> will substitute &lsquo;new&rsquo; for all instances of &lsquo;old&rsquo; in the file</li>
+<li><code>:s/old/new</code> will substitute &rsquo;new&rsquo; for the first instance of &lsquo;old&rsquo; in the current line</li>
+<li><code>:s/old/new/g</code> will substitute &rsquo;new&rsquo; for all instances of &lsquo;old&rsquo; in the current line</li>
+<li><code>#,#s/old/new/g</code> will substitute &rsquo;new&rsquo; for all instances of &lsquo;old&rsquo; between the two line numbers provides</li>
+<li><code>%s/old/new/g</code> will substitute &rsquo;new&rsquo; for all instances of &lsquo;old&rsquo; in the file</li>
 </ul>
 <p><code>/SEARCHTERM</code> will search for the first instance of the searchterm in the file. <code>n</code> will jump to the next instance<br>
 <code>%</code> while on any bracket/parenthesis will jump to its match<br>
@@ -354,7 +354,7 @@ Each filename points to an inode (a numerical value), which is seen most easily 
  35356766 -rw------- 1 root root 260 Nov 25 04:59 /etc/hosts
  
 stat /etc/hosts
- File: `/etc/hosts'
+ File: `/etc/hosts&#39;
  Size: 260           Blocks: 8           IO Block: 4096   regular file
  Device: 2ch/44d     Inode: 35356766     Links: 1
  Access: (0600/-rw-------)  Uid: (  0/   root)   Gid: (	0/	root)
