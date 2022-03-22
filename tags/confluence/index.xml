@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Confluence on Greg Beifuss</title>
+    <link>https://gbeifuss.github.io/tags/confluence/</link>
+    <description>Recent content in Confluence on Greg Beifuss</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 22 Mar 2022 13:26:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/confluence/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reset Confluence Password for an Administrator ID</title>
+      <link>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</link>
+      <pubDate>Tue, 22 Mar 2022 13:26:12 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</guid>
+      <description>Resetting an administrator&amp;rsquo;s unknown Confluence 3.1 password</description>
+    </item>
+    
+  </channel>
+</rss>

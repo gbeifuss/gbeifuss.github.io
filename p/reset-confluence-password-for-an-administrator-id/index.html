@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='What&rsquo;s the difference between Stopwatch and Measure-Command?'><title>Powershell Stopwatch vs Measure-Command</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Resetting an administrator&rsquo;s unknown Confluence 3.1 password'><title>Reset Confluence Password for an Administrator ID</title>
 
-<link rel='canonical' href='https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Powershell Stopwatch vs Measure-Command'>
-<meta property='og:description' content='What&#39;s the difference between Stopwatch and Measure-Command?'>
-<meta property='og:url' content='https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Reset Confluence Password for an Administrator ID'>
+<meta property='og:description' content='Breaking into Confluence 3.1'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-07-22T22:09:50-04:00'/><meta property='article:modified_time' content='2021-07-22T22:09:50-04:00'/>
-<meta name="twitter:title" content="Powershell Stopwatch vs Measure-Command">
-<meta name="twitter:description" content="What&#39;s the difference between Stopwatch and Measure-Command?">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Confluence' /><meta property='article:published_time' content='2022-03-22T13:26:12-04:00'/><meta property='article:modified_time' content='2022-03-22T13:26:12-04:00'/>
+<meta name="twitter:title" content="Reset Confluence Password for an Administrator ID">
+<meta name="twitter:description" content="Breaking into Confluence 3.1">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
 <script>
 var doNotTrack = false;
@@ -174,12 +174,12 @@ if (!doNotTrack) {
     
 
     <h2 class="article-title">
-        <a href="/p/powershell-stopwatch-vs-measure-command/">Powershell Stopwatch vs Measure-Command</a>
+        <a href="/p/reset-confluence-password-for-an-administrator-id/">Reset Confluence Password for an Administrator ID</a>
     </h2>
 
     
     <h3 class="article-subtitle">
-        What&#39;s the difference between Stopwatch and Measure-Command?
+        Breaking into Confluence 3.1
     </h3>
     <footer class="article-time">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -190,15 +190,32 @@ if (!doNotTrack) {
 
 
 
-        <time class="article-time--published">Jul 22, 2021</time>
+        <time class="article-time--published">Mar 22, 2022</time>
     </footer></div>
 </header>
 
     <section class="article-content">
-    <p>Often, I&rsquo;ll see scripts that use <code>Measure-Command</code> to calculate the length of time that code runs, while other code will use the <code>$stopwatch = [System.Diagnostics.Stopwatch]::StartNew()</code> method. I&rsquo;d always thought that these were interchangable and practically identical, however, I&rsquo;ve found out that they&rsquo;re not. Depending on the code, there can be substantial time differences between the two.</p>
-<p><code>Measure-Command</code> will discard the pipeline output, measuring only the time it takes to actually execute the command.</p>
-<p>The stopwatch timer measures everything, including the time it takes to display any output to the console.</p>
-<p>To have <code>Measure-Command</code> to measure the time needed to write to the console, add an <strong>explicit pipe</strong> to <code>Out-Host</code> inside the script block that you&rsquo;re measuring. This will write the output to the console, and cause a corresponding increase in the measured time.</p>
+    <p>I recently had a request to grant a new user access to a legacy Confluence install at work. This particular server was in active use from 2013-2018ish and runs Confluence 3.1 standalone (Apache &amp; mySQL).</p>
+<p>The big problem was that <strong>nobody knew any credentials</strong>.</p>
+<p>I started out by browsing to the configuration in <code>C:\confluence\confluence-3.1-std\conf\server.xml</code>. Luckily, I found some credentials to connect to the mySQL instance:</p>
+<pre tabindex="0"><code>&lt;property name=&#34;hibernate.connection.driver_class&#34;&gt;com.mysql.jdbc.Driver&lt;/property&gt;
+&lt;property name=&#34;hibernate.connection.password&#34;&gt;conf*w0rk&lt;/property&gt;
+&lt;property name=&#34;hibernate.connection.url&#34;&gt;jdbc:mysql://localhost/confluence?autoReconnect=true&lt;/property&gt;
+&lt;property name=&#34;hibernate.connection.username&#34;&gt;confluenceuser&lt;/property&gt;
+&lt;property name=&#34;hibernate.database.lower_non_ascii_supported&#34;&gt;true&lt;/property&gt;
+&lt;property name=&#34;hibernate.dialect&#34;&gt;com.atlassian.hibernate.dialect.MySQLDialect&lt;/property&gt;
+</code></pre><p>I was then able to follow Atlassian&rsquo;s documentation on <a class="link" href="https://confluence.atlassian.com/display/CONF34/Restoring&#43;Passwords&#43;To&#43;Recover&#43;Admin&#43;User&#43;Rights"  target="_blank" rel="noopener"
+    >Restoring Passwords To Recover Admin User Rights</a>.</p>
+<p>First, I ran a query against the database using <strong>MySQL Query Browser</strong> to identify existing administrators. This returns the users who belong to the Confluence-Administrators group:</p>
+<pre tabindex="0"><code>select name from users u, local_members l, groups g where g.groupname = &#39;confluence-administrators&#39; and g.id=l.groupid and u.id=l.userid;
+
+administrator
+confadmin
+wikiadmin
+</code></pre><p>Let&rsquo;s reset the password for &lsquo;administrator&rsquo;. I began by stopping Confluence via. the <code>shutdown.bat</code> script.</p>
+<p>Then, I used <strong>mySQL Query Browser</strong> again to reset the administrator account&rsquo;s password to <code>admin</code>:<br>
+<code>update users set password = 'x61Ey612Kl2gpFL56FT9weDnpSo4AV8j8+qx2AuTHdRyY036xxzTTrw10Wq3+4qQyB+XURPWx1ONxp3Y3pB37A==' where name='administrator';</code></p>
+<p>After the password was reset, I started Confluence again via. the &lsquo;startup.bat&rsquo; script. I then logged in as administrator:admin and used Confluence&rsquo;s interface to add a new user account.</p>
 
 </section>
 
@@ -207,7 +224,7 @@ if (!doNotTrack) {
     
     <section class="article-tags">
         
-            <a href="/tags/powershell/">powershell</a>
+            <a href="/tags/confluence/">Confluence</a>
         
     </section>
 
