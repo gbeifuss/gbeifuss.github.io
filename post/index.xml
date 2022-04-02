@@ -6,7 +6,25 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 22 Mar 2022 13:26:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Apr 2022 09:35:22 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reset Root on RHEL 4</title>
+      <link>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</link>
+      <pubDate>Sat, 02 Apr 2022 09:35:22 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</guid>
+      <description>Reset a lost Root password on RHEL 4</description>
+    </item>
+    
+    <item>
+      <title>Uninstalling Tivoli Storage Manager Client</title>
+      <link>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</link>
+      <pubDate>Sat, 02 Apr 2022 09:34:57 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</guid>
+      <description>Remove IBM Tivoli Storage Manager Client components left behind by the standard uninstaller</description>
+    </item>
+    
     <item>
       <title>Reset Confluence Password for an Administrator ID</title>
       <link>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</link>
@@ -23,6 +41,15 @@
       
       <guid>https://gbeifuss.github.io/p/adfs-change-service-account-to-gmsa/</guid>
       <description>Migrating an existing ADFS to use gMSA, step-by-step</description>
+    </item>
+    
+    <item>
+      <title>Creating an ESXi Thin Disk</title>
+      <link>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</link>
+      <pubDate>Sat, 26 Feb 2022 09:34:35 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</guid>
+      <description>Changing a thick ESXi disk to a thin provisioned disk</description>
     </item>
     
     <item>

@@ -6,7 +6,70 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Tue, 22 Mar 2022 13:26:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 02 Apr 2022 09:35:22 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Reset Root on RHEL 4</title>
+        <link>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</link>
+        <pubDate>Sat, 02 Apr 2022 09:35:22 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</guid>
+        <description>&lt;p&gt;One of the legacy systems I inherited at my job was a standalone Red Hat Enterprise Linux 4.0 server with no documented credentials or purpose&amp;hellip; at least, none that I could find, or that anyone in the business could recall. It&amp;rsquo;s difficult to decide if a server is still necessary when there&amp;rsquo;s no information! L33T hacking skills to the rescue!&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Reboot the server. We need to edit the startup configuration in order to reset the ROOT password.&lt;/li&gt;
+&lt;li&gt;As the server begins to boot again, the GRUB screen will appear for a few seconds. Press a key in order to interrupt the boot sequence.&lt;br&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-1.png&#34; alt=&#34;&#34;  /&gt;&lt;/li&gt;
+&lt;li&gt;If you interrupted the boot in time, you&amp;rsquo;ll be presented with a menu. Use the arrow keys to select the top option and press E.
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-2.png&#34; alt=&#34;&#34;  /&gt;&lt;/li&gt;
+&lt;li&gt;Use the arrow keys to highlight the line starting with &lt;em&gt;kernel&lt;/em&gt; and press E.
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-3.png&#34; alt=&#34;&#34;  /&gt;&lt;/li&gt;
+&lt;li&gt;Add the word &lt;em&gt;single&lt;/em&gt; to the end of the line you&amp;rsquo;re editing, and press ENTER to save the change. This instructs the boot process to load in single user mode:&lt;br&gt;
+&lt;code&gt;kernel /vmlinuz-2.6.9-55.ELsmp ro root=LABEL=/1 nousb single&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Press &lt;code&gt;b&lt;/code&gt; to continue the boot process.&lt;/li&gt;
+&lt;li&gt;Once the boot process is finished, you&amp;rsquo;ll be left at the prompt. Use the &lt;code&gt;passwd&lt;/code&gt; command to reset the password for the current user (Root).&lt;/li&gt;
+&lt;li&gt;Issue the &lt;code&gt;reboot&lt;/code&gt; command to restart the computer. It should boot normally, at which point you can use the new Root password to log in.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I logged in and found that this server seemed to only run a very old copy of sendmail (which no longer had a valid configuration), so I took the server offline for a scream test. In a few days, I&amp;rsquo;ll formally decommission it!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Uninstalling Tivoli Storage Manager Client</title>
+        <link>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</link>
+        <pubDate>Sat, 02 Apr 2022 09:34:57 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</guid>
+        <description>&lt;p&gt;One of the legacy ecosystems that I inherited is an IBM Tivoli Storage Manager install. Ours consists of:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;5 servers&lt;/li&gt;
+&lt;li&gt;2 tape libraries (totalling 8x LTO-6 drives)&lt;/li&gt;
+&lt;li&gt;IBM V5000 storage array&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Our site has a 25 year retention policy, driven by customer requirements &amp;amp; contracts. For the past 2-5 years, this install has not been cared for in any way. One of the tape libraries has been online for &lt;strong&gt;65,930 hours&lt;/strong&gt;&amp;hellip; that&amp;rsquo;s 7.5 years without a reboot! According to the people I spoke with, we apparently migrated away from it a few years ago &amp;hellip; but nobody could give me a 100% guarantee that all the backups were properly migrated to the new system, that retention policies were followed, or whether the TSM system could be restored from if the need ever arose.&lt;/p&gt;
+&lt;p&gt;I decided that the best course of action was to power down the systems and let everything age in place. At least that would give us a &lt;em&gt;chance&lt;/em&gt; at restoring data if it turned out something was improperly transitioned.&lt;/p&gt;
+&lt;p&gt;We have about 10 Windows Servers still with the IBM TSM Client installed and running, even though it wasn&amp;rsquo;t being used. We have installations ranging from v.06.02.0301 (April 2014) to v.07.01.0800 (March 2018).&lt;/p&gt;
+&lt;p&gt;I opened up Add/Remove Programs and removed the software&amp;hellip; which ended up actually doing nothing other than removing the entry. The TSM services were still installed (and running!), even after a reboot:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;get-service&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ft &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-a&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Status&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;                         &lt;span class=&#34;n&#34;&gt;DisplayName&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;------&lt;/span&gt;  &lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;                         &lt;span class=&#34;p&#34;&gt;-----------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Running&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Client&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Acceptor&lt;/span&gt;          &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Client&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Acceptor&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Running&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Client&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Scheduler&lt;/span&gt;         &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Client&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Scheduler&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Stopped&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journal&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Service&lt;/span&gt;          &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journal&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Service&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Stopped&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Remote&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Client&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Agent&lt;/span&gt;      &lt;span class=&#34;n&#34;&gt;TSM&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Remote&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Client&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Agent&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;More comprehensive methods were clearly needed!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Remove Services&lt;/strong&gt;&lt;br&gt;
+Launch Command Prompt (as Administrator)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sc delete &amp;#34;TSM Client Scheduler&amp;#34;
+sc delete &amp;#34;TSM Client Acceptor&amp;#34;
+sc delete &amp;#34;TSM Client Agent&amp;#34;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Remove Files and Directories&lt;/strong&gt;&lt;br&gt;
+Delete the main software folder (ie. &lt;code&gt;C:\Program Files\Tivoli&lt;/code&gt;).  If Windows states that some files are in use, reboot and retry.&lt;br&gt;
+Delete the installation folder (ie. &lt;code&gt;C:\tsm_images&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Delete Registry Entries&lt;/strong&gt;&lt;br&gt;
+Launch Regedit as administrator:&lt;br&gt;
+Delete &lt;code&gt;HKEY_LOCAL_MACHINE\SOFTWARE\IBM\ASDM&lt;/code&gt;&lt;br&gt;
+Delete &lt;code&gt;HKEY_LOCAL_MACHINE\SOFTWARE\Tivoli&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;After a reboot, there was no trace of the TSM Client any more!&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Reset Confluence Password for an Administrator ID</title>
         <link>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</link>
         <pubDate>Tue, 22 Mar 2022 13:26:12 -0400</pubDate>
@@ -123,6 +186,29 @@ Generate the new SPN: &lt;code&gt;setspn -S HOST/STS.COMPANY.COM DOMAIN\ADFS-GMS
     &gt;Service Account to gMSA?&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.reddit.com/r/adfs/comments/n7f2py/service_account_to_gmsa_success/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Service Account to GMSA - success!&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Creating an ESXi Thin Disk</title>
+        <link>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</link>
+        <pubDate>Sat, 26 Feb 2022 09:34:35 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</guid>
+        <description>&lt;p&gt;I built a new Windows 2019 Server VM the other day on our ESXi platform. I&amp;rsquo;ll migrate some services currently running on a Windows 2008R2 Server over, then decommission the old VM. One of the challenges I faced was getting our corporate image, which is stored as an image file in Phoenix, Arizona. Because of the way our storage is setup, I couldn&amp;rsquo;t directly transfer it to our storage system.&lt;/p&gt;
+&lt;p&gt;I downloaded the VMDK file to my laptop first. ESXi had to expand the file from 24GB to the full 80GB during the download, which took an hour or so.
+Next, I uploaded the 80GB VMDK file to our local ESXi cluster. A couple of hours later, it was finished!&lt;/p&gt;
+&lt;p&gt;I attached it to a new VM, and then did a storage vMotion. Fortunately, I have a couple of datastores to choose from!&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Right-click the virtual machine and select Migrate.&lt;/li&gt;
+&lt;li&gt;In Step 1 of the Wizard (Select a Migration Type), select &lt;strong&gt;Change Storage Only&lt;/strong&gt; and click &lt;strong&gt;Next&lt;/strong&gt;. We don&amp;rsquo;t need to move the VM to a new host, only the files.&lt;/li&gt;
+&lt;li&gt;In Step 2 of the Wizard (Select Storage) select the option &lt;strong&gt;Configure Per Disk&lt;/strong&gt; in the upper right.&lt;/li&gt;
+&lt;li&gt;Select the disk to modify.&lt;/li&gt;
+&lt;li&gt;Under Storage category, select the destination datastore. Under the &lt;strong&gt;Disk Format&lt;/strong&gt; option select &lt;strong&gt;Thin Provision&lt;/strong&gt;, and click &lt;strong&gt;Next&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;In Step 3 of the Wizard (Ready to Complete), review the information and click &lt;strong&gt;Finish&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2014832&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Changing the thick or thin provisioning of a virtual disk (2014832)&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         <item>
@@ -805,7 +891,7 @@ tunnel-group Management webvpn-attributes
 &lt;ul&gt;
 &lt;li&gt;Click Add. Enter a Display Name (which doesn&amp;rsquo;t seem to actually be used anywhere else).&lt;/li&gt;
 &lt;li&gt;Under FQDN, enter the same value that&amp;rsquo;s in your User Tunnel - vpn.company.com for example.&lt;/li&gt;
-&lt;li&gt;Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&amp;rsquo;s &lt;code&gt;Management&lt;/code&gt; .
+&lt;li&gt;Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&amp;rsquo;s &lt;code&gt;Management&lt;/code&gt; .&lt;br&gt;
 &lt;img src=&#34;https://gbeifuss.github.io/img/asdm-management-profile-server-list.png&#34; alt=&#34;&#34;  /&gt;&lt;/li&gt;
 &lt;li&gt;Click OK until you&amp;rsquo;re back at the main ASDM page, then click Apply to write the changes.&lt;/li&gt;
 &lt;/ul&gt;
@@ -816,7 +902,7 @@ tunnel-group Management webvpn-attributes
 &lt;p&gt;Load AnyConnect and establish a connection to your User Tunnel as usual. After successfully connecting, the ASA will contact the NDES for certificate enrollment on your behalf. After a few seconds, AnyConnect will issue a notice:
 popup-certificate-enrollment-succeeded.png)
 Click OK to acknowledge the notice. AnyConnect will indeed disconnect you and try to re-establish a connection. You can either authenticate and establish a User Tunnel, or click Cancel. If you click Cancel, AnyConnect will take a few minutes to perform Trusted Network Detection, determine you&amp;rsquo;re not on the corporate network, then transparently establish the Management Tunnel using your certificate. You can see the Management Tunnel status in the AnyConnect client Statistics:
-&lt;img src=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34; alt=&#34;&#34;  /&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34; alt=&#34;&#34;  /&gt;&lt;br&gt;
 When you connect back to a User Tunnel, the Management Tunnel will disconnect and show &lt;code&gt;Disconnected (user tunnel active)&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;behind-the-scenes&#34;&gt;Behind The Scenes&lt;/h2&gt;
 &lt;p&gt;AnyConnect actually grabs 2 certificates based on your VPN username and stores them in &lt;code&gt;Local User Certificates\Personal\Certificates&lt;/code&gt; and &lt;code&gt;Local Machine Certificates\Personal\Certificates&lt;/code&gt;. If you created a standard certificate template, NDES issues them with a 1 year validity period. However, AnyConnect inspects the &amp;lsquo;Date Issued&amp;rsquo; field and compares the age to the value set under &lt;code&gt;Certificate Expiration Threshold (days)&lt;/code&gt;. If the value = 2, then if the certificate is older than 2 days, AnyConnect will request another certificate the next time a VPN session is established.&lt;/p&gt;

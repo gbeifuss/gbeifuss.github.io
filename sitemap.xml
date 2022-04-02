@@ -2,27 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://gbeifuss.github.io/</loc>
+    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/linux/</loc>
+    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/post/</loc>
+    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</loc>
+    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</loc>
+    <lastmod>2022-04-02T09:34:57-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://gbeifuss.github.io/tags/confluence/</loc>
     <lastmod>2022-03-22T13:26:12-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2022-03-22T13:26:12-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2022-03-22T13:26:12-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</loc>
-    <lastmod>2022-03-22T13:26:12-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
     <lastmod>2022-03-22T13:26:12-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -42,6 +57,16 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
+    <loc>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</loc>
+    <lastmod>2022-02-26T09:34:35-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
+    <lastmod>2022-02-26T09:34:35-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://gbeifuss.github.io/tags/hp-ilo/</loc>
     <lastmod>2021-12-27T00:09:54-05:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -58,11 +83,6 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</loc>
-    <lastmod>2021-12-22T16:17:50-05:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
     <lastmod>2021-12-22T16:17:50-05:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -94,11 +114,6 @@
   </url><url>
     <loc>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</loc>
     <lastmod>2021-10-28T08:54:40-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/linux/</loc>
-    <lastmod>2021-10-28T08:54:12-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>

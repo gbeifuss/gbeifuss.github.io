@@ -217,7 +217,7 @@ tunnel-group Management webvpn-attributes
 <ul>
 <li>Click Add. Enter a Display Name (which doesn&rsquo;t seem to actually be used anywhere else).</li>
 <li>Under FQDN, enter the same value that&rsquo;s in your User Tunnel - vpn.company.com for example.</li>
-<li>Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&rsquo;s <code>Management</code> .
+<li>Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&rsquo;s <code>Management</code> .<br>
 <img src="/img/asdm-management-profile-server-list.png" alt=""  /></li>
 <li>Click OK until you&rsquo;re back at the main ASDM page, then click Apply to write the changes.</li>
 </ul>
@@ -228,7 +228,7 @@ tunnel-group Management webvpn-attributes
 <p>Load AnyConnect and establish a connection to your User Tunnel as usual. After successfully connecting, the ASA will contact the NDES for certificate enrollment on your behalf. After a few seconds, AnyConnect will issue a notice:
 popup-certificate-enrollment-succeeded.png)
 Click OK to acknowledge the notice. AnyConnect will indeed disconnect you and try to re-establish a connection. You can either authenticate and establish a User Tunnel, or click Cancel. If you click Cancel, AnyConnect will take a few minutes to perform Trusted Network Detection, determine you&rsquo;re not on the corporate network, then transparently establish the Management Tunnel using your certificate. You can see the Management Tunnel status in the AnyConnect client Statistics:
-<img src="/img/anyconnect-information-window-management-tunnel-connected.png" alt=""  />
+<img src="/img/anyconnect-information-window-management-tunnel-connected.png" alt=""  /><br>
 When you connect back to a User Tunnel, the Management Tunnel will disconnect and show <code>Disconnected (user tunnel active)</code>.</p>
 <h2 id="behind-the-scenes">Behind The Scenes</h2>
 <p>AnyConnect actually grabs 2 certificates based on your VPN username and stores them in <code>Local User Certificates\Personal\Certificates</code> and <code>Local Machine Certificates\Personal\Certificates</code>. If you created a standard certificate template, NDES issues them with a 1 year validity period. However, AnyConnect inspects the &lsquo;Date Issued&rsquo; field and compares the age to the value set under <code>Certificate Expiration Threshold (days)</code>. If the value = 2, then if the certificate is older than 2 days, AnyConnect will request another certificate the next time a VPN session is established.</p>

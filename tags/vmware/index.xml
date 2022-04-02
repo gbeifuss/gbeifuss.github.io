@@ -6,7 +6,16 @@
     <description>Recent content in VMWare on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 22 Dec 2021 16:17:50 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 26 Feb 2022 09:34:35 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Creating an ESXi Thin Disk</title>
+      <link>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</link>
+      <pubDate>Sat, 26 Feb 2022 09:34:35 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</guid>
+      <description>Changing a thick ESXi disk to a thin provisioned disk</description>
+    </item>
+    
     <item>
       <title>Remediating Log4j in VMWare VCenter 6.5</title>
       <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
