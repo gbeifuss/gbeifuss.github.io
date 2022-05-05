@@ -6,7 +6,22 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 02 Apr 2022 09:35:22 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 05 May 2022 09:44:16 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>VMWare VCSA 6.7 Backup Failure</title>
+        <link>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</link>
+        <pubDate>Thu, 05 May 2022 09:44:16 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</guid>
+        <description>&lt;p&gt;I set out to apply patches today on a relatively-newly-installed VCSA 6.7 virtual appliance today.&lt;/p&gt;
+&lt;p&gt;I started with taking a backup, as recommended by VMWare. The FTP backup would start, but then sit at &lt;code&gt;Creating backup target directory&lt;/code&gt; until it reported the error:
+&lt;code&gt;Structure com.vmware.appliance.recovery.backup.job.details.info has a union with a field not required for this case = end_time&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Most of the articles I found on the topic were related to permissions being incorrectly set. However, my account had full permissions both within the FileZilla FTP Server software and within Windows. The logs showed the VCSA logging in and creating directories, but the backup would fail with the above error before transferring data.&lt;/p&gt;
+&lt;p&gt;It turns out that the VCSA backup uses passive FTP for the actual transfer, and strict Windows Firewall rules prevented this from being established. Of course, security policies prevented me from temporarily disabling the firewall&amp;hellip; thanks a lot, corporate IT Security! I ended up creating a temporary Firewall rule to permit TCP 1024-1048, then configured the passive ports used by FileZilla FTP Server to use the same range.&lt;/p&gt;
+&lt;p&gt;After this, the backup completed successfully, and I proceeded with patching the VCSA.&lt;/p&gt;
+&lt;p&gt;In case anyone wonders, I reverted all my changes so that IT Security stays happy :)&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Reset Root on RHEL 4</title>
         <link>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</link>
         <pubDate>Sat, 02 Apr 2022 09:35:22 -0400</pubDate>

@@ -3,7 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
+    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/post/</loc>
+    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
+    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</loc>
+    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -12,17 +32,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</loc>
-    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
     <lastmod>2022-04-02T09:35:22-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -58,11 +68,6 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</loc>
-    <lastmod>2022-02-26T09:34:35-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
     <lastmod>2022-02-26T09:34:35-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
