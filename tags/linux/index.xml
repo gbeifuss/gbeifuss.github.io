@@ -6,7 +6,16 @@
     <description>Recent content in Linux on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 02 Apr 2022 09:35:22 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 11 May 2022 10:51:54 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Expand a Linux Disk in ESXi</title>
+      <link>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</link>
+      <pubDate>Wed, 11 May 2022 10:51:54 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
+      <description>Expanding an existing Linux disk in ESXi</description>
+    </item>
+    
     <item>
       <title>Reset Root on RHEL 4</title>
       <link>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</link>

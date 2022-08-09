@@ -6,7 +6,25 @@
     <description>Recent content in Posts on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 May 2022 09:44:16 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 08 Aug 2022 20:06:08 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>=Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
+      <link>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
+      <pubDate>Mon, 08 Aug 2022 20:06:08 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</guid>
+      <description>Resolving an ESXi alert about Thick Provisioned disks, despite having a vSAN Storage Policy that should prevent them</description>
+    </item>
+    
+    <item>
+      <title>Expand a Linux Disk in ESXi</title>
+      <link>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</link>
+      <pubDate>Wed, 11 May 2022 10:51:54 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
+      <description>Expanding an existing Linux disk in ESXi</description>
+    </item>
+    
     <item>
       <title>VMWare VCSA 6.7 Backup Failure</title>
       <link>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</link>
@@ -14,6 +32,15 @@
       
       <guid>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</guid>
       <description>Resolving com.vmware.appliance.recovery.backup.job.details.info union errors when performing an FTP backup of VSCA 6.7</description>
+    </item>
+    
+    <item>
+      <title>Reverting an ESXi Upgrade</title>
+      <link>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</link>
+      <pubDate>Sun, 01 May 2022 10:51:36 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</guid>
+      <description>How to roll ESXi back to a previous hypervisor after system errors</description>
     </item>
     
     <item>

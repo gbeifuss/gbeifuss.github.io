@@ -2,23 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</loc>
+    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/tags/</loc>
-    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/tags/vmware/</loc>
-    <lastmod>2022-05-05T09:44:16-04:00</lastmod>
+    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</loc>
+    <lastmod>2022-05-11T10:51:54-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/linux/</loc>
+    <lastmod>2022-05-11T10:51:54-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -27,8 +42,13 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/linux/</loc>
-    <lastmod>2022-04-02T09:35:22-04:00</lastmod>
+    <loc>https://gbeifuss.github.io/tags/hp-ilo/</loc>
+    <lastmod>2022-05-01T10:51:36-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</loc>
+    <lastmod>2022-05-01T10:51:36-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -69,11 +89,6 @@
   </url><url>
     <loc>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</loc>
     <lastmod>2022-02-26T09:34:35-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/hp-ilo/</loc>
-    <lastmod>2021-12-27T00:09:54-05:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>

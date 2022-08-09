@@ -6,7 +6,16 @@
     <description>Recent content in HP iLO on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 27 Dec 2021 00:09:54 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/hp-ilo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 May 2022 10:51:36 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/hp-ilo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reverting an ESXi Upgrade</title>
+      <link>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</link>
+      <pubDate>Sun, 01 May 2022 10:51:36 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</guid>
+      <description>How to roll ESXi back to a previous hypervisor after system errors</description>
+    </item>
+    
     <item>
       <title>Resolving HP iLO NAND Error</title>
       <link>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</link>
