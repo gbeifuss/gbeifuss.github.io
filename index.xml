@@ -6,8 +6,39 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Mon, 08 Aug 2022 20:06:08 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>=Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
+        <lastBuildDate>Tue, 09 Aug 2022 15:49:19 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Recovering SQL System Admin rights</title>
+        <link>https://gbeifuss.github.io/p/recovering-sql-system-admin-rights/</link>
+        <pubDate>Tue, 09 Aug 2022 15:49:19 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/recovering-sql-system-admin-rights/</guid>
+        <description>&lt;p&gt;It seems that a lot of my recent posts are related to my &amp;ldquo;adventures&amp;rdquo; at work. Oh well&amp;hellip; &lt;code&gt;&amp;lt;shrugs&amp;gt;&lt;/code&gt; Here&amp;rsquo;s another!&lt;/p&gt;
+&lt;p&gt;We have a legacy SQL server (Windows 2012R2, SQL 2012) that was unmaintained for a number of years until I came along. We had a developer who was nominally responsible for it, but I discovered that even his credentials didn&amp;rsquo;t have full &lt;strong&gt;sa&lt;/strong&gt; rights, and some databases were simply not accessible by him. I decided to turn to a life of crime and break in.&lt;/p&gt;
+&lt;p&gt;Is it really breaking in when I follow MS documentation? I suppose not.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;You can start an instance of SQL Server in single-user mode with either the -m or -f options from the command line. Any member of the computer&amp;rsquo;s local Administrators group can then connect to the instance of SQL Server as a member of the sysadmin fixed server role.
+When you start the instance in single-user mode, first stop the SQL Server Agent service. Otherwise, SQL Server Agent might connect first, taking the only available connection to the server and blocking you from logging in.&lt;/em&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open a Windows PowerShell command. Run it as an Administrator&lt;/li&gt;
+&lt;li&gt;Define the variables to use later:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;$service_name = &amp;#34;MSSQL`$instancename&amp;#34;  
+$sql_server_instance = &amp;#34;machine_name\instance&amp;#34;  
+$login_to_be_granted_access = &amp;#34;[CONTOSO\PatK]&amp;#34;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Stop SQL Server service:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;`net stop $SERVICENAME`
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Execute a CREATE LOGIN command followed by ALTER SERVER ROLE command&amp;quot;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;`sqlcmd.exe -E -S $sql_server_instance -Q &amp;#34;CREATE LOGIN $login_to_be_granted_access FROM WINDOWS; ALTER SERVER ROLE sysadmin ADD MEMBER $login_to_be_granted_access; &amp;#34;`
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Exit, and restart the service normally&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-ver16&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Connect to SQL Server when system administrators are locked out&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
         <link>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
         <pubDate>Mon, 08 Aug 2022 20:06:08 -0400</pubDate>
         
@@ -36,7 +67,7 @@
         
         <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
         <description>&lt;p&gt;I came across a Linux Database VM at work that desperately needed more disk space. The DBA outlined how they wanted the storage to be allocated, so I set about with the work!&lt;/p&gt;
-&lt;p&gt;First, I added new disks in ESXi to match the disk space requested. I added space in 500 or 1000 GB blocks to give us flexibility with storage and vmotion. Disks were balanced across SCSI controllers as well.&lt;/p&gt;
+&lt;p&gt;First, I added new disks in ESXi to match the disk space requested. I added space in 500 or 1000 GB blocks to give flexibility with storage and vmotion. Disks were balanced across SCSI controllers as well.&lt;/p&gt;
 &lt;p&gt;Then, I logged into the linux VM with admin credentials.&lt;/p&gt;
 &lt;p&gt;At a high-level, I&amp;rsquo;ll:&lt;/p&gt;
 &lt;ul&gt;

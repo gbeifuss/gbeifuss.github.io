@@ -2,22 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</loc>
-    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
+    <lastmod>2022-08-09T15:49:19-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
+    <lastmod>2022-08-09T15:49:19-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/recovering-sql-system-admin-rights/</loc>
+    <lastmod>2022-08-09T15:49:19-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</loc>
     <lastmod>2022-08-08T20:06:08-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
