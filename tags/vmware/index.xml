@@ -6,7 +6,34 @@
     <description>Recent content in VMWare on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 08 Aug 2022 20:06:08 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 06 Mar 2023 14:26:42 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cancel Vmware Tools Installation on ESXi</title>
+      <link>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</link>
+      <pubDate>Mon, 06 Mar 2023 14:26:42 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</guid>
+      <description>How to cancel a VMWare Tools install via. SSH from the host server</description>
+    </item>
+    
+    <item>
+      <title>VMWare ESXi - Disable SLP</title>
+      <link>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</link>
+      <pubDate>Mon, 06 Mar 2023 14:26:07 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</guid>
+      <description>How to disable the Service Location Protocol service on ESXi</description>
+    </item>
+    
+    <item>
+      <title>VMWare Tools Update/Install/Uninstall fails</title>
+      <link>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</link>
+      <pubDate>Thu, 13 Oct 2022 09:03:35 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</guid>
+      <description>How to resolve the error &amp;ldquo;Error upgrading VMWare Tools&amp;rdquo;</description>
+    </item>
+    
     <item>
       <title>Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
       <link>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>

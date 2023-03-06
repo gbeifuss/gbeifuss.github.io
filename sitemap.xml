@@ -2,13 +2,48 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</loc>
+    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://gbeifuss.github.io/</loc>
-    <lastmod>2022-08-09T15:49:19-04:00</lastmod>
+    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/linux/</loc>
+    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2022-08-09T15:49:19-04:00</lastmod>
+    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</loc>
+    <lastmod>2023-03-06T14:26:42-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
+    <lastmod>2023-03-06T14:26:42-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</loc>
+    <lastmod>2023-03-06T14:26:07-05:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</loc>
+    <lastmod>2022-10-13T09:03:35-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -17,27 +52,12 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
-    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</loc>
     <lastmod>2022-08-08T20:06:08-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
-    <lastmod>2022-08-08T20:06:08-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</loc>
-    <lastmod>2022-05-11T10:51:54-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/linux/</loc>
     <lastmod>2022-05-11T10:51:54-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

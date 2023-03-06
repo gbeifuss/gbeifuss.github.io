@@ -205,12 +205,12 @@ b) administratively remove it.</p>
 </span></span><span class="line"><span class="cl"><span class="p">&gt;</span>
 </span></span></code></pre></div><p>Well that&rsquo;s not good. There were no results. This time, I&rsquo;ll look for the specific attachment that contained the PII, then display any results that have a resultcount &gt; 0 (that is, a message with the attachment was found):</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">&gt;</span> <span class="nv">$results</span> <span class="p">=</span> <span class="nb">get-mailbox</span> <span class="p">|</span> <span class="nb">Search-Mailbox</span> <span class="n">-SearchQuery</span> <span class="s2">&#34;attachment:tax_07-10-2021-080049.pdf&#34;</span> <span class="n">-EstimateResultOnly</span>
-</span></span><span class="line"><span class="cl"><span class="p">&gt;</span> <span class="nv">$results</span> <span class="p">|</span> <span class="nb">where </span><span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="n">resultitemscount</span> <span class="o">-ne</span> <span class="n">0</span><span class="p">}</span> <span class="p">|</span> <span class="nb">select </span><span class="n">identity</span><span class="p">,</span><span class="n">resultitemscount</span> <span class="p">|</span> <span class="nb">ft </span><span class="n">-a</span>
+</span></span><span class="line"><span class="cl"><span class="p">&gt;</span> <span class="nv">$results</span> <span class="p">|</span> <span class="nb">where </span><span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">resultitemscount</span> <span class="o">-ne</span> <span class="mf">0</span><span class="p">}</span> <span class="p">|</span> <span class="nb">select </span><span class="n">identity</span><span class="p">,</span><span class="n">resultitemscount</span> <span class="p">|</span> <span class="nb">ft </span><span class="n">-a</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">Identity</span>                                   <span class="n">ResultItemsCount</span>
 </span></span><span class="line"><span class="cl"><span class="p">--------</span>                                   <span class="p">----------------</span>
-</span></span><span class="line"><span class="cl"><span class="n">company</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Corporate</span> <span class="n">Users</span><span class="p">/</span><span class="n">JDoe</span>                <span class="n">3</span>
-</span></span><span class="line"><span class="cl"><span class="n">company</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Corporate</span> <span class="n">Users</span><span class="p">/</span><span class="n">GWashington</span>         <span class="n">2</span>
+</span></span><span class="line"><span class="cl"><span class="n">company</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Corporate</span> <span class="n">Users</span><span class="p">/</span><span class="n">JDoe</span>                <span class="mf">3</span>
+</span></span><span class="line"><span class="cl"><span class="n">company</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Corporate</span> <span class="n">Users</span><span class="p">/</span><span class="n">GWashington</span>         <span class="mf">2</span>
 </span></span></code></pre></div><p>Much better! 5 messages found across Exchange. Now, let&rsquo;s purge them from JDoe&rsquo;s mailbox, but leave them in GWashington&rsquo;s mailbox. We need the -DeleteContent switch for that:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">&gt;</span> <span class="s2">&#34;JDoe&#34;</span> <span class="p">|</span> <span class="nb">Search-Mailbox</span> <span class="n">-SearchQuery</span> <span class="s2">&#34;attachment:tax_07-10-2021-080049.pdf&#34;</span> <span class="n">-DeleteContent</span>
 </span></span></code></pre></div>
@@ -304,7 +304,7 @@ b) administratively remove it.</p>
         
             2020 - 
         
-        2022 Greg Beifuss
+        2023 Greg Beifuss
     </section>
     
     <section class="powerby">
