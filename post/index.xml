@@ -17,6 +17,24 @@
     </item>
     
     <item>
+      <title>ESXi upgrade generates Dependency Errors</title>
+      <link>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</link>
+      <pubDate>Mon, 06 Mar 2023 14:27:52 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</guid>
+      <description>Upgrading ESXi results in errors about failed dependencies</description>
+    </item>
+    
+    <item>
+      <title>ESXi Staging Volume Full</title>
+      <link>https://gbeifuss.github.io/p/esxi-staging-volume-full/</link>
+      <pubDate>Mon, 06 Mar 2023 14:27:15 -0500</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/esxi-staging-volume-full/</guid>
+      <description>Recreating the /locker partition after getting a &amp;ldquo;The VFAT filesystem mpx.vmhba is full&amp;rdquo; error</description>
+    </item>
+    
+    <item>
       <title>Cancel Vmware Tools Installation on ESXi</title>
       <link>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</link>
       <pubDate>Mon, 06 Mar 2023 14:26:42 -0500</pubDate>

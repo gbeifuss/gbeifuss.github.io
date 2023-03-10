@@ -23,6 +23,93 @@ After running the command, I rebooted the server which booted properly.&lt;/p&gt
 </description>
         </item>
         <item>
+        <title>ESXi upgrade generates Dependency Errors</title>
+        <link>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</link>
+        <pubDate>Mon, 06 Mar 2023 14:27:52 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</guid>
+        <description>&lt;p&gt;I was patching ESXi hosts at work (again!) and ran into an issue with dependencies.&lt;/p&gt;
+&lt;p&gt;Update Manager generated an error when trying to patch ESXi 6.5, so I tried updating from the CLI:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server00:~] esxcli software vib update -d &amp;#34;/vmfs/volumes/ecd3afaf-295422fc/VMware-VMvisor-Installer-6.5.0.update03-20502893.x86_64-DellEMC_Customized-A10.zip&amp;#34; --dry-run
+
+[DependencyError]
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+Please refer to the log file for more details.
+[root@server00:~]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;One server was patched by downloading the &lt;code&gt;DellEMC-ESXi-6.5U3-20502893-A10.iso&lt;/code&gt; image to the Update Manager and creating a baseline from it. I then attached it to the host and let it Remediate.&lt;/p&gt;
+&lt;p&gt;Another server didn&amp;rsquo;t upgrade with the custom baseline I created, so I tried to remove the dependencies via. CLI:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server00:~] esxcli software vib list | grep -i brocade
+net-bna                        3.1.0.0-1OEM.500.0.0.472560           Brocade   VMwareCertified   2014-02-19
+scsi-bfa                       3.1.0.0-1OEM.500.0.0.472560           Brocade   VMwareCertified   2014-02-19
+ 
+[root@server00:~] esxcli software vib remove -n net-bna
+[DependencyError]
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+Please refer to the log file for more details.
+[root@server00:~] esxcli software vib remove -n scsi-bfa
+[DependencyError]
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+Please refer to the log file for more details.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;As the error above shows, that didn&amp;rsquo;t work, because there were sub-requirements that were not met.&lt;/p&gt;
+&lt;p&gt;I finally managed to apply the update via. CLI by instructing ESXi that it was okay to remove VIBs not associated with the profile being installed:
+&lt;code&gt;esxcli software profile install -p DellEMC-ESXi-6.5U3-14320405-A03 -d /vmfs/volumes/datastore/ISO/VMware-VMvisor-Installer-6.5.0.update03-14320405.x86_64-DellEMC_Customized-A03.zip --ok-to-remove&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ESXi Staging Volume Full</title>
+        <link>https://gbeifuss.github.io/p/esxi-staging-volume-full/</link>
+        <pubDate>Mon, 06 Mar 2023 14:27:15 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-staging-volume-full/</guid>
+        <description>&lt;p&gt;Another tale of ESXi patching adventures. My company has some ESXi hosts in remote locations that don&amp;rsquo;t get much care. As long as they&amp;rsquo;re running the VMs and business users don&amp;rsquo;t complain, the hosts don&amp;rsquo;t get much attention.&lt;/p&gt;
+&lt;p&gt;Today I was trying to patch a server with all the ESXi 6.5 patches released to date, but it was failing with this error:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;02 / 27 / 2023, 2:14:57 PM  The VFAT filesystem mpx.vmhba32:C0:T0:L0:8 (UUID 577b5b9f-bf67afef-822f-246e960d8318) is ...
+02 / 27 / 2023, 2:56:00 PM  Could not stage image profile &amp;#39;(Updated) ESXi-5.5.0-20150104001-standard&amp;#39;: (&amp;#39;VMware_locker_tools-light_6.5.0-3.191.20448942&amp;#39;, &amp;#39;[Errno 32] Broken pipe&amp;#39;)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Some quick searching revealed that this error is likely because the locker partition is out of space. Lo and behold, it was:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+[root@server02:~] ls -ltrh / | grep store
+lrwxrwxrwx    1 root     root           6 Feb 27 20:21 locker -&amp;gt; /store
+lrwxrwxrwx    1 root     root          49 Feb 27 20:21 store -&amp;gt; /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318
+[root@server02:~]
+
+[root@server02: / vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318/packages] df -h
+Filesystem   Size   Used Available Use% Mounted on
+NFS          4.0T   2.2T      1.8T  55% /vmfs/volumes/vmds05
+NFS          4.0T   2.9T      1.1T  72% /vmfs/volumes/vmds06
+NFS          4.0T   2.4T      1.6T  61% /vmfs/volumes/vmds04
+NFS          4.0T   2.9T      1.1T  73% /vmfs/volumes/vmds03
+NFS          4.0T   2.3T      1.7T  56% /vmfs/volumes/vmds02
+NFS          7.0T   6.5T    517.3G  93% /vmfs/volumes/vmds01
+vfat       285.8M 285.8M     56.0K 100% /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318
+vfat       249.7M 166.1M     83.6M  67% /vmfs/volumes/930098e3-722a9454-fdea-b663aa3b7053
+vfat       249.7M 166.1M     83.6M  67% /vmfs/volumes/3bc3cee8-10f1c748-e8e5-d729b7af1e64
+
+[root@server02:~] df /locker
+Filesystem         Bytes          Used     Available Use% Mounted on
+vfat           299712512     299655168         57344 100% /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Using the disk and partition information in the error, I formatted the partition with vfat:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server02:~] vmkfstools -C vfat /dev/disks/mpx.vmhba32:C0:T0:L0:8
+create fs deviceName:&amp;#39;/dev/disks/mpx.vmhba32:C0:T0:L0:8&amp;#39;, fsShortName:&amp;#39;vfat&amp;#39;, fsName:&amp;#39;(null)&amp;#39;
+deviceFullPath:/dev/disks/mpx.vmhba32:C0:T0:L0:8 deviceFile:mpx.vmhba32:C0:T0:L0:8
+Checking if remote hosts are using this device as a valid file system. This may take a few seconds...
+Creating vfat file system on &amp;#34;mpx.vmhba32:C0:T0:L0:8&amp;#34; with blockSize 1048576 and volume label &amp;#34;none&amp;#34;.
+Successfully created new volume: 577b5b9f-bf67afef-822f-246e960d8318
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Then, I recreated the symlinks:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ln -snf /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318 /store
+ln -snf /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318 /locker
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After a reboot, I found another host server running the same ESXi version and path level, then copied the contents of the store to my newly formatted partition. After another reboot (just to be safe), I was able to patch the host server without any problems.&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;p&gt;An article I referenced when figuring this out was:&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://blog.ntitta.in/?p=254&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Fixing the broken/corrupt Locker Partition on Esxi&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Cancel Vmware Tools Installation on ESXi</title>
         <link>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</link>
         <pubDate>Mon, 06 Mar 2023 14:26:42 -0500</pubDate>
