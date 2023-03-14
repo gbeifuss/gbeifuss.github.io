@@ -2,12 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</loc>
-    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
+    <loc>https://gbeifuss.github.io/</loc>
+    <lastmod>2023-03-13T15:38:51-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/</loc>
+    <loc>https://gbeifuss.github.io/post/</loc>
+    <lastmod>2023-03-13T15:38:51-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/</loc>
+    <lastmod>2023-03-13T15:38:51-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</loc>
+    <lastmod>2023-03-13T15:38:51-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
+    <lastmod>2023-03-13T15:38:51-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</loc>
     <lastmod>2023-03-06T15:21:01-05:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -17,22 +37,7 @@
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://gbeifuss.github.io/post/</loc>
-    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/</loc>
-    <lastmod>2023-03-06T15:21:01-05:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</loc>
-    <lastmod>2023-03-06T14:27:52-05:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://gbeifuss.github.io/tags/vmware/</loc>
     <lastmod>2023-03-06T14:27:52-05:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

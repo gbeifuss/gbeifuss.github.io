@@ -6,7 +6,74 @@
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Mon, 06 Mar 2023 15:21:01 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 13 Mar 2023 15:38:51 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Using ovftool to migrate VMs between ESXi hosts</title>
+        <link>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
+        <pubDate>Mon, 13 Mar 2023 15:38:51 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
+        <description>&lt;p&gt;Last week I found some Shadow IT at work - a single business-managed ESXi server hosting legacy VMs for code testing. We have an arm of our business that supports products for 25 years, so releases need to be tested on Windows XP servers and other OSes of that era. In any case, this server was happily chugging along &amp;hellip; on ESXi 5.0! Needless to say, I need to bring these VMs into the IT-fold and migrate them to a modern ESXi server: VxRail running ESXi 7.0. But with such an obsolete product, migration can&amp;rsquo;t rely on some of the modern tools that I normally rely on.&lt;/p&gt;
+&lt;p&gt;That meant it was time for Open Virtualization Formal Tool (ovftool) to come to my rescue! This is a VMWare tool used to manipulate VMs to OVFs (or OVAs), OVFs to VMs, and VM-to-VM migrations. Exactly what I need! The only caveat is that that no vmotion is possible - the VMs need to be powered down.&lt;/p&gt;
+&lt;p&gt;I downloaded &lt;a class=&#34;link&#34; href=&#34;https://developer.vmware.com/web/tool/4.4.0/ovf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ovftool 4.4.3&lt;/a&gt; to my laptop and got to work. The syntax for a VM-VM migration on a VxRail took me quite a bit of time to figure out, because the documentation isn&amp;rsquo;t very helpful, and all of examples I found with Google-fu claimed that I could just use the destination server name or IP. (&lt;em&gt;Hint: I couldn&amp;rsquo;t.&lt;/em&gt;)&lt;/p&gt;
+&lt;p&gt;The source server, source VM, destination storage and destination server (and credentials!) are needed, according to the documentation. Also, the &lt;em&gt;datastore&lt;/em&gt; is the destination file system, not the source.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://userid@domain.com@destination.server.hostname -ds=vxrail-vsan1
+Error: Unexpected option:  -ds=vxrail-vsan1
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I took a quick look at the help file and determined I should be providing the information like this:
+&lt;code&gt;Usage: ovftool [options] &amp;lt;source&amp;gt; [&amp;lt;target&amp;gt;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;I found that I could specify only the information above, but then I&amp;rsquo;d be prompted for credentials each time I ran the command, and typing in credentials became old very fast&amp;hellip; so I added them to the command:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://userid@domain.com@destination.server.hostname
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Error: Found wrong kind of object (Folder). Possible completions are:
+  site/
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Clearly I need to add &amp;lsquo;site/&amp;rsquo; to the destination server path, so that OVFTool knows where to create the file. Note that I need to add &amp;ldquo;host/&amp;rdquo; too:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Error: Found wrong kind of object (Folder). Possible completions are:
+  site-vxrail/
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;em&gt;sigh&lt;/em&gt; another folder to add to the destination server path. Your path may differ based on the heirarchy of your ESXi cluster. ovftool will continue generating an error about the Folder if you&amp;rsquo;re not at the final path:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Opening VI target: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Error: No network mapping specified. OVF networks:   VM Network. Target networks:   Management Network-92c1a646-e30f-436e-bfd6-b05f32371c4d  Virtual SAN-92c1a646-e30f-436e-bfd6-b05f32371c4d  VxRail Management-92c1a646-e30f-436e-bfd6-b05f32371c4d  site-VLAN101  site-VLAN200  site-VLAN210  vCenter Server Network-92c1a646-e30f-436e-bfd6-b05f32371c4d  vSphere vMotion-92c1a646-e30f-436e-bfd6-b05f32371c4d
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Oh, this is finally promising!
+I need to add the network mapping to the command, so I pick the appropriate target network (in this case, site-VLAN210)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/ -nw=site-VLAN210
+Error: Unexpected option: -nw=site-VLAN210
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Grrrr&amp;hellip; foiled again by the order of the information I provide. One more time!&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 -nw=site-VLAN210 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Opening VI target: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Deploying to VI: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Transfer Completed
+Completed successfully
+ 
+C:\apps\ovftool&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Hurrah! A quick check on the VxRail and I can see that the VM has been migrated, stored on the right datastore and joined to the right network. I power it on as a quick test and confirm that I can ping it. Success!&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Dell USB driver halts Linux boot</title>
         <link>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</link>
         <pubDate>Mon, 06 Mar 2023 15:21:01 -0500</pubDate>

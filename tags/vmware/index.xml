@@ -6,7 +6,16 @@
     <description>Recent content in VMWare on Greg Beifuss</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Mar 2023 14:27:52 -0500</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 13 Mar 2023 15:38:51 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using ovftool to migrate VMs between ESXi hosts</title>
+      <link>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
+      <pubDate>Mon, 13 Mar 2023 15:38:51 -0400</pubDate>
+      
+      <guid>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
+      <description>Migrate VMs between very different versions of ESXi using the ovftool</description>
+    </item>
+    
     <item>
       <title>ESXi upgrade generates Dependency Errors</title>
       <link>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</link>
