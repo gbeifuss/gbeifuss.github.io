@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Greg Beifuss</title>
+    <link>https://gbeifuss.github.io/post/</link>
+    <description>Recent content in Posts on Greg Beifuss</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 09 Jul 2024 10:12:04 -0400</lastBuildDate>
+    <atom:link href="https://gbeifuss.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Installing OpenSSH Server on Windows 11</title>
+      <link>https://gbeifuss.github.io/p/installing-openssh-server-on-windows-11/</link>
+      <pubDate>Tue, 09 Jul 2024 10:12:04 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/installing-openssh-server-on-windows-11/</guid>
+      <description>Installing an SFTP server via. OpenSSH Server on Windows 11</description>
+    </item>
+    <item>
+      <title>Configuring Docker instance of ichapod</title>
+      <link>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</link>
+      <pubDate>Thu, 11 Apr 2024 10:11:58 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</guid>
+      <description>How to configure ichapod to download podcasts under Docker and OMV</description>
+    </item>
+    <item>
+      <title>Configure SSH access via. Windows Terminal &amp; a private key</title>
+      <link>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</link>
+      <pubDate>Tue, 05 Mar 2024 10:13:04 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</guid>
+      <description>Use Windows Terminal for SSH connections, using private key authentication</description>
+    </item>
+    <item>
+      <title>ESXI VCentre Certificates</title>
+      <link>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</link>
+      <pubDate>Wed, 19 Jul 2023 13:28:02 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</guid>
+      <description>Replacing expired VCSA certificates when the Web GUI won&amp;rsquo;t load</description>
+    </item>
+    <item>
+      <title>ESXi CPU Ready Time statistics</title>
+      <link>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</link>
+      <pubDate>Mon, 03 Apr 2023 17:00:36 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</guid>
+      <description>Using VMWare&amp;rsquo;s CPU Ready Time metric to resolve a VM performance problem</description>
+    </item>
+    <item>
+      <title>Using ovftool to migrate VMs between ESXi hosts</title>
+      <link>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
+      <pubDate>Mon, 13 Mar 2023 15:38:51 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
+      <description>Migrate VMs between very different versions of ESXi using the ovftool</description>
+    </item>
+    <item>
+      <title>Dell USB driver halts Linux boot</title>
+      <link>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</link>
+      <pubDate>Mon, 06 Mar 2023 15:21:01 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</guid>
+      <description>Linux doesn&amp;rsquo;t enumerate the USB driver properly and prevents the OS from loading</description>
+    </item>
+    <item>
+      <title>ESXi upgrade generates Dependency Errors</title>
+      <link>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</link>
+      <pubDate>Mon, 06 Mar 2023 14:27:52 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</guid>
+      <description>Upgrading ESXi results in errors about failed dependencies</description>
+    </item>
+    <item>
+      <title>ESXi Staging Volume Full</title>
+      <link>https://gbeifuss.github.io/p/esxi-staging-volume-full/</link>
+      <pubDate>Mon, 06 Mar 2023 14:27:15 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/esxi-staging-volume-full/</guid>
+      <description>Recreating the /locker partition after getting a &amp;ldquo;The VFAT filesystem mpx.vmhba is full&amp;rdquo; error</description>
+    </item>
+    <item>
+      <title>Cancel Vmware Tools Installation on ESXi</title>
+      <link>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</link>
+      <pubDate>Mon, 06 Mar 2023 14:26:42 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</guid>
+      <description>How to cancel a VMWare Tools install via. SSH from the host server</description>
+    </item>
+    <item>
+      <title>VMWare ESXi - Disable SLP</title>
+      <link>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</link>
+      <pubDate>Mon, 06 Mar 2023 14:26:07 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</guid>
+      <description>How to disable the Service Location Protocol service on ESXi</description>
+    </item>
+    <item>
+      <title>VMWare Tools Update/Install/Uninstall fails</title>
+      <link>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</link>
+      <pubDate>Thu, 13 Oct 2022 09:03:35 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</guid>
+      <description>How to resolve the error &amp;ldquo;Error upgrading VMWare Tools&amp;rdquo;</description>
+    </item>
+    <item>
+      <title>Recovering SQL System Admin rights</title>
+      <link>https://gbeifuss.github.io/p/recovering-sql-system-admin-rights/</link>
+      <pubDate>Tue, 09 Aug 2022 15:49:19 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/recovering-sql-system-admin-rights/</guid>
+      <description>Recovering Microsoft SQL System Admin rights when they&amp;rsquo;ve been lost</description>
+    </item>
+    <item>
+      <title>Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
+      <link>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
+      <pubDate>Mon, 08 Aug 2022 20:06:08 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</guid>
+      <description>Resolving an ESXi alert about Thick Provisioned disks, despite having a vSAN Storage Policy that should prevent them</description>
+    </item>
+    <item>
+      <title>Expand a Linux Disk in ESXi</title>
+      <link>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</link>
+      <pubDate>Wed, 11 May 2022 10:51:54 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
+      <description>Expanding an existing Linux disk in ESXi</description>
+    </item>
+    <item>
+      <title>VMWare VCSA 6.7 Backup Failure</title>
+      <link>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</link>
+      <pubDate>Thu, 05 May 2022 09:44:16 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</guid>
+      <description>Resolving com.vmware.appliance.recovery.backup.job.details.info union errors when performing an FTP backup of VSCA 6.7</description>
+    </item>
+    <item>
+      <title>Reverting an ESXi Upgrade</title>
+      <link>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</link>
+      <pubDate>Sun, 01 May 2022 10:51:36 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</guid>
+      <description>How to roll ESXi back to a previous hypervisor after system errors</description>
+    </item>
+    <item>
+      <title>Reset Root on RHEL 4</title>
+      <link>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</link>
+      <pubDate>Sat, 02 Apr 2022 09:35:22 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</guid>
+      <description>Reset a lost Root password on RHEL 4</description>
+    </item>
+    <item>
+      <title>Uninstalling Tivoli Storage Manager Client</title>
+      <link>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</link>
+      <pubDate>Sat, 02 Apr 2022 09:34:57 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</guid>
+      <description>Remove IBM Tivoli Storage Manager Client components left behind by the standard uninstaller</description>
+    </item>
+    <item>
+      <title>Reset Confluence Password for an Administrator ID</title>
+      <link>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</link>
+      <pubDate>Tue, 22 Mar 2022 13:26:12 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</guid>
+      <description>Resetting an administrator&amp;rsquo;s unknown Confluence 3.1 password</description>
+    </item>
+    <item>
+      <title>ADFS - Change Service Account to gMSA</title>
+      <link>https://gbeifuss.github.io/p/adfs-change-service-account-to-gmsa/</link>
+      <pubDate>Tue, 22 Mar 2022 11:14:45 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/adfs-change-service-account-to-gmsa/</guid>
+      <description>Migrating an existing ADFS to use gMSA, step-by-step</description>
+    </item>
+    <item>
+      <title>Creating an ESXi Thin Disk</title>
+      <link>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</link>
+      <pubDate>Sat, 26 Feb 2022 09:34:35 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</guid>
+      <description>Changing a thick ESXi disk to a thin provisioned disk</description>
+    </item>
+    <item>
+      <title>Resolving HP iLO NAND Error</title>
+      <link>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</link>
+      <pubDate>Mon, 27 Dec 2021 00:09:54 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</guid>
+      <description>Resolve an HP iLO &amp;ldquo;Embedded Flash\NAND error&amp;rdquo; alarm by formatting NAND</description>
+    </item>
+    <item>
+      <title>HP iLO C7000 Credential Reset</title>
+      <link>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</link>
+      <pubDate>Mon, 27 Dec 2021 00:09:41 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</guid>
+      <description>Forcibly reset C7000 Onboard Administrator credentials via. script on USB key</description>
+    </item>
+    <item>
+      <title>Remediating Log4j in VMWare VCenter 6.5</title>
+      <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
+      <pubDate>Wed, 22 Dec 2021 16:17:50 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
+      <description>Step-by-step instructions for mitigating log4j on VMWare VCenter 6.5</description>
+    </item>
+    <item>
+      <title>ESXi 6.0 to 6.5 Upgrade</title>
+      <link>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</link>
+      <pubDate>Mon, 20 Dec 2021 23:38:30 -0500</pubDate>
+      <guid>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</guid>
+      <description>Upgrading ESXi 6.0 to 6.5, step-by-step</description>
+    </item>
+    <item>
+      <title>Forcibly Remove Computer from Domain</title>
+      <link>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</link>
+      <pubDate>Thu, 04 Nov 2021 20:52:28 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</guid>
+      <description>Use Command Prompt to remove a computer from a domain, when you cannot contact the domain</description>
+    </item>
+    <item>
+      <title>Removing GIT History</title>
+      <link>https://gbeifuss.github.io/p/removing-git-history/</link>
+      <pubDate>Tue, 02 Nov 2021 20:16:01 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/removing-git-history/</guid>
+      <description>How to remove files completely from the history of a git repository</description>
+    </item>
+    <item>
+      <title>Managing Mailbox moves in Exchange 2016</title>
+      <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>
+      <pubDate>Thu, 28 Oct 2021 08:54:40 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</guid>
+      <description>Set Exchange to continually report on the status of mailbox moves and keep the queue full, via. Powershell scripts. Also, disable indexing during a migration.</description>
+    </item>
+    <item>
+      <title>Linux Upskill Challenge</title>
+      <link>https://gbeifuss.github.io/p/linux-upskill-challenge/</link>
+      <pubDate>Thu, 28 Oct 2021 08:54:12 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/linux-upskill-challenge/</guid>
+      <description>Linux notes from completing /r/linuxupskillschallenge</description>
+    </item>
+    <item>
+      <title>Hugo &amp; Google Analytics</title>
+      <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
+      <pubDate>Tue, 05 Oct 2021 14:54:15 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/hugo-google-analytics/</guid>
+      <description>How to integrate Google Analytics with a Hugo website</description>
+    </item>
+    <item>
+      <title>VS Code &amp; Markdown</title>
+      <link>https://gbeifuss.github.io/p/vs-code-markdown/</link>
+      <pubDate>Tue, 05 Oct 2021 09:51:28 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/vs-code-markdown/</guid>
+      <description>Prevent VS Code from automatically trimming any trailing whitespace in markdown files</description>
+    </item>
+    <item>
+      <title>Working with JSON in Powershell</title>
+      <link>https://gbeifuss.github.io/p/working-with-json-in-powershell/</link>
+      <pubDate>Mon, 04 Oct 2021 15:47:05 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/working-with-json-in-powershell/</guid>
+      <description>Passing a Powershell object to the Netscaler API via. JSON</description>
+    </item>
+    <item>
+      <title>Cisco Management Tunnel - ASA Configuration</title>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</link>
+      <pubDate>Fri, 24 Sep 2021 10:12:43 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</guid>
+      <description>Configuring a Cisco ASA to support a Management Tunnel</description>
+    </item>
+    <item>
+      <title>Cisco Management Tunnel - NDES Setup</title>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</link>
+      <pubDate>Fri, 24 Sep 2021 08:25:46 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</guid>
+      <description>How to configure NDES and Certificate Templates to support a Cisco Management Tunnel</description>
+    </item>
+    <item>
+      <title>Cisco Management Tunnel</title>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel/</link>
+      <pubDate>Fri, 24 Sep 2021 07:26:05 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel/</guid>
+      <description>What is a Cisco AnyConnect Management Tunnel?</description>
+    </item>
+    <item>
+      <title>Installing a certificate in PowerApps</title>
+      <link>https://gbeifuss.github.io/p/installing-a-certificate-in-powerapps/</link>
+      <pubDate>Thu, 23 Sep 2021 08:43:28 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/installing-a-certificate-in-powerapps/</guid>
+      <description>Installing a TLS/SSL certificate in Microsoft Dynamics PowerApps</description>
+    </item>
+    <item>
+      <title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
+      <link>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
+      <pubDate>Tue, 21 Sep 2021 10:18:20 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
+      <description>Block HTTP/1.0 requests with Netscaler, to prevent internal IP disclosure from Exchange, by rewriting them to HTTP/1.1</description>
+    </item>
+    <item>
+      <title>Remediating an Internal IP Disclosure with Netscaler</title>
+      <link>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
+      <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
+      <description>How to use Netscaler to remediate a Nessus-reported internal IP disclosure for Exchange</description>
+    </item>
+    <item>
+      <title>Using multicursor in VS Code</title>
+      <link>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</link>
+      <pubDate>Mon, 13 Sep 2021 23:35:20 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</guid>
+      <description>Turning on multiple cursors in Visual Studio Code for faster editing</description>
+    </item>
+    <item>
+      <title>Hugo error - REF_NOT_FOUND</title>
+      <link>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</link>
+      <pubDate>Mon, 13 Sep 2021 23:35:09 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</guid>
+      <description>Resolving the Hugo error &amp;ldquo;REF_NOT_FOUND&amp;rdquo; when compiling a website</description>
+    </item>
+    <item>
+      <title>Exchange Transaction Logs won&#39;t clear</title>
+      <link>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</link>
+      <pubDate>Thu, 09 Sep 2021 09:29:17 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</guid>
+      <description>Exchange Transaction Logs should clear after a successful backup, but what if they&amp;rsquo;re not being deleted?</description>
+    </item>
+    <item>
+      <title>Exchange DAGs and Cluster Ownership</title>
+      <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>
+      <pubDate>Mon, 06 Sep 2021 22:12:49 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</guid>
+      <description>Use Powershell to change the cluster owner for &amp;lsquo;Available Storage&amp;rsquo; and &amp;lsquo;Cluster Group&amp;rsquo; in an Exchange DAG. Setup a Notification in PRTG along with a trigger to move the owner back.</description>
+    </item>
+    <item>
+      <title>Truncate Exchange Transaction Logs</title>
+      <link>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</link>
+      <pubDate>Fri, 03 Sep 2021 21:40:09 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</guid>
+      <description>Using diskshadow to take a &amp;lsquo;fake backup&amp;rsquo; so that Exchange will start purging transaction logs</description>
+    </item>
+    <item>
+      <title>Page References in Hugo</title>
+      <link>https://gbeifuss.github.io/p/page-references-in-hugo/</link>
+      <pubDate>Thu, 02 Sep 2021 07:37:44 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/page-references-in-hugo/</guid>
+      <description>How to use Hugo&amp;rsquo;s shortcodes for creating links to pages and sections on your site, and escaping shortcodes</description>
+    </item>
+    <item>
+      <title>Amending a Git Commit Statement</title>
+      <link>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</link>
+      <pubDate>Thu, 02 Sep 2021 07:37:36 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</guid>
+      <description>How to quickly change the git commit message before a push has occurred</description>
+    </item>
+    <item>
+      <title>Powershell &amp; PowerPlatform API ... now using the Graph API</title>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</link>
+      <pubDate>Mon, 30 Aug 2021 22:37:13 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</guid>
+      <description>Querying the Microsoft PowerPlatform API with Powershell and the Graph API. Also, using fixed-width font in an email with Powershell output.</description>
+    </item>
+    <item>
+      <title>Using Powershell to interact with Task Scheduler</title>
+      <link>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</link>
+      <pubDate>Wed, 25 Aug 2021 14:19:31 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</guid>
+      <description>Using Powershell to query Task Scheduler across the domain. Also, using Powershell to change Task properties for select Tasks.</description>
+    </item>
+    <item>
+      <title>Use .Summary in Hugo with the Stack theme</title>
+      <link>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</link>
+      <pubDate>Wed, 25 Aug 2021 08:15:17 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</guid>
+      <description>Edit Hugo&amp;rsquo;s configuration to make use of the .summary Front Matter with the Stack theme</description>
+    </item>
+    <item>
+      <title>Troubleshooting Hugo&#39;s &#39;Port 1313 already in use&#39; error</title>
+      <link>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</link>
+      <pubDate>Fri, 20 Aug 2021 14:12:12 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</guid>
+      <description>Fix the Hugo error &amp;ldquo;Port 1313 already in use&amp;rdquo; by freeing it up. WinNAT was the culprit.</description>
+    </item>
+    <item>
+      <title>Adding TLS 1.2 support for Powershell</title>
+      <link>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</link>
+      <pubDate>Fri, 20 Aug 2021 11:02:12 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</guid>
+      <description>Update Powershell to use TLS 1.2, and configure Windows to use TLS 1.2 as well</description>
+    </item>
+    <item>
+      <title>Enter-PSSession, WinRM &amp; NLA</title>
+      <link>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</link>
+      <pubDate>Wed, 18 Aug 2021 07:50:51 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</guid>
+      <description>Troubleshooting and resolving the Powershell error &amp;ldquo;WinRM cannot complete the operation&amp;rdquo;</description>
+    </item>
+    <item>
+      <title>Exchange &amp; -DeleteContent</title>
+      <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
+      <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
+      <description>Administratively deleting content from an Exchange Mailbox with Powershell</description>
+    </item>
+    <item>
+      <title>Network Troubleshooting and MTU</title>
+      <link>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</link>
+      <pubDate>Wed, 11 Aug 2021 14:57:19 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</guid>
+      <description>Diagnosing and resolving an MTU issue over a L2 link</description>
+    </item>
+    <item>
+      <title>Pushing to GitHub via. Git</title>
+      <link>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</link>
+      <pubDate>Mon, 09 Aug 2021 14:00:25 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</guid>
+      <description>Resolving a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error in git, when pushing to github</description>
+    </item>
+    <item>
+      <title>Powershell &amp; NTMLv1 use</title>
+      <link>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</link>
+      <pubDate>Thu, 05 Aug 2021 11:11:56 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</guid>
+      <description>Find NTLM traffic authenticating to domain controllers with Powershell</description>
+    </item>
+    <item>
+      <title>Pushing Hugo Content to GitHub</title>
+      <link>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</link>
+      <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
+      <description>Have Hugo generate your site content and use git to push up to github.io</description>
+    </item>
+    <item>
+      <title>Array Speed in Powershell</title>
+      <link>https://gbeifuss.github.io/p/array-speed-in-powershell/</link>
+      <pubDate>Thu, 22 Jul 2021 22:10:02 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/array-speed-in-powershell/</guid>
+      <description>Powershell has a number of ways to reference arrays, some that are faster than others. += is terribly slow compared to ArrayList</description>
+    </item>
+    <item>
+      <title>Powershell Stopwatch vs Measure-Command</title>
+      <link>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</link>
+      <pubDate>Thu, 22 Jul 2021 22:09:50 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</guid>
+      <description>What&amp;rsquo;s the difference between Stopwatch and Measure-Command?</description>
+    </item>
+    <item>
+      <title>Powershell &amp; Unresponsive Remote Sessions</title>
+      <link>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</link>
+      <pubDate>Thu, 22 Jul 2021 22:09:32 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</guid>
+      <description>Elegantly killing a CPU-consuming remote Powershell session</description>
+    </item>
+    <item>
+      <title>Powershell, Exchange &amp; TLS</title>
+      <link>https://gbeifuss.github.io/p/powershell-exchange-tls/</link>
+      <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
+      <description>Using Powershell to find the TLS versions used to connect to Exchange</description>
+    </item>
+    <item>
+      <title>Docker &amp; Printnightmare</title>
+      <link>https://gbeifuss.github.io/p/docker-printnightmare/</link>
+      <pubDate>Wed, 14 Jul 2021 08:21:50 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/docker-printnightmare/</guid>
+      <description>Using Docker for Windows to scan for PrintNightmare (CVE-2021-34527)</description>
+    </item>
+    <item>
+      <title>VS Code &amp; Remote Repositories</title>
+      <link>https://gbeifuss.github.io/p/vs-code-remote-repositories/</link>
+      <pubDate>Wed, 14 Jul 2021 08:21:37 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/vs-code-remote-repositories/</guid>
+      <description>Using the Remote Repositories Extension in VS Code to update github content</description>
+    </item>
+    <item>
+      <title>VS Code Snippets</title>
+      <link>https://gbeifuss.github.io/p/vs-code-snippets/</link>
+      <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
+      <description>Creating custom snippets in VS Code to simplify writing code</description>
+    </item>
+    <item>
+      <title>Powershell, DSInternals &amp; HIBP</title>
+      <link>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</link>
+      <pubDate>Mon, 12 Jul 2021 15:38:54 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</guid>
+      <description>Auditing AD passwords against Have I Been Pwned? by using Powershell</description>
+    </item>
+    <item>
+      <title>Running Powershell scripts with Task Scheduler</title>
+      <link>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</link>
+      <pubDate>Fri, 09 Jul 2021 16:08:41 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</guid>
+      <description>Scheduling a Powershell script in Task Scheduler via. GUI, and a shortcut to doing it repeatedly.</description>
+    </item>
+    <item>
+      <title>Powershell &amp; PowerPlatform API</title>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api/</link>
+      <pubDate>Fri, 09 Jul 2021 16:04:57 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api/</guid>
+      <description>Querying the Microsoft PowerPlatform API with Powershell</description>
+    </item>
+    <item>
+      <title>Powershell &amp; Netscaler API</title>
+      <link>https://gbeifuss.github.io/p/powershell-netscaler-api/</link>
+      <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
+      <guid>https://gbeifuss.github.io/p/powershell-netscaler-api/</guid>
+      <description>Saving a Netscaler configuration via. API with Powershell</description>
+    </item>
+  </channel>
+</rss>
