@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Netscaler on Greg Beifuss</title>
-    <link>https://gbeifuss.github.io/tags/netscaler/</link>
+    <link>http://localhost:1313/tags/netscaler/</link>
     <description>Recent content in Netscaler on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 04 Oct 2021 15:47:05 -0400</lastBuildDate>
-    <atom:link href="https://gbeifuss.github.io/tags/netscaler/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/netscaler/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Working with JSON in Powershell</title>
-      <link>https://gbeifuss.github.io/p/working-with-json-in-powershell/</link>
+      <link>http://localhost:1313/p/working-with-json-in-powershell/</link>
       <pubDate>Mon, 04 Oct 2021 15:47:05 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/working-with-json-in-powershell/</guid>
+      <guid>http://localhost:1313/p/working-with-json-in-powershell/</guid>
       <description>Passing a Powershell object to the Netscaler API via. JSON</description>
     </item>
     <item>
       <title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
-      <link>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
+      <link>http://localhost:1313/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
       <pubDate>Tue, 21 Sep 2021 10:18:20 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
+      <guid>http://localhost:1313/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
       <description>Block HTTP/1.0 requests with Netscaler, to prevent internal IP disclosure from Exchange, by rewriting them to HTTP/1.1</description>
     </item>
     <item>
       <title>Remediating an Internal IP Disclosure with Netscaler</title>
-      <link>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
+      <link>http://localhost:1313/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
       <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
+      <guid>http://localhost:1313/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
       <description>How to use Netscaler to remediate a Nessus-reported internal IP disclosure for Exchange</description>
     </item>
     <item>
       <title>Powershell &amp; Netscaler API</title>
-      <link>https://gbeifuss.github.io/p/powershell-netscaler-api/</link>
+      <link>http://localhost:1313/p/powershell-netscaler-api/</link>
       <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/powershell-netscaler-api/</guid>
+      <guid>http://localhost:1313/p/powershell-netscaler-api/</guid>
       <description>Saving a Netscaler configuration via. API with Powershell</description>
     </item>
   </channel>

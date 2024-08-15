@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Omv on Greg Beifuss</title>
-    <link>https://gbeifuss.github.io/tags/omv/</link>
-    <description>Recent content in Omv on Greg Beifuss</description>
+    <title>OMV on Greg Beifuss</title>
+    <link>http://localhost:1313/tags/omv/</link>
+    <description>Recent content in OMV on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 11 Apr 2024 10:11:58 -0400</lastBuildDate>
-    <atom:link href="https://gbeifuss.github.io/tags/omv/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/omv/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Configuring Docker instance of ichapod</title>
-      <link>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</link>
+      <link>http://localhost:1313/p/configuring-docker-instance-of-ichapod/</link>
       <pubDate>Thu, 11 Apr 2024 10:11:58 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</guid>
+      <guid>http://localhost:1313/p/configuring-docker-instance-of-ichapod/</guid>
       <description>How to configure ichapod to download podcasts under Docker and OMV</description>
     </item>
     <item>
       <title>Configure SSH access via. Windows Terminal &amp; a private key</title>
-      <link>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</link>
+      <link>http://localhost:1313/p/configure-ssh-access-via.-windows-terminal-a-private-key/</link>
       <pubDate>Tue, 05 Mar 2024 10:13:04 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</guid>
+      <guid>http://localhost:1313/p/configure-ssh-access-via.-windows-terminal-a-private-key/</guid>
       <description>Use Windows Terminal for SSH connections, using private key authentication</description>
     </item>
   </channel>

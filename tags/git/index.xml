@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Git on Greg Beifuss</title>
-    <link>https://gbeifuss.github.io/tags/git/</link>
+    <link>http://localhost:1313/tags/git/</link>
     <description>Recent content in Git on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 02 Nov 2021 20:16:01 -0400</lastBuildDate>
-    <atom:link href="https://gbeifuss.github.io/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/git/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Removing GIT History</title>
-      <link>https://gbeifuss.github.io/p/removing-git-history/</link>
+      <link>http://localhost:1313/p/removing-git-history/</link>
       <pubDate>Tue, 02 Nov 2021 20:16:01 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/removing-git-history/</guid>
+      <guid>http://localhost:1313/p/removing-git-history/</guid>
       <description>How to remove files completely from the history of a git repository</description>
     </item>
     <item>
       <title>Amending a Git Commit Statement</title>
-      <link>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</link>
+      <link>http://localhost:1313/p/amending-a-git-commit-statement/</link>
       <pubDate>Thu, 02 Sep 2021 07:37:36 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</guid>
+      <guid>http://localhost:1313/p/amending-a-git-commit-statement/</guid>
       <description>How to quickly change the git commit message before a push has occurred</description>
     </item>
     <item>
       <title>Pushing to GitHub via. Git</title>
-      <link>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</link>
+      <link>http://localhost:1313/p/pushing-to-github-via.-git/</link>
       <pubDate>Mon, 09 Aug 2021 14:00:25 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</guid>
+      <guid>http://localhost:1313/p/pushing-to-github-via.-git/</guid>
       <description>Resolving a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error in git, when pushing to github</description>
     </item>
     <item>
       <title>Pushing Hugo Content to GitHub</title>
-      <link>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</link>
+      <link>http://localhost:1313/p/pushing-hugo-content-to-github/</link>
       <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
+      <guid>http://localhost:1313/p/pushing-hugo-content-to-github/</guid>
       <description>Have Hugo generate your site content and use git to push up to github.io</description>
     </item>
   </channel>

@@ -2,52 +2,59 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hugo on Greg Beifuss</title>
-    <link>https://gbeifuss.github.io/tags/hugo/</link>
+    <link>http://localhost:1313/tags/hugo/</link>
     <description>Recent content in Hugo on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 05 Oct 2021 14:54:15 -0400</lastBuildDate>
-    <atom:link href="https://gbeifuss.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 10 Jul 2024 14:34:17 -0400</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Website Publishing with Hugo and GitHub</title>
+      <link>http://localhost:1313/p/website-publishing-with-hugo-and-github/</link>
+      <pubDate>Wed, 10 Jul 2024 14:34:17 -0400</pubDate>
+      <guid>http://localhost:1313/p/website-publishing-with-hugo-and-github/</guid>
+      <description>How to use Hugo and Github for publishing web content</description>
+    </item>
     <item>
       <title>Hugo &amp; Google Analytics</title>
-      <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
+      <link>http://localhost:1313/p/hugo-google-analytics/</link>
       <pubDate>Tue, 05 Oct 2021 14:54:15 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/hugo-google-analytics/</guid>
+      <guid>http://localhost:1313/p/hugo-google-analytics/</guid>
       <description>How to integrate Google Analytics with a Hugo website</description>
     </item>
     <item>
       <title>Hugo error - REF_NOT_FOUND</title>
-      <link>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</link>
+      <link>http://localhost:1313/p/hugo-error-ref_not_found/</link>
       <pubDate>Mon, 13 Sep 2021 23:35:09 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</guid>
+      <guid>http://localhost:1313/p/hugo-error-ref_not_found/</guid>
       <description>Resolving the Hugo error &amp;ldquo;REF_NOT_FOUND&amp;rdquo; when compiling a website</description>
     </item>
     <item>
       <title>Page References in Hugo</title>
-      <link>https://gbeifuss.github.io/p/page-references-in-hugo/</link>
+      <link>http://localhost:1313/p/page-references-in-hugo/</link>
       <pubDate>Thu, 02 Sep 2021 07:37:44 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/page-references-in-hugo/</guid>
+      <guid>http://localhost:1313/p/page-references-in-hugo/</guid>
       <description>How to use Hugo&amp;rsquo;s shortcodes for creating links to pages and sections on your site, and escaping shortcodes</description>
     </item>
     <item>
       <title>Use .Summary in Hugo with the Stack theme</title>
-      <link>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</link>
+      <link>http://localhost:1313/p/use-.summary-in-hugo-with-the-stack-theme/</link>
       <pubDate>Wed, 25 Aug 2021 08:15:17 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</guid>
+      <guid>http://localhost:1313/p/use-.summary-in-hugo-with-the-stack-theme/</guid>
       <description>Edit Hugo&amp;rsquo;s configuration to make use of the .summary Front Matter with the Stack theme</description>
     </item>
     <item>
       <title>Troubleshooting Hugo&#39;s &#39;Port 1313 already in use&#39; error</title>
-      <link>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</link>
+      <link>http://localhost:1313/p/troubleshooting-hugos-port-1313-already-in-use-error/</link>
       <pubDate>Fri, 20 Aug 2021 14:12:12 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</guid>
+      <guid>http://localhost:1313/p/troubleshooting-hugos-port-1313-already-in-use-error/</guid>
       <description>Fix the Hugo error &amp;ldquo;Port 1313 already in use&amp;rdquo; by freeing it up. WinNAT was the culprit.</description>
     </item>
     <item>
       <title>Pushing Hugo Content to GitHub</title>
-      <link>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</link>
+      <link>http://localhost:1313/p/pushing-hugo-content-to-github/</link>
       <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
+      <guid>http://localhost:1313/p/pushing-hugo-content-to-github/</guid>
       <description>Have Hugo generate your site content and use git to push up to github.io</description>
     </item>
   </channel>

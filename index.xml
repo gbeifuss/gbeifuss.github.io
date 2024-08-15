@@ -2,16 +2,185 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Greg Beifuss</title>
-        <link>https://gbeifuss.github.io/</link>
+        <link>http://localhost:1313/</link>
         <description>Recent content on Greg Beifuss</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Tue, 09 Jul 2024 10:12:04 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 15 Aug 2024 17:48:28 -0400</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>VMWare Converter Error</title>
+        <link>http://localhost:1313/p/vmware-converter-error/</link>
+        <pubDate>Thu, 15 Aug 2024 17:48:28 -0400</pubDate>
+        
+        <guid>http://localhost:1313/p/vmware-converter-error/</guid>
+        <description>&lt;p&gt;I was trying to use the VMWare Standalone Converter tool today to P2V a very old physical server, running CentOS 5.2. The age of the OS meant that I had to use Converter v.5 as newer converters would not connect to the source server OS. I also had to build a brand new ESXi 5.5 host, as newer ESXi versions require modern security protocols &amp;amp; ciphers which aren&amp;rsquo;t supported by Converter 5.5.&lt;/p&gt;
+&lt;p&gt;After setting everything up, I ran the Converter wizard. The task failed with the following message:&lt;br&gt;
+&lt;strong&gt;FAILED: Unable to obtain the IP address of the helper virtual machine&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;It turns out that the VM receiving the data couldn&amp;rsquo;t obtain an DHCP address from the network. This, in turn, meant there was no IP for the Converter to send the data to.&lt;/p&gt;
+&lt;p&gt;When running through the Conversion wizard, you can set &lt;code&gt;Helper VM Network Options&lt;/code&gt; via. the &lt;strong&gt;Options&lt;/strong&gt; screen. Simply assign a compatible static IP and the Helper VM will boot with those settings.&lt;/p&gt;
+&lt;p&gt;After manually setting the IP, the migration task proceeded normally.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Website Publishing with Hugo and GitHub</title>
+        <link>http://localhost:1313/p/website-publishing-with-hugo-and-github/</link>
+        <pubDate>Wed, 10 Jul 2024 14:34:17 -0400</pubDate>
+        
+        <guid>http://localhost:1313/p/website-publishing-with-hugo-and-github/</guid>
+        <description>&lt;p&gt;This website is primarily generated through hugo. I recently switched my main computer from a Surface Pro (v4) to a Dell Latitude 7320, which means that I had to reconfigure my website authoring environment from scratch. Along the way, there were lots of little hiccups because of a) changes to hugo since the last install and b) steps and tweaks that I&amp;rsquo;d not documented anywhere. It took a couple of hours, but everything is configured and publishing the way that I like again.&lt;/p&gt;
+&lt;p&gt;Generally speaking, I:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;took a backup of my existing site&lt;/li&gt;
+&lt;li&gt;installed hugo-extended and git&lt;/li&gt;
+&lt;li&gt;created my hugo site&lt;/li&gt;
+&lt;li&gt;used git to link my site with github pages&lt;/li&gt;
+&lt;li&gt;restored files&lt;/li&gt;
+&lt;li&gt;published&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I started by creating a .zip backup of my existing files. Then, &lt;em&gt;I deleted all the existing files&lt;/em&gt; as they are in OneDrive. I don&amp;rsquo;t want the cloud copies being automatically pushed back down to my laptop while I&amp;rsquo;m configuring everything.&lt;/p&gt;
+&lt;p&gt;Next, I installed &lt;em&gt;hugo-extended&lt;/em&gt; and &lt;em&gt;git&lt;/em&gt; with chocolately package manager and powershell:&lt;br&gt;
+&lt;code&gt;chocolatey install hugo-extended git -y&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;After that, I created my directories again, and told hugo that this was a new site:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;hugo new site .
+Congratulations! Your new Hugo site was created in C:\Users\Greg\OneDrive\myblog.dev.repo.
+
+Just a few more steps...
+
+1. Change the current directory to C:\Users\Greg\OneDrive\myblog.dev.repo.
+2. Create or install a theme:
+   - Create a new theme with the command &amp;#34;hugo new theme &amp;lt;THEMENAME&amp;gt;&amp;#34;
+   - Or, install a theme from https://themes.gohugo.io/
+3. Edit hugo.toml, setting the &amp;#34;theme&amp;#34; property to the theme name.
+4. Create new content with the command &amp;#34;hugo new content &amp;lt;SECTIONNAME&amp;gt;\&amp;lt;FILENAME&amp;gt;.&amp;lt;FORMAT&amp;gt;&amp;#34;.
+5. Start the embedded web server with the command &amp;#34;hugo server --buildDrafts&amp;#34;.
+
+See documentation at https://gohugo.io/.
+
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;dir
+ Volume in drive C has no label.
+ Volume Serial Number is D8FC-8442
+
+ Directory of C:\Users\Greg\OneDrive\myblog.dev.repo
+
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          .
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          ..
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          archetypes
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          assets
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          content
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          data
+2024-07-10  11:53 AM                83 hugo.toml
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          i18n
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          layouts
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          static
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          themes
+               1 File(s)             83 bytes
+              10 Dir(s)  434,143,707,136 bytes free
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;hugo server
+Watching for changes in C:\Users\Greg\OneDrive\myblog.dev.repo\{archetypes,assets,content,data,i18n,layouts,static}
+Watching for config changes in C:\Users\Greg\OneDrive\myblog.dev.repo\hugo.toml
+Start building sites …
+hugo v0.128.2-de36c1a95d28595d8243fd8b891665b069ed0850+extended windows/amd64 BuildDate=2024-07-04T08:13:25Z VendorInfo=gohugoio
+
+WARN  found no layout file for &amp;#34;html&amp;#34; for kind &amp;#34;home&amp;#34;: You should create a template file which matches Hugo Layouts Lookup Rules for this combination.
+WARN  found no layout file for &amp;#34;html&amp;#34; for kind &amp;#34;taxonomy&amp;#34;: You should create a template file which matches Hugo Layouts Lookup Rules for this combination.
+
+                   | EN
+-------------------+-----
+  Pages            |  4
+  Paginator pages  |  0
+  Non-page files   |  0
+  Static files     |  0
+  Processed images |  0
+  Aliases          |  0
+  Cleaned          |  0
+
+Built in 7 ms
+Environment: &amp;#34;development&amp;#34;
+Serving pages from disk
+Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+Web Server is available at http://localhost:1313/ (bind address 127.0.0.1)
+Press Ctrl+C to stop
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;dir
+ Volume in drive C has no label.
+ Volume Serial Number is D8FC-8442
+
+ Directory of C:\Users\Greg\OneDrive\myblog.dev.repo
+
+2024-07-10  12:15 PM    &amp;lt;DIR&amp;gt;          .
+2024-07-10  12:15 PM    &amp;lt;DIR&amp;gt;          ..
+2024-07-10  12:15 PM                 0 .hugo_build.lock
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          archetypes
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          assets
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          content
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          data
+2024-07-10  11:53 AM                83 hugo.toml
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          i18n
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          layouts
+2024-07-10  12:15 PM    &amp;lt;DIR&amp;gt;          public
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          static
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          themes
+               2 File(s)             83 bytes
+              11 Dir(s)  434,142,384,128 bytes free
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I launched &amp;amp; killed hugo (above) just so that it can create all the files and directories that aren&amp;rsquo;t automatically generated (like /public). I then grabbed a copy of the &lt;em&gt;stack&lt;/em&gt; theme and installed it in the themes directory:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;git init
+Initialized empty Git repository in C:/Users/Greg/OneDrive/myblog.dev.repo/.git/
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;git submodule add git@github.com:gbeifuss/hugo-theme-stack themes/hugo-theme-stack
+Cloning into &amp;#39;C:/Users/Greg/OneDrive/myblog.dev.repo/themes/hugo-theme-stack&amp;#39;...
+remote: Enumerating objects: 3111, done.
+remote: Total 3111 (delta 0), reused 0 (delta 0), pack-reused 3111
+Receiving objects: 100% (3111/3111), 852.37 KiB | 2.10 MiB/s, done.
+Resolving deltas: 100% (1964/1964), done.
+warning: in the working copy of &amp;#39;.gitmodules&amp;#39;, LF will be replaced by CRLF the next time Git touches it
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After this, I restored all all of the necessary configuration files &amp;amp; assets from the backup into their appropriate locations. hugo.toml, archtypes/default.md, /static, /layout, /contents, etc.&lt;br&gt;
+The next step is to link this back up with my github page. I did grab a copy of my id_ed25519.pub file (has my SSH key for github authentication) from my old laptop and validated a successful connection:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;ssh -T git@github.com
+Hi gbeifuss! You&amp;#39;ve successfully authenticated, but GitHub does not provide shell access.
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git remote add origin https://github.com/gbeifuss/gbeifuss.github.io.git
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git remote -v
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (fetch)
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (push)
+
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git push origin main
+error: src refspec main does not match any
+error: failed to push some refs to &amp;#39;https://github.com/gbeifuss/gbeifuss.github.io.git&amp;#39;
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git checkout -b main
+Switched to a new branch &amp;#39;main&amp;#39;
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git push --force origin main
+Enumerating objects: 372, done.
+Counting objects: 100% (372/372), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (230/230), done.
+Writing objects: 100% (372/372), 1.74 MiB | 1.72 MiB/s, done.
+Total 372 (delta 152), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (152/152), done.
+To https://github.com/gbeifuss/gbeifuss.github.io.git
+ + e4d1dbd...cccf12b main -&amp;gt; main (forced update)
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git push origin main
+Everything up-to-date
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Finally, create new content:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;hugo new content/post/esxi_vmware_converter_error.md
+Content &amp;#34;C:\\Users\\Greg\\OneDrive\\myblog.dev.repo\\content\\post\\esxi_vmware_converter_error.md&amp;#34; created
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Use &lt;code&gt;hugo server -D&lt;/code&gt; to run the server in Draft mode, showing all published &lt;em&gt;and&lt;/em&gt; draft content.
+Use &lt;code&gt;hugo&lt;/code&gt; to create the entire static copy of the site for publishing.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Installing OpenSSH Server on Windows 11</title>
-        <link>https://gbeifuss.github.io/p/installing-openssh-server-on-windows-11/</link>
+        <link>http://localhost:1313/p/installing-openssh-server-on-windows-11/</link>
         <pubDate>Tue, 09 Jul 2024 10:12:04 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/installing-openssh-server-on-windows-11/</guid>
+        <guid>http://localhost:1313/p/installing-openssh-server-on-windows-11/</guid>
         <description>&lt;p&gt;I needed to spin up an SFTP server to validate that a backup of our NSX appliance was working, so I tried a couple of free/lightweight SFTP applications that ended up not working (likely because they didn&amp;rsquo;t support the correct encryption keys/ciphers/algorithms). Dell Support recommends OpenSSH 8.1, so I decided to install the OpenSSH Server that comes with Windows 11.&lt;/p&gt;
 &lt;p&gt;Install it via. Start &amp;gt; Optional Features &amp;gt; Add &amp;gt; OpenSSH Server&lt;/p&gt;
 &lt;p&gt;After the installation is complete, validate that the service is running. I believe it is Stopped by default, so start it up.&lt;/p&gt;
@@ -30,10 +199,10 @@ Retrying the NSX backup resulted in a successful backup&lt;/p&gt;
         </item>
         <item>
         <title>Configuring Docker instance of ichapod</title>
-        <link>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</link>
+        <link>http://localhost:1313/p/configuring-docker-instance-of-ichapod/</link>
         <pubDate>Thu, 11 Apr 2024 10:11:58 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</guid>
+        <guid>http://localhost:1313/p/configuring-docker-instance-of-ichapod/</guid>
         <description>&lt;p&gt;One of my favourite &amp;rsquo;listening experiences&amp;rsquo; is the radio show &lt;a class=&#34;link&#34; href=&#34;https://ciut.fm/shows-by-day/higher-ground&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Higher Ground&lt;/a&gt; on CUIT 89.5. It&amp;rsquo;s hosted by Jason Palma and I&amp;rsquo;ve been listening for 20+ years.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;tldr; I&amp;rsquo;ve been downloading the show for many years&lt;/em&gt;&lt;br&gt;
@@ -77,10 +246,10 @@ services:
         </item>
         <item>
         <title>Configure SSH access via. Windows Terminal &amp; a private key</title>
-        <link>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</link>
+        <link>http://localhost:1313/p/configure-ssh-access-via.-windows-terminal-a-private-key/</link>
         <pubDate>Tue, 05 Mar 2024 10:13:04 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</guid>
+        <guid>http://localhost:1313/p/configure-ssh-access-via.-windows-terminal-a-private-key/</guid>
         <description>&lt;p&gt;Windows Terminal is one of my most loved features of recent Windows releases. Seriously Microsoft, where was this application in Windows 2000? I can launch Powershell, Command Prompt &lt;em&gt;and&lt;/em&gt; ssh sessions from the same window - simply amazing! (Yes, I know that Linux has supported this for decades).&lt;/p&gt;
 &lt;p&gt;I wanted to create a profile that would let me administer my omv Linux server, without having to input credentials &lt;em&gt;every. single. time.&lt;/em&gt; To do that, a public/private key needs to be created, before copying the public key over to the destination server. Then, when I connect via. SSH and present my private key, the connection is transparently (to me) approved.&lt;/p&gt;
 &lt;p&gt;Start by running the command &lt;code&gt;ssh-keygen -t rsa&lt;/code&gt; to generate a keypair. I accepted all the defaults, and skipped a passphrase:&lt;/p&gt;
@@ -123,16 +292,16 @@ Paste this configuration string into the profiles section. You&amp;rsquo;ll need
         </item>
         <item>
         <title>ESXI VCentre Certificates</title>
-        <link>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</link>
+        <link>http://localhost:1313/p/esxi-vcentre-certificates/</link>
         <pubDate>Wed, 19 Jul 2023 13:28:02 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</guid>
+        <guid>http://localhost:1313/p/esxi-vcentre-certificates/</guid>
         <description>&lt;p&gt;Someone on our VDI team informed me that they were getting an error when trying to log into their VSCA:
 &amp;ldquo;An error occurred during authentication.&amp;rdquo;
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-error.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-error.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/esxi-vcsa-cert-error.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/esxi-vcsa-cert-error.png&#34;
 			
 			
 			
@@ -169,8 +338,8 @@ com.vmware.vim.vmomi.client.exception.VlsiCertificateException: Server certifica
 &lt;p&gt;I then looked at the other certificates by using &lt;code&gt;check-trust-anchors -cml&lt;/code&gt;, which showed that the certificates had indeed expired 10 days ago:
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-expired.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-expired.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/esxi-vcsa-cert-expired.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/esxi-vcsa-cert-expired.png&#34;
 			
 			
 			
@@ -197,18 +366,18 @@ After 5 minutes, the operation completed and the new certificates were in place.
         </item>
         <item>
         <title>ESXi CPU Ready Time statistics</title>
-        <link>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</link>
+        <link>http://localhost:1313/p/esxi-cpu-ready-time-statistics/</link>
         <pubDate>Mon, 03 Apr 2023 17:00:36 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</guid>
+        <guid>http://localhost:1313/p/esxi-cpu-ready-time-statistics/</guid>
         <description>&lt;p&gt;I worked on an issue at work today that was really interesting (from a technical troubleshooting perspective), so I thought that I&amp;rsquo;d write about it.&lt;/p&gt;
 &lt;p&gt;Our organization is in the midst of moving from one datacentre to another. The PKI team reported that their new, just-spun-up servers at the new site were all performing very poorly. Their servers were all running at about 50% CPU usage on an 8 vCPU, 16GB RAM server, but took forever to boot or shutdown, and the GUI had noticible lag when clicking or moving around windows. They suspected a CPU issue - instead of having their 8 vCPU allocated as 8 sockets x 1 core each, they wanted 2 sockets x 4 core, or 1 socket x 8 core because they believed this would improve performance.&lt;br&gt;
 According to VMWare, this allocation doesn&amp;rsquo;t make any real difference in terms of performance since ESXi 6.5/6.7 (but may be needed for licensing compliance).&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s what the VM metrics looked like:
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-stats.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-stats.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/cpu-ready-stats.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/cpu-ready-stats.png&#34;
 			
 			
 			
@@ -225,8 +394,8 @@ According to VMWare, this allocation doesn&amp;rsquo;t make any real difference 
 &lt;em&gt;CPU Ready Time in VSphere is a metric that records the amount of time that a VM is ready to use CPU, but cannot because all CPU resources (on an ESXi host) are busy.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-wait.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-wait.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/cpu-ready-wait.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/cpu-ready-wait.png&#34;
 			
 			
 			
@@ -244,8 +413,8 @@ According to VMWare, this allocation doesn&amp;rsquo;t make any real difference 
 &lt;p&gt;We changed the CPU Limit from 30,000 MHz to 60,000 Mhz, effectively doubling the amount of CPU that the servers in this PKI group could consume.&lt;/p&gt;
 &lt;p&gt;&lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-policy.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-policy.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/cpu-ready-policy.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/cpu-ready-policy.png&#34;
 			
 			
 			
@@ -261,8 +430,8 @@ According to VMWare, this allocation doesn&amp;rsquo;t make any real difference 
 It doesn&amp;rsquo;t show well in this image because the scale is too vast, but you can clearly see it drop off from 40000-80000 ms to a negligable level.&lt;/p&gt;
 &lt;p&gt;&lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-fixed.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-fixed.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/cpu-ready-fixed.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/cpu-ready-fixed.png&#34;
 			
 			
 			
@@ -277,10 +446,10 @@ It doesn&amp;rsquo;t show well in this image because the scale is too vast, but 
         </item>
         <item>
         <title>Using ovftool to migrate VMs between ESXi hosts</title>
-        <link>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
+        <link>http://localhost:1313/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
         <pubDate>Mon, 13 Mar 2023 15:38:51 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
+        <guid>http://localhost:1313/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
         <description>&lt;p&gt;Last week I found some Shadow IT at work - a single business-managed ESXi server hosting legacy VMs for code testing. We have an arm of our business that supports products for 25 years, so releases need to be tested on Windows XP servers and other OSes of that era. In any case, this server was happily chugging along &amp;hellip; on ESXi 5.0! Needless to say, I need to bring these VMs into the IT-fold and migrate them to a modern ESXi server: VxRail running ESXi 7.0. But with such an obsolete product, migration can&amp;rsquo;t rely on some of the modern tools that I normally rely on.&lt;/p&gt;
 &lt;p&gt;That meant it was time for Open Virtualization Formal Tool (ovftool) to come to my rescue! This is a VMWare tool used to manipulate VMs to OVFs (or OVAs), OVFs to VMs, and VM-to-VM migrations. Exactly what I need! The only caveat is that that no vmotion is possible - the VMs need to be powered down.&lt;/p&gt;
 &lt;p&gt;I downloaded &lt;a class=&#34;link&#34; href=&#34;https://developer.vmware.com/web/tool/4.4.0/ovf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -344,16 +513,16 @@ C:\apps\ovftool&amp;gt;
         </item>
         <item>
         <title>Dell USB driver halts Linux boot</title>
-        <link>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</link>
+        <link>http://localhost:1313/p/dell-usb-driver-halts-linux-boot/</link>
         <pubDate>Mon, 06 Mar 2023 15:21:01 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</guid>
+        <guid>http://localhost:1313/p/dell-usb-driver-halts-linux-boot/</guid>
         <description>&lt;p&gt;I ran into an issue this week where a work server stopped booting after a linux kernel patch (3.10.0-xxxx.83.xxxx) was deployed.&lt;/p&gt;
 &lt;p&gt;The server would always get &amp;lsquo;stuck&amp;rsquo; trying to load drivers for an Avocent USB Keyboard/Mouse. These seemed to be the Dell iDRAC drivers, because the virtual console lacked keyboard/mouse inputs.&lt;/p&gt;
 &lt;p&gt;&lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/initrd.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/initrd.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/initrd.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/initrd.png&#34;
 			
 			
 			
@@ -373,10 +542,10 @@ After running the command, I rebooted the server which booted properly.&lt;/p&gt
         </item>
         <item>
         <title>ESXi upgrade generates Dependency Errors</title>
-        <link>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</link>
+        <link>http://localhost:1313/p/esxi-upgrade-generates-dependency-errors/</link>
         <pubDate>Mon, 06 Mar 2023 14:27:52 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</guid>
+        <guid>http://localhost:1313/p/esxi-upgrade-generates-dependency-errors/</guid>
         <description>&lt;p&gt;I was patching ESXi hosts at work (again!) and ran into an issue with dependencies.&lt;/p&gt;
 &lt;p&gt;Update Manager generated an error when trying to patch ESXi 6.5, so I tried updating from the CLI:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server00:~] esxcli software vib update -d &amp;#34;/vmfs/volumes/ecd3afaf-295422fc/VMware-VMvisor-Installer-6.5.0.update03-20502893.x86_64-DellEMC_Customized-A10.zip&amp;#34; --dry-run
@@ -411,10 +580,10 @@ Please refer to the log file for more details.
         </item>
         <item>
         <title>ESXi Staging Volume Full</title>
-        <link>https://gbeifuss.github.io/p/esxi-staging-volume-full/</link>
+        <link>http://localhost:1313/p/esxi-staging-volume-full/</link>
         <pubDate>Mon, 06 Mar 2023 14:27:15 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/esxi-staging-volume-full/</guid>
+        <guid>http://localhost:1313/p/esxi-staging-volume-full/</guid>
         <description>&lt;p&gt;Another tale of ESXi patching adventures. My company has some ESXi hosts in remote locations that don&amp;rsquo;t get much care. As long as they&amp;rsquo;re running the VMs and business users don&amp;rsquo;t complain, the hosts don&amp;rsquo;t get much attention.&lt;/p&gt;
 &lt;p&gt;Today I was trying to patch a server with all the ESXi 6.5 patches released to date, but it was failing with this error:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;02 / 27 / 2023, 2:14:57 PM  The VFAT filesystem mpx.vmhba32:C0:T0:L0:8 (UUID 577b5b9f-bf67afef-822f-246e960d8318) is ...
@@ -460,10 +629,10 @@ ln -snf /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318 /locker
         </item>
         <item>
         <title>Cancel Vmware Tools Installation on ESXi</title>
-        <link>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</link>
+        <link>http://localhost:1313/p/cancel-vmware-tools-installation-on-esxi/</link>
         <pubDate>Mon, 06 Mar 2023 14:26:42 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</guid>
+        <guid>http://localhost:1313/p/cancel-vmware-tools-installation-on-esxi/</guid>
         <description>&lt;p&gt;I ran into an issue at work where a migraton was halted because of a VM waiting for a VMWare Tools install to finish&amp;hellip; but I didn&amp;rsquo;t want to deal with it right then. Tracking down the owner and getting permission to reboot it outside of the normal schedule was going to be a hassle.&lt;/p&gt;
 &lt;p&gt;Luckily, these installs can be cancelled via. SSH on the host server:&lt;/p&gt;
 &lt;p&gt;List all the VMs on the host: &lt;code&gt;vim-cmd vmsvc/getallvms&lt;/code&gt;
@@ -487,10 +656,10 @@ Now used as test server.
         </item>
         <item>
         <title>VMWare ESXi - Disable SLP</title>
-        <link>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</link>
+        <link>http://localhost:1313/p/vmware-esxi-disable-slp/</link>
         <pubDate>Mon, 06 Mar 2023 14:26:07 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</guid>
+        <guid>http://localhost:1313/p/vmware-esxi-disable-slp/</guid>
         <description>&lt;p&gt;ESXi vulnerablities are in the news recently as they are being exploited &lt;em&gt;en masse&lt;/em&gt;&amp;hellip; not that active news coverage should be the sole driver for patching a server. The SLP (Service Location Protocol) service runs as root and parses network input without authentication. Since 2021 the recommendation from VMWare has been to disable the service. Newer versions (ie. 7.0 U2c and 8.0) disable it by default.&lt;/p&gt;
 &lt;p&gt;VMWare has an article - &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/76372&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;How to Disable/Enable the SLP Service on VMware ESXi (76372)&lt;/a&gt; - describing how to disable the service.&lt;/p&gt;
@@ -505,10 +674,10 @@ The server does not need a reboot for this change to take effect.
         </item>
         <item>
         <title>VMWare Tools Update/Install/Uninstall fails</title>
-        <link>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</link>
+        <link>http://localhost:1313/p/vmware-tools-update/install/uninstall-fails/</link>
         <pubDate>Thu, 13 Oct 2022 09:03:35 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</guid>
+        <guid>http://localhost:1313/p/vmware-tools-update/install/uninstall-fails/</guid>
         <description>&lt;p&gt;I&amp;rsquo;m in the midst of migrating a number of VMs from ESXi 6.5 hosts to ESXi 7.0.3, which means there are newer versions of the VMWare Tools available for the guests. Usually, selecting &amp;ldquo;Upgrade VMWare Tools&amp;rdquo; works seamlessly, but occassionally, the installer cannot properly uninstall the old version of the Tools, which results in the error &lt;code&gt;Error upgrading VMWare Tools&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Attempting to remove it directly from the guest OS (x64 Windows, in my case) results in the installer prompting for a location for  missing file &lt;code&gt;VMWare Tools64.msi&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The fix for this is easy, but convoluted.&lt;/p&gt;
@@ -531,10 +700,10 @@ The server does not need a reboot for this change to take effect.
         </item>
         <item>
         <title>Recovering SQL System Admin rights</title>
-        <link>https://gbeifuss.github.io/p/recovering-sql-system-admin-rights/</link>
+        <link>http://localhost:1313/p/recovering-sql-system-admin-rights/</link>
         <pubDate>Tue, 09 Aug 2022 15:49:19 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/recovering-sql-system-admin-rights/</guid>
+        <guid>http://localhost:1313/p/recovering-sql-system-admin-rights/</guid>
         <description>&lt;p&gt;It seems that a lot of my recent posts are related to my &amp;ldquo;adventures&amp;rdquo; at work. Oh well&amp;hellip; &lt;code&gt;&amp;lt;shrugs&amp;gt;&lt;/code&gt; Here&amp;rsquo;s another!&lt;/p&gt;
 &lt;p&gt;We have a legacy SQL server (Windows 2012R2, SQL 2012) that was unmaintained for a number of years until I came along. We had a developer who was nominally responsible for it, but I discovered that even his credentials didn&amp;rsquo;t have full &lt;strong&gt;sa&lt;/strong&gt; rights, and some databases were simply not accessible by him. I decided to turn to a life of crime and break in.&lt;/p&gt;
 &lt;p&gt;Is it really breaking in when I follow MS documentation? I suppose not.&lt;/p&gt;
@@ -562,10 +731,10 @@ $login_to_be_granted_access = &amp;#34;[CONTOSO\PatK]&amp;#34;
         </item>
         <item>
         <title>Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
-        <link>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
+        <link>http://localhost:1313/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
         <pubDate>Mon, 08 Aug 2022 20:06:08 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</guid>
+        <guid>http://localhost:1313/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</guid>
         <description>&lt;p&gt;We recently installed a VMWare/Dell VXRail deployment at my work to replace older ESXi 6.5 servers. I&amp;rsquo;m transitioning existing systems in the server room to the new VXRail through physical-to-virtual (P2V) or virtual-to-virtual (V2V) migrations. Since VMWare has removed their standalone converter, I&amp;rsquo;m using Veeam for the P2V.&lt;/p&gt;
 &lt;p&gt;I had an issue a couple of days ago where I performed a P2V as usual, but the VM was showing up with thick provisioned disks on the vSAN, instead of thin provisioned ones, as the assigned storage policy mandates. I was alerted to this by a vSAN online health check, as the &amp;ldquo;Thick-provisioned VMs on vSAN&amp;rdquo; alert tripped. This alarm triggers when vSAN detects thick-provisioned VMs, which in my case was occurring despite the presence of Object Space Reservation = 0 (thin provisioned) in the applied vSAN Storage Policy.provisioned.&lt;/p&gt;
 &lt;p&gt;There is no way in ESXi 7 to forcibly re-apply the currently-assigned storage policy, so I fixed this by cloning the existing policy, applying &lt;em&gt;that&lt;/em&gt;, then reapplying the original policy again.&lt;/p&gt;
@@ -585,10 +754,10 @@ $login_to_be_granted_access = &amp;#34;[CONTOSO\PatK]&amp;#34;
         </item>
         <item>
         <title>Expand a Linux Disk in ESXi</title>
-        <link>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</link>
+        <link>http://localhost:1313/p/expand-a-linux-disk-in-esxi/</link>
         <pubDate>Wed, 11 May 2022 10:51:54 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
+        <guid>http://localhost:1313/p/expand-a-linux-disk-in-esxi/</guid>
         <description>&lt;p&gt;I came across a Linux Database VM at work that desperately needed more disk space. The DBA outlined how they wanted the storage to be allocated, so I set about with the work!&lt;/p&gt;
 &lt;p&gt;First, I added new disks in ESXi to match the disk space requested. I added space in 500 or 1000 GB blocks to give flexibility with storage and vmotion. Disks were balanced across SCSI controllers as well.&lt;/p&gt;
 &lt;p&gt;Then, I logged into the linux VM with admin credentials.&lt;/p&gt;
@@ -722,10 +891,10 @@ Disk /dev/mapper/oralogvg-oraloglv: 3244.8 GB, 3244835209216 bytes, 6337568768 s
         </item>
         <item>
         <title>VMWare VCSA 6.7 Backup Failure</title>
-        <link>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</link>
+        <link>http://localhost:1313/p/vmware-vcsa-6.7-backup-failure/</link>
         <pubDate>Thu, 05 May 2022 09:44:16 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</guid>
+        <guid>http://localhost:1313/p/vmware-vcsa-6.7-backup-failure/</guid>
         <description>&lt;p&gt;I set out to apply patches today on a relatively-newly-installed VCSA 6.7 virtual appliance today.&lt;/p&gt;
 &lt;p&gt;I started with taking a backup, as recommended by VMWare. The FTP backup would start, but then sit at &lt;code&gt;Creating backup target directory&lt;/code&gt; until it reported the error:
 &lt;code&gt;Structure com.vmware.appliance.recovery.backup.job.details.info has a union with a field not required for this case = end_time&lt;/code&gt;&lt;/p&gt;
@@ -737,10 +906,10 @@ Disk /dev/mapper/oralogvg-oraloglv: 3244.8 GB, 3244835209216 bytes, 6337568768 s
         </item>
         <item>
         <title>Reverting an ESXi Upgrade</title>
-        <link>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</link>
+        <link>http://localhost:1313/p/reverting-an-esxi-upgrade/</link>
         <pubDate>Sun, 01 May 2022 10:51:36 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</guid>
+        <guid>http://localhost:1313/p/reverting-an-esxi-upgrade/</guid>
         <description>&lt;p&gt;I was looking at the configuration of 3 VSphere servers at work today and determined that they were running an old BIOS. I upgraded their HP DL380 G9 BIOS from &lt;code&gt;P89 v1.50 (07/20/2015)&lt;/code&gt; to &lt;code&gt;P89 v2.72 (03/25/2019)&lt;/code&gt; using iLO.&lt;/p&gt;
 &lt;p&gt;The first two updates went out without a hitch. The last server? Not so good, as there was a cascading chain of errors.&lt;/p&gt;
 &lt;p&gt;After rebooting the server (which is necessary for the BIOS update to take effect), the ESXi cluster complained that the server was not reachable. I couldn&amp;rsquo;t ping it either.&lt;/p&gt;
@@ -781,18 +950,18 @@ At this point, I noticed that while the IP was correct, DNS reverted to old entr
         </item>
         <item>
         <title>Reset Root on RHEL 4</title>
-        <link>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</link>
+        <link>http://localhost:1313/p/reset-root-on-rhel-4/</link>
         <pubDate>Sat, 02 Apr 2022 09:35:22 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</guid>
+        <guid>http://localhost:1313/p/reset-root-on-rhel-4/</guid>
         <description>&lt;p&gt;One of the legacy systems I inherited at my job was a standalone Red Hat Enterprise Linux 4.0 server with no documented credentials or purpose&amp;hellip; at least, none that I could find, or that anyone in the business could recall. It&amp;rsquo;s difficult to decide if a server is still necessary when there&amp;rsquo;s no information! L33T hacking skills to the rescue!&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Reboot the server. We need to edit the startup configuration in order to reset the ROOT password.&lt;/li&gt;
 &lt;li&gt;As the server begins to boot again, the GRUB screen will appear for a few seconds. Press a key in order to interrupt the boot sequence.&lt;br&gt;
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/rhel-boot-1.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-1.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/rhel-boot-1.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/rhel-boot-1.png&#34;
 			
 			
 			
@@ -804,8 +973,8 @@ At this point, I noticed that while the IP was correct, DNS reverted to old entr
 &lt;li&gt;If you interrupted the boot in time, you&amp;rsquo;ll be presented with a menu. Use the arrow keys to select the top option and press E.
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/rhel-boot-2.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-2.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/rhel-boot-2.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/rhel-boot-2.png&#34;
 			
 			
 			
@@ -817,8 +986,8 @@ At this point, I noticed that while the IP was correct, DNS reverted to old entr
 &lt;li&gt;Use the arrow keys to highlight the line starting with &lt;em&gt;kernel&lt;/em&gt; and press E.
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/rhel-boot-3.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-3.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/rhel-boot-3.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/rhel-boot-3.png&#34;
 			
 			
 			
@@ -838,10 +1007,10 @@ At this point, I noticed that while the IP was correct, DNS reverted to old entr
         </item>
         <item>
         <title>Uninstalling Tivoli Storage Manager Client</title>
-        <link>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</link>
+        <link>http://localhost:1313/p/uninstalling-tivoli-storage-manager-client/</link>
         <pubDate>Sat, 02 Apr 2022 09:34:57 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/uninstalling-tivoli-storage-manager-client/</guid>
+        <guid>http://localhost:1313/p/uninstalling-tivoli-storage-manager-client/</guid>
         <description>&lt;p&gt;One of the legacy ecosystems that I inherited is an IBM Tivoli Storage Manager install. Ours consists of:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;5 servers&lt;/li&gt;
@@ -877,10 +1046,10 @@ Delete &lt;code&gt;HKEY_LOCAL_MACHINE\SOFTWARE\Tivoli&lt;/code&gt;&lt;/p&gt;
         </item>
         <item>
         <title>Reset Confluence Password for an Administrator ID</title>
-        <link>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</link>
+        <link>http://localhost:1313/p/reset-confluence-password-for-an-administrator-id/</link>
         <pubDate>Tue, 22 Mar 2022 13:26:12 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</guid>
+        <guid>http://localhost:1313/p/reset-confluence-password-for-an-administrator-id/</guid>
         <description>&lt;p&gt;I recently had a request to grant a new user access to a legacy Confluence install at work. This particular server was in active use from 2013-2018ish and runs Confluence 3.1 standalone (Apache &amp;amp; mySQL).&lt;/p&gt;
 &lt;p&gt;The big problem was that &lt;strong&gt;nobody knew any credentials&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;I started out by browsing to the configuration in &lt;code&gt;C:\confluence\confluence-3.1-std\conf\server.xml&lt;/code&gt;. Luckily, I found some credentials to connect to the mySQL instance:&lt;/p&gt;
@@ -906,10 +1075,10 @@ wikiadmin
         </item>
         <item>
         <title>ADFS - Change Service Account to gMSA</title>
-        <link>https://gbeifuss.github.io/p/adfs-change-service-account-to-gmsa/</link>
+        <link>http://localhost:1313/p/adfs-change-service-account-to-gmsa/</link>
         <pubDate>Tue, 22 Mar 2022 11:14:45 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/adfs-change-service-account-to-gmsa/</guid>
+        <guid>http://localhost:1313/p/adfs-change-service-account-to-gmsa/</guid>
         <description>&lt;p&gt;Our organization ran an ADFS instance, but it was configured with a Service Account, not with a Group-Managed Service Account (gMSA), which is Microsoft&amp;rsquo;s recommendation for security reasons. I wanted to change it, without losing any of our configuration. The ADFSToolbox module didn&amp;rsquo;t seem to support a change to a gMSA, and I could find no supported way to backup our configuration (certificates, transformations, relying trusts) and restore them to a properly configured instance.&lt;/p&gt;
 &lt;p&gt;To start, my environment is 2 ADFS servers (Server 2019) running WID and ADFS Farm Behaviour 4.0.&lt;/p&gt;
 &lt;p&gt;I needed these tools:&lt;br&gt;
@@ -996,10 +1165,10 @@ Generate the new SPN: &lt;code&gt;setspn -S HOST/STS.COMPANY.COM DOMAIN\ADFS-GMS
         </item>
         <item>
         <title>Creating an ESXi Thin Disk</title>
-        <link>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</link>
+        <link>http://localhost:1313/p/creating-an-esxi-thin-disk/</link>
         <pubDate>Sat, 26 Feb 2022 09:34:35 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</guid>
+        <guid>http://localhost:1313/p/creating-an-esxi-thin-disk/</guid>
         <description>&lt;p&gt;I built a new Windows 2019 Server VM the other day on our ESXi platform. I&amp;rsquo;ll migrate some services currently running on a Windows 2008R2 Server over, then decommission the old VM. One of the challenges I faced was getting our corporate image, which is stored as an image file in Phoenix, Arizona. Because of the way our storage is setup, I couldn&amp;rsquo;t directly transfer it to our storage system.&lt;/p&gt;
 &lt;p&gt;I downloaded the VMDK file to my laptop first. ESXi had to expand the file from 24GB to the full 80GB during the download, which took an hour or so.
 Next, I uploaded the 80GB VMDK file to our local ESXi cluster. A couple of hours later, it was finished!&lt;/p&gt;
@@ -1019,16 +1188,16 @@ Next, I uploaded the 80GB VMDK file to our local ESXi cluster. A couple of hours
         </item>
         <item>
         <title>Resolving HP iLO NAND Error</title>
-        <link>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</link>
+        <link>http://localhost:1313/p/resolving-hp-ilo-nand-error/</link>
         <pubDate>Mon, 27 Dec 2021 00:09:54 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</guid>
-        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where patches had been sorely neglected for a couple of years. There were a number of HP DL380 G9 servers still running iLO 1.4. Once I gained access to iLO, I started by upgrading those HP servers to iLO 2.79, the most recent version.&lt;/p&gt;
+        <guid>http://localhost:1313/p/resolving-hp-ilo-nand-error/</guid>
+        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where patches had been sorely neglected for a couple of years. There were a number of HP DL380 G9 servers still running iLO 1.4. Once I gained access to iLO, I started by upgrading those HP servers to iLO 2.79, the most recent version.&lt;/p&gt;
 &lt;p&gt;After the mandatory reboot to apply the new iLO firmware, 2/3 of the servers now displayed an iLO login screen warning of &lt;code&gt;Embedded Flash\NAND error&lt;/code&gt;:
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/iLO-nand-error.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/iLO-nand-error.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/iLO-nand-error.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/iLO-nand-error.png&#34;
 			
 			
 			
@@ -1066,11 +1235,11 @@ The next suggestion in the article (if the NAND reset didn&amp;rsquo;t work) was
         </item>
         <item>
         <title>HP iLO C7000 Credential Reset</title>
-        <link>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</link>
+        <link>http://localhost:1313/p/hp-ilo-c7000-credential-reset/</link>
         <pubDate>Mon, 27 Dec 2021 00:09:41 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</guid>
-        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where some administrative passwords that weren&amp;rsquo;t known. In particular, there were two HP Blade C7000 chassis with no credentials for the Blade Onboard Administrator.&lt;/p&gt;
+        <guid>http://localhost:1313/p/hp-ilo-c7000-credential-reset/</guid>
+        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where some administrative passwords that weren&amp;rsquo;t known. In particular, there were two HP Blade C7000 chassis with no credentials for the Blade Onboard Administrator.&lt;/p&gt;
 &lt;p&gt;The easiest way to reset the Administrator credential is by plugging a USB key (with a reset script) in the chassis, then use the Insight LCD to run the script.&lt;/p&gt;
 &lt;p&gt;Create a new text file containing only the following string: &lt;code&gt;SET USER PASSWORD &amp;quot;Administrator&amp;quot; &amp;quot;password&amp;quot;&lt;/code&gt; and save it with a .cfg extension on a USB key.
 On the Insight LCD, select &lt;code&gt;USB Menu &amp;gt; Restore Configuration &amp;gt; usb://d1/resetadmin.cfg&lt;/code&gt;&lt;/p&gt;
@@ -1083,10 +1252,10 @@ SET USER PASSWORD &amp;#34;Administrator&amp;#34; &amp;#34;password&amp;#34;
         </item>
         <item>
         <title>Remediating Log4j in VMWare VCenter 6.5</title>
-        <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
+        <link>http://localhost:1313/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
         <pubDate>Wed, 22 Dec 2021 16:17:50 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
+        <guid>http://localhost:1313/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
         <description>&lt;p&gt;The log3j vulnerability in an Apache Java component is one of the more serious and widespread software/security flaws to be identified in some time&amp;hellip; although, it does seem like that&amp;rsquo;s said every few months.
 Basically, the flaw is triggered when a specific string is sent to the logging module. This string can be used to trigger a lookup on a remote server, returning a Java script that is then injected into the process. This then lets the attacker execute commands at the same privilege level as the application using the logging library. In short, it allows for remote code execution, and complete control by an attacker.&lt;/p&gt;
 &lt;p&gt;I had a number of ESXi 6.5 servers that needed to be patched. Fortunately, VMWare has a Python script that can be used for automated remediation.&lt;/p&gt;
@@ -1156,10 +1325,10 @@ ROOT@servername [ ~ ]:
         </item>
         <item>
         <title>ESXi 6.0 to 6.5 Upgrade</title>
-        <link>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</link>
+        <link>http://localhost:1313/p/esxi-6.0-to-6.5-upgrade/</link>
         <pubDate>Mon, 20 Dec 2021 23:38:30 -0500</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</guid>
+        <guid>http://localhost:1313/p/esxi-6.0-to-6.5-upgrade/</guid>
         <description>&lt;p&gt;Almost two months ago, I assumed responsibility for a new site. It turned out that no one had really performed any administration at the site in about two years and there was a lot of basic work to do. There were failed UPSes, cables left hanging from racks when servers had been decommissioned, no administrative IDs for some hardware (iLO and iDRAC) and no patching. They had several ESXi clusters still running 6.0 (which has no HTML 5 support) so access and administration was a nightmare, to say nothing of the security risks. Updating to 6.5 was high on my priority list!&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Download the offline bundle ZIP from VMWare for my HP DL380 G9 hardware.&lt;/li&gt;
@@ -1234,10 +1403,10 @@ VMware ESXi 6.5.0 build-18678235
         </item>
         <item>
         <title>Forcibly Remove Computer from Domain</title>
-        <link>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</link>
+        <link>http://localhost:1313/p/forcibly-remove-computer-from-domain/</link>
         <pubDate>Thu, 04 Nov 2021 20:52:28 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/forcibly-remove-computer-from-domain/</guid>
+        <guid>http://localhost:1313/p/forcibly-remove-computer-from-domain/</guid>
         <description>&lt;p&gt;I ran into an issue earlier this week where I had to remove a computer from a particular domain&amp;hellip; but the domain no longer existed. This meant that I couldn&amp;rsquo;t provide &amp;lsquo;domain admin&amp;rsquo; credentials to nicely remove the computer and join it back to WORKGROUP.&lt;/p&gt;
 &lt;p&gt;Fortunately, this can be done from the command prompt via. WMI.&lt;br&gt;
 I started by logging into the computer as a local administrator.&lt;/p&gt;
@@ -1248,10 +1417,10 @@ start /B /W wmic.exe /interactive:off ComputerSystem Where &amp;#34;Name=&amp;#3
         </item>
         <item>
         <title>Removing GIT History</title>
-        <link>https://gbeifuss.github.io/p/removing-git-history/</link>
+        <link>http://localhost:1313/p/removing-git-history/</link>
         <pubDate>Tue, 02 Nov 2021 20:16:01 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/removing-git-history/</guid>
+        <guid>http://localhost:1313/p/removing-git-history/</guid>
         <description>&lt;p&gt;I was training a colleague on using git last week with my Powershell script repository. When I reviewed the git history, I realized that there were lots of entries that were no longer necessary: primarily scripts that I deleted because they were obsolete, or never moved past development. I wanted to find a way to purge all entries related to these files from the git repository.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;git filter-branch --index-filter &amp;quot;git rm -rf --cached --ignore-unmatch FILEPATH&amp;quot; HEAD&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This took about a dozen minutes to walk through my approx. 400 commits. Each commit has to be checked, and then removed if it referenced the file.&lt;/p&gt;
@@ -1259,10 +1428,10 @@ start /B /W wmic.exe /interactive:off ComputerSystem Where &amp;#34;Name=&amp;#3
         </item>
         <item>
         <title>Managing Mailbox moves in Exchange 2016</title>
-        <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>
+        <link>http://localhost:1313/p/managing-mailbox-moves-in-exchange-2016/</link>
         <pubDate>Thu, 28 Oct 2021 08:54:40 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</guid>
+        <guid>http://localhost:1313/p/managing-mailbox-moves-in-exchange-2016/</guid>
         <description>&lt;p&gt;I manage a 5-server Exchange 2016 DAG at my workplace. Recently, I needed to migrate about 60 users from one database to another. I happen to hate the browser-based Exchange Administration Console (EAC) because it&amp;rsquo;s not very helpful - there&amp;rsquo;s no way to see the status for many &amp;ldquo;in progress&amp;rdquo; tasks, and &lt;em&gt;cancelling&lt;/em&gt; a task generally means you have no way of knowing if was completely cancelled, or partially cancelled&amp;hellip; &lt;strong&gt;very frustrating!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;I have a love for Powershell, so I fired up the EMC - hurrah!&lt;br&gt;
 The default number of active migrations is configurable via. Powershell, but I really don&amp;rsquo;t like changing server defaults if there&amp;rsquo;s another way to accomplish what I want. Changing server defaults means that there&amp;rsquo;s one more configuration variation that needs to be tracked in case I need to rebuild a server, or add another server to the DAG.&lt;/p&gt;
@@ -1294,10 +1463,10 @@ Then, validate that Indexing is set correctly on all the databases: &lt;code&gt;
         </item>
         <item>
         <title>Linux Upskill Challenge</title>
-        <link>https://gbeifuss.github.io/p/linux-upskill-challenge/</link>
+        <link>http://localhost:1313/p/linux-upskill-challenge/</link>
         <pubDate>Thu, 28 Oct 2021 08:54:12 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/linux-upskill-challenge/</guid>
+        <guid>http://localhost:1313/p/linux-upskill-challenge/</guid>
         <description>&lt;p&gt;I recently completed the &lt;a class=&#34;link&#34; href=&#34;https://reddit.com/r/linuxupskillchallenge&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Linux Upskill Challenge&lt;/a&gt;, a month-long, self-paced, self-led course curated on Reddit. It&amp;rsquo;s hands-on and is best run with a publically accessible remote server, so that you&amp;rsquo;re mimicing a production server that your organization might host online. (There&amp;rsquo;s &lt;em&gt;less pressure&lt;/em&gt; in administering a server that&amp;rsquo;s only locally available!)&lt;/p&gt;
 &lt;p&gt;These are my thoughts and notes about each day&amp;rsquo;s content - not formal study notes, but informal jot notes on the things I found interesting and important.&lt;/p&gt;
@@ -1491,10 +1660,10 @@ Scripts typically start with &lt;code&gt;#!/bin/bash&lt;/code&gt;&lt;/p&gt;
         </item>
         <item>
         <title>Hugo &amp; Google Analytics</title>
-        <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
+        <link>http://localhost:1313/p/hugo-google-analytics/</link>
         <pubDate>Tue, 05 Oct 2021 14:54:15 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/hugo-google-analytics/</guid>
+        <guid>http://localhost:1313/p/hugo-google-analytics/</guid>
         <description>&lt;p&gt;Hugo has integrated support (via. Internal Templates) for Google Analytics. An internal template adds support for some very common use cases on static websites. For example: Google Analytics, Disqus comments, Google News, and Twitter Cards. Internal templates certainly exist in v.0.87 and higher, but I&amp;rsquo;m not sure when support for them was first added. If your install of Hugo is out of date, now might be a good time to update it.&lt;/p&gt;
 &lt;p&gt;The first step, is to sign up for Google Analytics and adding your particular site (aka. &lt;em&gt;property&lt;/em&gt;), if you&amp;rsquo;ve not done so already. I&amp;rsquo;ll wait while you do that&amp;hellip;
 &lt;em&gt;&amp;hellip;twiddles thumbs&amp;hellip;&lt;/em&gt;&lt;/p&gt;
@@ -1525,10 +1694,10 @@ Scripts typically start with &lt;code&gt;#!/bin/bash&lt;/code&gt;&lt;/p&gt;
         </item>
         <item>
         <title>VS Code &amp; Markdown</title>
-        <link>https://gbeifuss.github.io/p/vs-code-markdown/</link>
+        <link>http://localhost:1313/p/vs-code-markdown/</link>
         <pubDate>Tue, 05 Oct 2021 09:51:28 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/vs-code-markdown/</guid>
+        <guid>http://localhost:1313/p/vs-code-markdown/</guid>
         <description>&lt;p&gt;VS Code automatically trims any trailing whitespace in a file, which makes sense for a lot of formats, but in markdown, a double trailing whitespace has special meaning - it acts as a &lt;code&gt;LF&lt;/code&gt; and creates a line break without a hard return (&lt;code&gt;CRLF&lt;/code&gt;).
 This automatic trim also occurs when formatting a file according to the language&amp;rsquo;s rules.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s configure VS Code to continue automatically trimming trailing whitespace, &lt;em&gt;except&lt;/em&gt; for markdown files:&lt;/p&gt;
@@ -1546,14 +1715,14 @@ This automatic trim also occurs when formatting a file according to the language
         </item>
         <item>
         <title>Working with JSON in Powershell</title>
-        <link>https://gbeifuss.github.io/p/working-with-json-in-powershell/</link>
+        <link>http://localhost:1313/p/working-with-json-in-powershell/</link>
         <pubDate>Mon, 04 Oct 2021 15:47:05 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/working-with-json-in-powershell/</guid>
+        <guid>http://localhost:1313/p/working-with-json-in-powershell/</guid>
         <description>&lt;p&gt;I&amp;rsquo;ve recently been editing a Powershell script that manages our Let&amp;rsquo;s Encrypt certificates and their integration with Netscaler. I&amp;rsquo;ve been using John Billeken&amp;rsquo;s excellent &lt;a class=&#34;link&#34; href=&#34;https://github.com/j81blog/GenLeCertForNS&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;GenLeCertForNS&lt;/a&gt; script to do the heavy lifting, but I&amp;rsquo;ve written a front-end wrapper for it to handle the way I need it to work in my environment. [I started using this with &lt;em&gt;v.2.63&lt;/em&gt;, which didn&amp;rsquo;t have email capabilities. My front-end wrapper adds email reporting, plus obfuscuating any credentials in the log, and loading the credentials from an encypted XML file].
 I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to update two Netscaler appliances with the same certificate: if the CN matched certain values, the script will find the same Let&amp;rsquo;s Encrypt certificate .pfx, upload it to the Netscaler at our warm Disaster Recovery site and properly bind it.&lt;/p&gt;
-&lt;p&gt;To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/powershell-netscaler-api/&#34; &gt;Powershell &amp;amp; Netscaler API&lt;/a&gt;. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.&lt;/p&gt;
+&lt;p&gt;To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/powershell-netscaler-api/&#34; &gt;Powershell &amp;amp; Netscaler API&lt;/a&gt;. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.&lt;/p&gt;
 &lt;p&gt;According to the &lt;a class=&#34;link&#34; href=&#34;https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/12.1/configuration/ssl/sslcertkey/sslcertkey/#link&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Citrix ADC NITRO API Reference&lt;/a&gt;, I need:
 &lt;strong&gt;URL:&lt;/strong&gt; http://&amp;lt;Citrix-ADC-IP-address(NSIP)&amp;gt;/nitro/v1/config/sslcertkey?action=link&lt;br&gt;
@@ -1586,14 +1755,14 @@ I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to up
         </item>
         <item>
         <title>Cisco Management Tunnel - ASA Configuration</title>
-        <link>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</link>
+        <link>http://localhost:1313/p/cisco-management-tunnel-asa-configuration/</link>
         <pubDate>Fri, 24 Sep 2021 10:12:43 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</guid>
+        <guid>http://localhost:1313/p/cisco-management-tunnel-asa-configuration/</guid>
         <description>&lt;p&gt;This is part 3 of a 3-part series.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel-ndes-setup/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Cisco Management Tunnel - ASA Setup&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;If you&amp;rsquo;ve stuck with me so far, now we come to the payoff - a working Management Tunnel! Let&amp;rsquo;s jump in.&lt;/p&gt;
@@ -1713,8 +1882,8 @@ tunnel-group Management webvpn-attributes
 &lt;li&gt;Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&amp;rsquo;s &lt;code&gt;Management&lt;/code&gt; .&lt;br&gt;
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/asdm-management-profile-server-list.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/asdm-management-profile-server-list.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/asdm-management-profile-server-list.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/asdm-management-profile-server-list.png&#34;
 			
 			
 			
@@ -1734,8 +1903,8 @@ popup-certificate-enrollment-succeeded.png)
 Click OK to acknowledge the notice. AnyConnect will indeed disconnect you and try to re-establish a connection. You can either authenticate and establish a User Tunnel, or click Cancel. If you click Cancel, AnyConnect will take a few minutes to perform Trusted Network Detection, determine you&amp;rsquo;re not on the corporate network, then transparently establish the Management Tunnel using your certificate. You can see the Management Tunnel status in the AnyConnect client Statistics:
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/anyconnect-information-window-management-tunnel-connected.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/anyconnect-information-window-management-tunnel-connected.png&#34;
 			
 			
 			
@@ -1771,15 +1940,15 @@ When you connect back to a User Tunnel, the Management Tunnel will disconnect an
         </item>
         <item>
         <title>Cisco Management Tunnel - NDES Setup</title>
-        <link>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</link>
+        <link>http://localhost:1313/p/cisco-management-tunnel-ndes-setup/</link>
         <pubDate>Fri, 24 Sep 2021 08:25:46 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</guid>
+        <guid>http://localhost:1313/p/cisco-management-tunnel-ndes-setup/</guid>
         <description>&lt;p&gt;This is part 2 of a 3-part series.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;Cisco Management Tunnel - NDES Setup&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Since an AnyConnect Management Tunnel seems like it will help resolve my organization&amp;rsquo;s work-from-home challenges, let&amp;rsquo;s setup a pilot.&lt;/p&gt;
 &lt;p&gt;The first thing we need to do is configure the certificates that are needed for user authentication.&lt;/p&gt;
@@ -1865,7 +2034,7 @@ Change the default GeneralTemplateProperty registry value from &amp;ldquo;IPSECI
 &lt;/ul&gt;
 &lt;p&gt;In the CA MMC, right-click Certificate Templates, select New, Certificate Template to Issue, then select AnyConnect. Your new template is now ready to issue!
 Reboot the NDES server for the registry settings made earlier to take effect.&lt;/p&gt;
-&lt;p&gt;Now, let&amp;rsquo;s tackle the ASA configuration in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Now, let&amp;rsquo;s tackle the ASA configuration in &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
 &lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gsecse.wordpress.com/2015/10/06/ndes-deployment-and-troubleshooting/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -1876,15 +2045,15 @@ Reboot the NDES server for the registry settings made earlier to take effect.&lt
         </item>
         <item>
         <title>Cisco Management Tunnel</title>
-        <link>https://gbeifuss.github.io/p/cisco-management-tunnel/</link>
+        <link>http://localhost:1313/p/cisco-management-tunnel/</link>
         <pubDate>Fri, 24 Sep 2021 07:26:05 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/cisco-management-tunnel/</guid>
+        <guid>http://localhost:1313/p/cisco-management-tunnel/</guid>
         <description>&lt;p&gt;This is part 1 of a 3-part series.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Cisco Management Tunnel&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel-ndes-setup/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;When the Covid-19 pandemic started, our organization sent everyone to work from home. Of course, with everyone on VPN and not continually connected, like in the office, that&amp;rsquo;s posed some problems for login scripts, and some of our automated processes like WSUS patch deployment, NTP time sync and SCCM. I recently heard this was an issue - I&amp;rsquo;m not sure why the sysadmins didn&amp;rsquo;t raise it sooner - and did some research into ways I can address those problems for our team. We use Cisco AnyConnect for VPN, and AnyConnect has two features that seemed to meet our needs:&lt;/p&gt;
 &lt;ul&gt;
@@ -1912,15 +2081,15 @@ In this scenario, a VPN Management Tunnel would establish whenever the user/comp
 &lt;li&gt;&lt;em&gt;AnyConnect Customization Scripts are not supported.&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The biggest risk I see to deploying either of these is how it might be affected by our web filtering proxy.&lt;/p&gt;
-&lt;p&gt;There&amp;rsquo;s really only one way to find out how/if this will work, and that&amp;rsquo;s to set it up! I&amp;rsquo;ll do that in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s really only one way to find out how/if this will work, and that&amp;rsquo;s to set it up! I&amp;rsquo;ll do that in &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;.&lt;/p&gt;
 </description>
         </item>
         <item>
         <title>Installing a certificate in PowerApps</title>
-        <link>https://gbeifuss.github.io/p/installing-a-certificate-in-powerapps/</link>
+        <link>http://localhost:1313/p/installing-a-certificate-in-powerapps/</link>
         <pubDate>Thu, 23 Sep 2021 08:43:28 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/installing-a-certificate-in-powerapps/</guid>
+        <guid>http://localhost:1313/p/installing-a-certificate-in-powerapps/</guid>
         <description>&lt;p&gt;My organization has a Microsoft Dynamics PowerApps-based website to allow a subset of our customers to manage their applications to us. It&amp;rsquo;s secured using HTTPS, as all good website should be. That means I need to update the certificate annually, and it&amp;rsquo;s a time-consuming process because we don&amp;rsquo;t actually own the domain that our PowerApps site is listening on. Here&amp;rsquo;s a high-level overview of what a renewal entails:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Generate a CSR&lt;/li&gt;
@@ -2071,11 +2240,11 @@ Verifying - Enter Export Password:
         </item>
         <item>
         <title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
-        <link>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
+        <link>http://localhost:1313/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
         <pubDate>Tue, 21 Sep 2021 10:18:20 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
-        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/&#34; &gt;Remediating an Internal IP Disclosure with Netscaler&lt;/a&gt;, but I found out today that the route I&amp;rsquo;d chosen prevents Outlook from authenticating. Oops!&lt;/p&gt;
+        <guid>http://localhost:1313/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/remediating-an-internal-ip-disclosure-with-netscaler/&#34; &gt;Remediating an Internal IP Disclosure with Netscaler&lt;/a&gt;, but I found out today that the route I&amp;rsquo;d chosen prevents Outlook from authenticating. Oops!&lt;/p&gt;
 &lt;p&gt;To summarize the earlier post, Exchange was leaking an internal IP and servername when an HTTP/1.0 packet was set &lt;em&gt;without a host header&lt;/em&gt; to &lt;code&gt;/autodiscover/autodiscover.xml&lt;/code&gt;. I initially tried to fix it by deleting the WWW-Authenticate and X-FEServer headers from the replies using Netscaler.&lt;/p&gt;
 &lt;p&gt;However, while that prevents the information from being leaked, it also prevents Outlook from properly loading when the traffic flows through Netscaler. In our case, internal traffic was fine, but people who rely on Outlook and autodiscover outside of our network couldn&amp;rsquo;t log in. I tested and removing the X-FEServer header permitted Outlook to load normally; it was removing the WWW-Authenticate header that caused the problem.&lt;/p&gt;
 &lt;p&gt;I tried out some alternate methods of blocking an internal IP in the WWW-Authenticate field (specifically, a reply containing &lt;code&gt;basic realm=&amp;quot;10.10.10.10&lt;/code&gt;), but it seems like there&amp;rsquo;s important authentication using that field. I came up with another approach which seems to be working: Since this vulnerability is the result of a HTTP/1.0 request, rewrite HTTP/1.0 requests to HTTP/1.1. HTTP/1.1 &lt;em&gt;requires&lt;/em&gt; the host header field, which means that IIS won&amp;rsquo;t happily disclose internal IPs in response to a missing host header. HTTP/1.1 has been a standard since 1997 and there should literally be no device in the past 20 years which does not support it.&lt;/p&gt;
@@ -2106,10 +2275,10 @@ closed
         </item>
         <item>
         <title>Remediating an Internal IP Disclosure with Netscaler</title>
-        <link>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
+        <link>http://localhost:1313/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
         <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
+        <guid>http://localhost:1313/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
         <description>&lt;p&gt;Our security administrator sent over a few security &amp;lsquo;vulnerabilities&amp;rsquo; that had been flagged during a recent audit. One of them was a finding that one of our websites was leaking an internal IP. All I was given to track this down was the output from the auditor&amp;rsquo;s Nessus scan:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Nessus was able to verify the issue with the following request :
 
@@ -2275,10 +2444,10 @@ closed
         </item>
         <item>
         <title>Using multicursor in VS Code</title>
-        <link>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</link>
+        <link>http://localhost:1313/p/using-multicursor-in-vs-code/</link>
         <pubDate>Mon, 13 Sep 2021 23:35:20 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</guid>
+        <guid>http://localhost:1313/p/using-multicursor-in-vs-code/</guid>
         <description>&lt;p&gt;CTRL-ALT-L enables multiple cursors in Visual Studio Code.&lt;/p&gt;
 &lt;p&gt;That is all.&lt;/p&gt;
 &lt;p&gt;(Technically CTRL-ALT-L is the keyboard shortcut for &amp;lsquo;Select all occurrences of current selection&amp;rsquo;. Select a word, press CTRL-ALT-L and a cursor will appear to the left of every instance of that word. It&amp;rsquo;s a useful alternative to Find/Replace.)&lt;/p&gt;
@@ -2286,10 +2455,10 @@ closed
         </item>
         <item>
         <title>Hugo error - REF_NOT_FOUND</title>
-        <link>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</link>
+        <link>http://localhost:1313/p/hugo-error-ref_not_found/</link>
         <pubDate>Mon, 13 Sep 2021 23:35:09 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</guid>
+        <guid>http://localhost:1313/p/hugo-error-ref_not_found/</guid>
         <description>&lt;p&gt;I tried generating updated content for my website the other day and Hugo threw an error instead:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hugo v0.88.1-5BC54738+extended windows/amd64 BuildDate=2021-09-04T09:39:19Z VendorInfo=gohugoio
 ERROR 2021/09/10 14:59:54 [en] REF_NOT_FOUND: Ref &amp;#34;exchange-clustergroup.md&amp;#34;: &amp;#34;C:\myblog.dev.repo\content\post\exchange-transaction-logs.md:15:458&amp;#34;: page not found
@@ -2300,13 +2469,13 @@ ERROR 2021/09/10 14:59:54 [en] REF_NOT_FOUND: Ref &amp;#34;exchange-clustergroup
         </item>
         <item>
         <title>Exchange Transaction Logs won&#39;t clear</title>
-        <link>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</link>
+        <link>http://localhost:1313/p/exchange-transaction-logs-wont-clear/</link>
         <pubDate>Thu, 09 Sep 2021 09:29:17 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</guid>
+        <guid>http://localhost:1313/p/exchange-transaction-logs-wont-clear/</guid>
         <description>&lt;p&gt;I solved a problem today that&amp;rsquo;s been plaguing me for a two weeks now. Exchange transaction logs are a record of every single operation that changes the state of any data in the database. Adding a new item, deleting an old item, modifying an existing item - all of these  are recorded in a transaction log at the same time they&amp;rsquo;re applied to the database itself. When an Exchange database is mounted, the transaction logs are reprocessed to make sure there aren&amp;rsquo;t any discrepancies or database errors. If there are, the transaction logs are used to rebuild the database state. This same process applied to the DAG as well. The entire purpose of transaction logs in Exchange is to provide information on the transactions that occurred since the last time you ran a complete backup of your Exchange environment.&lt;/p&gt;
 &lt;p&gt;If you&amp;rsquo;re using Exchange-aware backup software, Exchange will &amp;lsquo;know&amp;rsquo; when a full backup occurs and then it&amp;rsquo;ll delete all transaction logs prior to that point. They&amp;rsquo;re no longer needed for a database rebuild because there&amp;rsquo;s a backup.&lt;/p&gt;
-&lt;p&gt;The problem I ran into is that the transaction logs were not being purged despite a successful backup (by our Exchange-aware software) and filled up the volume, which caused a database dismount&amp;hellip; which led to some unhappy employees. Fortunately, it was just 1 of our 6 databases and I was able to fix it within 15 minutes, so not many people even noticed an issue. I wrote about workarounds and solutions for that in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/&#34; &gt;Exchange DAGs and Cluster Ownership&lt;/a&gt;. As I mentioned in that post, I believed that the root cause was that the Owner of our DAG cluster objects wasn&amp;rsquo;t the proper host. However, this wasn&amp;rsquo;t the case because the transaction logs continued to grow!&lt;/p&gt;
+&lt;p&gt;The problem I ran into is that the transaction logs were not being purged despite a successful backup (by our Exchange-aware software) and filled up the volume, which caused a database dismount&amp;hellip; which led to some unhappy employees. Fortunately, it was just 1 of our 6 databases and I was able to fix it within 15 minutes, so not many people even noticed an issue. I wrote about workarounds and solutions for that in &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/exchange-dags-and-cluster-ownership/&#34; &gt;Exchange DAGs and Cluster Ownership&lt;/a&gt;. As I mentioned in that post, I believed that the root cause was that the Owner of our DAG cluster objects wasn&amp;rsquo;t the proper host. However, this wasn&amp;rsquo;t the case because the transaction logs continued to grow!&lt;/p&gt;
 &lt;p&gt;The Transaction Logs for Journaling are causing the problem. Despite no old logs (they&amp;rsquo;re all timestamped AFTER our daily backup occurs, which tells me that the backup is working properly and Exchange is aware of it), they&amp;rsquo;re consuming 10+ GB more disk space each passing day. Yesterday morning they occupied 60GB, and 24 hours later they&amp;rsquo;re already consuming 84GB.&lt;/p&gt;
 &lt;p&gt;I checked the Queues and found dozens of messages in the Journaling queue:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-QueueDigest&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Dag&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange2016&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ft &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-a&lt;/span&gt;
@@ -2364,10 +2533,10 @@ Recipients:  Tier3M.Journaling@Company.com;3;3;[{LED=400 4.4.7 The server respon
         </item>
         <item>
         <title>Exchange DAGs and Cluster Ownership</title>
-        <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>
+        <link>http://localhost:1313/p/exchange-dags-and-cluster-ownership/</link>
         <pubDate>Mon, 06 Sep 2021 22:12:49 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</guid>
+        <guid>http://localhost:1313/p/exchange-dags-and-cluster-ownership/</guid>
         <description>&lt;p&gt;We run Exchange on a multiserver DAG, which behaves similarly to a cluster. It&amp;rsquo;s built on the same principles as a cluster, but it&amp;rsquo;s technically not a cluster and is administered differently than a cluster. It&amp;rsquo;s &amp;hellip; &lt;em&gt;clusterish&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;One of the issues that we run in to occasionally is that Cluster Owner changes to another DAG member server, which causes problems with our backup software. (The backup software can&amp;rsquo;t truely handle a cluster and wants to connect to the IP of a single server). The fix is pretty simple - change the owner back to the server it should be! Powershell makes this really easy:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
@@ -2463,8 +2632,8 @@ Recipients:  Tier3M.Journaling@Company.com;3;3;[{LED=400 4.4.7 The server respon
 &lt;p&gt;You can see below that at 7:49ish, both the cluster object owners changed from the preferred nodes. I know this since PRTG detected this as &amp;ldquo;2&amp;rdquo;, not &amp;ldquo;1&amp;rdquo;. In any case, after the sensor had been in this state for 60 seconds, the notification task started and moved the cluser objects back to their proper &amp;lsquo;home&amp;rsquo;. The sensor value reset to &amp;ldquo;0&amp;rdquo; clusters on a non-preferred node.&lt;/p&gt;
 &lt;p&gt;&lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/prtg-cluster.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/prtg-cluster.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/prtg-cluster.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/prtg-cluster.png&#34;
 			
 			
 			
@@ -2477,10 +2646,10 @@ Recipients:  Tier3M.Journaling@Company.com;3;3;[{LED=400 4.4.7 The server respon
         </item>
         <item>
         <title>Truncate Exchange Transaction Logs</title>
-        <link>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</link>
+        <link>http://localhost:1313/p/truncate-exchange-transaction-logs/</link>
         <pubDate>Fri, 03 Sep 2021 21:40:09 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</guid>
+        <guid>http://localhost:1313/p/truncate-exchange-transaction-logs/</guid>
         <description>&lt;p&gt;I received an alert today that the disk drive with our Exchange transaction logs was low on disk space. How low? 160KB free of 190GB! In fact, it was so low that Exchange dismounted the database on that server and moved it over to another host in the DAG.&lt;/p&gt;
 &lt;p&gt;Something like this is usually the result of backup problems. Exchange won&amp;rsquo;t purge transaction logs until it &lt;em&gt;knows&lt;/em&gt; that they&amp;rsquo;ve been successfully backed up, since a successful restore of backup data requires a full backup &lt;em&gt;plus&lt;/em&gt; all incremental transaction logs since then.&lt;/p&gt;
 &lt;p&gt;Of course, there&amp;rsquo;s a nice little trick to tell Exchange that a full backup was just performed&amp;hellip; without actually performing a full backup. That lets Exchange start purging the transaction logs, which frees up disk space, which means Exchange can remount your database(s). It&amp;rsquo;s all thanks to the magic of VSS and DiskShadow.exe.&lt;/p&gt;
@@ -2905,10 +3074,10 @@ Mailboxes should stop maintenance: 0
         </item>
         <item>
         <title>Page References in Hugo</title>
-        <link>https://gbeifuss.github.io/p/page-references-in-hugo/</link>
+        <link>http://localhost:1313/p/page-references-in-hugo/</link>
         <pubDate>Thu, 02 Sep 2021 07:37:44 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/page-references-in-hugo/</guid>
+        <guid>http://localhost:1313/p/page-references-in-hugo/</guid>
         <description>&lt;p&gt;There are special shortcodes that tell Hugo to generate the proper link(s) to other pages in your site, or other sections on the current page.&lt;/p&gt;
 &lt;p&gt;I originally learned this when I wanted to include a link to another post I&amp;rsquo;d written. I used a &lt;em&gt;reference&lt;/em&gt; shortcode (&lt;code&gt;ref&lt;/code&gt;) for this:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;[Querying PowerPlatform API via. Powershell]( {{&amp;lt; ref &amp;quot;powershell-powerplatform-api.md&amp;quot; &amp;gt;}})&lt;/code&gt;&lt;/p&gt;
@@ -2927,10 +3096,10 @@ Link to a heading on a different page: &lt;code&gt;{{&amp;lt; ref &amp;quot;docu
         </item>
         <item>
         <title>Amending a Git Commit Statement</title>
-        <link>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</link>
+        <link>http://localhost:1313/p/amending-a-git-commit-statement/</link>
         <pubDate>Thu, 02 Sep 2021 07:37:36 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/amending-a-git-commit-statement/</guid>
+        <guid>http://localhost:1313/p/amending-a-git-commit-statement/</guid>
         <description>&lt;p&gt;Sometimes I make a hideous typo in my &lt;code&gt;git commit -m &amp;quot;description here&amp;quot;&lt;/code&gt; message, or decide that I need to make a clearer commit message, before I&amp;rsquo;ve done a push.&lt;/p&gt;
 &lt;p&gt;It looks something like this when I&amp;rsquo;m working with hugo:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;git add .
@@ -2943,11 +3112,11 @@ git push origin main
         </item>
         <item>
         <title>Powershell &amp; PowerPlatform API ... now using the Graph API</title>
-        <link>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</link>
+        <link>http://localhost:1313/p/powershell-powerplatform-api-...-now-using-the-graph-api/</link>
         <pubDate>Mon, 30 Aug 2021 22:37:13 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</guid>
-        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/powershell-powerplatform-api/&#34; &gt;Querying PowerPlatform API via. Powershell&lt;/a&gt;, but I received notice on Friday that Microsoft has now set a date when they will &lt;a class=&#34;link&#34; href=&#34;https://techcommunity.microsoft.com/t5/azure-active-directory-identity/migrate-your-apps-to-access-the-license-managements-apis-from/ba-p/2464366&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+        <guid>http://localhost:1313/p/powershell-powerplatform-api-...-now-using-the-graph-api/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/powershell-powerplatform-api/&#34; &gt;Querying PowerPlatform API via. Powershell&lt;/a&gt;, but I received notice on Friday that Microsoft has now set a date when they will &lt;a class=&#34;link&#34; href=&#34;https://techcommunity.microsoft.com/t5/azure-active-directory-identity/migrate-your-apps-to-access-the-license-managements-apis-from/ba-p/2464366&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;cease supporting the Azure AD Graph endpoint&lt;/a&gt;, which also means they&amp;rsquo;ll stop supporting license assignment operation from MSOnline and Azure AD Powershell modules. As of June 30, 2022, you&amp;rsquo;ll need to use the MS Graph API endpoint and/or the Microsoft Graph Powershell module.&lt;/p&gt;
 &lt;p&gt;What does this announcement from Microsoft mean? It means that I need to move away from calls to &lt;code&gt;Connect-MsolService&lt;/code&gt; and &lt;code&gt;Get-MsolUser&lt;/code&gt; in my script. You can see my script in my prior post.&lt;/p&gt;
 &lt;p&gt;Now, technically, they should still work because I&amp;rsquo;m not assigning licenses, only reading them. But I don&amp;rsquo;t want my scripts to be even more fragmented, or have different EOL dates.&lt;/p&gt;
@@ -3004,11 +3173,11 @@ git push origin main
         </item>
         <item>
         <title>Using Powershell to interact with Task Scheduler</title>
-        <link>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</link>
+        <link>http://localhost:1313/p/using-powershell-to-interact-with-task-scheduler/</link>
         <pubDate>Wed, 25 Aug 2021 14:19:31 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</guid>
-        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/&#34; &gt;Running Powershell scripts with Task Scheduler&lt;/a&gt;, but I solved a Task Scheduler problem the other day with Powershell and want to write about it.&lt;/p&gt;
+        <guid>http://localhost:1313/p/using-powershell-to-interact-with-task-scheduler/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313/p/running-powershell-scripts-with-task-scheduler/&#34; &gt;Running Powershell scripts with Task Scheduler&lt;/a&gt;, but I solved a Task Scheduler problem the other day with Powershell and want to write about it.&lt;/p&gt;
 &lt;p&gt;I love to use Powershell to solve problems and questions that I have. These are questions that are, for all intents and purposes, impossible to do manually because of the time that it would take.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;ve undertaken a project to implement rotating the local Administrator passwords on our work servers. One of the things that I realized, as I was doing the preliminary investigation, is that there are quite a few scheduled jobs that run as .\Administrator in the Task Scheduler. I wondered:&lt;/p&gt;
 &lt;ul&gt;
@@ -3254,10 +3423,10 @@ What tool can I use? Powershell!&lt;/p&gt;
         </item>
         <item>
         <title>Use .Summary in Hugo with the Stack theme</title>
-        <link>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</link>
+        <link>http://localhost:1313/p/use-.summary-in-hugo-with-the-stack-theme/</link>
         <pubDate>Wed, 25 Aug 2021 08:15:17 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</guid>
+        <guid>http://localhost:1313/p/use-.summary-in-hugo-with-the-stack-theme/</guid>
         <description>&lt;p&gt;I decided to update my site to make it more &amp;lsquo;search engine-friendly&amp;rsquo; by making better use of the &lt;code&gt;meta description&lt;/code&gt; field. My particular theme, &lt;a class=&#34;link&#34; href=&#34;https://docs.stack.jimmycai.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Stack&lt;/a&gt;, does pull the .Description
 field from Front Matter, BUT it also uses the .Description field to populate a brief summary of the article on the home page. I don&amp;rsquo;t want SEO-friendly content displaying as a summary on my home page, so I decided to use another Front Matter field and update the theme to use that for the &lt;code&gt;meta description&lt;/code&gt;.&lt;/p&gt;
@@ -3329,10 +3498,10 @@ field from Front Matter, BUT it also uses the .Description field to populate a b
         </item>
         <item>
         <title>Troubleshooting Hugo&#39;s &#39;Port 1313 already in use&#39; error</title>
-        <link>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</link>
+        <link>http://localhost:1313/p/troubleshooting-hugos-port-1313-already-in-use-error/</link>
         <pubDate>Fri, 20 Aug 2021 14:12:12 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</guid>
+        <guid>http://localhost:1313/p/troubleshooting-hugos-port-1313-already-in-use-error/</guid>
         <description>&lt;p&gt;Today I:&lt;br&gt;
 &amp;hellip; started my computer, as usual&lt;br&gt;
 &amp;hellip; checked for patches, as usual&lt;br&gt;
@@ -3427,10 +3596,10 @@ Press Ctrl+C to stop
         </item>
         <item>
         <title>Adding TLS 1.2 support for Powershell</title>
-        <link>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</link>
+        <link>http://localhost:1313/p/adding-tls-1.2-support-for-powershell/</link>
         <pubDate>Fri, 20 Aug 2021 11:02:12 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</guid>
+        <guid>http://localhost:1313/p/adding-tls-1.2-support-for-powershell/</guid>
         <description>&lt;p&gt;Sometimes I try to setup PSWindowsUpdate (an amazing module from the Powershell Gallery) and receive an error like this one:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;WARNING&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Source&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Location&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;https&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;//&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;www&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;powershellgallery&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;api&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;package&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;PSWindowsUpdate&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2.2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; is not valid.
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;PackageManagement\Install-Package : Package ‘PSWindowsUpdate&amp;#39;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;failed&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;to&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;download&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;
@@ -3518,10 +3687,10 @@ Press Ctrl+C to stop
         </item>
         <item>
         <title>Enter-PSSession, WinRM &amp; NLA</title>
-        <link>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</link>
+        <link>http://localhost:1313/p/enter-pssession-winrm-nla/</link>
         <pubDate>Wed, 18 Aug 2021 07:50:51 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</guid>
+        <guid>http://localhost:1313/p/enter-pssession-winrm-nla/</guid>
         <description>&lt;p&gt;I was trying to use PS-Remoting to remotely run some powershell commands on a few servers, but one of them returned an error instead of connecting. I found this odd because:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;The other 2 servers didn&amp;rsquo;t have this error, and they all used the same GPOs to enforce configuration, and&lt;/li&gt;
@@ -3543,8 +3712,8 @@ Press Ctrl+C to stop
 &lt;p&gt;&amp;hellip; Then I saw it. The network connection icon in the systray said &amp;ldquo;unidentified network&amp;rdquo;.&lt;/p&gt;
 &lt;p&gt;&lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/unidentifiednetwork.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/unidentifiednetwork.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/unidentifiednetwork.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/unidentifiednetwork.png&#34;
 			
 			
 			
@@ -3569,10 +3738,10 @@ A quick test with powershell confirmed that enter-pssession now worked like it s
         </item>
         <item>
         <title>Exchange &amp; -DeleteContent</title>
-        <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
+        <link>http://localhost:1313/p/exchange-deletecontent/</link>
         <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
+        <guid>http://localhost:1313/p/exchange-deletecontent/</guid>
         <description>&lt;p&gt;Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to&lt;br&gt;
 a) quantify how many other people in our organization had that particular email in their mailbox, and&lt;br&gt;
 b) administratively remove it.&lt;/p&gt;
@@ -3595,10 +3764,10 @@ b) administratively remove it.&lt;/p&gt;
         </item>
         <item>
         <title>Network Troubleshooting and MTU</title>
-        <link>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</link>
+        <link>http://localhost:1313/p/network-troubleshooting-and-mtu/</link>
         <pubDate>Wed, 11 Aug 2021 14:57:19 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/</guid>
+        <guid>http://localhost:1313/p/network-troubleshooting-and-mtu/</guid>
         <description>&lt;p&gt;These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&amp;rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&amp;rsquo;s not super advanced work.&lt;/p&gt;
 &lt;p&gt;For about 8 months now, we&amp;rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&amp;rsquo;s still not in use because of &lt;em&gt;problems&lt;/em&gt;. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. &lt;code&gt;Ping&lt;/code&gt; to any system works, but protocols like RDP, SMB and replication (AD &amp;amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&amp;rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site &lt;strong&gt;and&lt;/strong&gt; I could ping all the other DCs, &lt;code&gt;repadmin /replsummary&lt;/code&gt; showed that replication was no longer working.&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s a simple topology diagram in ASCII art:&lt;/p&gt;
@@ -3644,8 +3813,8 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 &lt;p&gt;Wireshark uses winpcap (or libpcap) to grab the data &lt;em&gt;before&lt;/em&gt; it&amp;rsquo;s handed to the NIC:
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/wireshark.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/wireshark.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/wireshark.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/wireshark.png&#34;
 			
 			
 			
@@ -3679,8 +3848,8 @@ AD replication - which had been failing - picked right back up as soon as I ente
 &lt;p&gt;Now, I&amp;rsquo;ve proved that it&amp;rsquo;s an MTU issue, so I&amp;rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp;amp; EType field in the frame. This resulting QinQ frame is often referred to as &amp;lsquo;double tagged&amp;rsquo;.
 &lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/qinq.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/qinq.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/qinq.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/qinq.png&#34;
 			
 			
 			
@@ -3695,10 +3864,10 @@ AD replication - which had been failing - picked right back up as soon as I ente
         </item>
         <item>
         <title>Pushing to GitHub via. Git</title>
-        <link>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</link>
+        <link>http://localhost:1313/p/pushing-to-github-via.-git/</link>
         <pubDate>Mon, 09 Aug 2021 14:00:25 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</guid>
+        <guid>http://localhost:1313/p/pushing-to-github-via.-git/</guid>
         <description>&lt;p&gt;When I first committed to actually publishing a blog and settled on using Hugo and Github, I ran into a problem when trying to actually synchronize my local repository with Github: I kept getting a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error when I pushed the content up to Github. After some Google-fu, I found that the error was because I didn&amp;rsquo;t have any SSH keys setup on my Windows 10 system and it couldn&amp;rsquo;t communicate securely with GitHub.&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s how I fixed that:&lt;/p&gt;
 &lt;ol&gt;
@@ -3717,10 +3886,10 @@ NOTE: Your SSH keys must be named id_rsa and id_rsa.pub in order for Git and Git
         </item>
         <item>
         <title>Powershell &amp; NTMLv1 use</title>
-        <link>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</link>
+        <link>http://localhost:1313/p/powershell-ntmlv1-use/</link>
         <pubDate>Thu, 05 Aug 2021 11:11:56 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</guid>
+        <guid>http://localhost:1313/p/powershell-ntmlv1-use/</guid>
         <description>&lt;p&gt;I&amp;rsquo;m in the midst of trying to phase out non-Kerberos authentication traffic in our domain, because &lt;em&gt;it&amp;rsquo;s time&lt;/em&gt;. MS has offered Kerberos since Windows 2000, and the pre-Kerberos options (LANMan, NTLMv1, NTLMv2) are woefully insecure. In fact, MS stopped recommending NTLM for use in applications in 2010. It&amp;rsquo;s still widely in use for compatibility reasons.&lt;/p&gt;
 &lt;h2 id=&#34;the-protocols&#34;&gt;The Protocols&lt;/h2&gt;
 &lt;h3 id=&#34;lanman&#34;&gt;LANMan&lt;/h3&gt;
@@ -3837,10 +4006,10 @@ The only relevant entries I found were from a server that I upgraded 3 weeks ago
         </item>
         <item>
         <title>Pushing Hugo Content to GitHub</title>
-        <link>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</link>
+        <link>http://localhost:1313/p/pushing-hugo-content-to-github/</link>
         <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
+        <guid>http://localhost:1313/p/pushing-hugo-content-to-github/</guid>
         <description>&lt;p&gt;This blog content is generated by the &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Hugo&lt;/a&gt; static site generator and integrated with GitHub (which you can clearly tell by the URL), but I&amp;rsquo;m always struggling to remember the steps in pushing the newest content publicly.&lt;/p&gt;
 &lt;p&gt;But I&amp;rsquo;m getting ahead of myself. Before I get there, hugo and github need to be integrated. I&amp;rsquo;m using Windows 10, so I needed to start by installing git locally.
@@ -3926,10 +4095,10 @@ Resolving deltas: 100% (1958/1958), done.
         </item>
         <item>
         <title>Array Speed in Powershell</title>
-        <link>https://gbeifuss.github.io/p/array-speed-in-powershell/</link>
+        <link>http://localhost:1313/p/array-speed-in-powershell/</link>
         <pubDate>Thu, 22 Jul 2021 22:10:02 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/array-speed-in-powershell/</guid>
+        <guid>http://localhost:1313/p/array-speed-in-powershell/</guid>
         <description>&lt;p&gt;A popular and quick way to work with arrays in Powershell is to use a &lt;code&gt;+=&lt;/code&gt; operation:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;mf&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;.10000&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Foreach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Adding &lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt; to the array&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
@@ -3942,8 +4111,8 @@ Resolving deltas: 100% (1958/1958), done.
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Processing these 100,000 records took my system 214.7 seconds. When Powershell code uses the &lt;code&gt;+=&lt;/code&gt; operator, it actually creates a new array that&amp;rsquo;s one record larger than the current array, copies each existing entry into the new array and then adds the newest entry into the free record. It has to do this every time the &lt;code&gt;+=&lt;/code&gt; operator is used, which is 100,000 times in this sample code. The last time it runs, it needs to copy 99,999 existing entries into a new array&amp;hellip;.ouch! It&amp;rsquo;s easy to see &lt;em&gt;why&lt;/em&gt; this is so slow!&lt;/p&gt;
 &lt;p&gt;&lt;figure 
 	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/array.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/array.png&#34;
+	&lt;a href=&#34;http://localhost:1313/img/array.png&#34; &gt;
+		&lt;img src=&#34;http://localhost:1313/img/array.png&#34;
 			
 			
 			
@@ -3973,10 +4142,10 @@ Resolving deltas: 100% (1958/1958), done.
         </item>
         <item>
         <title>Powershell Stopwatch vs Measure-Command</title>
-        <link>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</link>
+        <link>http://localhost:1313/p/powershell-stopwatch-vs-measure-command/</link>
         <pubDate>Thu, 22 Jul 2021 22:09:50 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</guid>
+        <guid>http://localhost:1313/p/powershell-stopwatch-vs-measure-command/</guid>
         <description>&lt;p&gt;Often, I&amp;rsquo;ll see scripts that use &lt;code&gt;Measure-Command&lt;/code&gt; to calculate the length of time that code runs, while other code will use the &lt;code&gt;$stopwatch = [System.Diagnostics.Stopwatch]::StartNew()&lt;/code&gt; method. I&amp;rsquo;d always thought that these were interchangable and practically identical, however, I&amp;rsquo;ve found out that they&amp;rsquo;re not. Depending on the code, there can be substantial time differences between the two.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Measure-Command&lt;/code&gt; will discard the pipeline output, measuring only the time it takes to actually execute the command.&lt;/p&gt;
 &lt;p&gt;The stopwatch timer measures everything, including the time it takes to display any output to the console.&lt;/p&gt;
@@ -3985,10 +4154,10 @@ Resolving deltas: 100% (1958/1958), done.
         </item>
         <item>
         <title>Powershell &amp; Unresponsive Remote Sessions</title>
-        <link>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</link>
+        <link>http://localhost:1313/p/powershell-unresponsive-remote-sessions/</link>
         <pubDate>Thu, 22 Jul 2021 22:09:32 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</guid>
+        <guid>http://localhost:1313/p/powershell-unresponsive-remote-sessions/</guid>
         <description>&lt;p&gt;The other day I started a remote powershell session with &lt;code&gt;Invoke-Command&lt;/code&gt; and my script ran&amp;hellip;&lt;br&gt;
 and ran&amp;hellip;&lt;br&gt;
 and ran&amp;hellip;&lt;br&gt;
@@ -4087,10 +4256,10 @@ process ended.&lt;/p&gt;
         </item>
         <item>
         <title>Powershell, Exchange &amp; TLS</title>
-        <link>https://gbeifuss.github.io/p/powershell-exchange-tls/</link>
+        <link>http://localhost:1313/p/powershell-exchange-tls/</link>
         <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
+        <guid>http://localhost:1313/p/powershell-exchange-tls/</guid>
         <description>&lt;p&gt;I was recently curious about what sort of SSL/TLS connections were being used to access our Exchange cluster via. IIS. We have systems spanning twenty years: from Windows XP all the way to Windows Server 2019. Who knows what &amp;ldquo;solutions&amp;rdquo; developers or power users have come up with over the years to integrate with our mail system?&lt;/p&gt;
 &lt;p&gt;Previously, I&amp;rsquo;d followed MS guidance in &lt;a class=&#34;link&#34; href=&#34;https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-server-tls-guidance-part-2-enabling-tls-1-2-and/ba-p/607761&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Enabling TLS 1.2&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://www.microsoft.com/security/blog/2017/09/07/new-iis-functionality-to-help-identify-weak-tls-usage/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -4218,10 +4387,10 @@ process ended.&lt;/p&gt;
         </item>
         <item>
         <title>Docker &amp; Printnightmare</title>
-        <link>https://gbeifuss.github.io/p/docker-printnightmare/</link>
+        <link>http://localhost:1313/p/docker-printnightmare/</link>
         <pubDate>Wed, 14 Jul 2021 08:21:50 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/docker-printnightmare/</guid>
+        <guid>http://localhost:1313/p/docker-printnightmare/</guid>
         <description>&lt;p&gt;Since CVE-2021 is the news item of the week, I decided that I should scan our infrastructure using byt3bl33d3r&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://github.com/byt3bl33d3r/ItWasAllADream&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;CVE-2021-34527 Python Scanner&lt;/a&gt;. I learned Docker basics on the fly with this.&lt;/p&gt;
 &lt;ol&gt;
@@ -4344,10 +4513,10 @@ f36834af30d0   itwasalladream   &amp;#34;itwasalladream -u g…&amp;#34;   36 mi
         </item>
         <item>
         <title>VS Code &amp; Remote Repositories</title>
-        <link>https://gbeifuss.github.io/p/vs-code-remote-repositories/</link>
+        <link>http://localhost:1313/p/vs-code-remote-repositories/</link>
         <pubDate>Wed, 14 Jul 2021 08:21:37 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/vs-code-remote-repositories/</guid>
+        <guid>http://localhost:1313/p/vs-code-remote-repositories/</guid>
         <description>&lt;p&gt;I spend a lot of my day in VS Code, but not too much in GitHub because I don&amp;rsquo;t work on any joint projects. I do use a local Git repository for my code. It&amp;rsquo;s  easy to see when others have made changes so that I can &lt;del&gt;hunt them down&lt;/del&gt; speak politely to them about stopping.&lt;/p&gt;
 &lt;p&gt;In any case, I was watching &lt;a class=&#34;link&#34; href=&#34;https://mybuild.microsoft.com/sessions/0c6868e4-6a2c-4749-b3f5-b18ff76609c9?source=sessions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;An Introduction to Visual Studio Code and GitHub&lt;/a&gt; when I learned about the Remote Repositories (GitHub) extension for VS Code. You can directly edit a repository on GitHub without having to clone it locally.&lt;/p&gt;
@@ -4377,10 +4546,10 @@ I must confess that in the process of using Remote Repository access this week, 
         </item>
         <item>
         <title>VS Code Snippets</title>
-        <link>https://gbeifuss.github.io/p/vs-code-snippets/</link>
+        <link>http://localhost:1313/p/vs-code-snippets/</link>
         <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
+        <guid>http://localhost:1313/p/vs-code-snippets/</guid>
         <description>&lt;p&gt;I&amp;rsquo;ve worked with computers for a couple of decades now, and I love Notepad&amp;hellip; #sorrynotsorry, &lt;code&gt;vim&lt;/code&gt; fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown.
 My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature. Word&amp;rsquo;s &lt;em&gt;insert date/time&lt;/em&gt; function pales in comparison to the elegant simplicty of F5. Even trying to use keyboard shortcuts isn&amp;rsquo;t fast, when it should be.&lt;/p&gt;
 &lt;table&gt;
@@ -4465,10 +4634,10 @@ My favourite feature of Notepad is the ability to insert the date &amp;amp; time
         </item>
         <item>
         <title>Powershell, DSInternals &amp; HIBP</title>
-        <link>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</link>
+        <link>http://localhost:1313/p/powershell-dsinternals-hibp/</link>
         <pubDate>Mon, 12 Jul 2021 15:38:54 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</guid>
+        <guid>http://localhost:1313/p/powershell-dsinternals-hibp/</guid>
         <description>&lt;p&gt;I&amp;rsquo;m a big fan of Michael Grafnetter&amp;rsquo;s excellent &lt;a class=&#34;link&#34; href=&#34;https://github.com/MichaelGrafnetter/DSInternals&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;DSInternals&lt;/a&gt; module for Powershell. I periodically use it to audit our AD instance, and pass the results along to our Security Admin for any followup that needs to happen. I usually use Have I Been Pwned&amp;rsquo;s password dump, but you can provide any file containing passwords. The scariest part is that it takes &amp;lt;5 minutes to compare your AD records against 613 million passwords&amp;hellip; and most of that time is enumerating the AD accounts.&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s how to run it against your AD instance:&lt;/p&gt;
@@ -4489,10 +4658,10 @@ My favourite feature of Notepad is the ability to insert the date &amp;amp; time
         </item>
         <item>
         <title>Running Powershell scripts with Task Scheduler</title>
-        <link>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</link>
+        <link>http://localhost:1313/p/running-powershell-scripts-with-task-scheduler/</link>
         <pubDate>Fri, 09 Jul 2021 16:08:41 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</guid>
+        <guid>http://localhost:1313/p/running-powershell-scripts-with-task-scheduler/</guid>
         <description>&lt;p&gt;I do a fair amount of script writing to make my life easier. If it&amp;rsquo;s a repeated job, I try and automate it so that my time is freed up for more important (interesting) things. This is especially true if the task is tedious (with many manual steps) or involves lots of waiting around (like an Exchange CU). I have a fair number of Powershell scripts which run from Task Scheduler under Windows Server 2016. There are a lot of options to configure, so this can be complex. I&amp;rsquo;ll share the cheatcode way of doing this at the end.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Load Task Scheduler.&lt;/li&gt;
@@ -4525,10 +4694,10 @@ At the end of all this, I like to manually run the task by right-clicking it. Th
         </item>
         <item>
         <title>Powershell &amp; PowerPlatform API</title>
-        <link>https://gbeifuss.github.io/p/powershell-powerplatform-api/</link>
+        <link>http://localhost:1313/p/powershell-powerplatform-api/</link>
         <pubDate>Fri, 09 Jul 2021 16:04:57 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api/</guid>
+        <guid>http://localhost:1313/p/powershell-powerplatform-api/</guid>
         <description>&lt;p&gt;I found out that our netadmins are regularly checking the amount of free space we have in our Power Platform (Dynamics) subscription with the following process:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Launch a browser&lt;/li&gt;
@@ -4674,10 +4843,10 @@ The available Storage Capacity is more complicated to determine, since it&amp;rs
         </item>
         <item>
         <title>Powershell &amp; Netscaler API</title>
-        <link>https://gbeifuss.github.io/p/powershell-netscaler-api/</link>
+        <link>http://localhost:1313/p/powershell-netscaler-api/</link>
         <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
         
-        <guid>https://gbeifuss.github.io/p/powershell-netscaler-api/</guid>
+        <guid>http://localhost:1313/p/powershell-netscaler-api/</guid>
         <description>&lt;p&gt;I&amp;rsquo;ve been learning how to use Powershell to work with APIs, so I decided to write a quick script that will query our two Netscaler devices for the running configuration, and dump it. This is a quick way to backup the configuration regularly, because I often forget to grab a copy for backup purposes (unless I&amp;rsquo;m performing extensive work, or upgrading the firmware).&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;#These credentials are encrypted by ServiceAccount on Server&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$credFilePath&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;\\SERVER\PATH\creds.xml&amp;#39;&lt;/span&gt;

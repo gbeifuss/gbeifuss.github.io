@@ -2,115 +2,122 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>VMWare on Greg Beifuss</title>
-    <link>https://gbeifuss.github.io/tags/vmware/</link>
+    <link>http://localhost:1313/tags/vmware/</link>
     <description>Recent content in VMWare on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 19 Jul 2023 13:28:02 -0400</lastBuildDate>
-    <atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 15 Aug 2024 17:48:28 -0400</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VMWare Converter Error</title>
+      <link>http://localhost:1313/p/vmware-converter-error/</link>
+      <pubDate>Thu, 15 Aug 2024 17:48:28 -0400</pubDate>
+      <guid>http://localhost:1313/p/vmware-converter-error/</guid>
+      <description>VMWare Converter FAILED - Unable to obtain the IP address of the helper virtual machine</description>
+    </item>
     <item>
       <title>ESXI VCentre Certificates</title>
-      <link>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</link>
+      <link>http://localhost:1313/p/esxi-vcentre-certificates/</link>
       <pubDate>Wed, 19 Jul 2023 13:28:02 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</guid>
+      <guid>http://localhost:1313/p/esxi-vcentre-certificates/</guid>
       <description>Replacing expired VCSA certificates when the Web GUI won&amp;rsquo;t load</description>
     </item>
     <item>
       <title>ESXi CPU Ready Time statistics</title>
-      <link>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</link>
+      <link>http://localhost:1313/p/esxi-cpu-ready-time-statistics/</link>
       <pubDate>Mon, 03 Apr 2023 17:00:36 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</guid>
+      <guid>http://localhost:1313/p/esxi-cpu-ready-time-statistics/</guid>
       <description>Using VMWare&amp;rsquo;s CPU Ready Time metric to resolve a VM performance problem</description>
     </item>
     <item>
       <title>Using ovftool to migrate VMs between ESXi hosts</title>
-      <link>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
+      <link>http://localhost:1313/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
       <pubDate>Mon, 13 Mar 2023 15:38:51 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
+      <guid>http://localhost:1313/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
       <description>Migrate VMs between very different versions of ESXi using the ovftool</description>
     </item>
     <item>
       <title>ESXi upgrade generates Dependency Errors</title>
-      <link>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</link>
+      <link>http://localhost:1313/p/esxi-upgrade-generates-dependency-errors/</link>
       <pubDate>Mon, 06 Mar 2023 14:27:52 -0500</pubDate>
-      <guid>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</guid>
+      <guid>http://localhost:1313/p/esxi-upgrade-generates-dependency-errors/</guid>
       <description>Upgrading ESXi results in errors about failed dependencies</description>
     </item>
     <item>
       <title>ESXi Staging Volume Full</title>
-      <link>https://gbeifuss.github.io/p/esxi-staging-volume-full/</link>
+      <link>http://localhost:1313/p/esxi-staging-volume-full/</link>
       <pubDate>Mon, 06 Mar 2023 14:27:15 -0500</pubDate>
-      <guid>https://gbeifuss.github.io/p/esxi-staging-volume-full/</guid>
+      <guid>http://localhost:1313/p/esxi-staging-volume-full/</guid>
       <description>Recreating the /locker partition after getting a &amp;ldquo;The VFAT filesystem mpx.vmhba is full&amp;rdquo; error</description>
     </item>
     <item>
       <title>Cancel Vmware Tools Installation on ESXi</title>
-      <link>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</link>
+      <link>http://localhost:1313/p/cancel-vmware-tools-installation-on-esxi/</link>
       <pubDate>Mon, 06 Mar 2023 14:26:42 -0500</pubDate>
-      <guid>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</guid>
+      <guid>http://localhost:1313/p/cancel-vmware-tools-installation-on-esxi/</guid>
       <description>How to cancel a VMWare Tools install via. SSH from the host server</description>
     </item>
     <item>
       <title>VMWare ESXi - Disable SLP</title>
-      <link>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</link>
+      <link>http://localhost:1313/p/vmware-esxi-disable-slp/</link>
       <pubDate>Mon, 06 Mar 2023 14:26:07 -0500</pubDate>
-      <guid>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</guid>
+      <guid>http://localhost:1313/p/vmware-esxi-disable-slp/</guid>
       <description>How to disable the Service Location Protocol service on ESXi</description>
     </item>
     <item>
       <title>VMWare Tools Update/Install/Uninstall fails</title>
-      <link>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</link>
+      <link>http://localhost:1313/p/vmware-tools-update/install/uninstall-fails/</link>
       <pubDate>Thu, 13 Oct 2022 09:03:35 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</guid>
+      <guid>http://localhost:1313/p/vmware-tools-update/install/uninstall-fails/</guid>
       <description>How to resolve the error &amp;ldquo;Error upgrading VMWare Tools&amp;rdquo;</description>
     </item>
     <item>
       <title>Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
-      <link>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
+      <link>http://localhost:1313/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
       <pubDate>Mon, 08 Aug 2022 20:06:08 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</guid>
+      <guid>http://localhost:1313/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</guid>
       <description>Resolving an ESXi alert about Thick Provisioned disks, despite having a vSAN Storage Policy that should prevent them</description>
     </item>
     <item>
       <title>Expand a Linux Disk in ESXi</title>
-      <link>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</link>
+      <link>http://localhost:1313/p/expand-a-linux-disk-in-esxi/</link>
       <pubDate>Wed, 11 May 2022 10:51:54 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
+      <guid>http://localhost:1313/p/expand-a-linux-disk-in-esxi/</guid>
       <description>Expanding an existing Linux disk in ESXi</description>
     </item>
     <item>
       <title>VMWare VCSA 6.7 Backup Failure</title>
-      <link>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</link>
+      <link>http://localhost:1313/p/vmware-vcsa-6.7-backup-failure/</link>
       <pubDate>Thu, 05 May 2022 09:44:16 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</guid>
+      <guid>http://localhost:1313/p/vmware-vcsa-6.7-backup-failure/</guid>
       <description>Resolving com.vmware.appliance.recovery.backup.job.details.info union errors when performing an FTP backup of VSCA 6.7</description>
     </item>
     <item>
       <title>Reverting an ESXi Upgrade</title>
-      <link>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</link>
+      <link>http://localhost:1313/p/reverting-an-esxi-upgrade/</link>
       <pubDate>Sun, 01 May 2022 10:51:36 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</guid>
+      <guid>http://localhost:1313/p/reverting-an-esxi-upgrade/</guid>
       <description>How to roll ESXi back to a previous hypervisor after system errors</description>
     </item>
     <item>
       <title>Creating an ESXi Thin Disk</title>
-      <link>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</link>
+      <link>http://localhost:1313/p/creating-an-esxi-thin-disk/</link>
       <pubDate>Sat, 26 Feb 2022 09:34:35 -0400</pubDate>
-      <guid>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</guid>
+      <guid>http://localhost:1313/p/creating-an-esxi-thin-disk/</guid>
       <description>Changing a thick ESXi disk to a thin provisioned disk</description>
     </item>
     <item>
       <title>Remediating Log4j in VMWare VCenter 6.5</title>
-      <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
+      <link>http://localhost:1313/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
       <pubDate>Wed, 22 Dec 2021 16:17:50 -0500</pubDate>
-      <guid>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
+      <guid>http://localhost:1313/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
       <description>Step-by-step instructions for mitigating log4j on VMWare VCenter 6.5</description>
     </item>
     <item>
       <title>ESXi 6.0 to 6.5 Upgrade</title>
-      <link>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</link>
+      <link>http://localhost:1313/p/esxi-6.0-to-6.5-upgrade/</link>
       <pubDate>Mon, 20 Dec 2021 23:38:30 -0500</pubDate>
-      <guid>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</guid>
+      <guid>http://localhost:1313/p/esxi-6.0-to-6.5-upgrade/</guid>
       <description>Upgrading ESXi 6.0 to 6.5, step-by-step</description>
     </item>
   </channel>
