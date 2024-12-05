@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+    <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Writing custom snippets in VS Code'><title>VS Code Snippets</title>
 
-<link rel='canonical' href='http://localhost:1313/p/vs-code-snippets/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/vs-code-snippets/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='VS Code Snippets'>
 <meta property='og:description' content='Writing custom snippets in VS Code'>
-<meta property='og:url' content='http://localhost:1313/p/vs-code-snippets/'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/vs-code-snippets/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='VSCode' /><meta property='article:published_time' content='2021-07-14T08:20:02-04:00'/><meta property='article:modified_time' content='2021-07-14T08:20:02-04:00'/>
 <meta name="twitter:title" content="VS Code Snippets">
 <meta name="twitter:description" content="Writing custom snippets in VS Code">
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -28,10 +26,6 @@
           gtag('config', 'G-HMPKE841CT');
         }
       </script>
-    
-  
-
-
     </head>
     <body class="
     article-page 
@@ -89,7 +83,7 @@
             </figure>
             
         
-        <h1 class="site-name"><a href="http://localhost:1313/">Greg Beifuss</a></h1>
+        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
         <h2 class="site-description">... managing risk 24/7</h2>
     </header>
 
@@ -221,40 +215,40 @@
     <p>I&rsquo;ve worked with computers for a couple of decades now, and I love Notepad&hellip; #sorrynotsorry, <code>vim</code> fans. It&rsquo;s fantastic for writing - there&rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&rsquo;s usable for a variety of tasks. It&rsquo;s like the pre-markdown version of markdown.
 My favourite feature of Notepad is the ability to insert the date &amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature. Word&rsquo;s <em>insert date/time</em> function pales in comparison to the elegant simplicty of F5. Even trying to use keyboard shortcuts isn&rsquo;t fast, when it should be.</p>
 <table>
-<thead>
-<tr>
-<th>Notepad</th>
-<th>Word GUI</th>
-<th>Work shortcuts</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>F5</td>
-<td>click <em>Insert</em></td>
-<td>ALT+I</td>
-</tr>
-<tr>
-<td></td>
-<td>click <em>Date/Time</em></td>
-<td>D</td>
-</tr>
-<tr>
-<td></td>
-<td>read the menu</td>
-<td>read the menu</td>
-</tr>
-<tr>
-<td></td>
-<td>double-click choice</td>
-<td>UP/DOWN ARROW to choice</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>ENTER</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Notepad</th>
+          <th>Word GUI</th>
+          <th>Work shortcuts</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>F5</td>
+          <td>click <em>Insert</em></td>
+          <td>ALT+I</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>click <em>Date/Time</em></td>
+          <td>D</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>read the menu</td>
+          <td>read the menu</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td>double-click choice</td>
+          <td>UP/DOWN ARROW to choice</td>
+      </tr>
+      <tr>
+          <td></td>
+          <td></td>
+          <td>ENTER</td>
+      </tr>
+  </tbody>
 </table>
 <p>When I write Powershell scripts in VS Code, I had been manually typing in the date until I decided to write a custom snippet that would insert a header with all the things I normally add: script name, date/time, comments, my name. It&rsquo;s automatically populated whenever I type in <code>header &lt;ENTER&gt;</code></p>
 <ol>

@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+    <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Assess and eliminate NTLM v1 use with Powershell'><title>Powershell &amp; NTMLv1 use</title>
 
-<link rel='canonical' href='http://localhost:1313/p/powershell-ntmlv1-use/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/powershell-ntmlv1-use/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Powershell &amp; NTMLv1 use'>
 <meta property='og:description' content='Assess and eliminate NTLM v1 use with Powershell'>
-<meta property='og:url' content='http://localhost:1313/p/powershell-ntmlv1-use/'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/powershell-ntmlv1-use/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-08-05T11:11:56-04:00'/><meta property='article:modified_time' content='2021-08-05T11:11:56-04:00'/>
 <meta name="twitter:title" content="Powershell &amp; NTMLv1 use">
 <meta name="twitter:description" content="Assess and eliminate NTLM v1 use with Powershell">
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -28,10 +26,6 @@
           gtag('config', 'G-HMPKE841CT');
         }
       </script>
-    
-  
-
-
     </head>
     <body class="
     article-page has-toc
@@ -65,7 +59,7 @@
 ">
     
         <div id="article-toolbar">
-            <a href="http://localhost:1313/" class="back-home">
+            <a href="https://gbeifuss.github.io/" class="back-home">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <polyline points="15 6 9 12 15 18" />
@@ -188,45 +182,45 @@ The only relevant entries I found were from a server that I upgraded 3 weeks ago
 <p>MS exposes a GPO value to control the NTLM authentication methods available on the domain. <strong>Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options\<a class="link" href="https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-lan-manager-authentication-level"  target="_blank" rel="noopener"
     >Network security: LAN Manager authentication level</a></strong> will enforce these behaviours:</p>
 <table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Description</th>
-<th>Registry security level</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Send LM &amp; NTLM responses</td>
-<td>Client devices use LM and NTLM authentication, and they never use NTLMv2 session security. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
-<td>0</td>
-</tr>
-<tr>
-<td>Send LM &amp; NTLM – use NTLMv2 session security if negotiated</td>
-<td>Client devices use LM and NTLM authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
-<td>1</td>
-</tr>
-<tr>
-<td>Send NTLM response only</td>
-<td>Client devices use NTLMv1 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
-<td>2</td>
-</tr>
-<tr>
-<td>Send NTLMv2 response only</td>
-<td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
-<td>3</td>
-</tr>
-<tr>
-<td>Send NTLMv2 response only. Refuse LM</td>
-<td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM authentication, and they will accept only NTLM and NTLMv2 authentication.</td>
-<td>4</td>
-</tr>
-<tr>
-<td>Send NTLMv2 response only. Refuse LM &amp; NTLM</td>
-<td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM and NTLM authentication, and they will accept only NTLMv2 authentication.</td>
-<td>5</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Setting</th>
+          <th>Description</th>
+          <th>Registry security level</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Send LM &amp; NTLM responses</td>
+          <td>Client devices use LM and NTLM authentication, and they never use NTLMv2 session security. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>Send LM &amp; NTLM – use NTLMv2 session security if negotiated</td>
+          <td>Client devices use LM and NTLM authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>Send NTLM response only</td>
+          <td>Client devices use NTLMv1 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>2</td>
+      </tr>
+      <tr>
+          <td>Send NTLMv2 response only</td>
+          <td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td>Send NTLMv2 response only. Refuse LM</td>
+          <td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM authentication, and they will accept only NTLM and NTLMv2 authentication.</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>Send NTLMv2 response only. Refuse LM &amp; NTLM</td>
+          <td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM and NTLM authentication, and they will accept only NTLMv2 authentication.</td>
+          <td>5</td>
+      </tr>
+  </tbody>
 </table>
 <p>Obviously, 0 is the most insecure setting, but the most compatible. If your domain ever had a Domain Level lower than Windows Server 2008, 0 is probably what you&rsquo;ll be using. Since Windows Server 2008, the default has been 3.</p>
 <p>I&rsquo;d previously changed our domain from 0 to 2, but now that our last NTLMv1 application is gone, I&rsquo;ve set this to 3. We&rsquo;re headed full speed into <del>the future!</del> 2008.</p>

@@ -2,157 +2,157 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Powershell on Greg Beifuss</title>
-    <link>http://localhost:1313/tags/powershell/</link>
+    <link>https://gbeifuss.github.io/tags/powershell/</link>
     <description>Recent content in Powershell on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 22 Mar 2022 11:14:45 -0400</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://gbeifuss.github.io/tags/powershell/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ADFS - Change Service Account to gMSA</title>
-      <link>http://localhost:1313/p/adfs-change-service-account-to-gmsa/</link>
+      <link>https://gbeifuss.github.io/p/adfs-change-service-account-to-gmsa/</link>
       <pubDate>Tue, 22 Mar 2022 11:14:45 -0400</pubDate>
-      <guid>http://localhost:1313/p/adfs-change-service-account-to-gmsa/</guid>
+      <guid>https://gbeifuss.github.io/p/adfs-change-service-account-to-gmsa/</guid>
       <description>Migrating an existing ADFS to use gMSA, step-by-step</description>
     </item>
     <item>
       <title>Managing Mailbox moves in Exchange 2016</title>
-      <link>http://localhost:1313/p/managing-mailbox-moves-in-exchange-2016/</link>
+      <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>
       <pubDate>Thu, 28 Oct 2021 08:54:40 -0400</pubDate>
-      <guid>http://localhost:1313/p/managing-mailbox-moves-in-exchange-2016/</guid>
+      <guid>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</guid>
       <description>Set Exchange to continually report on the status of mailbox moves and keep the queue full, via. Powershell scripts. Also, disable indexing during a migration.</description>
     </item>
     <item>
       <title>VS Code &amp; Markdown</title>
-      <link>http://localhost:1313/p/vs-code-markdown/</link>
+      <link>https://gbeifuss.github.io/p/vs-code-markdown/</link>
       <pubDate>Tue, 05 Oct 2021 09:51:28 -0400</pubDate>
-      <guid>http://localhost:1313/p/vs-code-markdown/</guid>
+      <guid>https://gbeifuss.github.io/p/vs-code-markdown/</guid>
       <description>Prevent VS Code from automatically trimming any trailing whitespace in markdown files</description>
     </item>
     <item>
       <title>Working with JSON in Powershell</title>
-      <link>http://localhost:1313/p/working-with-json-in-powershell/</link>
+      <link>https://gbeifuss.github.io/p/working-with-json-in-powershell/</link>
       <pubDate>Mon, 04 Oct 2021 15:47:05 -0400</pubDate>
-      <guid>http://localhost:1313/p/working-with-json-in-powershell/</guid>
+      <guid>https://gbeifuss.github.io/p/working-with-json-in-powershell/</guid>
       <description>Passing a Powershell object to the Netscaler API via. JSON</description>
     </item>
     <item>
       <title>Cisco Management Tunnel - NDES Setup</title>
-      <link>http://localhost:1313/p/cisco-management-tunnel-ndes-setup/</link>
+      <link>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</link>
       <pubDate>Fri, 24 Sep 2021 08:25:46 -0400</pubDate>
-      <guid>http://localhost:1313/p/cisco-management-tunnel-ndes-setup/</guid>
+      <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</guid>
       <description>How to configure NDES and Certificate Templates to support a Cisco Management Tunnel</description>
     </item>
     <item>
       <title>Exchange DAGs and Cluster Ownership</title>
-      <link>http://localhost:1313/p/exchange-dags-and-cluster-ownership/</link>
+      <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>
       <pubDate>Mon, 06 Sep 2021 22:12:49 -0400</pubDate>
-      <guid>http://localhost:1313/p/exchange-dags-and-cluster-ownership/</guid>
+      <guid>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</guid>
       <description>Use Powershell to change the cluster owner for &amp;lsquo;Available Storage&amp;rsquo; and &amp;lsquo;Cluster Group&amp;rsquo; in an Exchange DAG. Setup a Notification in PRTG along with a trigger to move the owner back.</description>
     </item>
     <item>
       <title>Powershell &amp; PowerPlatform API ... now using the Graph API</title>
-      <link>http://localhost:1313/p/powershell-powerplatform-api-...-now-using-the-graph-api/</link>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</link>
       <pubDate>Mon, 30 Aug 2021 22:37:13 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-powerplatform-api-...-now-using-the-graph-api/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api-...-now-using-the-graph-api/</guid>
       <description>Querying the Microsoft PowerPlatform API with Powershell and the Graph API. Also, using fixed-width font in an email with Powershell output.</description>
     </item>
     <item>
       <title>Using Powershell to interact with Task Scheduler</title>
-      <link>http://localhost:1313/p/using-powershell-to-interact-with-task-scheduler/</link>
+      <link>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</link>
       <pubDate>Wed, 25 Aug 2021 14:19:31 -0400</pubDate>
-      <guid>http://localhost:1313/p/using-powershell-to-interact-with-task-scheduler/</guid>
+      <guid>https://gbeifuss.github.io/p/using-powershell-to-interact-with-task-scheduler/</guid>
       <description>Using Powershell to query Task Scheduler across the domain. Also, using Powershell to change Task properties for select Tasks.</description>
     </item>
     <item>
       <title>Adding TLS 1.2 support for Powershell</title>
-      <link>http://localhost:1313/p/adding-tls-1.2-support-for-powershell/</link>
+      <link>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</link>
       <pubDate>Fri, 20 Aug 2021 11:02:12 -0400</pubDate>
-      <guid>http://localhost:1313/p/adding-tls-1.2-support-for-powershell/</guid>
+      <guid>https://gbeifuss.github.io/p/adding-tls-1.2-support-for-powershell/</guid>
       <description>Update Powershell to use TLS 1.2, and configure Windows to use TLS 1.2 as well</description>
     </item>
     <item>
       <title>Enter-PSSession, WinRM &amp; NLA</title>
-      <link>http://localhost:1313/p/enter-pssession-winrm-nla/</link>
+      <link>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</link>
       <pubDate>Wed, 18 Aug 2021 07:50:51 -0400</pubDate>
-      <guid>http://localhost:1313/p/enter-pssession-winrm-nla/</guid>
+      <guid>https://gbeifuss.github.io/p/enter-pssession-winrm-nla/</guid>
       <description>Troubleshooting and resolving the Powershell error &amp;ldquo;WinRM cannot complete the operation&amp;rdquo;</description>
     </item>
     <item>
       <title>Exchange &amp; -DeleteContent</title>
-      <link>http://localhost:1313/p/exchange-deletecontent/</link>
+      <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
       <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
-      <guid>http://localhost:1313/p/exchange-deletecontent/</guid>
+      <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
       <description>Administratively deleting content from an Exchange Mailbox with Powershell</description>
     </item>
     <item>
       <title>Powershell &amp; NTMLv1 use</title>
-      <link>http://localhost:1313/p/powershell-ntmlv1-use/</link>
+      <link>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</link>
       <pubDate>Thu, 05 Aug 2021 11:11:56 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-ntmlv1-use/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</guid>
       <description>Find NTLM traffic authenticating to domain controllers with Powershell</description>
     </item>
     <item>
       <title>Array Speed in Powershell</title>
-      <link>http://localhost:1313/p/array-speed-in-powershell/</link>
+      <link>https://gbeifuss.github.io/p/array-speed-in-powershell/</link>
       <pubDate>Thu, 22 Jul 2021 22:10:02 -0400</pubDate>
-      <guid>http://localhost:1313/p/array-speed-in-powershell/</guid>
+      <guid>https://gbeifuss.github.io/p/array-speed-in-powershell/</guid>
       <description>Powershell has a number of ways to reference arrays, some that are faster than others. += is terribly slow compared to ArrayList</description>
     </item>
     <item>
       <title>Powershell Stopwatch vs Measure-Command</title>
-      <link>http://localhost:1313/p/powershell-stopwatch-vs-measure-command/</link>
+      <link>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</link>
       <pubDate>Thu, 22 Jul 2021 22:09:50 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-stopwatch-vs-measure-command/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-stopwatch-vs-measure-command/</guid>
       <description>What&amp;rsquo;s the difference between Stopwatch and Measure-Command?</description>
     </item>
     <item>
       <title>Powershell &amp; Unresponsive Remote Sessions</title>
-      <link>http://localhost:1313/p/powershell-unresponsive-remote-sessions/</link>
+      <link>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</link>
       <pubDate>Thu, 22 Jul 2021 22:09:32 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-unresponsive-remote-sessions/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/</guid>
       <description>Elegantly killing a CPU-consuming remote Powershell session</description>
     </item>
     <item>
       <title>Powershell, Exchange &amp; TLS</title>
-      <link>http://localhost:1313/p/powershell-exchange-tls/</link>
+      <link>https://gbeifuss.github.io/p/powershell-exchange-tls/</link>
       <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-exchange-tls/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
       <description>Using Powershell to find the TLS versions used to connect to Exchange</description>
     </item>
     <item>
       <title>VS Code Snippets</title>
-      <link>http://localhost:1313/p/vs-code-snippets/</link>
+      <link>https://gbeifuss.github.io/p/vs-code-snippets/</link>
       <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
-      <guid>http://localhost:1313/p/vs-code-snippets/</guid>
+      <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
       <description>Creating custom snippets in VS Code to simplify writing code</description>
     </item>
     <item>
       <title>Powershell, DSInternals &amp; HIBP</title>
-      <link>http://localhost:1313/p/powershell-dsinternals-hibp/</link>
+      <link>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</link>
       <pubDate>Mon, 12 Jul 2021 15:38:54 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-dsinternals-hibp/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</guid>
       <description>Auditing AD passwords against Have I Been Pwned? by using Powershell</description>
     </item>
     <item>
       <title>Running Powershell scripts with Task Scheduler</title>
-      <link>http://localhost:1313/p/running-powershell-scripts-with-task-scheduler/</link>
+      <link>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</link>
       <pubDate>Fri, 09 Jul 2021 16:08:41 -0400</pubDate>
-      <guid>http://localhost:1313/p/running-powershell-scripts-with-task-scheduler/</guid>
+      <guid>https://gbeifuss.github.io/p/running-powershell-scripts-with-task-scheduler/</guid>
       <description>Scheduling a Powershell script in Task Scheduler via. GUI, and a shortcut to doing it repeatedly.</description>
     </item>
     <item>
       <title>Powershell &amp; PowerPlatform API</title>
-      <link>http://localhost:1313/p/powershell-powerplatform-api/</link>
+      <link>https://gbeifuss.github.io/p/powershell-powerplatform-api/</link>
       <pubDate>Fri, 09 Jul 2021 16:04:57 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-powerplatform-api/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-powerplatform-api/</guid>
       <description>Querying the Microsoft PowerPlatform API with Powershell</description>
     </item>
     <item>
       <title>Powershell &amp; Netscaler API</title>
-      <link>http://localhost:1313/p/powershell-netscaler-api/</link>
+      <link>https://gbeifuss.github.io/p/powershell-netscaler-api/</link>
       <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
-      <guid>http://localhost:1313/p/powershell-netscaler-api/</guid>
+      <guid>https://gbeifuss.github.io/p/powershell-netscaler-api/</guid>
       <description>Saving a Netscaler configuration via. API with Powershell</description>
     </item>
   </channel>

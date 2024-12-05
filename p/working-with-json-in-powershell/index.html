@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+    <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Converting a Powershell object to JSON when making a Netscaler API call'><title>Working with JSON in Powershell</title>
 
-<link rel='canonical' href='http://localhost:1313/p/working-with-json-in-powershell/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/working-with-json-in-powershell/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Working with JSON in Powershell'>
 <meta property='og:description' content='Converting a Powershell object to JSON when making a Netscaler API call'>
-<meta property='og:url' content='http://localhost:1313/p/working-with-json-in-powershell/'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/working-with-json-in-powershell/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='Netscaler' /><meta property='article:tag' content='API' /><meta property='article:published_time' content='2021-10-04T15:47:05-04:00'/><meta property='article:modified_time' content='2021-10-04T15:47:05-04:00'/>
 <meta name="twitter:title" content="Working with JSON in Powershell">
 <meta name="twitter:description" content="Converting a Powershell object to JSON when making a Netscaler API call">
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -28,10 +26,6 @@
           gtag('config', 'G-HMPKE841CT');
         }
       </script>
-    
-  
-
-
     </head>
     <body class="
     article-page 
@@ -89,7 +83,7 @@
             </figure>
             
         
-        <h1 class="site-name"><a href="http://localhost:1313/">Greg Beifuss</a></h1>
+        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
         <h2 class="site-description">... managing risk 24/7</h2>
     </header>
 
@@ -221,27 +215,27 @@
     <p>I&rsquo;ve recently been editing a Powershell script that manages our Let&rsquo;s Encrypt certificates and their integration with Netscaler. I&rsquo;ve been using John Billeken&rsquo;s excellent <a class="link" href="https://github.com/j81blog/GenLeCertForNS"  target="_blank" rel="noopener"
     >GenLeCertForNS</a> script to do the heavy lifting, but I&rsquo;ve written a front-end wrapper for it to handle the way I need it to work in my environment. [I started using this with <em>v.2.63</em>, which didn&rsquo;t have email capabilities. My front-end wrapper adds email reporting, plus obfuscuating any credentials in the log, and loading the credentials from an encypted XML file].
 I was rewriting my wrapper to include SAN support <em>and</em> to update two Netscaler appliances with the same certificate: if the CN matched certain values, the script will find the same Let&rsquo;s Encrypt certificate .pfx, upload it to the Netscaler at our warm Disaster Recovery site and properly bind it.</p>
-<p>To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article <a class="link" href="http://localhost:1313/p/powershell-netscaler-api/" >Powershell &amp; Netscaler API</a>. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.</p>
+<p>To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article <a class="link" href="https://gbeifuss.github.io/p/powershell-netscaler-api/" >Powershell &amp; Netscaler API</a>. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.</p>
 <p>According to the <a class="link" href="https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/12.1/configuration/ssl/sslcertkey/sslcertkey/#link"  target="_blank" rel="noopener"
-    >Citrix ADC NITRO API Reference</a>, I need:
+    >Citrix ADC NITRO API Reference</a>, I need:<br>
 <strong>URL:</strong> http://&lt;Citrix-ADC-IP-address(NSIP)&gt;/nitro/v1/config/sslcertkey?action=link<br>
 <strong>HTTP Method:</strong> POST<br>
 <strong>Request Headers:</strong> Cookie:NITRO_AUTH_TOKEN=<!-- raw HTML omitted --> Content-Type:application/json<br>
 <strong>Request Payload:</strong></p>
-<pre tabindex="0"><code>{
-    &#34;sslcertkey&#34;:
-  {
-    &#34;certkey&#34;:&lt;String_value&gt;,
-    &#34;linkcertkeyname&#34;:&lt;String_value&gt;
-  }
-}
-</code></pre><p>This is a JSON format. While I could just use a straight string (ie. <code>$string=&quot;{&quot;sslcertkey&quot;:{&quot;linkcertkeyname&quot;:&quot;Sectigo RSA CA 2018&quot;,&quot;certkey&quot;:&quot;sts.agricorp.com&quot;}}&quot;)</code>) or a multiline string (ie. <code>$string=&quot;@TEXT@&quot;</code>), I figured that I should take the effort to learn a bit about taking an object and converting it to JSON.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;sslcertkey&#34;</span><span class="err">:</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;certkey&#34;</span><span class="err">:</span><span class="p">&lt;</span><span class="n">String_value</span><span class="p">&gt;,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;linkcertkeyname&#34;</span><span class="err">:</span><span class="p">&lt;</span><span class="n">String_value</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This is a JSON format. While I could just use a straight string (ie. <code>$string=&quot;{&quot;sslcertkey&quot;:{&quot;linkcertkeyname&quot;:&quot;Sectigo RSA CA 2018&quot;,&quot;certkey&quot;:&quot;sts.agricorp.com&quot;}}&quot;)</code>) or a multiline string (ie. <code>$string=&quot;@TEXT@&quot;</code>), I figured that I should take the effort to learn a bit about taking an object and converting it to JSON.</p>
 <p>My initial attempts to get this working were all wrong. I finally managed to get the key/value pairs properly written to a hashtable, and then converted it to JSON.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$array</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="s2">&#34;certkey&#34;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$CertificateCertKeyName</span><span class="s2">&#34;</span><span class="p">;</span> <span class="s2">&#34;linkcertkeyname&#34;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$IntermediateCACertKeyName</span><span class="s2">&#34;</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="nv">$hashtablePayload</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="s2">&#34;sslcertkey&#34;</span> <span class="p">=</span> <span class="nv">$array</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="nv">$jsonPayload</span> <span class="p">=</span> <span class="nb">ConvertTo-Json</span> <span class="n">-InputObject</span> <span class="nv">$hashtablePayload</span> <span class="n">-Depth</span> <span class="mf">100</span> <span class="n">-Compress</span>
 </span></span></code></pre></div><p>The output of <code>$jsonPayload</code> looks like this:<br>
-<code>{&quot;sslcertkey&quot;:{&quot;linkcertkeyname&quot;:&quot;Sectigo RSA CA 2018&quot;,&quot;certkey&quot;:&quot;sts.agricorp.com&quot;}}</code><br>
+<code>{&quot;sslcertkey&quot;:{&quot;linkcertkeyname&quot;:&quot;Sectigo RSA CA 2018&quot;,&quot;certkey&quot;:&quot;sts.company.com&quot;}}</code><br>
 &hellip;perfectly formatted JSON that I can pass through to the Netscaler:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$URI</span> <span class="p">=</span> <span class="s2">&#34;https://netscaler03.corp.company.com/nitro/v1/config&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nv">$headers</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="s1">&#39;X-NITRO-USER&#39;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$netscalerID</span><span class="s2">&#34;</span><span class="p">;</span> <span class="s1">&#39;X-NITRO-PASS&#39;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$netscalerPwd</span><span class="s2">&#34;</span> <span class="p">}</span>

@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+    <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Prevent IP disclosure to HTTP/1.0 requests from Exchange'><title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
 
-<link rel='canonical' href='http://localhost:1313/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler'>
 <meta property='og:description' content='Prevent IP disclosure to HTTP/1.0 requests from Exchange'>
-<meta property='og:url' content='http://localhost:1313/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Exchange' /><meta property='article:tag' content='Netscaler' /><meta property='article:published_time' content='2021-09-21T10:18:20-04:00'/><meta property='article:modified_time' content='2021-09-21T10:18:20-04:00'/>
 <meta name="twitter:title" content="Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler">
 <meta name="twitter:description" content="Prevent IP disclosure to HTTP/1.0 requests from Exchange">
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -28,10 +26,6 @@
           gtag('config', 'G-HMPKE841CT');
         }
       </script>
-    
-  
-
-
     </head>
     <body class="
     article-page 
@@ -89,7 +83,7 @@
             </figure>
             
         
-        <h1 class="site-name"><a href="http://localhost:1313/">Greg Beifuss</a></h1>
+        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
         <h2 class="site-description">... managing risk 24/7</h2>
     </header>
 
@@ -218,7 +212,7 @@
 </header>
 
     <section class="article-content">
-    <p>I&rsquo;ve already written about <a class="link" href="http://localhost:1313/p/remediating-an-internal-ip-disclosure-with-netscaler/" >Remediating an Internal IP Disclosure with Netscaler</a>, but I found out today that the route I&rsquo;d chosen prevents Outlook from authenticating. Oops!</p>
+    <p>I&rsquo;ve already written about <a class="link" href="https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/" >Remediating an Internal IP Disclosure with Netscaler</a>, but I found out today that the route I&rsquo;d chosen prevents Outlook from authenticating. Oops!</p>
 <p>To summarize the earlier post, Exchange was leaking an internal IP and servername when an HTTP/1.0 packet was set <em>without a host header</em> to <code>/autodiscover/autodiscover.xml</code>. I initially tried to fix it by deleting the WWW-Authenticate and X-FEServer headers from the replies using Netscaler.</p>
 <p>However, while that prevents the information from being leaked, it also prevents Outlook from properly loading when the traffic flows through Netscaler. In our case, internal traffic was fine, but people who rely on Outlook and autodiscover outside of our network couldn&rsquo;t log in. I tested and removing the X-FEServer header permitted Outlook to load normally; it was removing the WWW-Authenticate header that caused the problem.</p>
 <p>I tried out some alternate methods of blocking an internal IP in the WWW-Authenticate field (specifically, a reply containing <code>basic realm=&quot;10.10.10.10</code>), but it seems like there&rsquo;s important authentication using that field. I came up with another approach which seems to be working: Since this vulnerability is the result of a HTTP/1.0 request, rewrite HTTP/1.0 requests to HTTP/1.1. HTTP/1.1 <em>requires</em> the host header field, which means that IIS won&rsquo;t happily disclose internal IPs in response to a missing host header. HTTP/1.1 has been a standard since 1997 and there should literally be no device in the past 20 years which does not support it.</p>

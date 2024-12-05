@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+    <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Fixing Transaction Logs that won&#39;t clear after a backup occurs'><title>Exchange Transaction Logs won&#39;t clear</title>
 
-<link rel='canonical' href='http://localhost:1313/p/exchange-transaction-logs-wont-clear/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Exchange Transaction Logs won&#39;t clear'>
 <meta property='og:description' content='Fixing Transaction Logs that won&#39;t clear after a backup occurs'>
-<meta property='og:url' content='http://localhost:1313/p/exchange-transaction-logs-wont-clear/'>
+<meta property='og:url' content='https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Exchange' /><meta property='article:published_time' content='2021-09-09T09:29:17-04:00'/><meta property='article:modified_time' content='2021-09-09T09:29:17-04:00'/>
 <meta name="twitter:title" content="Exchange Transaction Logs won&#39;t clear">
 <meta name="twitter:description" content="Fixing Transaction Logs that won&#39;t clear after a backup occurs">
-  
-    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -28,10 +26,6 @@
           gtag('config', 'G-HMPKE841CT');
         }
       </script>
-    
-  
-
-
     </head>
     <body class="
     article-page 
@@ -89,7 +83,7 @@
             </figure>
             
         
-        <h1 class="site-name"><a href="http://localhost:1313/">Greg Beifuss</a></h1>
+        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
         <h2 class="site-description">... managing risk 24/7</h2>
     </header>
 
@@ -220,7 +214,7 @@
     <section class="article-content">
     <p>I solved a problem today that&rsquo;s been plaguing me for a two weeks now. Exchange transaction logs are a record of every single operation that changes the state of any data in the database. Adding a new item, deleting an old item, modifying an existing item - all of these  are recorded in a transaction log at the same time they&rsquo;re applied to the database itself. When an Exchange database is mounted, the transaction logs are reprocessed to make sure there aren&rsquo;t any discrepancies or database errors. If there are, the transaction logs are used to rebuild the database state. This same process applied to the DAG as well. The entire purpose of transaction logs in Exchange is to provide information on the transactions that occurred since the last time you ran a complete backup of your Exchange environment.</p>
 <p>If you&rsquo;re using Exchange-aware backup software, Exchange will &lsquo;know&rsquo; when a full backup occurs and then it&rsquo;ll delete all transaction logs prior to that point. They&rsquo;re no longer needed for a database rebuild because there&rsquo;s a backup.</p>
-<p>The problem I ran into is that the transaction logs were not being purged despite a successful backup (by our Exchange-aware software) and filled up the volume, which caused a database dismount&hellip; which led to some unhappy employees. Fortunately, it was just 1 of our 6 databases and I was able to fix it within 15 minutes, so not many people even noticed an issue. I wrote about workarounds and solutions for that in <a class="link" href="http://localhost:1313/p/exchange-dags-and-cluster-ownership/" >Exchange DAGs and Cluster Ownership</a>. As I mentioned in that post, I believed that the root cause was that the Owner of our DAG cluster objects wasn&rsquo;t the proper host. However, this wasn&rsquo;t the case because the transaction logs continued to grow!</p>
+<p>The problem I ran into is that the transaction logs were not being purged despite a successful backup (by our Exchange-aware software) and filled up the volume, which caused a database dismount&hellip; which led to some unhappy employees. Fortunately, it was just 1 of our 6 databases and I was able to fix it within 15 minutes, so not many people even noticed an issue. I wrote about workarounds and solutions for that in <a class="link" href="https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/" >Exchange DAGs and Cluster Ownership</a>. As I mentioned in that post, I believed that the root cause was that the Owner of our DAG cluster objects wasn&rsquo;t the proper host. However, this wasn&rsquo;t the case because the transaction logs continued to grow!</p>
 <p>The Transaction Logs for Journaling are causing the problem. Despite no old logs (they&rsquo;re all timestamped AFTER our daily backup occurs, which tells me that the backup is working properly and Exchange is aware of it), they&rsquo;re consuming 10+ GB more disk space each passing day. Yesterday morning they occupied 60GB, and 24 hours later they&rsquo;re already consuming 84GB.</p>
 <p>I checked the Queues and found dozens of messages in the Journaling queue:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-QueueDigest</span> <span class="n">-Dag</span> <span class="n">Exchange2016</span> <span class="p">|</span> <span class="nb">ft </span><span class="n">-a</span>

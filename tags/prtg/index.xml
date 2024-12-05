@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>PRTG on Greg Beifuss</title>
-    <link>http://localhost:1313/tags/prtg/</link>
+    <link>https://gbeifuss.github.io/tags/prtg/</link>
     <description>Recent content in PRTG on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 06 Sep 2021 22:12:49 -0400</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/prtg/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://gbeifuss.github.io/tags/prtg/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Exchange DAGs and Cluster Ownership</title>
-      <link>http://localhost:1313/p/exchange-dags-and-cluster-ownership/</link>
+      <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>
       <pubDate>Mon, 06 Sep 2021 22:12:49 -0400</pubDate>
-      <guid>http://localhost:1313/p/exchange-dags-and-cluster-ownership/</guid>
+      <guid>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</guid>
       <description>Use Powershell to change the cluster owner for &amp;lsquo;Available Storage&amp;rsquo; and &amp;lsquo;Cluster Group&amp;rsquo; in an Exchange DAG. Setup a Notification in PRTG along with a trigger to move the owner back.</description>
     </item>
   </channel>

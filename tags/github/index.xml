@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Github on Greg Beifuss</title>
-    <link>http://localhost:1313/tags/github/</link>
+    <link>https://gbeifuss.github.io/tags/github/</link>
     <description>Recent content in Github on Greg Beifuss</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 09 Aug 2021 14:00:25 -0400</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/github/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://gbeifuss.github.io/tags/github/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Pushing to GitHub via. Git</title>
-      <link>http://localhost:1313/p/pushing-to-github-via.-git/</link>
+      <link>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</link>
       <pubDate>Mon, 09 Aug 2021 14:00:25 -0400</pubDate>
-      <guid>http://localhost:1313/p/pushing-to-github-via.-git/</guid>
+      <guid>https://gbeifuss.github.io/p/pushing-to-github-via.-git/</guid>
       <description>Resolving a &amp;lsquo;Permission Denied (publickey)&amp;rsquo; error in git, when pushing to github</description>
     </item>
     <item>
       <title>Pushing Hugo Content to GitHub</title>
-      <link>http://localhost:1313/p/pushing-hugo-content-to-github/</link>
+      <link>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</link>
       <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
-      <guid>http://localhost:1313/p/pushing-hugo-content-to-github/</guid>
+      <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
       <description>Have Hugo generate your site content and use git to push up to github.io</description>
     </item>
     <item>
       <title>VS Code &amp; Remote Repositories</title>
-      <link>http://localhost:1313/p/vs-code-remote-repositories/</link>
+      <link>https://gbeifuss.github.io/p/vs-code-remote-repositories/</link>
       <pubDate>Wed, 14 Jul 2021 08:21:37 -0400</pubDate>
-      <guid>http://localhost:1313/p/vs-code-remote-repositories/</guid>
+      <guid>https://gbeifuss.github.io/p/vs-code-remote-repositories/</guid>
       <description>Using the Remote Repositories Extension in VS Code to update github content</description>
     </item>
   </channel>
