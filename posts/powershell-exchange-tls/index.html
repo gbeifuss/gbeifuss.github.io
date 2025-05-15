@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Querying Exchange IIS logs with Powershell">
+<title>Powershell, Exchange &amp; TLS</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/powershell-exchange-tls/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Powershell, Exchange & TLS">
+<meta property='og:description' content="Querying Exchange IIS logs with Powershell">
+<meta property='og:url' content='http://localhost:1313/posts/powershell-exchange-tls/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='Exchange' /><meta property='article:published_time' content='2021-07-19T16:53:03-04:00'/><meta property='article:modified_time' content='2021-07-19T16:53:03-04:00'/>
+<meta name="twitter:title" content="Powershell, Exchange & TLS">
+<meta name="twitter:description" content="Querying Exchange IIS logs with Powershell">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/powershell-exchange-tls/">Powershell, Exchange &amp; TLS</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Querying Exchange IIS logs with Powershell
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 19, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I was recently curious about what sort of SSL/TLS connections were being used to access our Exchange cluster via. IIS. We have systems spanning twenty years: from Windows XP all the way to Windows Server 2019. Who knows what &ldquo;solutions&rdquo; developers or power users have come up with over the years to integrate with our mail system?</p>
+<p>Previously, I&rsquo;d followed MS guidance in <a class="link" href="https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-server-tls-guidance-part-2-enabling-tls-1-2-and/ba-p/607761"  target="_blank" rel="noopener"
+    >Enabling TLS 1.2</a> and <a class="link" href="https://www.microsoft.com/security/blog/2017/09/07/new-iis-functionality-to-help-identify-weak-tls-usage/"  target="_blank" rel="noopener"
+    >New IIS Functionality to Help Identify Weak TLS Usage</a>. The IIS blog explains how to set 4 server variables in IIS to track security protocols and cipher suites:</p>
+<ul>
+<li>CRYPT_PROTOCOL</li>
+<li>CRYPT_CIPHER_ALG_ID</li>
+<li>CRYPT_HASH_ALG_ID</li>
+<li>CRYPT_KEYEXCHANGE_ALG_ID</li>
+</ul>
+<p>First, I needed to figure out what was actually being recorded by the logs.</p>
+<pre tabindex="0"><code>#Date: 2021-03-04 00:00:03
+#Fields: date time s-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) cs(Referer) sc-status sc-substatus sc-win32-status time-taken crypt-protocol crypt-cipher crypt-hash crypt-keyexchange OriginalClientIP
+2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;CorrelationID=&lt;empty&gt;;&amp;cafeReqId=7a4501f0-3d61-425d-8d1f-0c3d5c9e6d13; 443 DOMAIN\webmail 10.10.1.58 ExchangeServicesClient/15.00.0913.015 - 200 0 0 38 400 660e 800c ae06 -
+2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;CorrelationID=&lt;empty&gt;;&amp;cafeReqId=42acb956-ea0a-4a32-a097-0bc73ae92860; 443 - 10.10.12.120 ExchangeServicesClient/15.00.0913.015 - 401 1 2148074254 1 400 660e 800c ae06 -
+2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;CorrelationID=&lt;empty&gt;;&amp;cafeReqId=0e312297-90fc-4b4d-8a28-24c3c60bcb7e; 443 - 10.10.12.120 ExchangeServicesClient/15.00.0913.015 - 401 1 2148074254 2 400 660e 800c ae06 -
+</code></pre><p>The information I needed was in the 15th field (crypt-protocol). A value of &lsquo;400&rsquo; correlates to TLS 1.2, &lsquo;40&rsquo; represents TLS 1.0, &lsquo;10&rsquo; represents SSLv3 and so forth. There&rsquo;s Microsoft documentation that explains the various values.</p>
+<p>So, let&rsquo;s write some sloppy proof-of-concept code to parse the IIS log files on 1 server. We can then wrap it in a <code>foreach</code> statement, or something like that, to query all the servers once it&rsquo;s working. Let&rsquo;s do some rough calculations on how long this will take by wrapping it in a <code>measure-command</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$Protocol</span> <span class="p">=</span> <span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Measure-Command</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Import-Csv</span> <span class="n">c:</span><span class="p">\</span><span class="n">inetpub</span><span class="p">\</span><span class="n">logs</span><span class="p">\</span><span class="n">LogFiles</span><span class="p">\</span><span class="n">W3SVC1</span><span class="p">\</span><span class="n">u_ex210713_x</span><span class="p">.</span><span class="py">log</span> <span class="n">-Delimiter</span> <span class="s1">&#39; &#39;</span> <span class="n">-Header</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="nb">s-ip</span><span class="p">,</span> <span class="nb">cs-method</span><span class="p">,</span> <span class="nb">cs-uri</span><span class="n">-stem</span><span class="p">,</span> <span class="nb">cs-uri</span><span class="n">-query</span><span class="p">,</span> <span class="nb">s-port</span><span class="p">,</span> <span class="nb">cs-username</span><span class="p">,</span> <span class="nb">c-ip</span><span class="p">,</span> <span class="s1">&#39;cs(user-Agent)&#39;</span><span class="p">,</span> <span class="s1">&#39;cs(Referer)&#39;</span><span class="p">,</span> <span class="nb">sc-status</span><span class="p">,</span> <span class="nb">sc-substatus</span><span class="p">,</span> <span class="nb">sc-win32</span><span class="n">-status</span><span class="p">,</span> <span class="nb">time-taken</span><span class="p">,</span> <span class="nb">crypt-protocol</span><span class="p">,</span> <span class="nb">crypt-cipher</span><span class="p">,</span> <span class="nb">crypt-hash</span><span class="p">,</span> <span class="nb">crypt-keyexchange</span><span class="p">,</span> <span class="n">OriginalClientIP</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span> <span class="nv">$Protocol</span> <span class="p">+=</span> <span class="nv">$_</span><span class="p">.</span><span class="s1">&#39;crypt-protocol&#39;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;</span><span class="p">$((</span><span class="nb">Get-Content</span> <span class="n">C:</span><span class="p">\</span><span class="n">inetpub</span><span class="p">\</span><span class="n">logs</span><span class="p">\</span><span class="n">LogFiles</span><span class="p">\</span><span class="n">W3SVC1</span><span class="p">\</span><span class="n">u_ex210713_x</span><span class="p">.</span><span class="n">log</span><span class="p">).</span><span class="n">count</span><span class="p">)</span><span class="s2"> lines processed.&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Days</span>              <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Hours</span>             <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Minutes</span>           <span class="err">:</span> <span class="mf">17</span>
+</span></span><span class="line"><span class="cl"><span class="n">Seconds</span>           <span class="err">:</span> <span class="mf">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Milliseconds</span>      <span class="err">:</span> <span class="mf">253</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ticks</span>             <span class="err">:</span> <span class="mf">10212530494</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalDays</span>         <span class="err">:</span> <span class="mf">0.0118200584421296</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalHours</span>        <span class="err">:</span> <span class="mf">0.283681402611111</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMinutes</span>      <span class="err">:</span> <span class="mf">17.0208841566667</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalSeconds</span>      <span class="err">:</span> <span class="mf">1021.2530494</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMilliseconds</span> <span class="err">:</span> <span class="mf">1021253.0494</span>
+</span></span></code></pre></div><p>This command took 17 minutes to run against one file on one server! I have 10 log files on each server (I wrote a separate script to automatically purge files older than that in order to save disk space). Aside from this script seeming ridiculously slow, it&rsquo;ll be a whole day before my curiosity is satisfied - this simply won&rsquo;t do!</p>
+<p>Instead of the slow process of reading the whole file into memory, enumerating the columns and adding data to an array that we&rsquo;re constantly resizing, let&rsquo;s use a faster method. I&rsquo;ll read in 1000 rows at a time, split each row to find the 15th column, exclude irrelevant information, and add those results to an array.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Measure-Command</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$Protocol</span> <span class="p">=</span> <span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$nlines</span> <span class="p">=</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">Get-Content</span> <span class="n">C:</span><span class="p">\</span><span class="n">inetpub</span><span class="p">\</span><span class="n">logs</span><span class="p">\</span><span class="n">LogFiles</span><span class="p">\</span><span class="n">W3SVC1</span><span class="p">\</span><span class="n">u_ex210713_x</span><span class="p">.</span><span class="py">log</span> <span class="n">-ReadCount</span> <span class="mf">1000</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ForEach</span> <span class="p">(</span><span class="nv">$line</span> <span class="k">in</span> <span class="nv">$_</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">If</span> <span class="p">(</span><span class="nv">$line</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;400&#34;</span> <span class="o">-and</span> <span class="nv">$line</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;-&#34;</span> <span class="o">-and</span> <span class="nv">$line</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;time-taken&#34;</span> <span class="o">-and</span> <span class="nv">$line</span><span class="p">.</span><span class="py">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;::1&#34;</span> <span class="o">-and</span> <span class="nv">$line</span><span class="p">.</span><span class="py">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;127.0.0.1&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Protocol</span> <span class="p">+=</span> <span class="nv">$line</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$nlines</span> <span class="p">+=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Length</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$Protocol</span> <span class="p">|</span> <span class="nb">Group-Object</span>
+</span></span><span class="line"><span class="cl">  <span class="p">[</span><span class="no">string</span><span class="p">]::</span><span class="n">Format</span><span class="p">(</span><span class="s2">&#34;{1} lines&#34;</span><span class="p">,</span> <span class="nv">$nlines</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Days</span>              <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Hours</span>             <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Minutes</span>           <span class="err">:</span> <span class="mf">12</span>
+</span></span><span class="line"><span class="cl"><span class="n">Seconds</span>           <span class="err">:</span> <span class="mf">14</span>
+</span></span><span class="line"><span class="cl"><span class="n">Milliseconds</span>      <span class="err">:</span> <span class="mf">149</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ticks</span>             <span class="err">:</span> <span class="mf">7341497722</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalDays</span>         <span class="err">:</span> <span class="mf">0.00849710384490741</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalHours</span>        <span class="err">:</span> <span class="mf">0.203930492277778</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMinutes</span>      <span class="err">:</span> <span class="mf">12.2358295366667</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalSeconds</span>      <span class="err">:</span> <span class="mf">734.1497722</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMilliseconds</span> <span class="err">:</span> <span class="mf">734149.7722</span>
+</span></span></code></pre></div><p>Well, 12 minutes is somewhat better - a 30% improvement - but still not good enough. Let&rsquo;s get rid of the two tremendously slow array additions, which even activate in conjunction, slowing things down further. Arrays are fixed sizes. When you use the <code>+=</code> operator, PowerShell actually creates a <em>new</em> array with the values of the original array <em>plus</em> the added value. Each time I add a value, the entire existing array is replicated into a new array with one more value. It&rsquo;s terribly inefficient when you have large amounts of data like the 129,102 entries in this file.</p>
+<p>Let&rsquo;s use a .NET method to fix this speed issue. An ArrayList with a .Add() method is far more efficient for what I&rsquo;m doing.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Measure-Command</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$Protocol</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Collections.ArrayList</span><span class="p">]</span><span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Get-Content</span> <span class="n">C:</span><span class="p">\</span><span class="n">inetpub</span><span class="p">\</span><span class="n">logs</span><span class="p">\</span><span class="n">LogFiles</span><span class="p">\</span><span class="n">W3SVC1</span><span class="p">\</span><span class="n">u_ex210713_x</span><span class="p">.</span><span class="py">log</span> <span class="n">-ReadCount</span> <span class="mf">1000</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">If</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;400&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;-&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;time-taken&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;::1&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;127.0.0.1&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="vm">$null</span> <span class="p">=</span> <span class="nv">$Protocol</span><span class="p">.</span><span class="py">Add</span><span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Days</span>              <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Hours</span>             <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Minutes</span>           <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Seconds</span>           <span class="err">:</span> <span class="mf">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">Milliseconds</span>      <span class="err">:</span> <span class="mf">314</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ticks</span>             <span class="err">:</span> <span class="mf">83145768</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalDays</span>         <span class="err">:</span> <span class="mf">9</span><span class="p">.</span><span class="n">62335277777778E</span><span class="p">-</span><span class="mf">05</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalHours</span>        <span class="err">:</span> <span class="mf">0.00230960466666667</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMinutes</span>      <span class="err">:</span> <span class="mf">0.13857628</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalSeconds</span>      <span class="err">:</span> <span class="mf">8.3145768</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMilliseconds</span> <span class="err">:</span> <span class="mf">8314.5768</span>
+</span></span></code></pre></div><p>A 12180% speed increase from my first code is much better. Now let&rsquo;s run this against all 10 files in the directory, then dump the statistics I&rsquo;m interested in:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Measure-Command</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$Protocol</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Collections.ArrayList</span><span class="p">]</span><span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Get-Content</span> <span class="n">C:</span><span class="p">\</span><span class="n">W3SVC1</span><span class="p">\*.</span><span class="n">log</span> <span class="n">-ReadCount</span> <span class="mf">1000</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">If</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;400&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;-&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">15</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;time-taken&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;::1&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">]</span> <span class="o">-ne</span> <span class="s2">&#34;127.0.0.1&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="vm">$null</span> <span class="p">=</span> <span class="nv">$Protocol</span><span class="p">.</span><span class="py">Add</span><span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">Split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">8</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$Protocol</span> <span class="p">|</span> <span class="nb">Group-Object</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Count</span><span class="p">,</span> <span class="n">Name</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;</span><span class="p">$(</span><span class="nv">$Protocol</span><span class="p">.</span><span class="n">count</span><span class="p">)</span><span class="s2"> matching entries in </span><span class="p">$((</span><span class="nb">Get-Content</span> <span class="n">C:</span><span class="p">\</span><span class="n">W3SVC1</span><span class="p">\*.</span><span class="n">log</span><span class="p">).</span><span class="n">count</span><span class="p">)</span><span class="s2"> processed lines.&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Days</span>              <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Hours</span>             <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Minutes</span>           <span class="err">:</span> <span class="mf">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">Seconds</span>           <span class="err">:</span> <span class="mf">8</span>
+</span></span><span class="line"><span class="cl"><span class="n">Milliseconds</span>      <span class="err">:</span> <span class="mf">7</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ticks</span>             <span class="err">:</span> <span class="mf">680073775</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalDays</span>         <span class="err">:</span> <span class="mf">0.000787122424768519</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalHours</span>        <span class="err">:</span> <span class="mf">0.0188909381944444</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMinutes</span>      <span class="err">:</span> <span class="mf">1.13345629166667</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalSeconds</span>      <span class="err">:</span> <span class="mf">68.0073775</span>
+</span></span><span class="line"><span class="cl"><span class="n">TotalMilliseconds</span> <span class="err">:</span> <span class="mf">68007.3775</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="nv">$Protocol</span> <span class="p">|</span> <span class="nb">Group-Object</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Count</span><span class="p">,</span> <span class="n">Name</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Count</span> <span class="n">Name</span>
+</span></span><span class="line"><span class="cl"><span class="p">-----</span> <span class="p">----</span>
+</span></span><span class="line"><span class="cl">    <span class="mf">4</span> <span class="mf">10.1</span><span class="p">.</span><span class="py">0</span><span class="p">.</span><span class="py">32</span>
+</span></span><span class="line"><span class="cl"> <span class="mf">1340</span> <span class="mf">10.1</span><span class="p">.</span><span class="py">1</span><span class="p">.</span><span class="py">250</span>
+</span></span><span class="line"><span class="cl">    <span class="mf">8</span> <span class="mf">169.254</span><span class="p">.</span><span class="py">3</span><span class="p">.</span><span class="py">178</span>
+</span></span><span class="line"><span class="cl">   <span class="mf">85</span> <span class="mf">172.16</span><span class="p">.</span><span class="py">0</span><span class="p">.</span><span class="py">12</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="s2">&#34;</span><span class="p">$(</span><span class="nv">$Protocol</span><span class="p">.</span><span class="n">count</span><span class="p">)</span><span class="s2"> matching entries in </span><span class="p">$((</span><span class="nb">Get-Content</span> <span class="n">C:</span><span class="p">\</span><span class="n">W3SVC1</span><span class="p">\*.</span><span class="n">log</span><span class="p">).</span><span class="n">count</span><span class="p">)</span><span class="s2"> processed lines.&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="mf">1445</span> <span class="n">matching</span> <span class="n">entries</span> <span class="k">in</span> <span class="mf">1589761</span> <span class="n">processed</span> <span class="n">lines</span><span class="p">.</span>
+</span></span></code></pre></div><p>This code for <em>all 10 files</em> is 1400% faster than the code I started with to read a <em>single file</em>. There are 4 IPs connecting to Exchange using something other than TLS 1.2, but they&rsquo;re all private IPs for the Exchange cluster itself, or the replication network.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+            <a href="/tags/exchange/">Exchange</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/exchange-move-request/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Managing Mailbox moves in Exchange 2016</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/exchange-clustergroup/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Exchange DAGs and Cluster Ownership</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/exchange-delete-content/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Exchange &amp; -DeleteContent</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

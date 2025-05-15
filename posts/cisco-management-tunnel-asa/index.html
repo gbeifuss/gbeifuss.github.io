@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Part III - Configure the ASA">
+<title>Cisco Management Tunnel - ASA Configuration</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/cisco-management-tunnel-asa/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Cisco Management Tunnel - ASA Configuration">
+<meta property='og:description' content="Part III - Configure the ASA">
+<meta property='og:url' content='http://localhost:1313/posts/cisco-management-tunnel-asa/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Cisco ASA' /><meta property='article:tag' content='PKI' /><meta property='article:published_time' content='2021-09-24T10:12:43-04:00'/><meta property='article:modified_time' content='2021-09-24T10:12:43-04:00'/>
+<meta name="twitter:title" content="Cisco Management Tunnel - ASA Configuration">
+<meta name="twitter:description" content="Part III - Configure the ASA">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/cisco-management-tunnel-asa/">Cisco Management Tunnel - ASA Configuration</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Part III - Configure the ASA
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 24, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    8 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>This is part 3 of a 3-part series.</p>
+<ol>
+<li><a class="link" href="http://localhost:1313/posts/cisco-management-tunnel/" >Cisco Management Tunnel</a>.</li>
+<li><a class="link" href="http://localhost:1313/posts/cisco-management-tunnel-ndes/" >Cisco Management Tunnel - NDES Setup</a></li>
+<li>Cisco Management Tunnel - ASA Setup</li>
+</ol>
+<p>If you&rsquo;ve stuck with me so far, now we come to the payoff - a working Management Tunnel! Let&rsquo;s jump in.</p>
+<p>This article is based on my jot notes. There may be missing steps or information, although I&rsquo;ve tried my best to make sure everything is here, at least at a high-level. I use a mix of CLI and ASDM when working on the ASA, so be prepared to jump around a little.</p>
+<h2 id="requirements">Requirements
+</h2><ul>
+<li>Requires ASA 9.0.1 (or later) and ASDM 7.10.1 (or later)</li>
+<li>Connects whenever the user initiated VPN tunnel is disconnected, before or after user login. The Management VPN tunnel is not established when a trusted network is detected by the Trusted Network Detection (TND) feature or when an AnyConnect software update is in progress.</li>
+<li>Disconnects whenever the user initiates a VPN tunnel, before or after user login.</li>
+<li>Uses only machine store certificate authentication.</li>
+<li>Requires split-tunneling configuration, by default, to avoid impacting user initiated network communication (since the management VPN tunnel is meant to be transparent to the end user).</li>
+<li>Works with backup server list.</li>
+<li>Currently available only on Windows and macOS. Linux support will be added in subsequent releases.</li>
+</ul>
+<h2 id="install-certificates">Install Certificates
+</h2><p>If you don&rsquo;t already have your Issuing CA certificate installed on the ASA, you&rsquo;ll need to do that. I used the ASDM: Device Management &gt; Certificate Management &gt; CA Certificates. We can import it directly from the NDES/SCEP server we just set up by clicking &lsquo;Add&rsquo; and entering the proper information. It should be something like: <code>http://10.0.0.1/certsrv/mscep/mscep.dll</code></p>
+<p><em>Note: We will need two Profiles - one for Users to authenticate to and get the certificate, and one for the actual Management Tunnel</em>. I&rsquo;ll call it the User Tunnel just to be clear, and we&rsquo;ll work on it first.</p>
+<h2 id="create-a-new-vpn-connection-profile">Create a new VPN Connection Profile
+</h2><p>Create a new VPN Connection profile on the ASA via. ASDM. I called mine &ldquo;Helpdesk&rdquo;, since that&rsquo;s who my pilot testers will be. I don&rsquo;t want to mess around with the production VPN that 100+ users are connected to!</p>
+<ul>
+<li>Set the Authentiction method <code>AAA and certificate</code>.
+<ul>
+<li>Also configure the AAA Server group. You can use LOCAL, or if you&rsquo;re tied into another authentication service for MFA, like RSA, you can select it.</li>
+</ul>
+</li>
+<li>Configure DHCP, DNS and the domain name</li>
+<li>Enable SCEP Enrollment (Advanced\General)</li>
+</ul>
+<h2 id="set-group-policy-to-use-scep">Set Group Policy to use SCEP
+</h2><p>The Group Policy will need to be edited as well. Either edit an existing one, or create a new one and associate it with the previously created Connection Profile.
+I did this via. CLI, under a group policy named Helpdesk:
+group-policy Helpdesk attributes
+scep-forwarding-url value <a class="link" href="http://server.corp.company.com/certsrv/mscep/mscep.dll"  target="_blank" rel="noopener"
+    >http://server.corp.company.com/certsrv/mscep/mscep.dll</a>
+exit
+I prefer the CLI for this because it gives instant feedback about the success or failure. If you happen to disregard the requirement that NDES is NOT installed on your CA, then this step will repeatedly fail. &hellip;Or so I&rsquo;ve heard :)</p>
+<h2 id="edit-client-profile">Edit Client Profile
+</h2><p>These next steps are best done in the ASDM, because the output is XML files. CLI cannot manipulate them directly.</p>
+<ul>
+<li>Open the Client Profile that you&rsquo;ll use for the User Tunnel - mine is called &lsquo;Helpdesk&rsquo;.</li>
+<li>Open the <em>Preferences (Part 2)</em> page.
+<ul>
+<li>Enable &lsquo;Automatic VPN Policy&rsquo;</li>
+<li>Add your internal Trusted DNS Domains and Servers. If you have multiple, separate them with commas.</li>
+<li>Trusted Network Policy = Disconnect</li>
+<li>Untrusted Network Policy = Connect</li>
+</ul>
+</li>
+<li>Open the <em>Certificate Enrolment</em> page.
+<ul>
+<li>Enable Certificate Enrollment</li>
+<li>Set the Certificate Expiration Threshold (days).</li>
+<li>Enter <code>%USER%</code> or <code>%MACHINEID%</code> in the Name (CN) box. Either will work, but will affect whom the certificate is issued to (machine name or user id), which in turn will affect how the endpoint shows up in the VPN monitoring logs.</li>
+<li>Enter whatever you&rsquo;d like under Department, but we will reuse this entry later on. I chose <code>AnyConnect</code> for the sake of simplicity.</li>
+<li>Enter your domain name in the CA Domain field: <code>corp.company.com</code></li>
+<li>Enter the keysize. I recommend <code>2048</code>, which is what NDES should be expecting in the certificate request.</li>
+<li>Complete any other certificate fields you&rsquo;d like as they&rsquo;re optional, but nice to have completed.</li>
+</ul>
+</li>
+<li>Open the <em>Certificate Matching</em> page.
+<ul>
+<li>Click &lsquo;Add&rsquo; under the &lsquo;Distinguished Name (Max 10)&rsquo; section.</li>
+<li>Select OU in the Name drop down box. Then type in the value you entered for OU in the last step (under Certificate Enrollment) ito the Pattern field. For me, it’s <code>AnyConnect</code>.</li>
+<li>Ensure &lsquo;Match Case&rsquo; is enabled. Click OK and you’ll see the entry appear under &lsquo;Distinguished Name (Max 10)&rsquo;.</li>
+<li>Click OK as we&rsquo;re done. This process will allow the ASA to select the correct cert during authentication.</li>
+</ul>
+</li>
+</ul>
+<h2 id="create-the-management-tunnel-group-group-policy">Create the Management Tunnel Group, Group Policy
+</h2><p>Back to the CLI! We&rsquo;ll create a Management Tunnel Profile, and link it to our existing Split-Tunnel list. <em>Please note, the Profile name is case-sensitive!</em></p>
+<pre tabindex="0"><code>group-policy Management internal
+group-policy Management attributes
+ dns-server value 192.168.1.23 192.168.1.24
+ vpn-tunnel-protocol ssl-client
+ split-tunnel-policy tunnelspecified
+ split-tunnel-network-list value VPNSplitTunnelList
+ default-domain value corp.agricorp.com
+ client-bypass-protocol enable
+ address-pools value SSLVPNDHCP
+ anyconnect-custom ManagementTunnelAllAllowed value Value
+
+tunnel-group Management type remote-access
+tunnel-group Management general-attributes
+ default-group-policy Management
+tunnel-group Management webvpn-attributes
+ group-alias Management enable
+ group-url https://vpn.company.com/Management enable
+</code></pre><p>The &lsquo;Client Bypass Protocol&rsquo; needs to be enabled if you don&rsquo;t have BOTH IPv4 and IPv6 address pools configured to issue IP addresses. If you only have IPv4, like me, then the Client Bypass Protocol must be enabled. If it’s not, and the everything else is configured correctly, you’ll see the Management Connection State show as &ldquo;Disconnected (invalid VPN configuration)&rdquo;</p>
+<h2 id="create-the-management-tunnel-profile">Create the Management Tunnel Profile
+</h2><p>Back to ASDM! Add an AnyConnect Client Profile under Remote Access VPN &gt; Network (Client) Access &gt; AnyConnect Client Profile:</p>
+<ul>
+<li>Enter a Profile Name</li>
+<li>Select &lsquo;AnyConnect Management VPN Profile&rsquo; from the Profile Usage dropdown box. The resulting profile will have an <code>.vpnm</code> extension.</li>
+<li>Select the previously created User VPN Group Policy. In my case, it&rsquo;s <code>Helpdesk</code>. This associates the two policies, and when a user authenticates to <code>Helpdesk</code>, it&rsquo;ll download the Management Tunnel profile as well.</li>
+</ul>
+<p>Now, edit the Management VPN Profile:</p>
+<ul>
+<li>Open the <em>Preferences (Part 2)</em> page. Per Cisco: &ldquo;For a consistent user experience, we recommend that you use identical Trusted Network Detection settings in both user and management VPN tunnel profiles.&rdquo;
+<ul>
+<li>Enable &lsquo;Automatic VPN Policy&rsquo;</li>
+<li>Add your internal Trusted DNS Domains and Servers. If you have multiple, separate them with commas.</li>
+<li>Trusted Network Policy = Disconnect</li>
+<li>Untrusted Network Policy = Connect</li>
+</ul>
+</li>
+<li>Open the <em>Certificate Matching</em> page.
+<ul>
+<li>Click &lsquo;Add&rsquo; under the &lsquo;Distinguished Name (Max 10)&rsquo; section.</li>
+<li>Select OU in the Name drop down box. Then type in the value you entered for OU in the last step (under Certificate Enrollment) ito the Pattern field. For me, it’s <code>AnyConnect</code>.</li>
+<li>Ensure &lsquo;Match Case&rsquo; is enabled. Click OK and you’ll see the entry appear under &lsquo;Distinguished Name (Max 10)&rsquo;.</li>
+</ul>
+</li>
+<li>Open the <em>Server List</em> page.
+<ul>
+<li>Click Add. Enter a Display Name (which doesn&rsquo;t seem to actually be used anywhere else).</li>
+<li>Under FQDN, enter the same value that&rsquo;s in your User Tunnel - vpn.company.com for example.</li>
+<li>Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&rsquo;s <code>Management</code> .<br>
+<img src="/img/asdm-management-profile-server-list.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></li>
+<li>Click OK until you&rsquo;re back at the main ASDM page, then click Apply to write the changes.</li>
+</ul>
+</li>
+</ul>
+<p>At this point, everything should be setup. Let&rsquo;s test.</p>
+<h2 id="management-tunnel-behaviour">Management Tunnel Behaviour
+</h2><p>Load AnyConnect and establish a connection to your User Tunnel as usual. After successfully connecting, the ASA will contact the NDES for certificate enrollment on your behalf. After a few seconds, AnyConnect will issue a notice:
+popup-certificate-enrollment-succeeded.png)
+Click OK to acknowledge the notice. AnyConnect will indeed disconnect you and try to re-establish a connection. You can either authenticate and establish a User Tunnel, or click Cancel. If you click Cancel, AnyConnect will take a few minutes to perform Trusted Network Detection, determine you&rsquo;re not on the corporate network, then transparently establish the Management Tunnel using your certificate. You can see the Management Tunnel status in the AnyConnect client Statistics:
+<img src="/img/anyconnect-information-window-management-tunnel-connected.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+><br>
+When you connect back to a User Tunnel, the Management Tunnel will disconnect and show <code>Disconnected (user tunnel active)</code>.</p>
+<h2 id="behind-the-scenes">Behind The Scenes
+</h2><p>AnyConnect actually grabs 2 certificates based on your VPN username and stores them in <code>Local User Certificates\Personal\Certificates</code> and <code>Local Machine Certificates\Personal\Certificates</code>. If you created a standard certificate template, NDES issues them with a 1 year validity period. However, AnyConnect inspects the &lsquo;Date Issued&rsquo; field and compares the age to the value set under <code>Certificate Expiration Threshold (days)</code>. If the value = 2, then if the certificate is older than 2 days, AnyConnect will request another certificate the next time a VPN session is established.</p>
+<p>If you need to delete your certificates during testing and pilot use:</p>
+<ul>
+<li>
+<ul>
+<li>Stop the Cisco AnyConnect service</li>
+</ul>
+</li>
+<li>Open up the certificates mmc (mmc.exe). Add both the Current User plugin and the Current Machine plugin.</li>
+<li>Delete the certificate in Local User Certificates\Personal\Certificates</li>
+<li>Delete the certificate in Local Machine Certificates\Personal\Certificates</li>
+<li>Start the Cisco AnyConnect service again</li>
+</ul>
+<p>I also had to adjust the Dynamic Access Policy in use by the User Profile. We were checking for the presence of a certain AV product, but it was causing problems. Now we don&rsquo;t check that, but check for other things.</p>
+<p>I also originally set <code>anyconnect-custom-data ManagementTunnelAllAllowed Value true/true</code> based on another article I&rsquo;d read, but this is not necessary.</p>
+<h2 id="references">References
+</h2><p>Some articles I referenced when figuring this out were:</p>
+<p><a class="link" href="https://technook.home.blog/2019/07/11/cisco-anyconnect-managent-vpn-tunnel-microsoft-ca/"  target="_blank" rel="noopener"
+    >Cisco AnyConnect Management VPN Tunnel (Microsoft CA)</a></p>
+<p><a class="link" href="https://www.cisco.com/c/en/us/support/docs/security/adaptive-security-appliance-asa-software/215442-configure-anyconnect-management-vpn-tunn.html"  target="_blank" rel="noopener"
+    >Configure AnyConnect Management VPN Tunnel on ASA</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/cisco-asa/">Cisco ASA</a>
+        
+            <a href="/tags/pki/">PKI</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/cisco-management-tunnel-ndes/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Cisco Management Tunnel - NDES Setup</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/cisco-management-tunnel/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Cisco Management Tunnel</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

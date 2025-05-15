@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Administratively deleting content from an Exchange Mailbox'><title>Exchange &amp; -DeleteContent</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Administratively deleting content from an Exchange Mailbox">
+<title>Exchange &amp; -DeleteContent</title>
 
 <link rel='canonical' href='https://gbeifuss.github.io/p/exchange-deletecontent/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Exchange &amp; -DeleteContent'>
-<meta property='og:description' content='Administratively deleting content from an Exchange Mailbox'>
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Exchange & -DeleteContent">
+<meta property='og:description' content="Administratively deleting content from an Exchange Mailbox">
 <meta property='og:url' content='https://gbeifuss.github.io/p/exchange-deletecontent/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Exchange' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-08-11T15:01:20-04:00'/><meta property='article:modified_time' content='2021-08-11T15:01:20-04:00'/>
-<meta name="twitter:title" content="Exchange &amp; -DeleteContent">
+<meta name="twitter:title" content="Exchange & -DeleteContent">
 <meta name="twitter:description" content="Administratively deleting content from an Exchange Mailbox">
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
@@ -28,8 +29,8 @@
       </script>
     </head>
     <body class="
-    article-page 
-">
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -52,48 +53,39 @@
         }
     })();
 </script>
-<div class="container main-container flex 
-    
-        on-phone--column extended
-    
-">
-    
-        <aside class="sidebar left-sidebar sticky">
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
             
             <figure class="site-avatar">
+                <a href="/">
                 
-                    
-                    
-                    
-                        
-                        <img src="/img/thundercats_hu16775284636912897722.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
-
+                </a>
                 
             </figure>
             
         
-        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
-        <h2 class="site-description">... managing risk 24/7</h2>
-    </header>
-
-    <ol class="menu" id="main-menu">
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
         
         
         
-
         <li >
             <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -110,9 +102,10 @@
         </li>
         
         
-
         <li >
             <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -128,9 +121,10 @@
         </li>
         
         
-
         <li >
             <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -145,10 +139,12 @@
             </a>
         </li>
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -156,7 +152,7 @@
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -164,30 +160,38 @@
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
     
-<main class="main full-width">
+
+            <main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
     <div class="article-details">
     
 
-    <h2 class="article-title">
-        <a href="/p/exchange-deletecontent/">Exchange &amp; -DeleteContent</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/exchange-deletecontent/">Exchange &amp; -DeleteContent</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Administratively deleting content from an Exchange Mailbox
+        </h3>
+        
+    </div>
 
     
-    <h3 class="article-subtitle">
-        Administratively deleting content from an Exchange Mailbox
-    </h3>
     
-
+    
     
     <footer class="article-time">
         
@@ -206,12 +210,31 @@
         
 
         
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
     </footer>
     
+
+    
 </div>
+
 </header>
 
     <section class="article-content">
+    
+    
     <p>Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to<br>
 a) quantify how many other people in our organization had that particular email in their mailbox, and<br>
 b) administratively remove it.</p>
@@ -263,14 +286,16 @@ b) administratively remove it.</p>
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
                 
-                    
 <article class="">
     <a href="/p/managing-mailbox-moves-in-exchange-2016/">
         
@@ -281,8 +306,9 @@ b) administratively remove it.</p>
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/exchange-dags-and-cluster-ownership/">
         
@@ -293,8 +319,9 @@ b) administratively remove it.</p>
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/powershell-exchange-tls/">
         
@@ -305,10 +332,10 @@ b) administratively remove it.</p>
         </div>
     </a>
 </article>
-                
-            </div>
+
+            
         </div>
-    
+    </div>
 </aside>
 
      
@@ -322,12 +349,12 @@ b) administratively remove it.</p>
         
             2020 - 
         
-        2024 Greg Beifuss
+        2025 Greg Beifuss
     </section>
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -396,29 +423,27 @@ b) administratively remove it.</p>
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
 
             </main>
-    
-
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Converting a Powershell object to JSON when making a Netscaler API call'><title>Working with JSON in Powershell</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Converting a Powershell object to JSON when making a Netscaler API call">
+<title>Working with JSON in Powershell</title>
 
 <link rel='canonical' href='https://gbeifuss.github.io/p/working-with-json-in-powershell/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Working with JSON in Powershell'>
-<meta property='og:description' content='Converting a Powershell object to JSON when making a Netscaler API call'>
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Working with JSON in Powershell">
+<meta property='og:description' content="Converting a Powershell object to JSON when making a Netscaler API call">
 <meta property='og:url' content='https://gbeifuss.github.io/p/working-with-json-in-powershell/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='Netscaler' /><meta property='article:tag' content='API' /><meta property='article:published_time' content='2021-10-04T15:47:05-04:00'/><meta property='article:modified_time' content='2021-10-04T15:47:05-04:00'/>
@@ -28,8 +29,8 @@
       </script>
     </head>
     <body class="
-    article-page 
-">
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -52,48 +53,39 @@
         }
     })();
 </script>
-<div class="container main-container flex 
-    
-        on-phone--column extended
-    
-">
-    
-        <aside class="sidebar left-sidebar sticky">
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
             
             <figure class="site-avatar">
+                <a href="/">
                 
-                    
-                    
-                    
-                        
-                        <img src="/img/thundercats_hu16775284636912897722.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
-
+                </a>
                 
             </figure>
             
         
-        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
-        <h2 class="site-description">... managing risk 24/7</h2>
-    </header>
-
-    <ol class="menu" id="main-menu">
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
         
         
         
-
         <li >
             <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -110,9 +102,10 @@
         </li>
         
         
-
         <li >
             <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -128,9 +121,10 @@
         </li>
         
         
-
         <li >
             <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -145,10 +139,12 @@
             </a>
         </li>
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -156,7 +152,7 @@
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -164,30 +160,38 @@
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
     
-<main class="main full-width">
+
+            <main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
     <div class="article-details">
     
 
-    <h2 class="article-title">
-        <a href="/p/working-with-json-in-powershell/">Working with JSON in Powershell</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/working-with-json-in-powershell/">Working with JSON in Powershell</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Converting a Powershell object to JSON when making a Netscaler API call
+        </h3>
+        
+    </div>
 
     
-    <h3 class="article-subtitle">
-        Converting a Powershell object to JSON when making a Netscaler API call
-    </h3>
     
-
+    
     
     <footer class="article-time">
         
@@ -206,23 +210,42 @@
         
 
         
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
     </footer>
     
+
+    
 </div>
+
 </header>
 
     <section class="article-content">
+    
+    
     <p>I&rsquo;ve recently been editing a Powershell script that manages our Let&rsquo;s Encrypt certificates and their integration with Netscaler. I&rsquo;ve been using John Billeken&rsquo;s excellent <a class="link" href="https://github.com/j81blog/GenLeCertForNS"  target="_blank" rel="noopener"
     >GenLeCertForNS</a> script to do the heavy lifting, but I&rsquo;ve written a front-end wrapper for it to handle the way I need it to work in my environment. [I started using this with <em>v.2.63</em>, which didn&rsquo;t have email capabilities. My front-end wrapper adds email reporting, plus obfuscuating any credentials in the log, and loading the credentials from an encypted XML file].
 I was rewriting my wrapper to include SAN support <em>and</em> to update two Netscaler appliances with the same certificate: if the CN matched certain values, the script will find the same Let&rsquo;s Encrypt certificate .pfx, upload it to the Netscaler at our warm Disaster Recovery site and properly bind it.</p>
 <p>To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article <a class="link" href="https://gbeifuss.github.io/p/powershell-netscaler-api/" >Powershell &amp; Netscaler API</a>. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.</p>
 <p>According to the <a class="link" href="https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/12.1/configuration/ssl/sslcertkey/sslcertkey/#link"  target="_blank" rel="noopener"
-    >Citrix ADC NITRO API Reference</a>, I need:<br>
-<strong>URL:</strong> http://&lt;Citrix-ADC-IP-address(NSIP)&gt;/nitro/v1/config/sslcertkey?action=link<br>
-<strong>HTTP Method:</strong> POST<br>
-<strong>Request Headers:</strong> Cookie:NITRO_AUTH_TOKEN=<!-- raw HTML omitted --> Content-Type:application/json<br>
-<strong>Request Payload:</strong></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">{</span>
+    >Citrix ADC NITRO API Reference</a>, I need:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">**URL:** http://<span class="p">&lt;</span><span class="nt">Citrix-ADC-IP-address</span><span class="err">(</span><span class="na">NSIP</span><span class="err">)</span><span class="p">&gt;</span>/nitro/v1/config/sslcertkey?action=link  
+</span></span><span class="line"><span class="cl">**HTTP Method:** POST  
+</span></span><span class="line"><span class="cl">**Request Headers:** Cookie:NITRO_AUTH_TOKEN=<span class="p">&lt;</span><span class="nt">tokenvalue</span><span class="p">&gt;</span> Content-Type:application/json  
+</span></span><span class="line"><span class="cl">**Request Payload:**
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="s2">&#34;sslcertkey&#34;</span><span class="err">:</span>
 </span></span><span class="line"><span class="cl">  <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="s2">&#34;certkey&#34;</span><span class="err">:</span><span class="p">&lt;</span><span class="n">String_value</span><span class="p">&gt;,</span>
@@ -279,14 +302,16 @@ I was rewriting my wrapper to include SAN support <em>and</em> to update two Net
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-        <h2 class="section-title">Related contents</h2>
-        <div class="related-contents">
-            <div class="flex article-list--tile">
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
                 
-                    
 <article class="">
     <a href="/p/powershell-netscaler-api/">
         
@@ -297,8 +322,9 @@ I was rewriting my wrapper to include SAN support <em>and</em> to update two Net
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/powershell-powerplatform-api-...-now-using-the-graph-api/">
         
@@ -309,8 +335,9 @@ I was rewriting my wrapper to include SAN support <em>and</em> to update two Net
         </div>
     </a>
 </article>
+
+            
                 
-                    
 <article class="">
     <a href="/p/powershell-powerplatform-api/">
         
@@ -321,10 +348,10 @@ I was rewriting my wrapper to include SAN support <em>and</em> to update two Net
         </div>
     </a>
 </article>
-                
-            </div>
+
+            
         </div>
-    
+    </div>
 </aside>
 
      
@@ -338,12 +365,12 @@ I was rewriting my wrapper to include SAN support <em>and</em> to update two Net
         
             2020 - 
         
-        2024 Greg Beifuss
+        2025 Greg Beifuss
     </section>
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -412,29 +439,27 @@ I was rewriting my wrapper to include SAN support <em>and</em> to update two Net
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
 
             </main>
-    
-
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

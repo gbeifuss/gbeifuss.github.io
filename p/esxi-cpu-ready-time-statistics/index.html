@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Deciphering VMWare&#39;s CPU Ready Time metric'><title>ESXi CPU Ready Time statistics</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Deciphering VMWare's CPU Ready Time metric">
+<title>ESXi CPU Ready Time statistics</title>
 
 <link rel='canonical' href='https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='ESXi CPU Ready Time statistics'>
-<meta property='og:description' content='Deciphering VMWare&#39;s CPU Ready Time metric'>
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="ESXi CPU Ready Time statistics">
+<meta property='og:description' content="Deciphering VMWare's CPU Ready Time metric">
 <meta property='og:url' content='https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='VMWare' /><meta property='article:published_time' content='2023-04-03T17:00:36-04:00'/><meta property='article:modified_time' content='2023-04-03T17:00:36-04:00'/>
 <meta name="twitter:title" content="ESXi CPU Ready Time statistics">
-<meta name="twitter:description" content="Deciphering VMWare&#39;s CPU Ready Time metric">
+<meta name="twitter:description" content="Deciphering VMWare's CPU Ready Time metric">
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -28,8 +29,8 @@
       </script>
     </head>
     <body class="
-    article-page 
-">
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -52,48 +53,39 @@
         }
     })();
 </script>
-<div class="container main-container flex 
-    
-        on-phone--column extended
-    
-">
-    
-        <aside class="sidebar left-sidebar sticky">
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
             
             <figure class="site-avatar">
+                <a href="/">
                 
-                    
-                    
-                    
-                        
-                        <img src="/img/thundercats_hu16775284636912897722.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
-
+                </a>
                 
             </figure>
             
         
-        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
-        <h2 class="site-description">... managing risk 24/7</h2>
-    </header>
-
-    <ol class="menu" id="main-menu">
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
         
         
         
-
         <li >
             <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -110,9 +102,10 @@
         </li>
         
         
-
         <li >
             <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -128,9 +121,10 @@
         </li>
         
         
-
         <li >
             <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -145,10 +139,12 @@
             </a>
         </li>
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -156,7 +152,7 @@
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -164,30 +160,38 @@
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
     
-<main class="main full-width">
+
+            <main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
     <div class="article-details">
     
 
-    <h2 class="article-title">
-        <a href="/p/esxi-cpu-ready-time-statistics/">ESXi CPU Ready Time statistics</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/esxi-cpu-ready-time-statistics/">ESXi CPU Ready Time statistics</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Deciphering VMWare&#39;s CPU Ready Time metric
+        </h3>
+        
+    </div>
 
     
-    <h3 class="article-subtitle">
-        Deciphering VMWare&#39;s CPU Ready Time metric
-    </h3>
     
-
+    
     
     <footer class="article-time">
         
@@ -206,84 +210,87 @@
         
 
         
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
     </footer>
     
+
+    
 </div>
+
 </header>
 
     <section class="article-content">
+    
+    
     <p>I worked on an issue at work today that was really interesting (from a technical troubleshooting perspective), so I thought that I&rsquo;d write about it.</p>
 <p>Our organization is in the midst of moving from one datacentre to another. The PKI team reported that their new, just-spun-up servers at the new site were all performing very poorly. Their servers were all running at about 50% CPU usage on an 8 vCPU, 16GB RAM server, but took forever to boot or shutdown, and the GUI had noticible lag when clicking or moving around windows. They suspected a CPU issue - instead of having their 8 vCPU allocated as 8 sockets x 1 core each, they wanted 2 sockets x 4 core, or 1 socket x 8 core because they believed this would improve performance.<br>
 According to VMWare, this allocation doesn&rsquo;t make any real difference in terms of performance since ESXi 6.5/6.7 (but may be needed for licensing compliance).</p>
 <p>Here&rsquo;s what the VM metrics looked like:
-<figure 
-	>
-	<a href="/img/cpu-ready-stats.png" >
-		<img src="/img/cpu-ready-stats.png"
-			
-			
-			
-			loading="lazy"
-			alt="Monthly CPU Stats">
-	</a>
+<img src="/img/cpu-ready-stats.png"
 	
-	<figcaption>Monthly CPU Stats</figcaption>
 	
-</figure></p>
+	
+	loading="lazy"
+	
+		alt="Monthly CPU Stats"
+	
+	
+></p>
 <p>Migrating to another ESXi host in the cluster made no difference. The host servers in the cluster were all running at about 50% load, so it didn&rsquo;t seem to be an oversubscription issue (my first suspicion).</p>
 <p>Even doubling the resources (to 16 vCPU, 32GB RAM) on a VM made no real difference in performance, although I could see that the VM CPU load dropped to about 30% from 50%.</p>
 <p>I found the CPU Ready Time metric and after reading up on what it was and what acceptable values should be, figured out that the problem was that the VM&rsquo;s CPU couldn&rsquo;t get <em>scheduled time</em> on the host server.<br>
 <em>CPU Ready Time in VSphere is a metric that records the amount of time that a VM is ready to use CPU, but cannot because all CPU resources (on an ESXi host) are busy.</em></p>
-<p><figure 
-	>
-	<a href="/img/cpu-ready-wait.png" >
-		<img src="/img/cpu-ready-wait.png"
-			
-			
-			
-			loading="lazy"
-			alt="CPU Ready Time">
-	</a>
+<p><img src="/img/cpu-ready-wait.png"
 	
-	<figcaption>CPU Ready Time</figcaption>
 	
-</figure></p>
+	
+	loading="lazy"
+	
+		alt="CPU Ready Time"
+	
+	
+></p>
 <p>The VM in question was averaging 1000 second wait time for each CPU call (1.05M ms) over the prior day. VMWare documentation suggests that CPU Ready Time at or over 5% could indicate a performance problem. I quickly crunched some numbers using the <a class="link" href="https://vmcalc.com"  target="_blank" rel="noopener"
     >vmcalc.com</a> website. An average wait time of 1046000ms works out to a CPU Ready Time of about 656%&hellip; well above the 5% threshold!</p>
 <p>I compared the PKI Server&rsquo;s CPU Ready Time (1.05M ms) to that of a random server on another cluster, which had an average of just 30 ms!</p>
 <p>I worked with a colleague to find the cause of this CPU throttling, which turned out to be a Resource Group limit set on the entire PKI &lsquo;folder&rsquo;, affecting 27 VMs.</p>
 <p>We changed the CPU Limit from 30,000 MHz to 60,000 Mhz, effectively doubling the amount of CPU that the servers in this PKI group could consume.</p>
-<p><figure 
-	>
-	<a href="/img/cpu-ready-policy.png" >
-		<img src="/img/cpu-ready-policy.png"
-			
-			
-			
-			loading="lazy"
-			alt="Resource Policy">
-	</a>
+<p><img src="/img/cpu-ready-policy.png"
 	
-	<figcaption>Resource Policy</figcaption>
 	
-</figure></p>
+	
+	loading="lazy"
+	
+		alt="Resource Policy"
+	
+	
+></p>
 <p>We also checked each VM to make sure that limits were not set on individual VMs. Each one <em>did</em> have the CPU capped to 19200 MHz, which works out to 2.4GHz (when all 8 vCPU are considered). An effective 2.4GHz vCPU rate should be enough to run PKI, so this was contributing to the performance issue that the PKI team was experiencing.</p>
 <p>After applying the Limit change, we immediately saw the CPU Ready Time drop on the PKI VMs to something in the 300-400 ms range.<br>
 It doesn&rsquo;t show well in this image because the scale is too vast, but you can clearly see it drop off from 40000-80000 ms to a negligable level.</p>
-<p><figure 
-	>
-	<a href="/img/cpu-ready-fixed.png" >
-		<img src="/img/cpu-ready-fixed.png"
-			
-			
-			
-			loading="lazy"
-			alt="CPU Performance">
-	</a>
+<p><img src="/img/cpu-ready-fixed.png"
 	
-	<figcaption>CPU Performance</figcaption>
 	
-</figure></p>
+	
+	loading="lazy"
+	
+		alt="CPU Performance"
+	
+	
+></p>
 
 </section>
 
@@ -315,10 +322,9 @@ It doesn&rsquo;t show well in this image because the scale is too vast, but you 
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-</aside>
 
      
     
@@ -331,12 +337,12 @@ It doesn&rsquo;t show well in this image because the scale is too vast, but you 
         
             2020 - 
         
-        2024 Greg Beifuss
+        2025 Greg Beifuss
     </section>
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -405,29 +411,27 @@ It doesn&rsquo;t show well in this image because the scale is too vast, but you 
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
 
             </main>
-    
-
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');

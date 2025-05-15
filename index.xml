@@ -232,8 +232,8 @@ services:
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;---
 - series: Higher Ground Radio
   url: https://feed.podbean.com/ciuthigherground/feed.xml
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://hub.docker.com/r/shikasta/ichapod&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;https://hub.docker.com/r/shikasta/ichapod&lt;/a&gt;&lt;br&gt;
 &lt;a class=&#34;link&#34; href=&#34;https://github.com/shikasta-net/Ichapod&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -298,20 +298,16 @@ Paste this configuration string into the profiles section. You&amp;rsquo;ll need
         <guid>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</guid>
         <description>&lt;p&gt;Someone on our VDI team informed me that they were getting an error when trying to log into their VSCA:
 &amp;ldquo;An error occurred during authentication.&amp;rdquo;
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-error.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-error.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;VSCA Authentication Error&#34;&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-error.png&#34;
 	
-	&lt;figcaption&gt;VSCA Authentication Error&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;VSCA Authentication Error&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;I started with the usual troubleshooting - did it work with my credentials? (No, it did not). Did it work in a private browser window, to rule out a caching issue? (No, it did not).&lt;/p&gt;
 &lt;p&gt;I tried logging in locally, but none of the accounts that &lt;em&gt;should&lt;/em&gt; have worked, actually worked. So, before actually troubleshooting the issue, I had to break into the VCSA. Following the advice in &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2147144&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Resetting root password in vCenter Server Appliance 6.5 / 6.7 / 7.x (2147144)&lt;/a&gt;, I:&lt;/p&gt;
@@ -336,20 +332,16 @@ com.vmware.vim.vmomi.client.exception.VlsiCertificateException: Server certifica
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;That confirmed that this was likely a certificate error. I started by checking the STS certificate, following the advice in &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/79248&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Checking Expiration of STS Certificate on vCenter Servers (79248)&lt;/a&gt;, but the STS certificate was valid until 2029.&lt;/p&gt;
 &lt;p&gt;I then looked at the other certificates by using &lt;code&gt;check-trust-anchors -cml&lt;/code&gt;, which showed that the certificates had indeed expired 10 days ago:
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-expired.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-expired.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;VSCA Expired Certificates&#34;&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-expired.png&#34;
 	
-	&lt;figcaption&gt;VSCA Expired Certificates&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;VSCA Expired Certificates&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;I followed the advice in &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2112283&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;How to regenerate vSphere 6.x, 7.x, and 8.0 certificates using self-signed VMCA (2112283)&lt;/a&gt; to generate a new certificate:&lt;/p&gt;
 &lt;ul&gt;
@@ -374,74 +366,58 @@ After 5 minutes, the operation completed and the new certificates were in place.
 &lt;p&gt;Our organization is in the midst of moving from one datacentre to another. The PKI team reported that their new, just-spun-up servers at the new site were all performing very poorly. Their servers were all running at about 50% CPU usage on an 8 vCPU, 16GB RAM server, but took forever to boot or shutdown, and the GUI had noticible lag when clicking or moving around windows. They suspected a CPU issue - instead of having their 8 vCPU allocated as 8 sockets x 1 core each, they wanted 2 sockets x 4 core, or 1 socket x 8 core because they believed this would improve performance.&lt;br&gt;
 According to VMWare, this allocation doesn&amp;rsquo;t make any real difference in terms of performance since ESXi 6.5/6.7 (but may be needed for licensing compliance).&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s what the VM metrics looked like:
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-stats.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-stats.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;Monthly CPU Stats&#34;&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-stats.png&#34;
 	
-	&lt;figcaption&gt;Monthly CPU Stats&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Monthly CPU Stats&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;Migrating to another ESXi host in the cluster made no difference. The host servers in the cluster were all running at about 50% load, so it didn&amp;rsquo;t seem to be an oversubscription issue (my first suspicion).&lt;/p&gt;
 &lt;p&gt;Even doubling the resources (to 16 vCPU, 32GB RAM) on a VM made no real difference in performance, although I could see that the VM CPU load dropped to about 30% from 50%.&lt;/p&gt;
 &lt;p&gt;I found the CPU Ready Time metric and after reading up on what it was and what acceptable values should be, figured out that the problem was that the VM&amp;rsquo;s CPU couldn&amp;rsquo;t get &lt;em&gt;scheduled time&lt;/em&gt; on the host server.&lt;br&gt;
 &lt;em&gt;CPU Ready Time in VSphere is a metric that records the amount of time that a VM is ready to use CPU, but cannot because all CPU resources (on an ESXi host) are busy.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-wait.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-wait.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;CPU Ready Time&#34;&gt;
-	&lt;/a&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-wait.png&#34;
 	
-	&lt;figcaption&gt;CPU Ready Time&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;CPU Ready Time&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;The VM in question was averaging 1000 second wait time for each CPU call (1.05M ms) over the prior day. VMWare documentation suggests that CPU Ready Time at or over 5% could indicate a performance problem. I quickly crunched some numbers using the &lt;a class=&#34;link&#34; href=&#34;https://vmcalc.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;vmcalc.com&lt;/a&gt; website. An average wait time of 1046000ms works out to a CPU Ready Time of about 656%&amp;hellip; well above the 5% threshold!&lt;/p&gt;
 &lt;p&gt;I compared the PKI Server&amp;rsquo;s CPU Ready Time (1.05M ms) to that of a random server on another cluster, which had an average of just 30 ms!&lt;/p&gt;
 &lt;p&gt;I worked with a colleague to find the cause of this CPU throttling, which turned out to be a Resource Group limit set on the entire PKI &amp;lsquo;folder&amp;rsquo;, affecting 27 VMs.&lt;/p&gt;
 &lt;p&gt;We changed the CPU Limit from 30,000 MHz to 60,000 Mhz, effectively doubling the amount of CPU that the servers in this PKI group could consume.&lt;/p&gt;
-&lt;p&gt;&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-policy.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-policy.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;Resource Policy&#34;&gt;
-	&lt;/a&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-policy.png&#34;
 	
-	&lt;figcaption&gt;Resource Policy&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Resource Policy&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;We also checked each VM to make sure that limits were not set on individual VMs. Each one &lt;em&gt;did&lt;/em&gt; have the CPU capped to 19200 MHz, which works out to 2.4GHz (when all 8 vCPU are considered). An effective 2.4GHz vCPU rate should be enough to run PKI, so this was contributing to the performance issue that the PKI team was experiencing.&lt;/p&gt;
 &lt;p&gt;After applying the Limit change, we immediately saw the CPU Ready Time drop on the PKI VMs to something in the 300-400 ms range.&lt;br&gt;
 It doesn&amp;rsquo;t show well in this image because the scale is too vast, but you can clearly see it drop off from 40000-80000 ms to a negligable level.&lt;/p&gt;
-&lt;p&gt;&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/cpu-ready-fixed.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-fixed.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;CPU Performance&#34;&gt;
-	&lt;/a&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-fixed.png&#34;
 	
-	&lt;figcaption&gt;CPU Performance&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;CPU Performance&#34;
+	
+	
+&gt;&lt;/p&gt;
 </description>
         </item>
         <item>
@@ -519,20 +495,16 @@ C:\apps\ovftool&amp;gt;
         <guid>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</guid>
         <description>&lt;p&gt;I ran into an issue this week where a work server stopped booting after a linux kernel patch (3.10.0-xxxx.83.xxxx) was deployed.&lt;/p&gt;
 &lt;p&gt;The server would always get &amp;lsquo;stuck&amp;rsquo; trying to load drivers for an Avocent USB Keyboard/Mouse. These seemed to be the Dell iDRAC drivers, because the virtual console lacked keyboard/mouse inputs.&lt;/p&gt;
-&lt;p&gt;&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/initrd.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/initrd.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;Linux Error&#34;&gt;
-	&lt;/a&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/initrd.png&#34;
 	
-	&lt;figcaption&gt;Linux Error&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Linux Error&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;If the old kernel (3.10.0-1160.80.xxxx) was selected during boot, the OS loaded properly. I&amp;rsquo;m not a Unix expert, so I looped in one of my colleagues.&lt;/p&gt;
 &lt;p&gt;He explained that the kernel was trying to use old (or corrupted) drivers from the &lt;code&gt;initrd&lt;/code&gt; (initial ram disk) scheme. These drivers can be rebuilt by running &lt;code&gt;yum install kernel&lt;/code&gt;.&lt;br&gt;
 After running the command, I rebooted the server which booted properly.&lt;/p&gt;
@@ -621,8 +593,8 @@ Successfully created new volume: 577b5b9f-bf67afef-822f-246e960d8318
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ln -snf /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318 /store
 ln -snf /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318 /locker
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After a reboot, I found another host server running the same ESXi version and path level, then copied the contents of the store to my newly formatted partition. After another reboot (just to be safe), I was able to patch the host server without any problems.&lt;/p&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;An article I referenced when figuring this out was:&lt;br&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;An article I referenced when figuring this out was:&lt;br&gt;
 &lt;a class=&#34;link&#34; href=&#34;https://blog.ntitta.in/?p=254&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Fixing the broken/corrupt Locker Partition on Esxi&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -724,8 +696,8 @@ $login_to_be_granted_access = &amp;#34;[CONTOSO\PatK]&amp;#34;
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;li&gt;Exit, and restart the service normally&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-ver16&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-ver16&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Connect to SQL Server when system administrators are locked out&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
@@ -958,44 +930,32 @@ At this point, I noticed that while the IP was correct, DNS reverted to old entr
 &lt;ol&gt;
 &lt;li&gt;Reboot the server. We need to edit the startup configuration in order to reset the ROOT password.&lt;/li&gt;
 &lt;li&gt;As the server begins to boot again, the GRUB screen will appear for a few seconds. Press a key in order to interrupt the boot sequence.&lt;br&gt;
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/rhel-boot-1.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-1.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-1.png&#34;
 	
-&lt;/figure&gt;&lt;/li&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
 &lt;li&gt;If you interrupted the boot in time, you&amp;rsquo;ll be presented with a menu. Use the arrow keys to select the top option and press E.
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/rhel-boot-2.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-2.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-2.png&#34;
 	
-&lt;/figure&gt;&lt;/li&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
 &lt;li&gt;Use the arrow keys to highlight the line starting with &lt;em&gt;kernel&lt;/em&gt; and press E.
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/rhel-boot-3.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-3.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-3.png&#34;
 	
-&lt;/figure&gt;&lt;/li&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
 &lt;li&gt;Add the word &lt;em&gt;single&lt;/em&gt; to the end of the line you&amp;rsquo;re editing, and press ENTER to save the change. This instructs the boot process to load in single user mode:&lt;br&gt;
 &lt;code&gt;kernel /vmlinuz-2.6.9-55.ELsmp ro root=LABEL=/1 nousb single&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Press &lt;code&gt;b&lt;/code&gt; to continue the boot process.&lt;/li&gt;
@@ -1155,8 +1115,8 @@ Generate the new SPN: &lt;code&gt;setspn -S HOST/STS.COMPANY.COM DOMAIN\ADFS-GMS
 &lt;p&gt;Cleanup tools and powershell modules.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;I derived this article from my Reddit posts on the matter:&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;I derived this article from my Reddit posts on the matter:&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.reddit.com/r/adfs/comments/hmghnf/service_account_to_gmsa/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Service Account to gMSA?&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.reddit.com/r/adfs/comments/n7f2py/service_account_to_gmsa_success/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -1181,8 +1141,8 @@ Next, I uploaded the 80GB VMDK file to our local ESXi cluster. A couple of hours
 &lt;li&gt;Under Storage category, select the destination datastore. Under the &lt;strong&gt;Disk Format&lt;/strong&gt; option select &lt;strong&gt;Thin Provision&lt;/strong&gt;, and click &lt;strong&gt;Next&lt;/strong&gt;.&lt;/li&gt;
 &lt;li&gt;In Step 3 of the Wizard (Ready to Complete), review the information and click &lt;strong&gt;Finish&lt;/strong&gt;.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2014832&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2014832&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Changing the thick or thin provisioning of a virtual disk (2014832)&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
@@ -1194,20 +1154,16 @@ Next, I uploaded the 80GB VMDK file to our local ESXi cluster. A couple of hours
         <guid>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</guid>
         <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where patches had been sorely neglected for a couple of years. There were a number of HP DL380 G9 servers still running iLO 1.4. Once I gained access to iLO, I started by upgrading those HP servers to iLO 2.79, the most recent version.&lt;/p&gt;
 &lt;p&gt;After the mandatory reboot to apply the new iLO firmware, 2/3 of the servers now displayed an iLO login screen warning of &lt;code&gt;Embedded Flash\NAND error&lt;/code&gt;:
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/iLO-nand-error.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/iLO-nand-error.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;fantastic excel art&#34;&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/iLO-nand-error.png&#34;
 	
-	&lt;figcaption&gt;fantastic excel art&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;fantastic excel art&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;I found HP Knowledge Base article &lt;code&gt;Document ID: c04996097&lt;/code&gt; outlining my symptoms.&lt;/p&gt;
 &lt;p&gt;I started by resetting iLO and cycling the server, which had no effect.&lt;br&gt;
 The next step was to format the NAND:&lt;/p&gt;
@@ -1225,8 +1181,8 @@ The next step was to format the NAND:&lt;/p&gt;
 &lt;p&gt;After the mandatory reboot, the same error was displayed on the iLO login page.
 The next suggestion in the article (if the NAND reset didn&amp;rsquo;t work) was to perform a cold boot of the server. I shut down the server, removed the power cord for 15 seconds, plugged in the cord again and started the server.&lt;/p&gt;
 &lt;p&gt;This time iLO didn&amp;rsquo;t complain about problems with the flash memory. Hurrah!&lt;/p&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;The articles I referenced when figuring this out were:
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;The articles I referenced when figuring this out were:
 &lt;a class=&#34;link&#34; href=&#34;https://support.hpe.com/hpesc/public/docDisplay?docId=emr_na-c04996097&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;HPE Integrated Lights-Out 4 (iLO 4) - HPE Active Health System (AHS) Logs and HPE OneView Profiles May Be Unavailable Causing iLO Self-Test Error 8192, Embedded Media Manager and Other Errors&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://support.hpe.com/hpesc/public/docDisplay?docId=emr_na-a00048622en_us&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -1315,8 +1271,8 @@ Log file: /var/log/vmsa-2021-0028_2021_12_21_20_55_17.log
 ROOT@servername [ ~ ]:
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;The articles I referenced when figuring this out were:&lt;br&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;The articles I referenced when figuring this out were:&lt;br&gt;
 &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/87081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Workaround instructions to address CVE-2021-44228 and CVE-2021-45046 in vCenter Server and vCenter Cloud Gateway (87081)&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.virtubytes.com/2021/12/15/mitigate-log4j-vmware-vulnerability-workaround&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -1470,8 +1426,8 @@ Then, validate that Indexing is set correctly on all the databases: &lt;code&gt;
         <description>&lt;p&gt;I recently completed the &lt;a class=&#34;link&#34; href=&#34;https://reddit.com/r/linuxupskillchallenge&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Linux Upskill Challenge&lt;/a&gt;, a month-long, self-paced, self-led course curated on Reddit. It&amp;rsquo;s hands-on and is best run with a publically accessible remote server, so that you&amp;rsquo;re mimicing a production server that your organization might host online. (There&amp;rsquo;s &lt;em&gt;less pressure&lt;/em&gt; in administering a server that&amp;rsquo;s only locally available!)&lt;/p&gt;
 &lt;p&gt;These are my thoughts and notes about each day&amp;rsquo;s content - not formal study notes, but informal jot notes on the things I found interesting and important.&lt;/p&gt;
-&lt;h1 id=&#34;rlinuxupskillschallenge&#34;&gt;/r/linuxupskillschallenge&lt;/h1&gt;
-&lt;p&gt;&lt;strong&gt;Day 0 - Getting Started&lt;/strong&gt;&lt;br&gt;
+&lt;h1 id=&#34;rlinuxupskillschallenge&#34;&gt;/r/linuxupskillschallenge
+&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;Day 0 - Getting Started&lt;/strong&gt;&lt;br&gt;
 Created new Azure Ubuntu VM. Used SSH key for authentication.&lt;br&gt;
 Azure returned a .PEM file. Kitty won&amp;rsquo;t take this - I had to use puttygen.exe to load the PEM and output a PPK. I then created a Kitty profile using this PPK (Connection -&amp;gt; SSH -&amp;gt; Auth) and username &lt;code&gt;azureuser&lt;/code&gt; (Connection -&amp;gt; Data -&amp;gt; Autologin username)&lt;br&gt;
 &lt;a class=&#34;link&#34; href=&#34;https://docs.bitnami.com/azure/faq/get-started/connect-ssh/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -1686,8 +1642,8 @@ Scripts typically start with &lt;code&gt;#!/bin/bash&lt;/code&gt;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Save the file.&lt;/p&gt;
 &lt;p&gt;That’s really all you have to do to set the Google Analytics Tracking ID in Hugo. My theme - &lt;a class=&#34;link&#34; href=&#34;https://docs.stack.jimmycai.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;hugo-stack-theme&lt;/a&gt;] - automatically has support for this internal template, so my site started sending tracking data to Google Analytics right away.&lt;/p&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;An article I referenced when figuring this out was:&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;An article I referenced when figuring this out was:&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://cloudywithachanceofdevops.com/posts/2018/05/17/setting-up-google-analytics-on-hugo/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Setting Up Google Analytics on Hugo&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -1724,12 +1680,12 @@ This automatic trim also occurs when formatting a file according to the language
 I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to update two Netscaler appliances with the same certificate: if the CN matched certain values, the script will find the same Let&amp;rsquo;s Encrypt certificate .pfx, upload it to the Netscaler at our warm Disaster Recovery site and properly bind it.&lt;/p&gt;
 &lt;p&gt;To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/powershell-netscaler-api/&#34; &gt;Powershell &amp;amp; Netscaler API&lt;/a&gt;. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.&lt;/p&gt;
 &lt;p&gt;According to the &lt;a class=&#34;link&#34; href=&#34;https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/12.1/configuration/ssl/sslcertkey/sslcertkey/#link&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Citrix ADC NITRO API Reference&lt;/a&gt;, I need:&lt;br&gt;
-&lt;strong&gt;URL:&lt;/strong&gt; http://&amp;lt;Citrix-ADC-IP-address(NSIP)&amp;gt;/nitro/v1/config/sslcertkey?action=link&lt;br&gt;
-&lt;strong&gt;HTTP Method:&lt;/strong&gt; POST&lt;br&gt;
-&lt;strong&gt;Request Headers:&lt;/strong&gt; Cookie:NITRO_AUTH_TOKEN=&lt;!-- raw HTML omitted --&gt; Content-Type:application/json&lt;br&gt;
-&lt;strong&gt;Request Payload:&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &gt;Citrix ADC NITRO API Reference&lt;/a&gt;, I need:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**URL:** http://&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;Citrix-ADC-IP-address&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;NSIP&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;/nitro/v1/config/sslcertkey?action=link  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**HTTP Method:** POST  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**Request Headers:** Cookie:NITRO_AUTH_TOKEN=&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;tokenvalue&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; Content-Type:application/json  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**Request Payload:**
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;s2&#34;&gt;&amp;#34;sslcertkey&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;s2&#34;&gt;&amp;#34;certkey&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String_value&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;,&lt;/span&gt;
@@ -1767,8 +1723,8 @@ I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to up
 &lt;/ol&gt;
 &lt;p&gt;If you&amp;rsquo;ve stuck with me so far, now we come to the payoff - a working Management Tunnel! Let&amp;rsquo;s jump in.&lt;/p&gt;
 &lt;p&gt;This article is based on my jot notes. There may be missing steps or information, although I&amp;rsquo;ve tried my best to make sure everything is here, at least at a high-level. I use a mix of CLI and ASDM when working on the ASA, so be prepared to jump around a little.&lt;/p&gt;
-&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
-&lt;ul&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements
+&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;Requires ASA 9.0.1 (or later) and ASDM 7.10.1 (or later)&lt;/li&gt;
 &lt;li&gt;Connects whenever the user initiated VPN tunnel is disconnected, before or after user login. The Management VPN tunnel is not established when a trusted network is detected by the Trusted Network Detection (TND) feature or when an AnyConnect software update is in progress.&lt;/li&gt;
 &lt;li&gt;Disconnects whenever the user initiates a VPN tunnel, before or after user login.&lt;/li&gt;
@@ -1777,11 +1733,11 @@ I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to up
 &lt;li&gt;Works with backup server list.&lt;/li&gt;
 &lt;li&gt;Currently available only on Windows and macOS. Linux support will be added in subsequent releases.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;install-certificates&#34;&gt;Install Certificates&lt;/h2&gt;
-&lt;p&gt;If you don&amp;rsquo;t already have your Issuing CA certificate installed on the ASA, you&amp;rsquo;ll need to do that. I used the ASDM: Device Management &amp;gt; Certificate Management &amp;gt; CA Certificates. We can import it directly from the NDES/SCEP server we just set up by clicking &amp;lsquo;Add&amp;rsquo; and entering the proper information. It should be something like: &lt;code&gt;http://10.0.0.1/certsrv/mscep/mscep.dll&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-certificates&#34;&gt;Install Certificates
+&lt;/h2&gt;&lt;p&gt;If you don&amp;rsquo;t already have your Issuing CA certificate installed on the ASA, you&amp;rsquo;ll need to do that. I used the ASDM: Device Management &amp;gt; Certificate Management &amp;gt; CA Certificates. We can import it directly from the NDES/SCEP server we just set up by clicking &amp;lsquo;Add&amp;rsquo; and entering the proper information. It should be something like: &lt;code&gt;http://10.0.0.1/certsrv/mscep/mscep.dll&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Note: We will need two Profiles - one for Users to authenticate to and get the certificate, and one for the actual Management Tunnel&lt;/em&gt;. I&amp;rsquo;ll call it the User Tunnel just to be clear, and we&amp;rsquo;ll work on it first.&lt;/p&gt;
-&lt;h2 id=&#34;create-a-new-vpn-connection-profile&#34;&gt;Create a new VPN Connection Profile&lt;/h2&gt;
-&lt;p&gt;Create a new VPN Connection profile on the ASA via. ASDM. I called mine &amp;ldquo;Helpdesk&amp;rdquo;, since that&amp;rsquo;s who my pilot testers will be. I don&amp;rsquo;t want to mess around with the production VPN that 100+ users are connected to!&lt;/p&gt;
+&lt;h2 id=&#34;create-a-new-vpn-connection-profile&#34;&gt;Create a new VPN Connection Profile
+&lt;/h2&gt;&lt;p&gt;Create a new VPN Connection profile on the ASA via. ASDM. I called mine &amp;ldquo;Helpdesk&amp;rdquo;, since that&amp;rsquo;s who my pilot testers will be. I don&amp;rsquo;t want to mess around with the production VPN that 100+ users are connected to!&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Set the Authentiction method &lt;code&gt;AAA and certificate&lt;/code&gt;.
 &lt;ul&gt;
@@ -1791,16 +1747,16 @@ I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to up
 &lt;li&gt;Configure DHCP, DNS and the domain name&lt;/li&gt;
 &lt;li&gt;Enable SCEP Enrollment (Advanced\General)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;set-group-policy-to-use-scep&#34;&gt;Set Group Policy to use SCEP&lt;/h2&gt;
-&lt;p&gt;The Group Policy will need to be edited as well. Either edit an existing one, or create a new one and associate it with the previously created Connection Profile.
+&lt;h2 id=&#34;set-group-policy-to-use-scep&#34;&gt;Set Group Policy to use SCEP
+&lt;/h2&gt;&lt;p&gt;The Group Policy will need to be edited as well. Either edit an existing one, or create a new one and associate it with the previously created Connection Profile.
 I did this via. CLI, under a group policy named Helpdesk:
 group-policy Helpdesk attributes
 scep-forwarding-url value &lt;a class=&#34;link&#34; href=&#34;http://server.corp.company.com/certsrv/mscep/mscep.dll&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;http://server.corp.company.com/certsrv/mscep/mscep.dll&lt;/a&gt;
 exit
 I prefer the CLI for this because it gives instant feedback about the success or failure. If you happen to disregard the requirement that NDES is NOT installed on your CA, then this step will repeatedly fail. &amp;hellip;Or so I&amp;rsquo;ve heard :)&lt;/p&gt;
-&lt;h2 id=&#34;edit-client-profile&#34;&gt;Edit Client Profile&lt;/h2&gt;
-&lt;p&gt;These next steps are best done in the ASDM, because the output is XML files. CLI cannot manipulate them directly.&lt;/p&gt;
+&lt;h2 id=&#34;edit-client-profile&#34;&gt;Edit Client Profile
+&lt;/h2&gt;&lt;p&gt;These next steps are best done in the ASDM, because the output is XML files. CLI cannot manipulate them directly.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Open the Client Profile that you&amp;rsquo;ll use for the User Tunnel - mine is called &amp;lsquo;Helpdesk&amp;rsquo;.&lt;/li&gt;
 &lt;li&gt;Open the &lt;em&gt;Preferences (Part 2)&lt;/em&gt; page.
@@ -1831,8 +1787,8 @@ I prefer the CLI for this because it gives instant feedback about the success or
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;create-the-management-tunnel-group-group-policy&#34;&gt;Create the Management Tunnel Group, Group Policy&lt;/h2&gt;
-&lt;p&gt;Back to the CLI! We&amp;rsquo;ll create a Management Tunnel Profile, and link it to our existing Split-Tunnel list. &lt;em&gt;Please note, the Profile name is case-sensitive!&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-the-management-tunnel-group-group-policy&#34;&gt;Create the Management Tunnel Group, Group Policy
+&lt;/h2&gt;&lt;p&gt;Back to the CLI! We&amp;rsquo;ll create a Management Tunnel Profile, and link it to our existing Split-Tunnel list. &lt;em&gt;Please note, the Profile name is case-sensitive!&lt;/em&gt;&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;group-policy Management internal
 group-policy Management attributes
  dns-server value 192.168.1.23 192.168.1.24
@@ -1851,8 +1807,8 @@ tunnel-group Management webvpn-attributes
  group-alias Management enable
  group-url https://vpn.company.com/Management enable
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The &amp;lsquo;Client Bypass Protocol&amp;rsquo; needs to be enabled if you don&amp;rsquo;t have BOTH IPv4 and IPv6 address pools configured to issue IP addresses. If you only have IPv4, like me, then the Client Bypass Protocol must be enabled. If it’s not, and the everything else is configured correctly, you’ll see the Management Connection State show as &amp;ldquo;Disconnected (invalid VPN configuration)&amp;rdquo;&lt;/p&gt;
-&lt;h2 id=&#34;create-the-management-tunnel-profile&#34;&gt;Create the Management Tunnel Profile&lt;/h2&gt;
-&lt;p&gt;Back to ASDM! Add an AnyConnect Client Profile under Remote Access VPN &amp;gt; Network (Client) Access &amp;gt; AnyConnect Client Profile:&lt;/p&gt;
+&lt;h2 id=&#34;create-the-management-tunnel-profile&#34;&gt;Create the Management Tunnel Profile
+&lt;/h2&gt;&lt;p&gt;Back to ASDM! Add an AnyConnect Client Profile under Remote Access VPN &amp;gt; Network (Client) Access &amp;gt; AnyConnect Client Profile:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Enter a Profile Name&lt;/li&gt;
 &lt;li&gt;Select &amp;lsquo;AnyConnect Management VPN Profile&amp;rsquo; from the Profile Usage dropdown box. The resulting profile will have an &lt;code&gt;.vpnm&lt;/code&gt; extension.&lt;/li&gt;
@@ -1880,42 +1836,34 @@ tunnel-group Management webvpn-attributes
 &lt;li&gt;Click Add. Enter a Display Name (which doesn&amp;rsquo;t seem to actually be used anywhere else).&lt;/li&gt;
 &lt;li&gt;Under FQDN, enter the same value that&amp;rsquo;s in your User Tunnel - vpn.company.com for example.&lt;/li&gt;
 &lt;li&gt;Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&amp;rsquo;s &lt;code&gt;Management&lt;/code&gt; .&lt;br&gt;
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/asdm-management-profile-server-list.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/asdm-management-profile-server-list.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/asdm-management-profile-server-list.png&#34;
 	
-&lt;/figure&gt;&lt;/li&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
 &lt;li&gt;Click OK until you&amp;rsquo;re back at the main ASDM page, then click Apply to write the changes.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;At this point, everything should be setup. Let&amp;rsquo;s test.&lt;/p&gt;
-&lt;h2 id=&#34;management-tunnel-behaviour&#34;&gt;Management Tunnel Behaviour&lt;/h2&gt;
-&lt;p&gt;Load AnyConnect and establish a connection to your User Tunnel as usual. After successfully connecting, the ASA will contact the NDES for certificate enrollment on your behalf. After a few seconds, AnyConnect will issue a notice:
+&lt;h2 id=&#34;management-tunnel-behaviour&#34;&gt;Management Tunnel Behaviour
+&lt;/h2&gt;&lt;p&gt;Load AnyConnect and establish a connection to your User Tunnel as usual. After successfully connecting, the ASA will contact the NDES for certificate enrollment on your behalf. After a few seconds, AnyConnect will issue a notice:
 popup-certificate-enrollment-succeeded.png)
 Click OK to acknowledge the notice. AnyConnect will indeed disconnect you and try to re-establish a connection. You can either authenticate and establish a User Tunnel, or click Cancel. If you click Cancel, AnyConnect will take a few minutes to perform Trusted Network Detection, determine you&amp;rsquo;re not on the corporate network, then transparently establish the Management Tunnel using your certificate. You can see the Management Tunnel status in the AnyConnect client Statistics:
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34;
 	
-&lt;/figure&gt;&lt;br&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;br&gt;
 When you connect back to a User Tunnel, the Management Tunnel will disconnect and show &lt;code&gt;Disconnected (user tunnel active)&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;behind-the-scenes&#34;&gt;Behind The Scenes&lt;/h2&gt;
-&lt;p&gt;AnyConnect actually grabs 2 certificates based on your VPN username and stores them in &lt;code&gt;Local User Certificates\Personal\Certificates&lt;/code&gt; and &lt;code&gt;Local Machine Certificates\Personal\Certificates&lt;/code&gt;. If you created a standard certificate template, NDES issues them with a 1 year validity period. However, AnyConnect inspects the &amp;lsquo;Date Issued&amp;rsquo; field and compares the age to the value set under &lt;code&gt;Certificate Expiration Threshold (days)&lt;/code&gt;. If the value = 2, then if the certificate is older than 2 days, AnyConnect will request another certificate the next time a VPN session is established.&lt;/p&gt;
+&lt;h2 id=&#34;behind-the-scenes&#34;&gt;Behind The Scenes
+&lt;/h2&gt;&lt;p&gt;AnyConnect actually grabs 2 certificates based on your VPN username and stores them in &lt;code&gt;Local User Certificates\Personal\Certificates&lt;/code&gt; and &lt;code&gt;Local Machine Certificates\Personal\Certificates&lt;/code&gt;. If you created a standard certificate template, NDES issues them with a 1 year validity period. However, AnyConnect inspects the &amp;lsquo;Date Issued&amp;rsquo; field and compares the age to the value set under &lt;code&gt;Certificate Expiration Threshold (days)&lt;/code&gt;. If the value = 2, then if the certificate is older than 2 days, AnyConnect will request another certificate the next time a VPN session is established.&lt;/p&gt;
 &lt;p&gt;If you need to delete your certificates during testing and pilot use:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -1930,8 +1878,8 @@ When you connect back to a User Tunnel, the Management Tunnel will disconnect an
 &lt;/ul&gt;
 &lt;p&gt;I also had to adjust the Dynamic Access Policy in use by the User Profile. We were checking for the presence of a certain AV product, but it was causing problems. Now we don&amp;rsquo;t check that, but check for other things.&lt;/p&gt;
 &lt;p&gt;I also originally set &lt;code&gt;anyconnect-custom-data ManagementTunnelAllAllowed Value true/true&lt;/code&gt; based on another article I&amp;rsquo;d read, but this is not necessary.&lt;/p&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://technook.home.blog/2019/07/11/cisco-anyconnect-managent-vpn-tunnel-microsoft-ca/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Cisco AnyConnect Management VPN Tunnel (Microsoft CA)&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.cisco.com/c/en/us/support/docs/security/adaptive-security-appliance-asa-software/215442-configure-anyconnect-management-vpn-tunn.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -1952,13 +1900,13 @@ When you connect back to a User Tunnel, the Management Tunnel will disconnect an
 &lt;/ol&gt;
 &lt;p&gt;Since an AnyConnect Management Tunnel seems like it will help resolve my organization&amp;rsquo;s work-from-home challenges, let&amp;rsquo;s setup a pilot.&lt;/p&gt;
 &lt;p&gt;The first thing we need to do is configure the certificates that are needed for user authentication.&lt;/p&gt;
-&lt;h2 id=&#34;install-and-configure-ndes&#34;&gt;Install and Configure NDES&lt;/h2&gt;
-&lt;p&gt;We already have a dedicated server running AD Certificate Services (AD CS), acting as our Certificate Authority (CA). Network Device Enrollment Service (NDES) acts as a registration authority for a CA using Simple Certificate Enrollment Protocol (SCEP). The CA has to fully trust the NDES to verify inbound certificate requests. The result is that NDES owns an extremely powerful type of certificate (Exchange Enrollment Agent (Offline request)), which allows NDES to request certificates with almost any subject from the CA. All of that to say, it&amp;rsquo;s important to secure NDES as much as warranted.&lt;/p&gt;
+&lt;h2 id=&#34;install-and-configure-ndes&#34;&gt;Install and Configure NDES
+&lt;/h2&gt;&lt;p&gt;We already have a dedicated server running AD Certificate Services (AD CS), acting as our Certificate Authority (CA). Network Device Enrollment Service (NDES) acts as a registration authority for a CA using Simple Certificate Enrollment Protocol (SCEP). The CA has to fully trust the NDES to verify inbound certificate requests. The result is that NDES owns an extremely powerful type of certificate (Exchange Enrollment Agent (Offline request)), which allows NDES to request certificates with almost any subject from the CA. All of that to say, it&amp;rsquo;s important to secure NDES as much as warranted.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;The most important advice I can give is to pay attention to the warning that &lt;strong&gt;NDES cannot run on a CA Server&lt;/strong&gt;!&lt;/em&gt;
 Don&amp;rsquo;t ask me how I know.&lt;/p&gt;
 &lt;p&gt;I decided to piggyback NDES on an existing Windows 2016 server we have, so I was able to use Powershell for most of the heavy lifting. I usually roll with Powershell 7, but there are steps that require Powershell 5.1. I&amp;rsquo;ll try to be clear about when Powershell 5.1 is needed.&lt;/p&gt;
-&lt;h3 id=&#34;create-gmsa&#34;&gt;Create gMSA&lt;/h3&gt;
-&lt;p&gt;Let&amp;rsquo;s start by creating (and testing the creation of) the gMSA:&lt;/p&gt;
+&lt;h3 id=&#34;create-gmsa&#34;&gt;Create gMSA
+&lt;/h3&gt;&lt;p&gt;Let&amp;rsquo;s start by creating (and testing the creation of) the gMSA:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;New-ADServiceAccount&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-DNSHostName&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;company&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;com&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-PrincipalsAllowedToRetrieveManagedPassword&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SERVER&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Enter-PSSession&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;corpca&lt;/span&gt;
@@ -1966,11 +1914,11 @@ Don&amp;rsquo;t ask me how I know.&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Install-ADServiceAccount&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Test-ADServiceAccount&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;exit&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;install-ndes&#34;&gt;Install NDES&lt;/h3&gt;
-&lt;p&gt;You can&amp;rsquo;t install NDES as a gMSA, but we&amp;rsquo;ll convert it later. I&amp;rsquo;m going to use my admin account for the initial installation, and convert it to a gMSA later. You cannot initially install it as a gMSA. Let&amp;rsquo;s install the NDES role first:&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;install-ndes&#34;&gt;Install NDES
+&lt;/h3&gt;&lt;p&gt;You can&amp;rsquo;t install NDES as a gMSA, but we&amp;rsquo;ll convert it later. I&amp;rsquo;m going to use my admin account for the initial installation, and convert it to a gMSA later. You cannot initially install it as a gMSA. Let&amp;rsquo;s install the NDES role first:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;#Install-AdcsNetworkDeviceEnrollmentService -Force -ServiceAccountName &amp;#34;CORP\admin&amp;#34; -ServiceAccountPassword &amp;#34;System.Security.SecureString&amp;#34; -RAName &amp;#34;SERVER-MSCEP-RA&amp;#34; -RAEmail &amp;#34;helpdesk@company.com&amp;#34; -RACompany &amp;#34;Company&amp;#34; -RADepartment &amp;#34;IT-CNS&amp;#34; -RACity &amp;#34;Guelph&amp;#34; -RAState &amp;#34;Ontario&amp;#34; -RACountry &amp;#34;CA&amp;#34; -SigningProviderName &amp;#34;Microsoft Strong Cryptographic Provider&amp;#34; -SigningKeyLength &amp;#34;2048&amp;#34; -EncryptionProviderName &amp;#34;Microsoft Strong Cryptographic Provider&amp;#34; -EncryptionKeyLength &amp;#34;2048&amp;#34; -CAConfig &amp;#34;corpca.corp.company.com\Company Corporate Issuing CA&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;configure-iis&#34;&gt;Configure IIS&lt;/h3&gt;
-&lt;p&gt;Now, add the installation account to the IIS_IUSRS group:&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;configure-iis&#34;&gt;Configure IIS
+&lt;/h3&gt;&lt;p&gt;Now, add the installation account to the IIS_IUSRS group:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Add-LocalGroupMember&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Group&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IIS_IUSRS&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Member&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;admin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Since NDES was installed on a server with the Web Enrollment server role, the IIS virtual directories won&amp;rsquo;t show. However, the site is still working and vsible under the IIS Applications, and IIS Application Pools pages. We need to use &lt;em&gt;Powershell 5.1&lt;/em&gt; to check that SSL is properly set on the MSCEP_ADMIN site by first querying the current values, then setting them:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Get-WebConfigurationProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-pspath&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MACHINE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WEBROOT&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APPHOST&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-location&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;Default&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Web&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Site&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CertSrv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mscep_admin&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-filter&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;webServer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;security&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;access&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sslFlags&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt;
@@ -1978,8 +1926,8 @@ Don&amp;rsquo;t ask me how I know.&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To return to the stock IIS settings, run this command from &lt;em&gt;Powershell 5.1&lt;/em&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Set-WebConfigurationProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-pspath&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MACHINE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WEBROOT&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APPHOST&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-location&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;Default&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Web&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Site&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CertSrv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mscep_admin&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-filter&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;webServer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;security&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;access&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sslFlags&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-value&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;`&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The SCEP site (MSCEP) &lt;em&gt;must&lt;/em&gt; remain accessible via. HTTP, as that&amp;rsquo;s the only mechanism that the ASA supports.&lt;/p&gt;
-&lt;h2 id=&#34;run-ndes-under-a-gmsa&#34;&gt;Run NDES under a gMSA&lt;/h2&gt;
-&lt;p&gt;Next, I used the IIS GUI to change the SCEP application pool identity (which is actually the NDES Application Pool) to the gMSA (under Advanced Settings), and restarted IIS.&lt;/p&gt;
+&lt;h2 id=&#34;run-ndes-under-a-gmsa&#34;&gt;Run NDES under a gMSA
+&lt;/h2&gt;&lt;p&gt;Next, I used the IIS GUI to change the SCEP application pool identity (which is actually the NDES Application Pool) to the gMSA (under Advanced Settings), and restarted IIS.&lt;/p&gt;
 &lt;p&gt;Since we&amp;rsquo;re using a gMSA, I need to grant that account permissions to manage the private key for the certs we have, but it needs to be done via. powershell since remote GUI access doesn&amp;rsquo;t support it. I modified a script from &lt;a class=&#34;link&#34; href=&#34;https://www.codyhosterman.com/2019/06/assigning-read-access-to-windows-private-key/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Assigning Read Access to Windows Private Key&lt;/a&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;foreach&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$certobj&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;gci &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cert&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;localmachine&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;my&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;where &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;subject&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-like&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;E=helpdesk*&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;})){&lt;/span&gt;
@@ -2017,8 +1965,8 @@ Don&amp;rsquo;t ask me how I know.&lt;/p&gt;
 Change the default GeneralTemplateProperty registry value from &amp;ldquo;IPSECIntermediateOffline&amp;rdquo; to &amp;ldquo;AnyConnect&amp;rdquo;, and set NDES to not require a password:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Set-ItemProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HKLM&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SOFTWARE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Microsoft&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Cryptography&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MSCEP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;GeneralPurposeTemplate&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Value&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;AnyConnect&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Set-ItemProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HKLM&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SOFTWARE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Microsoft&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Cryptography&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MSCEP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;EnforcePassword&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;EnforcePassword&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Value&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;create-certificate-template&#34;&gt;Create Certificate Template&lt;/h2&gt;
-&lt;p&gt;Let&amp;rsquo;s create a new template to use for issuing to AnyConnect. I prefer to create new template because we can modify it in many ways not available when we just use the default &amp;lsquo;User&amp;rsquo; template.&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;create-certificate-template&#34;&gt;Create Certificate Template
+&lt;/h2&gt;&lt;p&gt;Let&amp;rsquo;s create a new template to use for issuing to AnyConnect. I prefer to create new template because we can modify it in many ways not available when we just use the default &amp;lsquo;User&amp;rsquo; template.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Open the Certificate Templates MMC.&lt;/li&gt;
 &lt;li&gt;Make a copy of the &amp;lsquo;User&amp;rsquo; template, and configure these settings:
@@ -2035,8 +1983,8 @@ Change the default GeneralTemplateProperty registry value from &amp;ldquo;IPSECI
 &lt;p&gt;In the CA MMC, right-click Certificate Templates, select New, Certificate Template to Issue, then select AnyConnect. Your new template is now ready to issue!
 Reboot the NDES server for the registry settings made earlier to take effect.&lt;/p&gt;
 &lt;p&gt;Now, let&amp;rsquo;s tackle the ASA configuration in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
-&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gsecse.wordpress.com/2015/10/06/ndes-deployment-and-troubleshooting/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;NDES Deployment and troubleshooting&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.sysadmins.lv/retired-msft-blogs/pki/setting-up-ndes-using-a-group-managed-service-account-gmsa.aspx&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -2115,8 +2063,8 @@ In this scenario, a VPN Management Tunnel would establish whenever the user/comp
 &lt;li&gt;Confirm that the certificate is now in use and working&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Honestly, getting the paperwork filled out is the hardest part of the whole process because it gets bounced around and needs to be escalated a certain way (politics). Documenting that hassle isn&amp;rsquo;t going to be useful for anyone else, so let&amp;rsquo;s focus on the technical parts.&lt;/p&gt;
-&lt;h2 id=&#34;generate-a-csr&#34;&gt;Generate a CSR&lt;/h2&gt;
-&lt;p&gt;I&amp;rsquo;ve used the &lt;a class=&#34;link&#34; href=&#34;https://www.certificatetools.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+&lt;h2 id=&#34;generate-a-csr&#34;&gt;Generate a CSR
+&lt;/h2&gt;&lt;p&gt;I&amp;rsquo;ve used the &lt;a class=&#34;link&#34; href=&#34;https://www.certificatetools.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;CertificateTools.com X509 Certificate Generator&lt;/a&gt; site in the past because it can handle SANs (Subject Alternative Name). This particular site needs 4 domains:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;company.com&lt;/li&gt;
@@ -2210,14 +2158,14 @@ Certificate Request:
          dd:d7:24:1d:7f:e9:2b:cd:a4:9b:70:82:8f:ee:8e:1a:49:43:
          a3:54:b2:e7:78:4d:47:5e:f3:08:71:d7:07:a5:af:9e:89:e0:
          bb:50:1a:1f
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;merging-the-cer-and-key-to-create-a-pfx&#34;&gt;Merging the CER and KEY to create a PFX&lt;/h2&gt;
-&lt;p&gt;After sending off the CSR, I received back a certificate (CER) file from the certificate management department. This is the certificate I need, but it does not have the private key attached. If I were to import this, I&amp;rsquo;d get a notice saying that it&amp;rsquo;s missing the private key (&amp;ldquo;You do not have the private key for this certificate&amp;rdquo;). Let&amp;rsquo;s merge the KEY with the CER and generate a PFX, with everything nicely bundled together and protected by a password. Back to openssl:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;merging-the-cer-and-key-to-create-a-pfx&#34;&gt;Merging the CER and KEY to create a PFX
+&lt;/h2&gt;&lt;p&gt;After sending off the CSR, I received back a certificate (CER) file from the certificate management department. This is the certificate I need, but it does not have the private key attached. If I were to import this, I&amp;rsquo;d get a notice saying that it&amp;rsquo;s missing the private key (&amp;ldquo;You do not have the private key for this certificate&amp;rdquo;). Let&amp;rsquo;s merge the KEY with the CER and generate a PFX, with everything nicely bundled together and protected by a password. Back to openssl:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;D:\Apps\OpenSSL\bin&amp;gt;openssl pkcs12 -export -out company.pfx -inkey rsa.private -in ServerCertificate.crt
 Enter Export Password:
 Verifying - Enter Export Password:
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Now that I have the PFX, I can import into Netscaler and bind it to my VSRV.&lt;/p&gt;
-&lt;h2 id=&#34;bind-to-powerapps&#34;&gt;Bind to PowerApps&lt;/h2&gt;
-&lt;p&gt;I also have to upload this to PowerApps and bind it to the proper portal:&lt;/p&gt;
+&lt;h2 id=&#34;bind-to-powerapps&#34;&gt;Bind to PowerApps
+&lt;/h2&gt;&lt;p&gt;I also have to upload this to PowerApps and bind it to the proper portal:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Launch the PowerApps Portals Admin Centre in a browser&lt;/li&gt;
 &lt;li&gt;Click &amp;ldquo;Manage SSL Certificates&amp;rdquo;. You&amp;rsquo;ll see a list of certificates that PowerApps knows about.
@@ -2630,18 +2578,14 @@ Recipients:  Tier3M.Journaling@Company.com;3;3;[{LED=400 4.4.7 The server respon
 &lt;li&gt;Save &amp;amp; test.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;You can see below that at 7:49ish, both the cluster object owners changed from the preferred nodes. I know this since PRTG detected this as &amp;ldquo;2&amp;rdquo;, not &amp;ldquo;1&amp;rdquo;. In any case, after the sensor had been in this state for 60 seconds, the notification task started and moved the cluser objects back to their proper &amp;lsquo;home&amp;rsquo;. The sensor value reset to &amp;ldquo;0&amp;rdquo; clusters on a non-preferred node.&lt;/p&gt;
-&lt;p&gt;&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/prtg-cluster.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/prtg-cluster.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/prtg-cluster.png&#34;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
 </description>
         </item>
         <item>
@@ -3609,12 +3553,12 @@ Press Ctrl+C to stop
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CategoryInfo&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ResourceUnavailable&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\...&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Install-Package&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exception&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FullyQualifiedErrorId&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PackageFailedInstallOrDownload&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Microsoft&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;PowerShell&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;PackageManagement&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Cmdlets&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;InstallPackage&lt;/span&gt; 
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;A similar issue arises with using the Invoke-WebRequest cmdlet. The root cause is that Powershell is trying to connect to a site and there&amp;rsquo;s no agreement on the encryption protocol to use. By default, Powershell uses TLS 1.0 and that&amp;rsquo;s been widely deprecated.&lt;/p&gt;
-&lt;h2 id=&#34;the-background&#34;&gt;The Background&lt;/h2&gt;
-&lt;p&gt;Transport Layer Security (TLS) is the successor to SSL. Starting in 2018, there was a groundswell of (good) advice that TLS 1.0 and 1.1 should be deprecated on websites and in browsers. This was largely adopted across the internet by 2020. That leaves TLS 1.2 as the &lt;em&gt;de facto standard&lt;/em&gt;, with TLS 1.3 adoption rising but not as widespread yet.&lt;/p&gt;
-&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;
-&lt;p&gt;In April 2020, Microsoft disabled support for TLS 1.0 on the Powershell Gallery and now requires TLS 1.2. The issue is that Powershell 5.1 doesn&amp;rsquo;t support this configuration out of the box and the PowershellGet module (1.0.0.1) didn&amp;rsquo;t support TLS 1.2 &lt;em&gt;at all&lt;/em&gt;. Smooth move, Microsoft.&lt;/p&gt;
-&lt;h2 id=&#34;the-solution&#34;&gt;The Solution&lt;/h2&gt;
-&lt;p&gt;Microsoft released a new version of PowershellGet (2.2.4) in April 2020 that supports TLS 1.2. You can install it like this:&lt;/p&gt;
+&lt;h2 id=&#34;the-background&#34;&gt;The Background
+&lt;/h2&gt;&lt;p&gt;Transport Layer Security (TLS) is the successor to SSL. Starting in 2018, there was a groundswell of (good) advice that TLS 1.0 and 1.1 should be deprecated on websites and in browsers. This was largely adopted across the internet by 2020. That leaves TLS 1.2 as the &lt;em&gt;de facto standard&lt;/em&gt;, with TLS 1.3 adoption rising but not as widespread yet.&lt;/p&gt;
+&lt;h2 id=&#34;the-problem&#34;&gt;The Problem
+&lt;/h2&gt;&lt;p&gt;In April 2020, Microsoft disabled support for TLS 1.0 on the Powershell Gallery and now requires TLS 1.2. The issue is that Powershell 5.1 doesn&amp;rsquo;t support this configuration out of the box and the PowershellGet module (1.0.0.1) didn&amp;rsquo;t support TLS 1.2 &lt;em&gt;at all&lt;/em&gt;. Smooth move, Microsoft.&lt;/p&gt;
+&lt;h2 id=&#34;the-solution&#34;&gt;The Solution
+&lt;/h2&gt;&lt;p&gt;Microsoft released a new version of PowershellGet (2.2.4) in April 2020 that supports TLS 1.2. You can install it like this:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Install-Module&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PowerShellGet&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-RequiredVersion&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;2.2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-SkipPublisherCheck&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;By default, Powershell uses whatever the system default settings for crypto:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;Net.ServicePointManager&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SecurityProtocol&lt;/span&gt;
@@ -3710,20 +3654,16 @@ Press Ctrl+C to stop
 &lt;li&gt;PS-Remoting was correctly configured in Powershell&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&amp;hellip; Then I saw it. The network connection icon in the systray said &amp;ldquo;unidentified network&amp;rdquo;.&lt;/p&gt;
-&lt;p&gt;&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/unidentifiednetwork.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/unidentifiednetwork.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;Unidentified Network image&#34;&gt;
-	&lt;/a&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/unidentifiednetwork.png&#34;
 	
-	&lt;figcaption&gt;Unidentified Network image&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Unidentified Network image&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;Of course! Since Windows isn&amp;rsquo;t detecting the network connection as part of the Domain Network, Windows Firewall can&amp;rsquo;t permit my WinRM traffic under the Domain profile rule. The job of reviewing the network configuration (IP Address) and assigning a location to the network is the job of the &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/windows/win32/winsock/the-role-of-nla-2&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Network Location Awareness (NLA)&lt;/a&gt; service. NLA first attempts to identify a logical network by its domain name (DNS). If a logical network does not have a domain name, NLA identifies the network from custom static information stored in the registry, and finally from its subnet address.&lt;/p&gt;
 &lt;p&gt;Fixing this misdetection is quite easy. Off the top of my head, there are at least 3 ways to do this:&lt;/p&gt;
@@ -3811,18 +3751,14 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 &lt;p&gt;I ran a series of packet captures to see if anything looked unusual. Nothing jumped out at me, but I did notice that whenever the packet size exceeded 1500-ish bytes, there were lots of retranmissions and/or errors.&lt;/p&gt;
 &lt;p&gt;Wait! How is it that a server with an MTU of 1500 is sending packets that are 2600 bytes?&lt;/p&gt;
 &lt;p&gt;Wireshark uses winpcap (or libpcap) to grab the data &lt;em&gt;before&lt;/em&gt; it&amp;rsquo;s handed to the NIC:
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/wireshark.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/wireshark.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/wireshark.png&#34;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;Many OS and NIC drivers support &lt;em&gt;TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload&lt;/em&gt; which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&amp;hellip; with offloading enabled, this task is now completed &lt;em&gt;after&lt;/em&gt; Wireshark has grabbed the data, so it&amp;rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.&lt;/p&gt;
 &lt;p&gt;Back to my regularly scheduled commentary&amp;hellip;&lt;/p&gt;
 &lt;p&gt;Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&amp;rsquo;s 1468, which is the largest setting that worked with the Don&amp;rsquo;tFragment flag set, plus the 28 byte IP header. Let&amp;rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:
@@ -3846,18 +3782,14 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;On Windows 2019, this took effect immediately. If it doesn&amp;rsquo;t, a reboot should ensure it applies.
 AD replication - which had been failing - picked right back up as soon as I entered this command.&lt;/p&gt;
 &lt;p&gt;Now, I&amp;rsquo;ve proved that it&amp;rsquo;s an MTU issue, so I&amp;rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp;amp; EType field in the frame. This resulting QinQ frame is often referred to as &amp;lsquo;double tagged&amp;rsquo;.
-&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/qinq.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/qinq.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			&gt;
-	&lt;/a&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/qinq.png&#34;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;You can read more about QinQ in the Cisco article &lt;a class=&#34;link&#34; href=&#34;http://www.cisco.com/en/US/tech/tk389/tk689/technologies_tech_note09186a0080094665.shtml&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Inter-Switch Link and IEEE 802.1Q Frame Format&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -3891,32 +3823,32 @@ NOTE: Your SSH keys must be named id_rsa and id_rsa.pub in order for Git and Git
         
         <guid>https://gbeifuss.github.io/p/powershell-ntmlv1-use/</guid>
         <description>&lt;p&gt;I&amp;rsquo;m in the midst of trying to phase out non-Kerberos authentication traffic in our domain, because &lt;em&gt;it&amp;rsquo;s time&lt;/em&gt;. MS has offered Kerberos since Windows 2000, and the pre-Kerberos options (LANMan, NTLMv1, NTLMv2) are woefully insecure. In fact, MS stopped recommending NTLM for use in applications in 2010. It&amp;rsquo;s still widely in use for compatibility reasons.&lt;/p&gt;
-&lt;h2 id=&#34;the-protocols&#34;&gt;The Protocols&lt;/h2&gt;
-&lt;h3 id=&#34;lanman&#34;&gt;LANMan&lt;/h3&gt;
-&lt;p&gt;LANMan, or LAN Manager, was offered in 1987 and can be easily broken. Among other issues:&lt;/p&gt;
+&lt;h2 id=&#34;the-protocols&#34;&gt;The Protocols
+&lt;/h2&gt;&lt;h3 id=&#34;lanman&#34;&gt;LANMan
+&lt;/h3&gt;&lt;p&gt;LANMan, or LAN Manager, was offered in 1987 and can be easily broken. Among other issues:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;A LANMan password is not case-sensitive. Everything is cast to uppercase before the hash is created. This dramatically reduces the characters that need to be bruteforced, as lowercase isn&amp;rsquo;t a required set (reducing the total characters by 26).&lt;/li&gt;
 &lt;li&gt;When first created, the implementation presumed that passwords woud never be longer than 7 characters, so a total of eight bytes are used to store it - the seven password characters plus a parity byte. Of course, this quickly became a problem, so the password length was increased to use 16 bytes. But in order to remain backwards compatible, this is implemented as 2x 8-byte fields (7 password characters + 1 parity byte). Any password shorter than 14 charafters will have unused bytes filled with &lt;em&gt;NULLs&lt;/em&gt;.&lt;br&gt;
 If the password is seven characters or less, the entire second 8-byte field will be full of &lt;em&gt;NULLs&lt;/em&gt;, which means the attacker only has to break one 7-character password. Even if the password takes a full 14 characters, the attacker doesn&amp;rsquo;t have to break that, they are actually breaking 2 separate seven-character passwords, which is magnitudes of order faster.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;ntlm-v1&#34;&gt;NTLM v1&lt;/h3&gt;
-&lt;p&gt;New Technology LAN Manager (NTLM) is the default authentication protocol for NT 4.0. It&amp;rsquo;s a challenge/response-based protocol but has issues as well:&lt;/p&gt;
+&lt;h3 id=&#34;ntlm-v1&#34;&gt;NTLM v1
+&lt;/h3&gt;&lt;p&gt;New Technology LAN Manager (NTLM) is the default authentication protocol for NT 4.0. It&amp;rsquo;s a challenge/response-based protocol but has issues as well:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;The challenge issued by NTLMv1 is always a 16-byte random number.&lt;/li&gt;
 &lt;li&gt;It used a DES algorithm for encryption of the challenge (with the user&amp;rsquo;s hash). DES is built for speed, which makes decryption by an attacker fast as well.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;As of 2019, every possible 8-character NTLM password hash can be enumerated by modern hardware in about 2.5 hours. It&amp;rsquo;s even faster if you use rainbow tables, which exist for all 8 and 9-character passwords.&lt;/p&gt;
-&lt;h3 id=&#34;ntlm-v2&#34;&gt;NTLM v2&lt;/h3&gt;
-&lt;p&gt;A number of the NTLM v1 weaknesses are corrected in v2:&lt;/p&gt;
+&lt;h3 id=&#34;ntlm-v2&#34;&gt;NTLM v2
+&lt;/h3&gt;&lt;p&gt;A number of the NTLM v1 weaknesses are corrected in v2:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;The challenge is a variable-length challenge.&lt;/li&gt;
 &lt;li&gt;HMAC-MD5 is used instead of DES. It&amp;rsquo;s slower, so brute force isn&amp;rsquo;t a practical option&amp;hellip; at least until quantum computers become available!&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;NTLM remains vulnerable to &lt;em&gt;pass the hash&lt;/em&gt; attacks, in addition to not supporting modern encryption algorithms (AES, SHA-256).&lt;/p&gt;
-&lt;h2 id=&#34;decommissioning-ntlm-and-lanman&#34;&gt;Decommissioning NTLM and LANMan&lt;/h2&gt;
-&lt;p&gt;Now that it&amp;rsquo;s clear why NTLM is a terrible modern choice for authentication, let&amp;rsquo;s sort out how to get rid of it. Many older devices may only support NTLM, so we need to identify any devices currently using it.&lt;/p&gt;
-&lt;h3 id=&#34;audit&#34;&gt;Audit&lt;/h3&gt;
-&lt;p&gt;First, enable NTLM auditing on your Domain Controllers. This will create &lt;em&gt;Event ID 4624&lt;/em&gt; in the Security Event log. This event will note which authentication method was used: KERBEROS or NTLM. If it&amp;rsquo;s NTLM, a subfield will tell whether it&amp;rsquo;s LM, V1 or V2.&lt;/p&gt;
+&lt;h2 id=&#34;decommissioning-ntlm-and-lanman&#34;&gt;Decommissioning NTLM and LANMan
+&lt;/h2&gt;&lt;p&gt;Now that it&amp;rsquo;s clear why NTLM is a terrible modern choice for authentication, let&amp;rsquo;s sort out how to get rid of it. Many older devices may only support NTLM, so we need to identify any devices currently using it.&lt;/p&gt;
+&lt;h3 id=&#34;audit&#34;&gt;Audit
+&lt;/h3&gt;&lt;p&gt;First, enable NTLM auditing on your Domain Controllers. This will create &lt;em&gt;Event ID 4624&lt;/em&gt; in the Security Event log. This event will note which authentication method was used: KERBEROS or NTLM. If it&amp;rsquo;s NTLM, a subfield will tell whether it&amp;rsquo;s LM, V1 or V2.&lt;/p&gt;
 &lt;p&gt;I created a GPO for my DCs and set these values under &lt;em&gt;Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options&lt;/em&gt;:&lt;br&gt;
 &lt;strong&gt;Network Security: Restrict NTLM: Audit NTLM authentication in this domain&lt;/strong&gt; to &lt;em&gt;Enable all&lt;/em&gt;&lt;br&gt;
 &lt;strong&gt;Network security: Restrict NTLM: Audit Incoming NTLM Traffic&lt;/strong&gt; to &lt;em&gt;Enable auditing for all accounts&lt;/em&gt;&lt;br&gt;
@@ -3956,8 +3888,8 @@ NOTE: This is the relevant part of my code for the filtering. The full script do
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Good!&lt;br&gt;
 The only relevant entries I found were from a server that I upgraded 3 weeks ago, specifically because it was using NTLM for an obsolete application. After tossing on a supported OS and upgrading to the current application version, NTLMv1 authentication from this server stopped.&lt;/p&gt;
-&lt;h3 id=&#34;block&#34;&gt;Block&lt;/h3&gt;
-&lt;p&gt;MS exposes a GPO value to control the NTLM authentication methods available on the domain. &lt;strong&gt;Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options\&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-lan-manager-authentication-level&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+&lt;h3 id=&#34;block&#34;&gt;Block
+&lt;/h3&gt;&lt;p&gt;MS exposes a GPO value to control the NTLM authentication methods available on the domain. &lt;strong&gt;Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options\&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-lan-manager-authentication-level&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Network security: LAN Manager authentication level&lt;/a&gt;&lt;/strong&gt; will enforce these behaviours:&lt;/p&gt;
 &lt;table&gt;
   &lt;thead&gt;
@@ -4109,20 +4041,16 @@ Resolving deltas: 100% (1958/1958), done.
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$report&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;{0} elements collected in {1:n1} seconds&amp;#39;&lt;/span&gt; 
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$report&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-f&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$stopwatch&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Elapsed&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;TotalSeconds&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Processing these 100,000 records took my system 214.7 seconds. When Powershell code uses the &lt;code&gt;+=&lt;/code&gt; operator, it actually creates a new array that&amp;rsquo;s one record larger than the current array, copies each existing entry into the new array and then adds the newest entry into the free record. It has to do this every time the &lt;code&gt;+=&lt;/code&gt; operator is used, which is 100,000 times in this sample code. The last time it runs, it needs to copy 99,999 existing entries into a new array&amp;hellip;.ouch! It&amp;rsquo;s easy to see &lt;em&gt;why&lt;/em&gt; this is so slow!&lt;/p&gt;
-&lt;p&gt;&lt;figure 
-	&gt;
-	&lt;a href=&#34;https://gbeifuss.github.io/img/array.png&#34; &gt;
-		&lt;img src=&#34;https://gbeifuss.github.io/img/array.png&#34;
-			
-			
-			
-			loading=&#34;lazy&#34;
-			alt=&#34;fantastic excel art&#34;&gt;
-	&lt;/a&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/array.png&#34;
 	
-	&lt;figcaption&gt;fantastic excel art&lt;/figcaption&gt;
 	
-&lt;/figure&gt;&lt;/p&gt;
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;fantastic excel art&#34;
+	
+	
+&gt;&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s use a .NET method to do this and see whether it&amp;rsquo;s any faster:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Collections.ArrayList&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$stopwatch&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Diagnostics.Stopwatch&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;StartNew&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
@@ -4633,6 +4561,46 @@ My favourite feature of Notepad is the ability to insert the date &amp;amp; time
 &lt;/code&gt;&lt;/pre&gt;</description>
         </item>
         <item>
+        <title>About</title>
+        <link>https://gbeifuss.github.io/about/</link>
+        <pubDate>Tue, 13 Jul 2021 14:55:39 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/about/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;m a husband and dad, but by day I&amp;rsquo;m a sysadmin managing risk. What kind of risk? Financial risk, reputation risk and operational risk&amp;hellip; actually, it&amp;rsquo;s pretty much everything, all the time.&lt;/p&gt;
+&lt;p&gt;I architect, implement, administer and troubleshoot services, servers and infrastructure devices (local and cloud-based). I have a love for elegant solutions, and Powershell! I write about things I am familiar with, things I&amp;rsquo;m learning, and the things that I&amp;rsquo;ve had to understand in order to help others understand.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve been managing computers and infrastructure since NT 3.51 and Netware. Every day, I try to keep 400 users, 400 servers and my bosses happy. Most difficult problems at work eventually bubble up to me, so I&amp;rsquo;m regularly involved with many different technologies. On a typical day, I have greasy hands from working with AD, Exchange, architecture/design as well as firewalls, switches and the network stack.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img.shields.io/static/v1?color=steelblue&amp;amp;style=flat&amp;amp;logo=windows&amp;amp;label=OS&amp;amp;message=Windows%20Server&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt; &lt;img src=&#34;https://img.shields.io/static/v1?color=steelblue&amp;amp;style=flat&amp;amp;logo=powershell&amp;amp;label=Script&amp;amp;message=Powershell&amp;amp;logocolor=white&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt; &lt;img src=&#34;https://img.shields.io/static/v1?color=steelblue&amp;amp;style=flat&amp;amp;logo=windowsterminal&amp;amp;label=Terminal&amp;amp;message=Windows%20Terminal&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt; &lt;img src=&#34;https://img.shields.io/static/v1?color=steelblue&amp;amp;style=flat&amp;amp;logo=visual%20studio%20code&amp;amp;label=Code&amp;amp;message=VS%20Code&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Powershell, DSInternals &amp; HIBP</title>
         <link>https://gbeifuss.github.io/p/powershell-dsinternals-hibp/</link>
         <pubDate>Mon, 12 Jul 2021 15:38:54 -0400</pubDate>
@@ -4868,6 +4836,14 @@ The available Storage Capacity is more complicated to determine, since it&amp;rs
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$result&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ConvertTo-Json&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Out-File&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$FilePath&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;\Netscaler03_&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;${formatedDate}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;.txt&amp;#34;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Greg&lt;/p&gt;
 </description>
+        </item>
+        <item>
+        <title>Search</title>
+        <link>https://gbeifuss.github.io/search/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://gbeifuss.github.io/search/</guid>
+        <description></description>
         </item>
         
     </channel>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Trying to move VMs from ESXi 5.0 to 7.0">
+<title>Using ovftool to migrate VMs between ESXi hosts</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/esxi-ovftool/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Using ovftool to migrate VMs between ESXi hosts">
+<meta property='og:description' content="Trying to move VMs from ESXi 5.0 to 7.0">
+<meta property='og:url' content='http://localhost:1313/posts/esxi-ovftool/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='VMWare' /><meta property='article:published_time' content='2023-03-13T15:38:51-04:00'/><meta property='article:modified_time' content='2023-03-13T15:38:51-04:00'/>
+<meta name="twitter:title" content="Using ovftool to migrate VMs between ESXi hosts">
+<meta name="twitter:description" content="Trying to move VMs from ESXi 5.0 to 7.0">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/esxi-ovftool/">Using ovftool to migrate VMs between ESXi hosts</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Trying to move VMs from ESXi 5.0 to 7.0
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 13, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Last week I found some Shadow IT at work - a single business-managed ESXi server hosting legacy VMs for code testing. We have an arm of our business that supports products for 25 years, so releases need to be tested on Windows XP servers and other OSes of that era. In any case, this server was happily chugging along &hellip; on ESXi 5.0! Needless to say, I need to bring these VMs into the IT-fold and migrate them to a modern ESXi server: VxRail running ESXi 7.0. But with such an obsolete product, migration can&rsquo;t rely on some of the modern tools that I normally rely on.</p>
+<p>That meant it was time for Open Virtualization Formal Tool (ovftool) to come to my rescue! This is a VMWare tool used to manipulate VMs to OVFs (or OVAs), OVFs to VMs, and VM-to-VM migrations. Exactly what I need! The only caveat is that that no vmotion is possible - the VMs need to be powered down.</p>
+<p>I downloaded <a class="link" href="https://developer.vmware.com/web/tool/4.4.0/ovf"  target="_blank" rel="noopener"
+    >ovftool 4.4.3</a> to my laptop and got to work. The syntax for a VM-VM migration on a VxRail took me quite a bit of time to figure out, because the documentation isn&rsquo;t very helpful, and all of examples I found with Google-fu claimed that I could just use the destination server name or IP. (<em>Hint: I couldn&rsquo;t.</em>)</p>
+<p>The source server, source VM, destination storage and destination server (and credentials!) are needed, according to the documentation. Also, the <em>datastore</em> is the destination file system, not the source.</p>
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://userid@domain.com@destination.server.hostname -ds=vxrail-vsan1
+Error: Unexpected option:  -ds=vxrail-vsan1
+Completed with errors
+</code></pre><p>I took a quick look at the help file and determined I should be providing the information like this:
+<code>Usage: ovftool [options] &lt;source&gt; [&lt;target&gt;]</code></p>
+<p>I found that I could specify only the information above, but then I&rsquo;d be prompted for credentials each time I ran the command, and typing in credentials became old very fast&hellip; so I added them to the command:</p>
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://userid@domain.com@destination.server.hostname
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Error: Found wrong kind of object (Folder). Possible completions are:
+  site/
+Completed with errors
+</code></pre><p>Clearly I need to add &lsquo;site/&rsquo; to the destination server path, so that OVFTool knows where to create the file. Note that I need to add &ldquo;host/&rdquo; too:</p>
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Error: Found wrong kind of object (Folder). Possible completions are:
+  site-vxrail/
+Completed with errors
+</code></pre><p><em>sigh</em> another folder to add to the destination server path. Your path may differ based on the heirarchy of your ESXi cluster. ovftool will continue generating an error about the Folder if you&rsquo;re not at the final path:</p>
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Opening VI target: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Error: No network mapping specified. OVF networks:   VM Network. Target networks:   Management Network-92c1a646-e30f-436e-bfd6-b05f32371c4d  Virtual SAN-92c1a646-e30f-436e-bfd6-b05f32371c4d  VxRail Management-92c1a646-e30f-436e-bfd6-b05f32371c4d  site-VLAN101  site-VLAN200  site-VLAN210  vCenter Server Network-92c1a646-e30f-436e-bfd6-b05f32371c4d  vSphere vMotion-92c1a646-e30f-436e-bfd6-b05f32371c4d
+Completed with errors
+</code></pre><p>Oh, this is finally promising!
+I need to add the network mapping to the command, so I pick the appropriate target network (in this case, site-VLAN210)</p>
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/ -nw=site-VLAN210
+Error: Unexpected option: -nw=site-VLAN210
+Completed with errors
+</code></pre><p>Grrrr&hellip; foiled again by the order of the information I provide. One more time!</p>
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 -nw=site-VLAN210 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Opening VI target: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Deploying to VI: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Transfer Completed
+Completed successfully
+ 
+C:\apps\ovftool&gt;
+</code></pre><p>Hurrah! A quick check on the VxRail and I can see that the VM has been migrated, stored on the right datastore and joined to the right network. I power it on as a quick test and confirm that I can ping it. Success!</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/vmware/">VMWare</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

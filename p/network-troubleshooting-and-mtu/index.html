@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Isolating Maximum Transmission Unit Problems'><title>Network Troubleshooting and MTU</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Isolating Maximum Transmission Unit Problems">
+<title>Network Troubleshooting and MTU</title>
 
 <link rel='canonical' href='https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Network Troubleshooting and MTU'>
-<meta property='og:description' content='Isolating Maximum Transmission Unit Problems'>
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Network Troubleshooting and MTU">
+<meta property='og:description' content="Isolating Maximum Transmission Unit Problems">
 <meta property='og:url' content='https://gbeifuss.github.io/p/network-troubleshooting-and-mtu/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-08-11T14:57:19-04:00'/><meta property='article:modified_time' content='2021-08-11T14:57:19-04:00'/>
@@ -28,8 +29,8 @@
       </script>
     </head>
     <body class="
-    article-page 
-">
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -52,48 +53,39 @@
         }
     })();
 </script>
-<div class="container main-container flex 
-    
-        on-phone--column extended
-    
-">
-    
-        <aside class="sidebar left-sidebar sticky">
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
         </span>
     </button>
 
-    <header class="site-info">
+    <header>
         
             
             <figure class="site-avatar">
+                <a href="/">
                 
-                    
-                    
-                    
-                        
-                        <img src="/img/thundercats_hu16775284636912897722.png" width="300"
-                            height="300" class="site-logo" loading="lazy" alt="Avatar">
-                    
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
-
+                </a>
                 
             </figure>
             
         
-        <h1 class="site-name"><a href="https://gbeifuss.github.io/">Greg Beifuss</a></h1>
-        <h2 class="site-description">... managing risk 24/7</h2>
-    </header>
-
-    <ol class="menu" id="main-menu">
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
         
         
         
-
         <li >
             <a href='/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -110,9 +102,10 @@
         </li>
         
         
-
         <li >
             <a href='/about/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -128,9 +121,10 @@
         </li>
         
         
-
         <li >
             <a href='/search/' >
+                
+                
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -145,10 +139,12 @@
             </a>
         </li>
         
+        <li class="menu-bottom-section">
+            <ol class="menu">
 
-        
-            <li id="dark-mode-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="8" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -156,7 +152,7 @@
 
 
 
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
   <circle cx="16" cy="12" r="2" />
   <rect x="2" y="6" width="20" height="12" rx="6" />
@@ -164,30 +160,38 @@
 
 
 
-                <span>Dark Mode</span>
-            </li>
-        
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
     </ol>
 </aside>
 
     
-<main class="main full-width">
+
+            <main class="main full-width">
     <article class="main-article">
     <header class="article-header">
 
     <div class="article-details">
     
 
-    <h2 class="article-title">
-        <a href="/p/network-troubleshooting-and-mtu/">Network Troubleshooting and MTU</a>
-    </h2>
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/network-troubleshooting-and-mtu/">Network Troubleshooting and MTU</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Isolating Maximum Transmission Unit Problems
+        </h3>
+        
+    </div>
 
     
-    <h3 class="article-subtitle">
-        Isolating Maximum Transmission Unit Problems
-    </h3>
     
-
+    
     
     <footer class="article-time">
         
@@ -206,12 +210,31 @@
         
 
         
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
     </footer>
     
+
+    
 </div>
+
 </header>
 
     <section class="article-content">
+    
+    
     <p>These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&rsquo;s not super advanced work.</p>
 <p>For about 8 months now, we&rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&rsquo;s still not in use because of <em>problems</em>. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. <code>Ping</code> to any system works, but protocols like RDP, SMB and replication (AD &amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site <strong>and</strong> I could ping all the other DCs, <code>repadmin /replsummary</code> showed that replication was no longer working.</p>
 <p>Here&rsquo;s a simple topology diagram in ASCII art:</p>
@@ -255,18 +278,14 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 <p>I ran a series of packet captures to see if anything looked unusual. Nothing jumped out at me, but I did notice that whenever the packet size exceeded 1500-ish bytes, there were lots of retranmissions and/or errors.</p>
 <p>Wait! How is it that a server with an MTU of 1500 is sending packets that are 2600 bytes?</p>
 <p>Wireshark uses winpcap (or libpcap) to grab the data <em>before</em> it&rsquo;s handed to the NIC:
-<figure 
-	>
-	<a href="/img/wireshark.png" >
-		<img src="/img/wireshark.png"
-			
-			
-			
-			loading="lazy"
-			>
-	</a>
+<img src="/img/wireshark.png"
 	
-</figure></p>
+	
+	
+	loading="lazy"
+	
+	
+></p>
 <p>Many OS and NIC drivers support <em>TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload</em> which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&hellip; with offloading enabled, this task is now completed <em>after</em> Wireshark has grabbed the data, so it&rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.</p>
 <p>Back to my regularly scheduled commentary&hellip;</p>
 <p>Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&rsquo;s 1468, which is the largest setting that worked with the Don&rsquo;tFragment flag set, plus the 28 byte IP header. Let&rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:
@@ -290,18 +309,14 @@ Head Office core switch - dedicated L2 link - SiteA core switch
 </code></pre><p>On Windows 2019, this took effect immediately. If it doesn&rsquo;t, a reboot should ensure it applies.
 AD replication - which had been failing - picked right back up as soon as I entered this command.</p>
 <p>Now, I&rsquo;ve proved that it&rsquo;s an MTU issue, so I&rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp; EType field in the frame. This resulting QinQ frame is often referred to as &lsquo;double tagged&rsquo;.
-<figure 
-	>
-	<a href="/img/qinq.png" >
-		<img src="/img/qinq.png"
-			
-			
-			
-			loading="lazy"
-			>
-	</a>
+<img src="/img/qinq.png"
 	
-</figure></p>
+	
+	
+	loading="lazy"
+	
+	
+></p>
 <p>You can read more about QinQ in the Cisco article <a class="link" href="http://www.cisco.com/en/US/tech/tk389/tk689/technologies_tech_note09186a0080094665.shtml"  target="_blank" rel="noopener"
     >Inter-Switch Link and IEEE 802.1Q Frame Format</a></p>
 
@@ -329,10 +344,9 @@ AD replication - which had been failing - picked right back up as soon as I ente
     
 </article>
 
-    <aside class="related-contents--wrapper">
     
+
     
-</aside>
 
      
     
@@ -345,12 +359,12 @@ AD replication - which had been failing - picked right back up as soon as I ente
         
             2020 - 
         
-        2024 Greg Beifuss
+        2025 Greg Beifuss
     </section>
     
     <section class="powerby">
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 
@@ -419,29 +433,27 @@ AD replication - which had been failing - picked right back up as soon as I ente
 
 </div><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><script 
                 src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
-                defer="true"
+                defer
                 >
             </script><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
             ><link 
                 rel="stylesheet" 
-                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
             >
 
             </main>
-    
-
         </div>
         <script 
-                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
-                defer="false"
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
                 >
-            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
 <script>
     (function () {
         const customFont = document.createElement('link');
