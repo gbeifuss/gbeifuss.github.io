@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Assess and eliminate NTLM v1 use with Powershell">
+<title>Powershell &amp; NTMLv1 use</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/powershell-ntmlv1-use/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Powershell & NTMLv1 use">
+<meta property='og:description' content="Assess and eliminate NTLM v1 use with Powershell">
+<meta property='og:url' content='https://gbeifuss.github.io/p/powershell-ntmlv1-use/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-08-05T11:11:56-04:00'/><meta property='article:modified_time' content='2021-08-05T11:11:56-04:00'/>
+<meta name="twitter:title" content="Powershell & NTMLv1 use">
+<meta name="twitter:description" content="Assess and eliminate NTLM v1 use with Powershell">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/powershell-ntmlv1-use/">Powershell &amp; NTMLv1 use</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Assess and eliminate NTLM v1 use with Powershell
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 05, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I&rsquo;m in the midst of trying to phase out non-Kerberos authentication traffic in our domain, because <em>it&rsquo;s time</em>. MS has offered Kerberos since Windows 2000, and the pre-Kerberos options (LANMan, NTLMv1, NTLMv2) are woefully insecure. In fact, MS stopped recommending NTLM for use in applications in 2010. It&rsquo;s still widely in use for compatibility reasons.</p>
+<h2 id="the-protocols">The Protocols
+</h2><h3 id="lanman">LANMan
+</h3><p>LANMan, or LAN Manager, was offered in 1987 and can be easily broken. Among other issues:</p>
+<ul>
+<li>A LANMan password is not case-sensitive. Everything is cast to uppercase before the hash is created. This dramatically reduces the characters that need to be bruteforced, as lowercase isn&rsquo;t a required set (reducing the total characters by 26).</li>
+<li>When first created, the implementation presumed that passwords woud never be longer than 7 characters, so a total of eight bytes are used to store it - the seven password characters plus a parity byte. Of course, this quickly became a problem, so the password length was increased to use 16 bytes. But in order to remain backwards compatible, this is implemented as 2x 8-byte fields (7 password characters + 1 parity byte). Any password shorter than 14 charafters will have unused bytes filled with <em>NULLs</em>.<br>
+If the password is seven characters or less, the entire second 8-byte field will be full of <em>NULLs</em>, which means the attacker only has to break one 7-character password. Even if the password takes a full 14 characters, the attacker doesn&rsquo;t have to break that, they are actually breaking 2 separate seven-character passwords, which is magnitudes of order faster.</li>
+</ul>
+<h3 id="ntlm-v1">NTLM v1
+</h3><p>New Technology LAN Manager (NTLM) is the default authentication protocol for NT 4.0. It&rsquo;s a challenge/response-based protocol but has issues as well:</p>
+<ul>
+<li>The challenge issued by NTLMv1 is always a 16-byte random number.</li>
+<li>It used a DES algorithm for encryption of the challenge (with the user&rsquo;s hash). DES is built for speed, which makes decryption by an attacker fast as well.</li>
+</ul>
+<p>As of 2019, every possible 8-character NTLM password hash can be enumerated by modern hardware in about 2.5 hours. It&rsquo;s even faster if you use rainbow tables, which exist for all 8 and 9-character passwords.</p>
+<h3 id="ntlm-v2">NTLM v2
+</h3><p>A number of the NTLM v1 weaknesses are corrected in v2:</p>
+<ul>
+<li>The challenge is a variable-length challenge.</li>
+<li>HMAC-MD5 is used instead of DES. It&rsquo;s slower, so brute force isn&rsquo;t a practical option&hellip; at least until quantum computers become available!</li>
+</ul>
+<p>NTLM remains vulnerable to <em>pass the hash</em> attacks, in addition to not supporting modern encryption algorithms (AES, SHA-256).</p>
+<h2 id="decommissioning-ntlm-and-lanman">Decommissioning NTLM and LANMan
+</h2><p>Now that it&rsquo;s clear why NTLM is a terrible modern choice for authentication, let&rsquo;s sort out how to get rid of it. Many older devices may only support NTLM, so we need to identify any devices currently using it.</p>
+<h3 id="audit">Audit
+</h3><p>First, enable NTLM auditing on your Domain Controllers. This will create <em>Event ID 4624</em> in the Security Event log. This event will note which authentication method was used: KERBEROS or NTLM. If it&rsquo;s NTLM, a subfield will tell whether it&rsquo;s LM, V1 or V2.</p>
+<p>I created a GPO for my DCs and set these values under <em>Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options</em>:<br>
+<strong>Network Security: Restrict NTLM: Audit NTLM authentication in this domain</strong> to <em>Enable all</em><br>
+<strong>Network security: Restrict NTLM: Audit Incoming NTLM Traffic</strong> to <em>Enable auditing for all accounts</em><br>
+<strong>Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers</strong> to <em>Audit all</em></p>
+<p>Now I have Event ID 4624 showing up in my logs. I want to find if there&rsquo;s any NTLM v1 or LM traffic. Let&rsquo;s parse this with with a custom XML filter for all records matching Event ID 4624 that don&rsquo;t contain &lsquo;NTLM v2&rsquo;, &lsquo;Kerberos&rsquo; or &lsquo;-&rsquo; authentication types.<br>
+NOTE: This is the relevant part of my code for the filtering. The full script does some other things like emailing me a report, which is why there are other functions and variables referenced:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$domaincontroller</span> <span class="k">in</span> <span class="nv">$domaincontrollers</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nb">Clear-Variable</span> <span class="n">-Name</span> <span class="n">eventlog</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">    <span class="nv">$query</span> <span class="p">=</span> <span class="sh">@&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sh">
+</span></span></span><span class="line"><span class="cl"><span class="sh">	&lt;QueryList&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">           &lt;Query Id=&#34;0&#34;&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">              &lt;Select Path=&#34;Security&#34;&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[System[(EventID=&#39;4624&#39;)]]
+</span></span></span><span class="line"><span class="cl"><span class="sh">	      &lt;/Select&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sh">	      &lt;Suppress Path=&#34;Security&#34;&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;NTLM v2&#39;)]] or
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;Kerberos&#39;)]] or
+</span></span></span><span class="line"><span class="cl"><span class="sh">                *[EventData[Data[@Name=&#39;AuthenticationPackageName&#39;] and (Data=&#39;-&#39;)]]
+</span></span></span><span class="line"><span class="cl"><span class="sh">               &lt;/Suppress&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">           &lt;/Query&gt; 
+</span></span></span><span class="line"><span class="cl"><span class="sh">	&lt;/QueryList&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sh">
+</span></span></span><span class="line"><span class="cl"><span class="sh">&#34;@</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$eventlog</span> <span class="p">=</span> <span class="nb">Get-WinEvent</span> <span class="n">-FilterXml</span> <span class="nv">$query</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeader</span> <span class="s2">&#34;1&#34;</span> <span class="s2">&#34;NTLMv1 Events on domain controller </span><span class="nv">$domaincontroller</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-HtmlTable</span> <span class="p">(</span><span class="nv">$eventlog</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="py">ID</span> <span class="o">-eq</span> <span class="s2">&#34;4624&#34;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">TimeCreated</span><span class="p">,</span> <span class="n">Message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeaderClose</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHeader0Close</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$MyReport</span> <span class="p">+=</span> <span class="nb">Get-CustomHTMLClose</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Good!<br>
+The only relevant entries I found were from a server that I upgraded 3 weeks ago, specifically because it was using NTLM for an obsolete application. After tossing on a supported OS and upgrading to the current application version, NTLMv1 authentication from this server stopped.</p>
+<h3 id="block">Block
+</h3><p>MS exposes a GPO value to control the NTLM authentication methods available on the domain. <strong>Computer Configuration\Windows Settings\Security Settings\Local Policies\Security Options\<a class="link" href="https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/network-security-lan-manager-authentication-level"  target="_blank" rel="noopener"
+    >Network security: LAN Manager authentication level</a></strong> will enforce these behaviours:</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>Setting</th>
+          <th>Description</th>
+          <th>Registry security level</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Send LM &amp; NTLM responses</td>
+          <td>Client devices use LM and NTLM authentication, and they never use NTLMv2 session security. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>Send LM &amp; NTLM – use NTLMv2 session security if negotiated</td>
+          <td>Client devices use LM and NTLM authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>Send NTLM response only</td>
+          <td>Client devices use NTLMv1 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>2</td>
+      </tr>
+      <tr>
+          <td>Send NTLMv2 response only</td>
+          <td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers accept LM, NTLM, and NTLMv2 authentication.</td>
+          <td>3</td>
+      </tr>
+      <tr>
+          <td>Send NTLMv2 response only. Refuse LM</td>
+          <td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM authentication, and they will accept only NTLM and NTLMv2 authentication.</td>
+          <td>4</td>
+      </tr>
+      <tr>
+          <td>Send NTLMv2 response only. Refuse LM &amp; NTLM</td>
+          <td>Client devices use NTLMv2 authentication, and they use NTLMv2 session security if the server supports it. Domain controllers refuse to accept LM and NTLM authentication, and they will accept only NTLMv2 authentication.</td>
+          <td>5</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>Obviously, 0 is the most insecure setting, but the most compatible. If your domain ever had a Domain Level lower than Windows Server 2008, 0 is probably what you&rsquo;ll be using. Since Windows Server 2008, the default has been 3.</p>
+<p>I&rsquo;d previously changed our domain from 0 to 2, but now that our last NTLMv1 application is gone, I&rsquo;ve set this to 3. We&rsquo;re headed full speed into <del>the future!</del> 2008.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

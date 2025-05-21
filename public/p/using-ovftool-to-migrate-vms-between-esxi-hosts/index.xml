@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Using ovftool to migrate VMs between ESXi hosts on Greg Beifuss</title>
+        <link>http://localhost:1313/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
+        <description>Recent content in Using ovftool to migrate VMs between ESXi hosts on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate></lastBuildDate><atom:link href="http://localhost:1313/p/using-ovftool-to-migrate-vms-between-esxi-hosts/index.xml" rel="self" type="application/rss+xml" />
+    </channel>
+</rss>

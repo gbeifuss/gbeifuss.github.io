@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>VSCode on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/vscode/</link>
+        <description>Recent content in VSCode on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 05 Oct 2021 09:51:28 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vscode/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>VS Code &amp; Markdown</title>
+        <link>https://gbeifuss.github.io/p/vs-code-markdown/</link>
+        <pubDate>Tue, 05 Oct 2021 09:51:28 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vs-code-markdown/</guid>
+        <description>&lt;p&gt;VS Code automatically trims any trailing whitespace in a file, which makes sense for a lot of formats, but in markdown, a double trailing whitespace has special meaning - it acts as a &lt;code&gt;LF&lt;/code&gt; and creates a line break without a hard return (&lt;code&gt;CRLF&lt;/code&gt;).
+This automatic trim also occurs when formatting a file according to the language&amp;rsquo;s rules.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s configure VS Code to continue automatically trimming trailing whitespace, &lt;em&gt;except&lt;/em&gt; for markdown files:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the Command Palette (View, Command Palette…. or CTRL+SHIFT+P)&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;Preferences: Open Settings (JSON)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the snippet:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;[markdown]&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;files.trimTrailingWhitespace&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;false&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Save &lt;code&gt;settings.json&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
+        <title>Using multicursor in VS Code</title>
+        <link>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</link>
+        <pubDate>Mon, 13 Sep 2021 23:35:20 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/using-multicursor-in-vs-code/</guid>
+        <description>&lt;p&gt;CTRL-ALT-L enables multiple cursors in Visual Studio Code.&lt;/p&gt;
+&lt;p&gt;That is all.&lt;/p&gt;
+&lt;p&gt;(Technically CTRL-ALT-L is the keyboard shortcut for &amp;lsquo;Select all occurrences of current selection&amp;rsquo;. Select a word, press CTRL-ALT-L and a cursor will appear to the left of every instance of that word. It&amp;rsquo;s a useful alternative to Find/Replace.)&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>VS Code &amp; Remote Repositories</title>
+        <link>https://gbeifuss.github.io/p/vs-code-remote-repositories/</link>
+        <pubDate>Wed, 14 Jul 2021 08:21:37 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vs-code-remote-repositories/</guid>
+        <description>&lt;p&gt;I spend a lot of my day in VS Code, but not too much in GitHub because I don&amp;rsquo;t work on any joint projects. I do use a local Git repository for my code. It&amp;rsquo;s  easy to see when others have made changes so that I can &lt;del&gt;hunt them down&lt;/del&gt; speak politely to them about stopping.&lt;/p&gt;
+&lt;p&gt;In any case, I was watching &lt;a class=&#34;link&#34; href=&#34;https://mybuild.microsoft.com/sessions/0c6868e4-6a2c-4749-b3f5-b18ff76609c9?source=sessions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;An Introduction to Visual Studio Code and GitHub&lt;/a&gt; when I learned about the Remote Repositories (GitHub) extension for VS Code. You can directly edit a repository on GitHub without having to clone it locally.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Disclaimer&lt;/em&gt;
+I must confess that in the process of using Remote Repository access this week, I managed to lose/erase 6 files that I hadn&amp;rsquo;t committed, but maybe you&amp;rsquo;re more of a git savant than I am, and you&amp;rsquo;ll have no problems.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s look at how to get this installed and integrated with VS Code:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Load VS Code&lt;/li&gt;
+&lt;li&gt;Open Extensions (CTRL+SHIFT+X)&lt;/li&gt;
+&lt;li&gt;Search for &lt;a class=&#34;link&#34; href=&#34;https://github.com/microsoft/vscode-remote-repositories-github&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Remote Repositories (GitHub)&lt;/a&gt;. Install it.&lt;/li&gt;
+&lt;li&gt;Open the Command Palette (&lt;code&gt;CTRL+SHIFT+P&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Type in &lt;code&gt;Remote Repositories: Open Repository&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;Open Repository from GitHub&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;You&amp;rsquo;ll be prompted to allow access to GitHub. Allow it.&lt;/li&gt;
+&lt;li&gt;A browser window will open. Click &lt;code&gt;Continue&lt;/code&gt; to authorize access to GitHub.&lt;/li&gt;
+&lt;li&gt;Sign in to GitHub. If you don&amp;rsquo;t already have an account, there won&amp;rsquo;t be any repositories for you to open in VS Code, will there?&lt;/li&gt;
+&lt;li&gt;You should receive a &amp;lsquo;Success!&amp;rsquo; webpage, with an authorization token on it.
+&lt;ul&gt;
+&lt;li&gt;If your browser prompts you to Open Visual Studio Code, do so. It&amp;rsquo;ll save you the trouble of manually entering the authorization code. Once VS Code opens again, you&amp;rsquo;ll be prompted to &lt;code&gt;Allow an extension to open this URI&lt;/code&gt;. Permit it, and VS Code will complete the link.&lt;/li&gt;
+&lt;li&gt;If the browser didn&amp;rsquo;t prompt, copy the authorization token. You&amp;rsquo;ll have to paste it into VS Code manually. The Command Palette field should be asking for the token, so paste it in.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;VS Code should now be able to open your repositories directly on GitHub.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
+        <title>VS Code Snippets</title>
+        <link>https://gbeifuss.github.io/p/vs-code-snippets/</link>
+        <pubDate>Wed, 14 Jul 2021 08:20:02 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vs-code-snippets/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve worked with computers for a couple of decades now, and I love Notepad&amp;hellip; #sorrynotsorry, &lt;code&gt;vim&lt;/code&gt; fans. It&amp;rsquo;s fantastic for writing - there&amp;rsquo;s no fancy GUI needing customization to fit your workflow, and offers just enough structure that it&amp;rsquo;s usable for a variety of tasks. It&amp;rsquo;s like the pre-markdown version of markdown.
+My favourite feature of Notepad is the ability to insert the date &amp;amp; time via. F5. This is a brilliant and elegant (and often overlooked) feature. Word&amp;rsquo;s &lt;em&gt;insert date/time&lt;/em&gt; function pales in comparison to the elegant simplicty of F5. Even trying to use keyboard shortcuts isn&amp;rsquo;t fast, when it should be.&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;Notepad&lt;/th&gt;
+          &lt;th&gt;Word GUI&lt;/th&gt;
+          &lt;th&gt;Work shortcuts&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;F5&lt;/td&gt;
+          &lt;td&gt;click &lt;em&gt;Insert&lt;/em&gt;&lt;/td&gt;
+          &lt;td&gt;ALT+I&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;/td&gt;
+          &lt;td&gt;click &lt;em&gt;Date/Time&lt;/em&gt;&lt;/td&gt;
+          &lt;td&gt;D&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;/td&gt;
+          &lt;td&gt;read the menu&lt;/td&gt;
+          &lt;td&gt;read the menu&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;/td&gt;
+          &lt;td&gt;double-click choice&lt;/td&gt;
+          &lt;td&gt;UP/DOWN ARROW to choice&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;/td&gt;
+          &lt;td&gt;ENTER&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;When I write Powershell scripts in VS Code, I had been manually typing in the date until I decided to write a custom snippet that would insert a header with all the things I normally add: script name, date/time, comments, my name. It&amp;rsquo;s automatically populated whenever I type in &lt;code&gt;header &amp;lt;ENTER&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the Command Palette (View, Command Palette&amp;hellip;. or CTRL+SHIFT+P)&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;Preferences: Configure User Snippets&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;Powershell&lt;/code&gt; from the list&lt;/li&gt;
+&lt;li&gt;Add the snippet:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt; &amp;#34;File Header&amp;#34;: {
+    &amp;#34;prefix&amp;#34;: &amp;#34;header&amp;#34;,
+    &amp;#34;description&amp;#34;: &amp;#34;Output a file header with the file name, comment field, author and date&amp;#34;,
+    &amp;#34;body&amp;#34;: [
+        &amp;#34;#$TM_FILENAME&amp;#34;,
+        &amp;#34;&amp;#34;,
+        &amp;#34;&amp;lt;#&amp;#34;,
+        &amp;#34;&amp;#34;,
+        &amp;#34;&amp;#34;,
+        &amp;#34;Greg Beifuss&amp;#34;,
+        &amp;#34;$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE&amp;#34;,
+        &amp;#34;#&amp;gt;&amp;#34;,
+        &amp;#34;&amp;#34;,
+        &amp;#34;&amp;#34;,
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Since I&amp;rsquo;m using VS Code to write markdown now, I decided to do a similar thing to reproduce Notepad&amp;rsquo;s F5 feature:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the Command Palette (View, Command Palette&amp;hellip;. or CTRL+SHIFT+P)&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;Preferences: Configure User Snippets&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;Markdown&lt;/code&gt; from the list&lt;/li&gt;
+&lt;li&gt;Add the snippet:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;&amp;#34;Current Date and Time&amp;#34;: {
+    &amp;#34;prefix&amp;#34;: &amp;#34;datetime&amp;#34;,
+    &amp;#34;description&amp;#34;: &amp;#34;Add Current date &amp;amp; time&amp;#34;,
+    &amp;#34;body&amp;#34;: [
+        &amp;#34;$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE&amp;#34;
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This snippet seems to be more tempermental - when I type in &lt;code&gt;datetime &amp;lt;ENTER&amp;gt;&lt;/code&gt;, usually it&amp;rsquo;s not replaced with the date/timestamp. I resort to:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;1. CTRL+I
+2. datetime &amp;lt;ENTER&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        
+    </channel>
+</rss>

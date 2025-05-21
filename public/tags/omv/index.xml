@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>OMV on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/omv/</link>
+        <description>Recent content in OMV on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Thu, 11 Apr 2024 10:11:58 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/omv/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Configuring Docker instance of ichapod</title>
+        <link>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</link>
+        <pubDate>Thu, 11 Apr 2024 10:11:58 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</guid>
+        <description>&lt;p&gt;One of my favourite &amp;rsquo;listening experiences&amp;rsquo; is the radio show &lt;a class=&#34;link&#34; href=&#34;https://ciut.fm/shows-by-day/higher-ground&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Higher Ground&lt;/a&gt; on CUIT 89.5. It&amp;rsquo;s hosted by Jason Palma and I&amp;rsquo;ve been listening for 20+ years.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;tldr; I&amp;rsquo;ve been downloading the show for many years&lt;/em&gt;&lt;br&gt;
+When I first discovered this show circa. 2000, the station allowed streaming of that week&amp;rsquo;s show with RealAudio. I discovered that the stream file could be opened, giving me the URL for the underlying .ra file. I faithfully downloaded the file weekly, and listened to the shows while working on my college labs. Later on, the station quit that, and the show would post the MP3s on a third party site. I downloaded all of those too, which were shows from 2008-2010.&lt;br&gt;
+Sometime in/around September 2014, I managed to infect my laptop with CryptoWall (1.0). In the process of recovering/reformatting my laptop, I erased &lt;em&gt;all&lt;/em&gt; of my historical archives of Higher Ground shows. The only ones I had left were encrypted copies of the 2008-2010 shows. Of course, by 2014 the site hosting the originals had quit offering that service, so there was no way to re-download them. The station at that point was only hosting the .mp3 for the current show - each week a new file was posted for streaming.&lt;br&gt;
+By then I was into Powershell and scripting, so I set up a scheduled task that ran my script to download the .mp3 file each week. This ran faithfully for a few years, until the station changed things again. Higher Ground was by this time posting the files to Podbean.com.&lt;/p&gt;
+&lt;p&gt;I use &lt;a class=&#34;link&#34; href=&#34;https://www.openmediavault.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;OMV&lt;/a&gt; to host a SMB share plus a small &lt;a class=&#34;link&#34; href=&#34;https://jellyfin.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Jellyfin&lt;/a&gt; instance. I figured that with its embedded support for Docker, this would be a great opportunity to have OMV handle the downloading for me. I found a great docker container (ichapod) that will parse a podcast playlist and download all the files, including prefixing the filename with the posted date so that I can listen in order. If there&amp;rsquo;s nothing to download, ichapod will terminate.&lt;/p&gt;
+&lt;p&gt;OMV &amp;gt; Services &amp;gt; Compose &amp;gt; Files &amp;gt; Add&lt;/p&gt;
+&lt;p&gt;I used this configuration file:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;version: &amp;#39;3&amp;#39;
+services:
+  ichapod:
+    image: shikasta/ichapod
+    build: .
+    volumes:
+      - &amp;#34;./podcasts.yml:/var/lib/ichapod/podcasts.yml&amp;#34;
+      - &amp;#34;/srv/dev-disk-by-uuid-964d6de1-d26d-4f07-b743-30799f1c511d/backup/archive:/podcasts&amp;#34; ##saves to Higher Ground Radio folder
+    command:
+      - &amp;#34;/var/lib/ichapod/podcasts.yml&amp;#34;
+      - &amp;#34;/podcasts&amp;#34;
+    user: &amp;#34;1000:10000&amp;#34;
+    restart: &amp;#39;always&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The &lt;em&gt;volumes&lt;/em&gt; entries tell the Docker instance to present the &lt;code&gt;podcasts.yml&lt;/code&gt; file as &lt;code&gt;/var/lib/ichapod/podcasts.yml&lt;/code&gt;, which is where ichapod expects to find the list of podcasts. I also present my &lt;code&gt;/backup/archive directory&lt;/code&gt; as &lt;code&gt;/podcasts&lt;/code&gt;, which is where ichapod will create a directory named after the podcast series, and save the playlist files.&lt;/p&gt;
+&lt;p&gt;I created a &lt;code&gt;podcasts.yml&lt;/code&gt; file with the following content:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;---
+- series: Higher Ground Radio
+  url: https://feed.podbean.com/ciuthigherground/feed.xml
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://hub.docker.com/r/shikasta/ichapod&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://hub.docker.com/r/shikasta/ichapod&lt;/a&gt;&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://github.com/shikasta-net/Ichapod&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/shikasta-net/Ichapod&lt;/a&gt;&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://ciut.fm/shows-by-day/higher-ground&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Higher Ground Radio&lt;/a&gt;&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://www.facebook.com/groups/highergroundradio/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Higher Ground Radio Facebook Group&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Configure SSH access via. Windows Terminal &amp; a private key</title>
+        <link>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</link>
+        <pubDate>Tue, 05 Mar 2024 10:13:04 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</guid>
+        <description>&lt;p&gt;Windows Terminal is one of my most loved features of recent Windows releases. Seriously Microsoft, where was this application in Windows 2000? I can launch Powershell, Command Prompt &lt;em&gt;and&lt;/em&gt; ssh sessions from the same window - simply amazing! (Yes, I know that Linux has supported this for decades).&lt;/p&gt;
+&lt;p&gt;I wanted to create a profile that would let me administer my omv Linux server, without having to input credentials &lt;em&gt;every. single. time.&lt;/em&gt; To do that, a public/private key needs to be created, before copying the public key over to the destination server. Then, when I connect via. SSH and present my private key, the connection is transparently (to me) approved.&lt;/p&gt;
+&lt;p&gt;Start by running the command &lt;code&gt;ssh-keygen -t rsa&lt;/code&gt; to generate a keypair. I accepted all the defaults, and skipped a passphrase:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg&amp;gt;ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (C:\Users\Greg/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in C:\Users\Greg/.ssh/id_rsa.
+Your public key has been saved in C:\Users\Greg/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:IaBSPSCx3y416+iY7qLYbMf9FoxBNhSNbAR/SMRh5yM greg@DESKTOP-SU06DHB
+The key&amp;#39;s randomart image is:
++---[RSA 3072]----+
+|o.oooBO=.        |
+| + .o=O+.        |
+|o .  =E.=        |
+| o .  .+ o       |
+|  . +  +S        |
+|   o o. o        |
+|  ..o.   .       |
+|o=.+o . .        |
+|X==..  o.        |
++----[SHA256]-----+
+
+C:\Users\Greg&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Now we copy the public key over to the omv server:&lt;br&gt;
+&lt;code&gt;cat ~/.ssh/id_rsa.pub | ssh root@192.168.4.107 &amp;quot;mkdir -p ~/.ssh &amp;amp;&amp;amp; chmod 700 ~/.ssh &amp;amp;&amp;amp; cat &amp;gt;&amp;gt;  ~/.ssh/authorized_keys&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Finally, we setup the connection profile in Windows Terminal via. &lt;code&gt;Launch Terminal &amp;gt; Settings &amp;gt; Open JSON&lt;/code&gt; &lt;br&gt;
+Paste this configuration string into the profiles section. You&amp;rsquo;ll need to update the username and IP address to reflect your situation:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+    &amp;#34;commandline&amp;#34;: &amp;#34;ssh -i \&amp;#34;~/.ssh/id_rsa\&amp;#34; root@192.168.4.107&amp;#34;,
+    &amp;#34;font&amp;#34;: {&amp;#34;size&amp;#34;: 10.0},
+    &amp;#34;guid&amp;#34;: &amp;#34;{0caa0dad-35be-5f56-a8ff-afceaeaa6103}&amp;#34;,
+    &amp;#34;hidden&amp;#34;: false,
+    &amp;#34;name&amp;#34;: &amp;#34;OMV Server&amp;#34;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Save the settings, then test the connection!&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>PKI on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/pki/</link>
+        <description>Recent content in PKI on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Fri, 24 Sep 2021 10:12:43 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/pki/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Cisco Management Tunnel - ASA Configuration</title>
+        <link>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</link>
+        <pubDate>Fri, 24 Sep 2021 10:12:43 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/</guid>
+        <description>&lt;p&gt;This is part 3 of a 3-part series.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Cisco Management Tunnel - ASA Setup&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If you&amp;rsquo;ve stuck with me so far, now we come to the payoff - a working Management Tunnel! Let&amp;rsquo;s jump in.&lt;/p&gt;
+&lt;p&gt;This article is based on my jot notes. There may be missing steps or information, although I&amp;rsquo;ve tried my best to make sure everything is here, at least at a high-level. I use a mix of CLI and ASDM when working on the ASA, so be prepared to jump around a little.&lt;/p&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Requires ASA 9.0.1 (or later) and ASDM 7.10.1 (or later)&lt;/li&gt;
+&lt;li&gt;Connects whenever the user initiated VPN tunnel is disconnected, before or after user login. The Management VPN tunnel is not established when a trusted network is detected by the Trusted Network Detection (TND) feature or when an AnyConnect software update is in progress.&lt;/li&gt;
+&lt;li&gt;Disconnects whenever the user initiates a VPN tunnel, before or after user login.&lt;/li&gt;
+&lt;li&gt;Uses only machine store certificate authentication.&lt;/li&gt;
+&lt;li&gt;Requires split-tunneling configuration, by default, to avoid impacting user initiated network communication (since the management VPN tunnel is meant to be transparent to the end user).&lt;/li&gt;
+&lt;li&gt;Works with backup server list.&lt;/li&gt;
+&lt;li&gt;Currently available only on Windows and macOS. Linux support will be added in subsequent releases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;install-certificates&#34;&gt;Install Certificates
+&lt;/h2&gt;&lt;p&gt;If you don&amp;rsquo;t already have your Issuing CA certificate installed on the ASA, you&amp;rsquo;ll need to do that. I used the ASDM: Device Management &amp;gt; Certificate Management &amp;gt; CA Certificates. We can import it directly from the NDES/SCEP server we just set up by clicking &amp;lsquo;Add&amp;rsquo; and entering the proper information. It should be something like: &lt;code&gt;http://10.0.0.1/certsrv/mscep/mscep.dll&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note: We will need two Profiles - one for Users to authenticate to and get the certificate, and one for the actual Management Tunnel&lt;/em&gt;. I&amp;rsquo;ll call it the User Tunnel just to be clear, and we&amp;rsquo;ll work on it first.&lt;/p&gt;
+&lt;h2 id=&#34;create-a-new-vpn-connection-profile&#34;&gt;Create a new VPN Connection Profile
+&lt;/h2&gt;&lt;p&gt;Create a new VPN Connection profile on the ASA via. ASDM. I called mine &amp;ldquo;Helpdesk&amp;rdquo;, since that&amp;rsquo;s who my pilot testers will be. I don&amp;rsquo;t want to mess around with the production VPN that 100+ users are connected to!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Set the Authentiction method &lt;code&gt;AAA and certificate&lt;/code&gt;.
+&lt;ul&gt;
+&lt;li&gt;Also configure the AAA Server group. You can use LOCAL, or if you&amp;rsquo;re tied into another authentication service for MFA, like RSA, you can select it.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Configure DHCP, DNS and the domain name&lt;/li&gt;
+&lt;li&gt;Enable SCEP Enrollment (Advanced\General)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;set-group-policy-to-use-scep&#34;&gt;Set Group Policy to use SCEP
+&lt;/h2&gt;&lt;p&gt;The Group Policy will need to be edited as well. Either edit an existing one, or create a new one and associate it with the previously created Connection Profile.
+I did this via. CLI, under a group policy named Helpdesk:
+group-policy Helpdesk attributes
+scep-forwarding-url value &lt;a class=&#34;link&#34; href=&#34;http://server.corp.company.com/certsrv/mscep/mscep.dll&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://server.corp.company.com/certsrv/mscep/mscep.dll&lt;/a&gt;
+exit
+I prefer the CLI for this because it gives instant feedback about the success or failure. If you happen to disregard the requirement that NDES is NOT installed on your CA, then this step will repeatedly fail. &amp;hellip;Or so I&amp;rsquo;ve heard :)&lt;/p&gt;
+&lt;h2 id=&#34;edit-client-profile&#34;&gt;Edit Client Profile
+&lt;/h2&gt;&lt;p&gt;These next steps are best done in the ASDM, because the output is XML files. CLI cannot manipulate them directly.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Open the Client Profile that you&amp;rsquo;ll use for the User Tunnel - mine is called &amp;lsquo;Helpdesk&amp;rsquo;.&lt;/li&gt;
+&lt;li&gt;Open the &lt;em&gt;Preferences (Part 2)&lt;/em&gt; page.
+&lt;ul&gt;
+&lt;li&gt;Enable &amp;lsquo;Automatic VPN Policy&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Add your internal Trusted DNS Domains and Servers. If you have multiple, separate them with commas.&lt;/li&gt;
+&lt;li&gt;Trusted Network Policy = Disconnect&lt;/li&gt;
+&lt;li&gt;Untrusted Network Policy = Connect&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Open the &lt;em&gt;Certificate Enrolment&lt;/em&gt; page.
+&lt;ul&gt;
+&lt;li&gt;Enable Certificate Enrollment&lt;/li&gt;
+&lt;li&gt;Set the Certificate Expiration Threshold (days).&lt;/li&gt;
+&lt;li&gt;Enter &lt;code&gt;%USER%&lt;/code&gt; or &lt;code&gt;%MACHINEID%&lt;/code&gt; in the Name (CN) box. Either will work, but will affect whom the certificate is issued to (machine name or user id), which in turn will affect how the endpoint shows up in the VPN monitoring logs.&lt;/li&gt;
+&lt;li&gt;Enter whatever you&amp;rsquo;d like under Department, but we will reuse this entry later on. I chose &lt;code&gt;AnyConnect&lt;/code&gt; for the sake of simplicity.&lt;/li&gt;
+&lt;li&gt;Enter your domain name in the CA Domain field: &lt;code&gt;corp.company.com&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Enter the keysize. I recommend &lt;code&gt;2048&lt;/code&gt;, which is what NDES should be expecting in the certificate request.&lt;/li&gt;
+&lt;li&gt;Complete any other certificate fields you&amp;rsquo;d like as they&amp;rsquo;re optional, but nice to have completed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Open the &lt;em&gt;Certificate Matching&lt;/em&gt; page.
+&lt;ul&gt;
+&lt;li&gt;Click &amp;lsquo;Add&amp;rsquo; under the &amp;lsquo;Distinguished Name (Max 10)&amp;rsquo; section.&lt;/li&gt;
+&lt;li&gt;Select OU in the Name drop down box. Then type in the value you entered for OU in the last step (under Certificate Enrollment) ito the Pattern field. For me, it’s &lt;code&gt;AnyConnect&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Ensure &amp;lsquo;Match Case&amp;rsquo; is enabled. Click OK and you’ll see the entry appear under &amp;lsquo;Distinguished Name (Max 10)&amp;rsquo;.&lt;/li&gt;
+&lt;li&gt;Click OK as we&amp;rsquo;re done. This process will allow the ASA to select the correct cert during authentication.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;create-the-management-tunnel-group-group-policy&#34;&gt;Create the Management Tunnel Group, Group Policy
+&lt;/h2&gt;&lt;p&gt;Back to the CLI! We&amp;rsquo;ll create a Management Tunnel Profile, and link it to our existing Split-Tunnel list. &lt;em&gt;Please note, the Profile name is case-sensitive!&lt;/em&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;group-policy Management internal
+group-policy Management attributes
+ dns-server value 192.168.1.23 192.168.1.24
+ vpn-tunnel-protocol ssl-client
+ split-tunnel-policy tunnelspecified
+ split-tunnel-network-list value VPNSplitTunnelList
+ default-domain value corp.agricorp.com
+ client-bypass-protocol enable
+ address-pools value SSLVPNDHCP
+ anyconnect-custom ManagementTunnelAllAllowed value Value
+
+tunnel-group Management type remote-access
+tunnel-group Management general-attributes
+ default-group-policy Management
+tunnel-group Management webvpn-attributes
+ group-alias Management enable
+ group-url https://vpn.company.com/Management enable
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The &amp;lsquo;Client Bypass Protocol&amp;rsquo; needs to be enabled if you don&amp;rsquo;t have BOTH IPv4 and IPv6 address pools configured to issue IP addresses. If you only have IPv4, like me, then the Client Bypass Protocol must be enabled. If it’s not, and the everything else is configured correctly, you’ll see the Management Connection State show as &amp;ldquo;Disconnected (invalid VPN configuration)&amp;rdquo;&lt;/p&gt;
+&lt;h2 id=&#34;create-the-management-tunnel-profile&#34;&gt;Create the Management Tunnel Profile
+&lt;/h2&gt;&lt;p&gt;Back to ASDM! Add an AnyConnect Client Profile under Remote Access VPN &amp;gt; Network (Client) Access &amp;gt; AnyConnect Client Profile:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Enter a Profile Name&lt;/li&gt;
+&lt;li&gt;Select &amp;lsquo;AnyConnect Management VPN Profile&amp;rsquo; from the Profile Usage dropdown box. The resulting profile will have an &lt;code&gt;.vpnm&lt;/code&gt; extension.&lt;/li&gt;
+&lt;li&gt;Select the previously created User VPN Group Policy. In my case, it&amp;rsquo;s &lt;code&gt;Helpdesk&lt;/code&gt;. This associates the two policies, and when a user authenticates to &lt;code&gt;Helpdesk&lt;/code&gt;, it&amp;rsquo;ll download the Management Tunnel profile as well.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Now, edit the Management VPN Profile:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Open the &lt;em&gt;Preferences (Part 2)&lt;/em&gt; page. Per Cisco: &amp;ldquo;For a consistent user experience, we recommend that you use identical Trusted Network Detection settings in both user and management VPN tunnel profiles.&amp;rdquo;
+&lt;ul&gt;
+&lt;li&gt;Enable &amp;lsquo;Automatic VPN Policy&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Add your internal Trusted DNS Domains and Servers. If you have multiple, separate them with commas.&lt;/li&gt;
+&lt;li&gt;Trusted Network Policy = Disconnect&lt;/li&gt;
+&lt;li&gt;Untrusted Network Policy = Connect&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Open the &lt;em&gt;Certificate Matching&lt;/em&gt; page.
+&lt;ul&gt;
+&lt;li&gt;Click &amp;lsquo;Add&amp;rsquo; under the &amp;lsquo;Distinguished Name (Max 10)&amp;rsquo; section.&lt;/li&gt;
+&lt;li&gt;Select OU in the Name drop down box. Then type in the value you entered for OU in the last step (under Certificate Enrollment) ito the Pattern field. For me, it’s &lt;code&gt;AnyConnect&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Ensure &amp;lsquo;Match Case&amp;rsquo; is enabled. Click OK and you’ll see the entry appear under &amp;lsquo;Distinguished Name (Max 10)&amp;rsquo;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Open the &lt;em&gt;Server List&lt;/em&gt; page.
+&lt;ul&gt;
+&lt;li&gt;Click Add. Enter a Display Name (which doesn&amp;rsquo;t seem to actually be used anywhere else).&lt;/li&gt;
+&lt;li&gt;Under FQDN, enter the same value that&amp;rsquo;s in your User Tunnel - vpn.company.com for example.&lt;/li&gt;
+&lt;li&gt;Under User Group, enter the Management VPN Tunnel Alias (configured under the Management Tunnel Group). In my case, it&amp;rsquo;s &lt;code&gt;Management&lt;/code&gt; .&lt;br&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/asdm-management-profile-server-list.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
+&lt;li&gt;Click OK until you&amp;rsquo;re back at the main ASDM page, then click Apply to write the changes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;At this point, everything should be setup. Let&amp;rsquo;s test.&lt;/p&gt;
+&lt;h2 id=&#34;management-tunnel-behaviour&#34;&gt;Management Tunnel Behaviour
+&lt;/h2&gt;&lt;p&gt;Load AnyConnect and establish a connection to your User Tunnel as usual. After successfully connecting, the ASA will contact the NDES for certificate enrollment on your behalf. After a few seconds, AnyConnect will issue a notice:
+popup-certificate-enrollment-succeeded.png)
+Click OK to acknowledge the notice. AnyConnect will indeed disconnect you and try to re-establish a connection. You can either authenticate and establish a User Tunnel, or click Cancel. If you click Cancel, AnyConnect will take a few minutes to perform Trusted Network Detection, determine you&amp;rsquo;re not on the corporate network, then transparently establish the Management Tunnel using your certificate. You can see the Management Tunnel status in the AnyConnect client Statistics:
+&lt;img src=&#34;https://gbeifuss.github.io/img/anyconnect-information-window-management-tunnel-connected.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;br&gt;
+When you connect back to a User Tunnel, the Management Tunnel will disconnect and show &lt;code&gt;Disconnected (user tunnel active)&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;behind-the-scenes&#34;&gt;Behind The Scenes
+&lt;/h2&gt;&lt;p&gt;AnyConnect actually grabs 2 certificates based on your VPN username and stores them in &lt;code&gt;Local User Certificates\Personal\Certificates&lt;/code&gt; and &lt;code&gt;Local Machine Certificates\Personal\Certificates&lt;/code&gt;. If you created a standard certificate template, NDES issues them with a 1 year validity period. However, AnyConnect inspects the &amp;lsquo;Date Issued&amp;rsquo; field and compares the age to the value set under &lt;code&gt;Certificate Expiration Threshold (days)&lt;/code&gt;. If the value = 2, then if the certificate is older than 2 days, AnyConnect will request another certificate the next time a VPN session is established.&lt;/p&gt;
+&lt;p&gt;If you need to delete your certificates during testing and pilot use:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;ul&gt;
+&lt;li&gt;Stop the Cisco AnyConnect service&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Open up the certificates mmc (mmc.exe). Add both the Current User plugin and the Current Machine plugin.&lt;/li&gt;
+&lt;li&gt;Delete the certificate in Local User Certificates\Personal\Certificates&lt;/li&gt;
+&lt;li&gt;Delete the certificate in Local Machine Certificates\Personal\Certificates&lt;/li&gt;
+&lt;li&gt;Start the Cisco AnyConnect service again&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also had to adjust the Dynamic Access Policy in use by the User Profile. We were checking for the presence of a certain AV product, but it was causing problems. Now we don&amp;rsquo;t check that, but check for other things.&lt;/p&gt;
+&lt;p&gt;I also originally set &lt;code&gt;anyconnect-custom-data ManagementTunnelAllAllowed Value true/true&lt;/code&gt; based on another article I&amp;rsquo;d read, but this is not necessary.&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://technook.home.blog/2019/07/11/cisco-anyconnect-managent-vpn-tunnel-microsoft-ca/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cisco AnyConnect Management VPN Tunnel (Microsoft CA)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.cisco.com/c/en/us/support/docs/security/adaptive-security-appliance-asa-software/215442-configure-anyconnect-management-vpn-tunn.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Configure AnyConnect Management VPN Tunnel on ASA&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Cisco Management Tunnel - NDES Setup</title>
+        <link>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</link>
+        <pubDate>Fri, 24 Sep 2021 08:25:46 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/</guid>
+        <description>&lt;p&gt;This is part 2 of a 3-part series.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Cisco Management Tunnel - NDES Setup&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Since an AnyConnect Management Tunnel seems like it will help resolve my organization&amp;rsquo;s work-from-home challenges, let&amp;rsquo;s setup a pilot.&lt;/p&gt;
+&lt;p&gt;The first thing we need to do is configure the certificates that are needed for user authentication.&lt;/p&gt;
+&lt;h2 id=&#34;install-and-configure-ndes&#34;&gt;Install and Configure NDES
+&lt;/h2&gt;&lt;p&gt;We already have a dedicated server running AD Certificate Services (AD CS), acting as our Certificate Authority (CA). Network Device Enrollment Service (NDES) acts as a registration authority for a CA using Simple Certificate Enrollment Protocol (SCEP). The CA has to fully trust the NDES to verify inbound certificate requests. The result is that NDES owns an extremely powerful type of certificate (Exchange Enrollment Agent (Offline request)), which allows NDES to request certificates with almost any subject from the CA. All of that to say, it&amp;rsquo;s important to secure NDES as much as warranted.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;The most important advice I can give is to pay attention to the warning that &lt;strong&gt;NDES cannot run on a CA Server&lt;/strong&gt;!&lt;/em&gt;
+Don&amp;rsquo;t ask me how I know.&lt;/p&gt;
+&lt;p&gt;I decided to piggyback NDES on an existing Windows 2016 server we have, so I was able to use Powershell for most of the heavy lifting. I usually roll with Powershell 7, but there are steps that require Powershell 5.1. I&amp;rsquo;ll try to be clear about when Powershell 5.1 is needed.&lt;/p&gt;
+&lt;h3 id=&#34;create-gmsa&#34;&gt;Create gMSA
+&lt;/h3&gt;&lt;p&gt;Let&amp;rsquo;s start by creating (and testing the creation of) the gMSA:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;New-ADServiceAccount&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-DNSHostName&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;company&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;com&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-PrincipalsAllowedToRetrieveManagedPassword&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SERVER&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Enter-PSSession&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;corpca&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Add-WindowsFeature&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;RSAT-AD&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-PowerShell&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Install-ADServiceAccount&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Test-ADServiceAccount&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;exit&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;install-ndes&#34;&gt;Install NDES
+&lt;/h3&gt;&lt;p&gt;You can&amp;rsquo;t install NDES as a gMSA, but we&amp;rsquo;ll convert it later. I&amp;rsquo;m going to use my admin account for the initial installation, and convert it to a gMSA later. You cannot initially install it as a gMSA. Let&amp;rsquo;s install the NDES role first:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;#Install-AdcsNetworkDeviceEnrollmentService -Force -ServiceAccountName &amp;#34;CORP\admin&amp;#34; -ServiceAccountPassword &amp;#34;System.Security.SecureString&amp;#34; -RAName &amp;#34;SERVER-MSCEP-RA&amp;#34; -RAEmail &amp;#34;helpdesk@company.com&amp;#34; -RACompany &amp;#34;Company&amp;#34; -RADepartment &amp;#34;IT-CNS&amp;#34; -RACity &amp;#34;Guelph&amp;#34; -RAState &amp;#34;Ontario&amp;#34; -RACountry &amp;#34;CA&amp;#34; -SigningProviderName &amp;#34;Microsoft Strong Cryptographic Provider&amp;#34; -SigningKeyLength &amp;#34;2048&amp;#34; -EncryptionProviderName &amp;#34;Microsoft Strong Cryptographic Provider&amp;#34; -EncryptionKeyLength &amp;#34;2048&amp;#34; -CAConfig &amp;#34;corpca.corp.company.com\Company Corporate Issuing CA&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;configure-iis&#34;&gt;Configure IIS
+&lt;/h3&gt;&lt;p&gt;Now, add the installation account to the IIS_IUSRS group:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Add-LocalGroupMember&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Group&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IIS_IUSRS&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Member&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;admin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;NDES-gMSA&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Since NDES was installed on a server with the Web Enrollment server role, the IIS virtual directories won&amp;rsquo;t show. However, the site is still working and vsible under the IIS Applications, and IIS Application Pools pages. We need to use &lt;em&gt;Powershell 5.1&lt;/em&gt; to check that SSL is properly set on the MSCEP_ADMIN site by first querying the current values, then setting them:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Get-WebConfigurationProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-pspath&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MACHINE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WEBROOT&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APPHOST&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-location&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;Default&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Web&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Site&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CertSrv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mscep_admin&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-filter&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;webServer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;security&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;access&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sslFlags&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Set-WebConfigurationProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-pspath&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MACHINE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WEBROOT&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APPHOST&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-location&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;Default&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Web&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Site&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CertSrv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mscep_admin&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-filter&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;webServer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;security&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;access&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sslFlags&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-value&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Ssl&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To return to the stock IIS settings, run this command from &lt;em&gt;Powershell 5.1&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Set-WebConfigurationProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-pspath&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MACHINE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WEBROOT&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;APPHOST&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-location&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;‘&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;Default&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Web&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Site&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CertSrv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mscep_admin&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;’&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-filter&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;webServer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;security&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;access&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-name&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;sslFlags&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-value&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;“&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;”&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;`&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The SCEP site (MSCEP) &lt;em&gt;must&lt;/em&gt; remain accessible via. HTTP, as that&amp;rsquo;s the only mechanism that the ASA supports.&lt;/p&gt;
+&lt;h2 id=&#34;run-ndes-under-a-gmsa&#34;&gt;Run NDES under a gMSA
+&lt;/h2&gt;&lt;p&gt;Next, I used the IIS GUI to change the SCEP application pool identity (which is actually the NDES Application Pool) to the gMSA (under Advanced Settings), and restarted IIS.&lt;/p&gt;
+&lt;p&gt;Since we&amp;rsquo;re using a gMSA, I need to grant that account permissions to manage the private key for the certs we have, but it needs to be done via. powershell since remote GUI access doesn&amp;rsquo;t support it. I modified a script from &lt;a class=&#34;link&#34; href=&#34;https://www.codyhosterman.com/2019/06/assigning-read-access-to-windows-private-key/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Assigning Read Access to Windows Private Key&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;foreach&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$certobj&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;gci &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cert&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;localmachine&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;my&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;where &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;subject&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-like&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;E=helpdesk*&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;})){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$rsaCert&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Security.Cryptography.X509Certificates.RSACertificateExtensions&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;GetRSAPrivateKey&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CertObj&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$fileName&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$rsaCert&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;key&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;UniqueName&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$path&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$env:ALLUSERSPROFILE&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;\Microsoft\Crypto\rsa\machinekeys\&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$filename&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$permissions&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-Acl&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$path&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$rule&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;new-object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;security&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;accesscontrol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;filesystemaccessrule&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;corp\ndes-gmsa$&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;read&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;allow&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$permissions&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;AddAccessRule&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$rule&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nb&#34;&gt;Set-Acl&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$path&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-AclObject&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$permissions&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;get-acl&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-path&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$path&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;access&lt;/span&gt; &lt;span class=&#34;c&#34;&gt;#*validate that the settings worked&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;FileSystemRights&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FullControl&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;AccessControlType&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Allow&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;IdentityReference&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;NT&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;AUTHORITY&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SYSTEM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;IsInherited&lt;/span&gt;       &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;False&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;InheritanceFlags&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;PropagationFlags&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;FileSystemRights&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FullControl&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;AccessControlType&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Allow&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;IdentityReference&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BUILTIN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Administrators&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;IsInherited&lt;/span&gt;       &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;False&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;InheritanceFlags&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;PropagationFlags&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;FileSystemRights&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Synchronize&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;AccessControlType&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Allow&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;IdentityReference&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;CORP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;ndes-gmsa&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;IsInherited&lt;/span&gt;       &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;False&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;InheritanceFlags&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;PropagationFlags&lt;/span&gt;  &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, configure NDES to use the certificate template we&amp;rsquo;ll create in the next step. I&amp;rsquo;m going to create a certificate template named &amp;lsquo;AnyConnect&amp;rsquo; for NDES to issue to my ASA via. SCEP.
+Change the default GeneralTemplateProperty registry value from &amp;ldquo;IPSECIntermediateOffline&amp;rdquo; to &amp;ldquo;AnyConnect&amp;rdquo;, and set NDES to not require a password:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Set-ItemProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HKLM&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SOFTWARE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Microsoft&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Cryptography&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MSCEP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;GeneralPurposeTemplate&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Value&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;AnyConnect&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Set-ItemProperty&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Path&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HKLM&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SOFTWARE&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Microsoft&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Cryptography&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MSCEP&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;EnforcePassword&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Name&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;EnforcePassword&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Value&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;create-certificate-template&#34;&gt;Create Certificate Template
+&lt;/h2&gt;&lt;p&gt;Let&amp;rsquo;s create a new template to use for issuing to AnyConnect. I prefer to create new template because we can modify it in many ways not available when we just use the default &amp;lsquo;User&amp;rsquo; template.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Open the Certificate Templates MMC.&lt;/li&gt;
+&lt;li&gt;Make a copy of the &amp;lsquo;User&amp;rsquo; template, and configure these settings:
+&lt;ul&gt;
+&lt;li&gt;rename to &amp;lsquo;AnyConnect&amp;rsquo; (General tab)&lt;/li&gt;
+&lt;li&gt;set OS compatibility (Compatibility tab)&lt;/li&gt;
+&lt;li&gt;edit Extensions/Applition Policies and remove all entries EXCEPT Client Authentication&lt;/li&gt;
+&lt;li&gt;edit Security and add the CORP\NDES-gMSA$ account. (If using the GUI to browse for this account, you may need to change the account filtering options to list gMSAs). Allow the account Enroll permission only.&lt;/li&gt;
+&lt;li&gt;set Subject Name to &amp;lsquo;supply in the request&amp;rsquo;. Accept the popup notification.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Clikc OK and close the Templates MMC.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the CA MMC, right-click Certificate Templates, select New, Certificate Template to Issue, then select AnyConnect. Your new template is now ready to issue!
+Reboot the NDES server for the registry settings made earlier to take effect.&lt;/p&gt;
+&lt;p&gt;Now, let&amp;rsquo;s tackle the ASA configuration in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gsecse.wordpress.com/2015/10/06/ndes-deployment-and-troubleshooting/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NDES Deployment and troubleshooting&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.sysadmins.lv/retired-msft-blogs/pki/setting-up-ndes-using-a-group-managed-service-account-gmsa.aspx&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Setting up NDES using a Group Managed Service Account (gMSA)&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Cisco Management Tunnel</title>
+        <link>https://gbeifuss.github.io/p/cisco-management-tunnel/</link>
+        <pubDate>Fri, 24 Sep 2021 07:26:05 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/cisco-management-tunnel/</guid>
+        <description>&lt;p&gt;This is part 1 of a 3-part series.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Cisco Management Tunnel&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/&#34; &gt;Cisco Management Tunnel - ASA Setup&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;When the Covid-19 pandemic started, our organization sent everyone to work from home. Of course, with everyone on VPN and not continually connected, like in the office, that&amp;rsquo;s posed some problems for login scripts, and some of our automated processes like WSUS patch deployment, NTP time sync and SCCM. I recently heard this was an issue - I&amp;rsquo;m not sure why the sysadmins didn&amp;rsquo;t raise it sooner - and did some research into ways I can address those problems for our team. We use Cisco AnyConnect for VPN, and AnyConnect has two features that seemed to meet our needs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;AnyConnect Start Before Login (SBL)&lt;/strong&gt;
+In essence, this forces the user to authenticate to VPN before signing to their machine with domain credentials. This would mean that a VPN connection exists before the user sign in, which should address login script issues.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;AnyConnect Management VPN&lt;/strong&gt;
+In this scenario, a VPN Management Tunnel would establish whenever the user/computer is disconnected from VPN. If the user reauthenticates, the Management Tunnel drops as the VPN connection is already present. Certificates are used for authentication. This would address our ability to patch machines that are powered on but not signed into VPN, and it sounds like it’d help with login scripts too.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here’s how Cisco describes the Management Tunnel feature in &lt;a class=&#34;link&#34; href=&#34;https://www.cisco.com/c/en/us/support/docs/security/adaptive-security-appliance-asa-software/215442-configure-anyconnect-management-vpn-tunn.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Configure AnyConnect Management VPN Tunnel on ASA&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Background Information&lt;/strong&gt;
+&lt;em&gt;A management VPN tunnel ensures connectivity to the corporate network whenever the client system is powered up, not just when a VPN connection is established by the end-user. You can perform patch management on out-of-the-office endpoints, especially devices that are infrequently connected by the user, via VPN, to the office network. Endpoint OS login scripts that require corporate network connectivity also benefits from this feature.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;AnyConnect Management Tunnel allows administrators to have AnyConnect connected without user intervention prior to the user log in. AnyConnect Management tunnel can work in conjunction with Trusted Network Detection and therefore is triggered only when the endpoint is off-premise and disconnected from User-initiated VPN. AnyConnect Management tunnel is transparent to the end-user and disconnects automatically when the user initiates VPN.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Working of Management Tunnel&lt;/strong&gt;
+&lt;em&gt;AnyConnect VPN agent service is automatically started upon system boot-up. It detects that the management tunnel feature is enabled (via the management VPN profile), therefore it launches the management client application to initiate a management tunnel connection. The management client application uses the host entry from the management VPN profile to initiate the connection. Then the VPN tunnel is established as usual, with one exception: no software update is performed during a management tunnel connection since the management tunnel is meant to be transparent to the user.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;The user initiates a VPN tunnel via the AnyConnect UI, which triggers the management tunnel termination. Upon management tunnel termination, the user tunnel establishment continues as usual.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;The user disconnects the VPN tunnel, which triggers the automatic re-establishment of the management tunnel.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Limitations&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;User interaction is not supported.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Certificate-based authentication through Machine Certificate Store (Windows) is only supported.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Strict Server Certificate checking is enforced.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Private Proxy is not supported.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;A public proxy is not supported (ProxyNative value is supported on platforms where Native Proxy settings are not retrieved from the browser).&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;AnyConnect Customization Scripts are not supported.&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The biggest risk I see to deploying either of these is how it might be affected by our web filtering proxy.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s really only one way to find out how/if this will work, and that&amp;rsquo;s to set it up! I&amp;rsquo;ll do that in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/cisco-management-tunnel/&#34; &gt;Cisco Management Tunnel - NDES Setup&lt;/a&gt;.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

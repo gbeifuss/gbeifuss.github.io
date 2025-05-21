@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Confluence on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/confluence/</link>
+        <description>Recent content in Confluence on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 22 Mar 2022 13:26:12 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/confluence/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Reset Confluence Password for an Administrator ID</title>
+        <link>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</link>
+        <pubDate>Tue, 22 Mar 2022 13:26:12 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/reset-confluence-password-for-an-administrator-id/</guid>
+        <description>&lt;p&gt;I recently had a request to grant a new user access to a legacy Confluence install at work. This particular server was in active use from 2013-2018ish and runs Confluence 3.1 standalone (Apache &amp;amp; mySQL).&lt;/p&gt;
+&lt;p&gt;The big problem was that &lt;strong&gt;nobody knew any credentials&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;I started out by browsing to the configuration in &lt;code&gt;C:\confluence\confluence-3.1-std\conf\server.xml&lt;/code&gt;. Luckily, I found some credentials to connect to the mySQL instance:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;&amp;lt;property name=&amp;#34;hibernate.connection.driver_class&amp;#34;&amp;gt;com.mysql.jdbc.Driver&amp;lt;/property&amp;gt;
+&amp;lt;property name=&amp;#34;hibernate.connection.password&amp;#34;&amp;gt;conf*w0rk&amp;lt;/property&amp;gt;
+&amp;lt;property name=&amp;#34;hibernate.connection.url&amp;#34;&amp;gt;jdbc:mysql://localhost/confluence?autoReconnect=true&amp;lt;/property&amp;gt;
+&amp;lt;property name=&amp;#34;hibernate.connection.username&amp;#34;&amp;gt;confluenceuser&amp;lt;/property&amp;gt;
+&amp;lt;property name=&amp;#34;hibernate.database.lower_non_ascii_supported&amp;#34;&amp;gt;true&amp;lt;/property&amp;gt;
+&amp;lt;property name=&amp;#34;hibernate.dialect&amp;#34;&amp;gt;com.atlassian.hibernate.dialect.MySQLDialect&amp;lt;/property&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I was then able to follow Atlassian&amp;rsquo;s documentation on &lt;a class=&#34;link&#34; href=&#34;https://confluence.atlassian.com/display/CONF34/Restoring&amp;#43;Passwords&amp;#43;To&amp;#43;Recover&amp;#43;Admin&amp;#43;User&amp;#43;Rights&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Restoring Passwords To Recover Admin User Rights&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;First, I ran a query against the database using &lt;strong&gt;MySQL Query Browser&lt;/strong&gt; to identify existing administrators. This returns the users who belong to the Confluence-Administrators group:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;select name from users u, local_members l, groups g where g.groupname = &amp;#39;confluence-administrators&amp;#39; and g.id=l.groupid and u.id=l.userid;
+
+administrator
+confadmin
+wikiadmin
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s reset the password for &amp;lsquo;administrator&amp;rsquo;. I began by stopping Confluence via. the &lt;code&gt;shutdown.bat&lt;/code&gt; script.&lt;/p&gt;
+&lt;p&gt;Then, I used &lt;strong&gt;mySQL Query Browser&lt;/strong&gt; again to reset the administrator account&amp;rsquo;s password to &lt;code&gt;admin&lt;/code&gt;:&lt;br&gt;
+&lt;code&gt;update users set password = &#39;x61Ey612Kl2gpFL56FT9weDnpSo4AV8j8+qx2AuTHdRyY036xxzTTrw10Wq3+4qQyB+XURPWx1ONxp3Y3pB37A==&#39; where name=&#39;administrator&#39;;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;After the password was reset, I started Confluence again via. the &amp;lsquo;startup.bat&amp;rsquo; script. I then logged in as administrator:admin and used Confluence&amp;rsquo;s interface to add a new user account.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

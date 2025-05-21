@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Gathering information from Task Scheduler with Powershell">
+<title>Using Powershell to interact with Task Scheduler</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/powershell-taskscheduler/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Using Powershell to interact with Task Scheduler">
+<meta property='og:description' content="Gathering information from Task Scheduler with Powershell">
+<meta property='og:url' content='http://localhost:1313/posts/powershell-taskscheduler/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-08-25T14:19:31-04:00'/><meta property='article:modified_time' content='2021-08-25T14:19:31-04:00'/>
+<meta name="twitter:title" content="Using Powershell to interact with Task Scheduler">
+<meta name="twitter:description" content="Gathering information from Task Scheduler with Powershell">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/powershell-taskscheduler/">Using Powershell to interact with Task Scheduler</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Gathering information from Task Scheduler with Powershell
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 25, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I&rsquo;ve already written about <a class="link" href="http://localhost:1313/posts/powershell-scheduling-tasks/" >Running Powershell scripts with Task Scheduler</a>, but I solved a Task Scheduler problem the other day with Powershell and want to write about it.</p>
+<p>I love to use Powershell to solve problems and questions that I have. These are questions that are, for all intents and purposes, impossible to do manually because of the time that it would take.</p>
+<p>I&rsquo;ve undertaken a project to implement rotating the local Administrator passwords on our work servers. One of the things that I realized, as I was doing the preliminary investigation, is that there are quite a few scheduled jobs that run as .\Administrator in the Task Scheduler. I wondered:</p>
+<ul>
+<li>exactly how many jobs are scheduled in Task Scheduler?</li>
+<li>what do the jobs do?</li>
+<li>which servers are they on?</li>
+</ul>
+<p>I used Powershell and <code>get-adcomputer</code> to identify 543 computers in our domain that should be scanned for Task Scheduler-scheduled jobs. These computers run OSes ranging from Server 2000 to Server 2019. There were some key pieces of information I wanted to pull from them:</p>
+<ul>
+<li>Computer Name</li>
+<li>Task Name</li>
+<li>Credentials it runs under</li>
+<li>Is it enabled?</li>
+<li>When did it last run?</li>
+<li>When will it next run?</li>
+<li>What command is executed?</li>
+<li>What actions, if any, are executed?</li>
+</ul>
+<p>I started with <a class="link" href="https://github.com/exevolution/Get-AllScheduledTasks/blob/master/Get-AllScheduledTasks.ps1"  target="_blank" rel="noopener"
+    >Get-AllScheduledTasks</a> and modified it for the things I need:</p>
+<ul>
+<li>I removed <code>ActiveDirectory</code> module lines as they&rsquo;re not necessary under Powershell 7</li>
+<li>I removed the variable <code>$OUDistinguishedName</code></li>
+<li>I added field to the HashTable storing information about each Task</li>
+<li>I added filtering when querying the Task - I only want information about Tasks in the root (&quot;&quot;)</li>
+<li>I added a <code>switch</code> condition to resolve well-known SIDs to their names (i.e. LOCAL SYSTEM) and improved the regex query</li>
+<li>I sent all the output directly to a CSV instead sending it to an array, then sending that to a CSV</li>
+</ul>
+<p>There are some problems with the script - namely there&rsquo;s no handling of Tasks with multiple triggers or actions. They show up as &ldquo;System.Object[]` in the log - but for the purpose of my high-level discussions on how to handle Tasks running as .\Administrator, the script works. There were also one or two servers where the script just hung, and this script obviously doesn&rsquo;t work on older OSes like Windows Server 2003.</p>
+<ul>
+<li>1604 jobs were found&hellip; wow! Those are a lot of jobs that bypass our enterprise scheduling process.</li>
+<li>543 domain-joined systems were scanned by this script. NOTE: some systems couldn’t be queried. I’d estimate this at 10-15% (50-75 systems).</li>
+<li>899 jobs (56%) run on DB systems (Oracle, SQL servers)</li>
+<li>159 jobs run under the local Administrator credentials</li>
+<li>158 jobs are to reboot the server</li>
+<li>598 jobs have not run since 2019</li>
+<li>614 jobs are currently disabled and not set to run. Some of them are obsolete, but some of them are purposely created &amp; disabled so that an admin can easily run a predefined task by manually triggering it.</li>
+</ul>
+<p>With these stats, I can create a plan to deal with all these Tasks that won&rsquo;t run once I rotate the local Administrator password.</p>
+<p>I&rsquo;ve included my full script at the end of this post.</p>
+<p>As I was writing this script, I found that a number of systems still had Symantec jobs running regularly, even though Symantec was uninstalled from our servers about a year ago. The tasks ran, but didn&rsquo;t actually do anything since the executable they were calling had been deleted. That seemed pretty harmless but pointless, so of course I had to fix it!</p>
+<p>Now I had a new quest - disable all the Symantec tasks across our organization!<br>
+What tool can I use? Powershell!</p>
+<p>I wrote a quick script that uses 2 methods to query all 543 servers, find any Tasks in the \Symantec Endpoint Protection\ folder and disable them&hellip; then I ran it. Mission accomplished!</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">#Disable-ScheduledSEPTasks</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">&lt;#
+</span></span></span><span class="line"><span class="cl"><span class="cm">There are a lot of servers with enabled SEP-related tasks in Task Scheduler.
+</span></span></span><span class="line"><span class="cl"><span class="cm">The tasks don&#39;t run because the executable doesn&#39;t exist.
+</span></span></span><span class="line"><span class="cl"><span class="cm">Disable these tasks to clean up log noise and prevent someone from placing a malicious file in the path
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">Greg Beifuss
+</span></span></span><span class="line"><span class="cl"><span class="cm">2021-08-25 12:20
+</span></span></span><span class="line"><span class="cl"><span class="cm">#&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Grab specific computers</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$Computers</span> <span class="p">=</span> <span class="nb">Get-ADComputer</span> <span class="n">-Filter</span> <span class="p">{</span> <span class="p">(</span><span class="n">name</span> <span class="o">-notlike</span> <span class="s2">&#34;AC*&#34;</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="n">name</span> <span class="o">-notlike</span> <span class="s2">&#34;WIFI*&#34;</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="n">name</span> <span class="o">-notlike</span> <span class="s2">&#34;DON*&#34;</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="n">Enabled</span> <span class="o">-eq</span> <span class="s2">&#34;True&#34;</span><span class="p">)</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">DNSHostName</span> <span class="p">|</span> <span class="nb">Sort-Object</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Do this the Powershell 7 way</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$Computers</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="n">-Parallel</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Test-Connection</span> <span class="n">-ComputerName</span> <span class="nv">$Computer</span> <span class="n">-Count</span> <span class="mf">1</span> <span class="n">-Quiet</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Get-ScheduledTask</span> <span class="n">-CimSession</span> <span class="nv">$_</span> <span class="n">-TaskPath</span> <span class="s2">&#34;\Symantec Endpoint Protection\&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Do this the legacy way.</span>
+</span></span><span class="line"><span class="cl"><span class="c">#If pingable, try to connect and disable tasks</span>
+</span></span><span class="line"><span class="cl"><span class="k">ForEach</span> <span class="p">(</span><span class="nv">$Computer</span> <span class="k">in</span> <span class="nv">$Computers</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># Test connection with computer</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Test-Connection</span> <span class="n">-ComputerName</span> <span class="nv">$Computer</span> <span class="n">-Count</span> <span class="mf">1</span> <span class="n">-Quiet</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c"># Disable SEP tasks on machines</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$scriptblock</span> <span class="p">=</span> <span class="p">{</span><span class="nb">Get-ScheduledTask</span> <span class="n">-TaskPath</span> <span class="s2">&#34;\Symantec Endpoint Protection\&#34;</span> <span class="p">|</span> <span class="nb">Disable-ScheduledTask</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Invoke-Command</span> <span class="n">-ComputerName</span> <span class="nv">$Computer</span> <span class="n">-ScriptBlock</span> <span class="nv">$scriptblock</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>And here is the script that generated the statistics about Task Scheduler:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">#Get-ScheduledRootTasks</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">&lt;#
+</span></span></span><span class="line"><span class="cl"><span class="cm">Get all scheduled tasks at the root level &#34;\&#34; (this is where staff typically create them and avoids OS/Application-created tasks)
+</span></span></span><span class="line"><span class="cl"><span class="cm">Export the results to a CSV
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">Modified from https://github.com/exevolution/Get-AllScheduledTasks/blob/master/Get-AllScheduledTasks.ps1
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">Greg Beifuss
+</span></span></span><span class="line"><span class="cl"><span class="cm">2021-08-25 12:25
+</span></span></span><span class="line"><span class="cl"><span class="cm">#&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">Function</span><span class="w"> </span><span class="nb">Connect-TaskScheduler</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="nb">CmdletBinding</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">Param</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">(</span><span class="na">Mandatory</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">,</span> <span class="na">ValueFromPipeline</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="no">String</span><span class="p">]</span><span class="nv">$ComputerName</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">Begin</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$objScheduledTask</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-ComObject</span><span class="p">(</span><span class="s2">&#34;Schedule.Service&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">Process</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">Try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">Write-Verbose</span> <span class="s2">&#34;Connecting to </span><span class="nv">$ComputerName</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">$objScheduledTask</span><span class="p">.</span><span class="py">Connect</span><span class="p">(</span><span class="s2">&#34;</span><span class="nv">$ComputerName</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">Write-Verbose</span> <span class="s2">&#34;Connected: </span><span class="p">$(</span><span class="nv">$objScheduledTask</span><span class="p">.</span><span class="n">Connected</span><span class="p">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">Catch</span> <span class="p">{</span> <span class="nb">Write-Error</span> <span class="s2">&#34;Failed to connect to </span><span class="nv">$ComputerName</span><span class="s2">&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">End</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">Return</span> <span class="nv">$objScheduledTask</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">Function</span><span class="w"> </span><span class="nb">Get-AllScheduledTasks</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="nb">CmdletBinding</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">Param</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">(</span><span class="na">Mandatory</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">ValidateScript</span><span class="p">(</span> <span class="p">{</span> <span class="k">If</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">GetType</span><span class="p">().</span><span class="py">BaseType</span><span class="p">.</span><span class="py">Name</span> <span class="o">-eq</span> <span class="s2">&#34;MarshalByRefObject&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Connected</span> <span class="o">-eq</span> <span class="vm">$True</span><span class="p">)</span> <span class="p">{</span> <span class="vm">$True</span> <span class="p">}</span><span class="k">Else</span> <span class="p">{</span> <span class="k">Throw</span> <span class="s2">&#34;Not a valid Task Scheduler connection object&#34;</span> <span class="p">}</span> <span class="p">})]</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Session</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">(</span><span class="na">ValueFromPipelineByPropertyName</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">ValidateNotNullOrEmpty</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="no">String[]</span><span class="p">]</span><span class="nv">$Path</span> <span class="p">=</span> <span class="s2">&#34;\&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="no">Switch</span><span class="p">]</span><span class="nv">$Recurse</span> <span class="p">=</span> <span class="vm">$False</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">Begin</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Tasks</span> <span class="p">=</span> <span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Paths</span> <span class="p">=</span> <span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">Process</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Paths</span> <span class="p">+=</span> <span class="nb">Get-TaskSchedulerPaths</span> <span class="n">-Session</span> <span class="nv">$Session</span> <span class="n">-Path</span> <span class="nv">$Path</span> <span class="n">-Recurse:</span><span class="nv">$Recurse</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Tasks</span> <span class="p">+=</span> <span class="nv">$Paths</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Path</span> <span class="p">|</span> <span class="nb">Get-TaskSchedulerTasks</span> <span class="n">-Session</span> <span class="nv">$Session</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">End</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">Return</span> <span class="nv">$Tasks</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">Function</span><span class="w"> </span><span class="nb">Get-TaskSchedulerPaths</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="nb">CmdletBinding</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">Param</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">(</span><span class="na">ValueFromPipeline</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">ValidateNotNullOrEmpty</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="no">String[]</span><span class="p">]</span><span class="nv">$Path</span> <span class="p">=</span> <span class="s2">&#34;\&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">(</span><span class="na">Mandatory</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">ValidateScript</span><span class="p">(</span> <span class="p">{</span> <span class="k">If</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">GetType</span><span class="p">().</span><span class="py">BaseType</span><span class="p">.</span><span class="py">Name</span> <span class="o">-eq</span> <span class="s2">&#34;MarshalByRefObject&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Connected</span> <span class="o">-eq</span> <span class="vm">$True</span><span class="p">)</span> <span class="p">{</span> <span class="vm">$True</span> <span class="p">}</span><span class="k">Else</span> <span class="p">{</span> <span class="k">Throw</span> <span class="s2">&#34;Not a valid Task Scheduler connection object&#34;</span> <span class="p">}</span> <span class="p">})]</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Session</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="no">Switch</span><span class="p">]</span><span class="nv">$Recurse</span> <span class="p">=</span> <span class="vm">$False</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">Begin</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Paths</span> <span class="p">=</span> <span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">Process</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$BasePath</span> <span class="p">=</span> <span class="nv">$Session</span><span class="p">.</span><span class="py">GetFolder</span><span class="p">(</span><span class="s2">&#34;</span><span class="nv">$Path</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Paths</span> <span class="p">+=</span> <span class="nv">$BasePath</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Paths</span> <span class="p">+=</span> <span class="nv">$BasePath</span><span class="p">.</span><span class="py">GetFolders</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">If</span> <span class="p">(</span><span class="nv">$Recurse</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">ForEach</span> <span class="p">(</span><span class="nv">$P</span> <span class="k">in</span> <span class="nv">$Paths</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">If</span> <span class="p">(</span><span class="nv">$P</span> <span class="o">-eq</span> <span class="nv">$BasePath</span><span class="p">)</span> <span class="p">{</span> <span class="k">Continue</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="k">Else</span> <span class="p">{</span> <span class="nv">$Paths</span> <span class="p">+=</span> <span class="nb">Get-TaskSchedulerPaths</span> <span class="n">-Session</span> <span class="nv">$Session</span> <span class="n">-Path</span> <span class="nv">$P</span><span class="p">.</span><span class="py">Path</span> <span class="n">-Recurse</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">End</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">Return</span> <span class="nv">$Paths</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">Function</span><span class="w"> </span><span class="nb">Get-TaskSchedulerTasks</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="nb">CmdletBinding</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">Param</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">(</span><span class="na">ValueFromPipeline</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">ValidateNotNullOrEmpty</span><span class="p">()]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="no">String[]</span><span class="p">]</span><span class="nv">$Path</span> <span class="p">=</span> <span class="s2">&#34;\&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">Parameter</span><span class="p">(</span><span class="na">Mandatory</span> <span class="p">=</span> <span class="vm">$True</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="nb">ValidateScript</span><span class="p">(</span> <span class="p">{</span> <span class="k">If</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">GetType</span><span class="p">().</span><span class="py">BaseType</span><span class="p">.</span><span class="py">Name</span> <span class="o">-eq</span> <span class="s2">&#34;MarshalByRefObject&#34;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Connected</span> <span class="o">-eq</span> <span class="vm">$True</span><span class="p">)</span> <span class="p">{</span> <span class="vm">$True</span> <span class="p">}</span><span class="k">Else</span> <span class="p">{</span> <span class="k">Throw</span> <span class="s2">&#34;Not a valid Task Scheduler connection object&#34;</span> <span class="p">}</span> <span class="p">})]</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Session</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">Begin</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$AllTasks</span> <span class="p">=</span> <span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">Process</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$Folder</span> <span class="p">=</span> <span class="nv">$Session</span><span class="p">.</span><span class="py">GetFolder</span><span class="p">(</span><span class="s2">&#34;</span><span class="nv">$Path</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$FolderTasks</span> <span class="p">=</span> <span class="nv">$Folder</span><span class="p">.</span><span class="py">GetTasks</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">ForEach</span> <span class="p">(</span><span class="nv">$Task</span> <span class="k">in</span> <span class="nv">$FolderTasks</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">If</span> <span class="p">(((</span><span class="nv">$Task</span><span class="p">.</span><span class="py">Path</span><span class="p">.</span><span class="py">ToCharArray</span><span class="p">()</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span> <span class="o">-eq</span> <span class="s1">&#39;\&#39;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Measure-Object</span><span class="p">).</span><span class="py">Count</span> <span class="o">-eq</span> <span class="mf">1</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="nv">$Task</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">-Property</span> <span class="n">Name</span> <span class="o">-NotMatch</span> <span class="s1">&#39;^(SensorFramework|Optimize Start Menu|ShadowCopyVolumeUser_Feed|User_Feed|OneDrive|MicrosoftEdgeUpdateTask|GoogleUpdateTask|Adobe Acrobat Update Task)&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$RunAsID</span> <span class="p">=</span> <span class="nv">$Task</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="vm">@</span><span class="p">{</span><span class="n">Name</span> <span class="p">=</span> <span class="s2">&#34;RunAs&#34;</span><span class="p">;</span> <span class="n">Expression</span> <span class="p">=</span> <span class="p">{</span> <span class="p">[</span><span class="no">xml</span><span class="p">]</span><span class="nv">$xml</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">xml</span> <span class="p">;</span> <span class="nv">$xml</span><span class="p">.</span><span class="py">Task</span><span class="p">.</span><span class="py">Principals</span><span class="p">.</span><span class="py">Principal</span><span class="p">.</span><span class="py">UserId</span> <span class="p">}</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">RunAs</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span>
+</span></span><span class="line"><span class="cl">                <span class="k">If</span> <span class="p">(</span><span class="nv">$RunAsID</span> <span class="o">-match</span> <span class="s2">&#34;S-\d-(?:\d+-){1,14}\d+&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">Switch</span> <span class="p">(</span><span class="nv">$RunAsID</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="s2">&#34;S-1-5-18&#34;</span> <span class="p">{</span> <span class="nv">$RunAs</span> <span class="p">=</span> <span class="s2">&#34;LOCAL SYSTEM&#34;</span><span class="p">;</span> <span class="k">break</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                        <span class="s2">&#34;S-1-5-19&#34;</span> <span class="p">{</span> <span class="nv">$RunAs</span> <span class="p">=</span> <span class="s2">&#34;LOCAL SERVICE&#34;</span><span class="p">;</span> <span class="k">break</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                        <span class="s2">&#34;S-1-5-20&#34;</span> <span class="p">{</span> <span class="nv">$RunAs</span> <span class="p">=</span> <span class="s2">&#34;NETWORK SERVICE&#34;</span><span class="p">;</span> <span class="k">break</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">Default</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">Try</span> <span class="p">{</span> <span class="nv">$RunAs</span> <span class="p">=</span> <span class="nb">Get-ADUser</span> <span class="n">-Identity</span> <span class="nv">$RunAsID</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">SamAccountName</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">Catch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                                <span class="k">Try</span> <span class="p">{</span> <span class="nv">$RunAs</span> <span class="p">=</span> <span class="nb">Get-ADGroup</span> <span class="n">-Identity</span> <span class="nv">$RunAsID</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">SamAccountName</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                                <span class="k">Catch</span> <span class="p">{</span> <span class="nv">$RunAs</span> <span class="p">=</span> <span class="nv">$RunAsID</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="k">Else</span> <span class="p">{</span> <span class="nv">$RunAs</span> <span class="p">=</span> <span class="nv">$RunAsID</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="nv">$HashTable</span> <span class="p">=</span> <span class="p">[</span><span class="no">Ordered</span><span class="p">]</span><span class="vm">@</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">ComputerName</span> <span class="p">=</span> <span class="nv">$Session</span><span class="p">.</span><span class="py">TargetServer</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">Name</span>         <span class="p">=</span> <span class="nv">$Task</span><span class="p">.</span><span class="py">Name</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">RunAs</span>        <span class="p">=</span> <span class="nv">$RunAs</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">Action</span>       <span class="p">=</span> <span class="nv">$Task</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="vm">@</span><span class="p">{</span><span class="n">Name</span> <span class="p">=</span> <span class="s2">&#34;Actions&#34;</span><span class="p">;</span> <span class="n">Expression</span> <span class="p">=</span> <span class="p">{</span> <span class="p">[</span><span class="no">xml</span><span class="p">]</span><span class="nv">$xml</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">xml</span> <span class="p">;</span> <span class="nv">$xml</span><span class="p">.</span><span class="py">Task</span><span class="p">.</span><span class="py">Actions</span><span class="p">.</span><span class="py">Exec</span><span class="p">.</span><span class="py">Command</span> <span class="p">}</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">Actions</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">Arguments</span>    <span class="p">=</span> <span class="nv">$Task</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="vm">@</span><span class="p">{</span><span class="n">Name</span> <span class="p">=</span> <span class="s2">&#34;Arguments&#34;</span><span class="p">;</span> <span class="n">Expression</span> <span class="p">=</span> <span class="p">{</span> <span class="p">[</span><span class="no">xml</span><span class="p">]</span><span class="nv">$xml</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">xml</span> <span class="p">;</span> <span class="nv">$xml</span><span class="p">.</span><span class="py">Task</span><span class="p">.</span><span class="py">Actions</span><span class="p">.</span><span class="py">Exec</span><span class="p">.</span><span class="py">Arguments</span> <span class="p">}</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">Arguments</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">LastRunTime</span>  <span class="p">=</span> <span class="nv">$Task</span><span class="p">.</span><span class="py">LastRunTime</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">NextRunTime</span>  <span class="p">=</span> <span class="nv">$Task</span><span class="p">.</span><span class="py">NextRunTime</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">TaskEnabled</span>  <span class="p">=</span> <span class="nv">$Task</span><span class="p">.</span><span class="py">Enabled</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">$AllTasks</span> <span class="p">+=</span> <span class="nb">New-Object</span> <span class="n">PSObject</span> <span class="n">-Property</span> <span class="nv">$HashTable</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">End</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">Return</span> <span class="nv">$AllTasks</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$Tasks</span> <span class="p">=</span> <span class="vm">@</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">ForEach</span> <span class="p">(</span><span class="nv">$Computer</span> <span class="k">in</span> <span class="p">(</span> <span class="nb">Get-ADComputer</span> <span class="n">-Filter</span> <span class="p">{</span> <span class="p">(</span><span class="n">name</span> <span class="o">-notlike</span> <span class="s2">&#34;AC*&#34;</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="n">name</span> <span class="o">-notlike</span> <span class="s2">&#34;WIFI*&#34;</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="n">name</span> <span class="o">-notlike</span> <span class="s2">&#34;DON*&#34;</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="n">Enabled</span> <span class="o">-eq</span> <span class="s2">&#34;True&#34;</span><span class="p">)</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">DNSHostName</span> <span class="p">|</span> <span class="nb">Sort-Object</span><span class="p">)){</span>
+</span></span><span class="line"><span class="cl"><span class="c">#ForEach ($Computer in $Computers[355..543]) {</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$Connection</span> <span class="p">=</span> <span class="nb">Connect-TaskScheduler</span> <span class="n">-ComputerName</span> <span class="nv">$Computer</span> <span class="n">-Verbose</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Get-AllScheduledTasks</span> <span class="n">-Session</span> <span class="nv">$Connection</span> <span class="n">-Recurse</span> <span class="p">|</span> <span class="nb">Export-CSV</span> <span class="n">c:</span><span class="p">\</span><span class="n">users</span><span class="p">\</span><span class="n">gbadmin</span><span class="p">\</span><span class="n">desktop</span><span class="p">\</span><span class="n">tasks</span><span class="p">.</span><span class="py">csv</span> <span class="n">-NoTypeInformation</span> <span class="n">-Append</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

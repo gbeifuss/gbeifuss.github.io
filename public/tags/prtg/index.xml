@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>PRTG on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/prtg/</link>
+        <description>Recent content in PRTG on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Mon, 06 Sep 2021 22:12:49 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/prtg/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Exchange DAGs and Cluster Ownership</title>
+        <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>
+        <pubDate>Mon, 06 Sep 2021 22:12:49 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</guid>
+        <description>&lt;p&gt;We run Exchange on a multiserver DAG, which behaves similarly to a cluster. It&amp;rsquo;s built on the same principles as a cluster, but it&amp;rsquo;s technically not a cluster and is administered differently than a cluster. It&amp;rsquo;s &amp;hellip; &lt;em&gt;clusterish&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;One of the issues that we run in to occasionally is that Cluster Owner changes to another DAG member server, which causes problems with our backup software. (The backup software can&amp;rsquo;t truely handle a cluster and wants to connect to the IP of a single server). The fix is pretty simple - change the owner back to the server it should be! Powershell makes this really easy:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;H:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&amp;gt;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Move-ClusterGroup&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Node&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;                                    &lt;span class=&#34;n&#34;&gt;OwnerNode&lt;/span&gt;                               &lt;span class=&#34;n&#34;&gt;State&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;                                    &lt;span class=&#34;p&#34;&gt;---------&lt;/span&gt;                               &lt;span class=&#34;p&#34;&gt;-----&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt;                       &lt;span class=&#34;n&#34;&gt;EXCHANGE04&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Offline&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;                          &lt;span class=&#34;n&#34;&gt;Exchange03&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Offline&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;H:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&amp;gt;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;                                    &lt;span class=&#34;n&#34;&gt;OwnerNode&lt;/span&gt;                               &lt;span class=&#34;n&#34;&gt;State&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;                                    &lt;span class=&#34;p&#34;&gt;---------&lt;/span&gt;                               &lt;span class=&#34;p&#34;&gt;-----&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt;                       &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Offline&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;                          &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Online&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To prevent any complications with our backups, I would like:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The Owner Node to be monitored&lt;/li&gt;
+&lt;li&gt;The Owner Node to be corrected to the proper values, if it&amp;rsquo;s not on Exchange05.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;We run PRTG for server monitoring&amp;hellip;. Fortunately, PRTG can do this for us! The (old) article &lt;a class=&#34;link&#34; href=&#34;https://kb.paessler.com/en/topic/70294-how-can-i-monitor-with-prtg-which-node-is-active-in-a-microsoft-cluster&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Monitoring Active Cluster Nodes With PRTG&lt;/a&gt; outlines the process. I only used this as a guide, as I ended up sourcing Jannos-443&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://github.com/Jannos-443/PRTG-MSCluster-PrefNodes&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PRTG-MSCluster-PrefNodes.ps1&lt;/a&gt; script.&lt;/p&gt;
+&lt;p&gt;I started by checking the Preferred Node setting for these two cluster objects:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterOwnerNode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;ClusterObject&lt;/span&gt;     &lt;span class=&#34;n&#34;&gt;OwnerNodes&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-------------&lt;/span&gt;     &lt;span class=&#34;p&#34;&gt;----------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;{}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Just peachy. Neither object has a preferred owner. Let&amp;rsquo;s fix that:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;set-ClusterOwnerNode&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;agricorp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;com&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterOwnerNode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;ClusterObject&lt;/span&gt;     &lt;span class=&#34;n&#34;&gt;OwnerNodes&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-------------&lt;/span&gt;     &lt;span class=&#34;p&#34;&gt;----------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;That&amp;rsquo;s better. With that out of the way, I created a new PRTG sensor to monitor that the Cluster was Owned by the Preferred Node:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Save the Cluster-checking script to &lt;code&gt;${env:ProgramFiles(x86)}\PRTG Network Monitor\Custom Sensors\EXEXML&lt;/code&gt; on the PRTG probe server.&lt;/li&gt;
+&lt;li&gt;Open PRTG and browsed to the Exchange05 server object. This is the server that should be the Owner&lt;/li&gt;
+&lt;li&gt;Create a new sensor. Select a sensor type &amp;ldquo;EXE/Script Advanced Sensor&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;PRTG-MSCluster-PrefNodes.ps1&lt;/code&gt; from the dropdown list. Provide the Exchange Cluster name as a parameter. In my case, I entered &lt;code&gt;Exchange2016&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Set the Security Context of the sensor to &lt;code&gt;Use Windows credentials of parent device&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Save changes. Query the sensor a couple of times to make sure that it&amp;rsquo;s working properly. When one or more nodes isn&amp;rsquo;t on the Preferred Node, then the sensor will change to &amp;lsquo;Warning&amp;rsquo;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Next, I want PRTG&amp;rsquo;s Notification action to correct the Owner of the cluster object. We&amp;rsquo;ll create a custom notification that will run a short Powershell script I wrote:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;&amp;lt;#
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;SYNOPSIS&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Force Cluster Owner to a specific server
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;DESCRIPTION&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    https://kb.paessler.com/en/topic/40713-can-i-automatically-restart-a-windows-service-with-prtg
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Copy this script to the main PRTG server&amp;#39;s Notifications\EXE scripts folder (${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    and create a new Notification Template &amp;gt; Execute Program. Choose this script from the dropdown and provide the SERVERNAME as a parameter.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    The Credentials need to be generated under the instance that PRTG is running as (NT Authority\System). These domain creds allow PRTG
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    to remotely run code on the remote system and manipulate the Cluster Groups.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .PARAMETER Server
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Server FQDN or NetBIOS Name
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;EXAMPLE&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Sample call from PRTG EXE/Script Advanced
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    PRTG-MSCluster-MoveClusterGroup.ps1 EXCHANGE01
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Author:  Greg Beifuss
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    7:48 AM 9/8/2021
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;#&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;param&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$Server&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;$null&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$id&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Import-Clixml&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;C:\Program Files (x86)\PRTG Network Monitor\Notifications\EXE\powershell.xml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$Scriptblock&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Move-ClusterGroup&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Node&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$env:COMPUTERNAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Invoke-Command&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ComputerName&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Server&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ScriptBlock&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Scriptblock&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Credential&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$id&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;0&#34;&gt;
+&lt;li&gt;Use &lt;code&gt;Export-CLIXML&lt;/code&gt; to store credentials that can log into the destination server (in my case, Exchange05)&lt;/li&gt;
+&lt;li&gt;Save this script to &lt;code&gt;${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE&lt;/code&gt;)` on the main PRTG server. This is the server that Notifications run from - the other PRTG servers simply won&amp;rsquo;t have the Notifications directory.&lt;/li&gt;
+&lt;li&gt;Create a new Notification Template in PRTG. Choose &amp;lsquo;Execute Program&amp;rsquo;, and select the PRTG-MSCluster-MoveClusterGroup.ps1 script. Provide a cluster member server name as the parameter. This will be passed into the script. Save.&lt;/li&gt;
+&lt;li&gt;Browse to the PRTG sensor that was previously created. Select &amp;lsquo;Notification Triggers&amp;rsquo;. Enable a State Trigger that will perform the Notification Template you just created. I used:
+&lt;ul&gt;
+&lt;li&gt;When sensor state is Warning for at least 60 seconds, perform PRTG-MSCluster-MoveClusterGroup&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Save &amp;amp; test.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;You can see below that at 7:49ish, both the cluster object owners changed from the preferred nodes. I know this since PRTG detected this as &amp;ldquo;2&amp;rdquo;, not &amp;ldquo;1&amp;rdquo;. In any case, after the sensor had been in this state for 60 seconds, the notification task started and moved the cluser objects back to their proper &amp;lsquo;home&amp;rsquo;. The sensor value reset to &amp;ldquo;0&amp;rdquo; clusters on a non-preferred node.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/prtg-cluster.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

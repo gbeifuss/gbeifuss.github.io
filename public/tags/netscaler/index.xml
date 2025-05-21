@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Netscaler on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/netscaler/</link>
+        <description>Recent content in Netscaler on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Mon, 04 Oct 2021 15:47:05 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/netscaler/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Working with JSON in Powershell</title>
+        <link>https://gbeifuss.github.io/p/working-with-json-in-powershell/</link>
+        <pubDate>Mon, 04 Oct 2021 15:47:05 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/working-with-json-in-powershell/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve recently been editing a Powershell script that manages our Let&amp;rsquo;s Encrypt certificates and their integration with Netscaler. I&amp;rsquo;ve been using John Billeken&amp;rsquo;s excellent &lt;a class=&#34;link&#34; href=&#34;https://github.com/j81blog/GenLeCertForNS&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GenLeCertForNS&lt;/a&gt; script to do the heavy lifting, but I&amp;rsquo;ve written a front-end wrapper for it to handle the way I need it to work in my environment. [I started using this with &lt;em&gt;v.2.63&lt;/em&gt;, which didn&amp;rsquo;t have email capabilities. My front-end wrapper adds email reporting, plus obfuscuating any credentials in the log, and loading the credentials from an encypted XML file].
+I was rewriting my wrapper to include SAN support &lt;em&gt;and&lt;/em&gt; to update two Netscaler appliances with the same certificate: if the CN matched certain values, the script will find the same Let&amp;rsquo;s Encrypt certificate .pfx, upload it to the Netscaler at our warm Disaster Recovery site and properly bind it.&lt;/p&gt;
+&lt;p&gt;To do that, I needed to make a number of API calls to Netscaler, which I generally discuss in my article &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/powershell-netscaler-api/&#34; &gt;Powershell &amp;amp; Netscaler API&lt;/a&gt;. This time, I needed to pass specific parameters in JSON format in order to link and unlink the certificate from others in the chain.&lt;/p&gt;
+&lt;p&gt;According to the &lt;a class=&#34;link&#34; href=&#34;https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/12.1/configuration/ssl/sslcertkey/sslcertkey/#link&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Citrix ADC NITRO API Reference&lt;/a&gt;, I need:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**URL:** http://&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;Citrix-ADC-IP-address&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;NSIP&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;/nitro/v1/config/sslcertkey?action=link  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**HTTP Method:** POST  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**Request Headers:** Cookie:NITRO_AUTH_TOKEN=&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;tokenvalue&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; Content-Type:application/json  
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;**Request Payload:**
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;s2&#34;&gt;&amp;#34;sslcertkey&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;s2&#34;&gt;&amp;#34;certkey&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String_value&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;s2&#34;&gt;&amp;#34;linkcertkeyname&amp;#34;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String_value&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is a JSON format. While I could just use a straight string (ie. &lt;code&gt;$string=&amp;quot;{&amp;quot;sslcertkey&amp;quot;:{&amp;quot;linkcertkeyname&amp;quot;:&amp;quot;Sectigo RSA CA 2018&amp;quot;,&amp;quot;certkey&amp;quot;:&amp;quot;sts.agricorp.com&amp;quot;}}&amp;quot;)&lt;/code&gt;) or a multiline string (ie. &lt;code&gt;$string=&amp;quot;@TEXT@&amp;quot;&lt;/code&gt;), I figured that I should take the effort to learn a bit about taking an object and converting it to JSON.&lt;/p&gt;
+&lt;p&gt;My initial attempts to get this working were all wrong. I finally managed to get the key/value pairs properly written to a hashtable, and then converted it to JSON.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;certkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CertificateCertKeyName&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;linkcertkeyname&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$IntermediateCACertKeyName&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;sslcertkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$array&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$jsonPayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ConvertTo-Json&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-InputObject&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Depth&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Compress&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output of &lt;code&gt;$jsonPayload&lt;/code&gt; looks like this:&lt;br&gt;
+&lt;code&gt;{&amp;quot;sslcertkey&amp;quot;:{&amp;quot;linkcertkeyname&amp;quot;:&amp;quot;Sectigo RSA CA 2018&amp;quot;,&amp;quot;certkey&amp;quot;:&amp;quot;sts.company.com&amp;quot;}}&lt;/code&gt;&lt;br&gt;
+&amp;hellip;perfectly formatted JSON that I can pass through to the Netscaler:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$URI&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://netscaler03.corp.company.com/nitro/v1/config&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$headers&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;X-NITRO-USER&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$netscalerID&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;X-NITRO-PASS&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$netscalerPwd&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;sslcertkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;certkey&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$CertificateCertKeyName&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;linkcertkeyname&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$IntermediateCACertKeyName&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$jsonPayload&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ConvertTo-Json&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-InputObject&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$hashtablePayload&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Depth&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Compress&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$response&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Invoke-RestMethod&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Method&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;POST&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Uri&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$uri&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;`/sslcertkey?action=link&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ContentType&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;application&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;json&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Headers&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$headers&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Body&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$JsonPayload&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
+        <link>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
+        <pubDate>Tue, 21 Sep 2021 10:18:20 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/&#34; &gt;Remediating an Internal IP Disclosure with Netscaler&lt;/a&gt;, but I found out today that the route I&amp;rsquo;d chosen prevents Outlook from authenticating. Oops!&lt;/p&gt;
+&lt;p&gt;To summarize the earlier post, Exchange was leaking an internal IP and servername when an HTTP/1.0 packet was set &lt;em&gt;without a host header&lt;/em&gt; to &lt;code&gt;/autodiscover/autodiscover.xml&lt;/code&gt;. I initially tried to fix it by deleting the WWW-Authenticate and X-FEServer headers from the replies using Netscaler.&lt;/p&gt;
+&lt;p&gt;However, while that prevents the information from being leaked, it also prevents Outlook from properly loading when the traffic flows through Netscaler. In our case, internal traffic was fine, but people who rely on Outlook and autodiscover outside of our network couldn&amp;rsquo;t log in. I tested and removing the X-FEServer header permitted Outlook to load normally; it was removing the WWW-Authenticate header that caused the problem.&lt;/p&gt;
+&lt;p&gt;I tried out some alternate methods of blocking an internal IP in the WWW-Authenticate field (specifically, a reply containing &lt;code&gt;basic realm=&amp;quot;10.10.10.10&lt;/code&gt;), but it seems like there&amp;rsquo;s important authentication using that field. I came up with another approach which seems to be working: Since this vulnerability is the result of a HTTP/1.0 request, rewrite HTTP/1.0 requests to HTTP/1.1. HTTP/1.1 &lt;em&gt;requires&lt;/em&gt; the host header field, which means that IIS won&amp;rsquo;t happily disclose internal IPs in response to a missing host header. HTTP/1.1 has been a standard since 1997 and there should literally be no device in the past 20 years which does not support it.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s get to work. I&amp;rsquo;ll create a rewrite policy that looks for HTTP/1.0. If it&amp;rsquo;s found, replace it with HTTP/1.1.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;add rewrite action RW_ACTION_HTTP1.0 replace HTTP.REQ.VERSION.MINOR &amp;#34;\&amp;#34;1\&amp;#34;&amp;#34;
+add rewrite policy RW_POLICY_HTTP1.0 &amp;#34;HTTP.REQ.VERSION.MINOR.EQ(0)&amp;#34; RW_ACTION_HTTP1.0
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_HTTP1.0 -priority 110 -gotoPriorityExpression END -type REQUEST
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s test and make sure that the internal information is no longer returned:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;GET /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 400 Bad Request
+Content-Type: text/html; charset=us-ascii
+Server: Microsoft-HTTPAPI/2.0
+Date: Tue, 21 Sep 2021 14:16:46 GMT
+Connection: close
+Content-Length: 334
+Strict-Transport-Security: max-age=15552000
+
+&amp;lt;!DOCTYPE HTML PUBLIC &amp;#34;-//W3C//DTD HTML 4.01//EN&amp;#34;&amp;#34;http://www.w3.org/TR/html4/strict.dtd&amp;#34;&amp;gt;
+&amp;lt;HTML&amp;gt;&amp;lt;HEAD&amp;gt;&amp;lt;TITLE&amp;gt;Bad Request&amp;lt;/TITLE&amp;gt;
+&amp;lt;META HTTP-EQUIV=&amp;#34;Content-Type&amp;#34; Content=&amp;#34;text/html; charset=us-ascii&amp;#34;&amp;gt;&amp;lt;/HEAD&amp;gt;
+&amp;lt;BODY&amp;gt;&amp;lt;h2&amp;gt;Bad Request - Invalid Hostname&amp;lt;/h2&amp;gt;
+&amp;lt;hr&amp;gt;&amp;lt;p&amp;gt;HTTP Error 400. The request hostname is invalid.&amp;lt;/p&amp;gt;
+&amp;lt;/BODY&amp;gt;&amp;lt;/HTML&amp;gt;
+closed
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Great! The request is rejected (404) because HTTP/1.1 requires a host header, and this rewritten HTTP/1.0 request doesn&amp;rsquo;t have one.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Remediating an Internal IP Disclosure with Netscaler</title>
+        <link>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
+        <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
+        <description>&lt;p&gt;Our security administrator sent over a few security &amp;lsquo;vulnerabilities&amp;rsquo; that had been flagged during a recent audit. One of them was a finding that one of our websites was leaking an internal IP. All I was given to track this down was the output from the auditor&amp;rsquo;s Nessus scan:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Nessus was able to verify the issue with the following request :
+
+GET autodiscover/autodiscover.xml HTTP/1.0
+Accept-Charset: iso-8859-1,utf-8;q=0.9,*;q=0.1
+Accept-Language: en
+Connection: Close
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)
+Pragma: no-cache
+AcceptL image/gif, image/x-xbitmap, image/jpeg, impage/pjpeg, image/png, */*
+
+Which returned the following IP address :
+
+10.10.0.31
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After some quick research, I learned that this is actually  &lt;strong&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.tenable.com/plugins/nessus/77026&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Microsoft Exchange Client Access Server Information Disclosure&lt;/a&gt;&lt;/strong&gt;. That it was being termed a vulnerability was pretty generous use of the term by our auditors in the PCI Compliance Report. Knowing an internal IP isn&amp;rsquo;t actually going to open the door for an attacker, but it could be useful as part of the enumeration or in a wider attack, the internal IP address might be very useful.&lt;/p&gt;
+&lt;p&gt;This vulnerability is usually found in conjunction with &lt;a class=&#34;link&#34; href=&#34;https://www.tenable.com/plugins/nessus/10759&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Web Server HTTP Header Internal IP Disclosure&lt;/a&gt;, which returns the internal IP in the location field. However, a previous audit had found that and I&amp;rsquo;d remediated it. I wonder how come this first audit didn&amp;rsquo;t find the Microsoft Exchange Client Access Server Information Disclosure vulnerability? Hmm.&lt;/p&gt;
+&lt;p&gt;In both of these &amp;lsquo;vulnerabilities&amp;rsquo;, an attacker can send an IIS webserver a specially-crafted HTTP 1.0 GET request, without any host header set. This causes the server to return its internal IP address in the reply. The reason for this is that the HTTP 1.0 protocol does not require the host header to be set by the client in the request. The HTTP 1.1 protocol requires the client to specify a host in the header, so is not affected.&lt;/p&gt;
+&lt;p&gt;Once I sorted out &lt;em&gt;what&lt;/em&gt; I was looking for, it was time to replicate the findings, so that I can self-test that the &amp;lsquo;vulnerability&amp;rsquo; has been remediated.&lt;/p&gt;
+&lt;p&gt;I love the &lt;a class=&#34;link&#34; href=&#34;https://chocolatey.org&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;chocolatey&lt;/a&gt; package manager for Powershell, especially since Windows doesn&amp;rsquo;t ship with anything useful. (WinGet seems to be what Microsoft is positioning as their Package Manager, but it&amp;rsquo;s far behind chocolatey at this point). In any case, since I have chocolatey already installed, let&amp;rsquo;s use it to download and install the openssl package:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;choco install openssl&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Wow, that was pretty easy, right? Let&amp;rsquo;s get started by opening a connection to the Exchange server using SSL/TLS:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Program Files\OpenSSL-Win64\bin&amp;gt;openssl s_client -host 206.98.14.28 -port 443
+
+CONNECTED(00000130)
+Can&amp;#39;t use SSL_get_servername
+depth=1 C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+verify return:1
+---
+Certificate chain
+ 0 s:OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+   i:C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+ 1 s:C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+   i:C = US, ST = New Jersey, L = Jersey City, O = The USERTRUST Network, CN = USERTrust RSA Certification Authority
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIGkzCCBXugAwIBAgIQeMhcbdyCJZhuKNK1eI9BnDANBgkqhkiG9w0BAQsFADCB
+jzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G
+A1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTcwNQYDVQQD
+Ey5TZWN0aWdvIFJTQSBEb21haW4gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENB
+MB4XDTE5MTEwNTAwMDAwMFoXDTIxMTEwNDIzNTk1OVowZTEhMB8GA1UECxMYRG9t
+YWluIENvbnRyb2wgVmFsaWRhdGVkMSEwHwYDVQQLExhQb3NpdGl2ZVNTTCBNdWx0
+aS1Eb21haW4xHTAbBgNVBAMTFHdlYm1haWwuYWdyaWNvcnAuY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AM11BCgKCAQEAzkoRlNCs5fI4iiNvh2YcaV3y3KynScoj
+F7sk8frQY1iYBrQ4oLfDI2h+Np7a21kvdMyYufLzWeAz1n0EDu29/kkp8QBIVaDU
+CgCNdsocnvwC41E7Qyc9wumBRNWbz0c4B7tyDvhImgBfl6IIXUe+cy/KsrqWb3Tq
+mJKJ7acSBNzRcPgK8qUbUCdtNixhBRruWKjnQ7qwmzLwsRozFZGExUCms5/MX4Od
+uZ5UHWGYZed+w30vu86Hy1/jf0VWeDGSAsiPUySLq55fvwClyRftN1aS9bwROrvE
+sTJ1rAkR26wUFNyQi9ijkOEPCh2TqyclQNvRnokSI346ZMKKkaPpFwIDAQABo4ID
+EjCCAw4wHwYDVR0jBBgwFoAUjYxexFStiuF36Zv5mwXhuAGNYeEwHQYDVR0OBBYE
+FKb+bHu4DBzyNq5bUYs8Ppfr2EXFMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBJBgNVHSAEQjBAMDQG
+CysGAQQBsjEBAgIHMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20v
+Q1BTMAgGBmeBDAECATCBhAYIKwYBBQUHAQEEeDB2ME8GCCsGAQUFBzAChkNodHRw
+Oi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29SU0FEb21haW5WYWxpZGF0aW9uU2Vj
+dXJlU2VydmVyQ0EuY3J0MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdv
+LmNvbTA6BgNVHREEMzAxghR3ZWJtYWlsLmFncmljb3JwLmNvbYIZYXV0b2Rpc2Nv
+dmVyLmFncmljb3JwLmNvbTCCAX8GCisGAQQB1nkCBAIEggFvBIIBawFpAHYAfT7y
++I//iFVoJMLAyp5SiXkrxQ54CX8uapdomX4i8NcAAAFuPDgr2gAABAMARzBFAiAi
+1bJ3H3IUyTUswT99xLn8P2xHsFjAm4FjcuqpbSdgxAIhAPZOftlPa1H1jQPQ1ESb
+IMox3lbDRSrPOOESq+oGMCPZAHcARJRlLrDuzq/EQAfYqP4owNrmgr7YyzG1P9Mz
+lrW2gagAAAFuPDgrzgAABAMASDBGAiEAgNOhZoOzgj8DwuR516eWmpms/RmaQ61x
+5z8CAnfYOL0CIQD5ODhJYisT5s7oRmqXgEzCg84dWeysi5/DjYzWvlqzFQB2AFWB
+1MIWkDYBSuoLm1c8U/DA5Dh4cCUIFy+jqh0HE9MMAAABbjw4K5wAAAQDAEcwRQIg
+adxDdH5iWyGh6tReXl/1t0zLEBcPwXe24St5WYnSwlcCIQC5RKhMAD63eyKpojIo
+6fJocT/P6SBsfAykYhwThDFIPDANBgkqhkiG9w0BAQsFAAOCAQEAnUwWuOimEN5k
+zzXFVVDFdwRYmTdnW7fzOgXnQKVmtkqAXiL0Qp05OnUq7qPJuTaOR+KaGPS0nnLN
+b3/U3SimzH+tukkDZWcVch7tFzrEzpmWzighsQrzdCO0fv7SL3un7aKxQzf/u+se
+iCZ5F8W40+YmZq8mW7LUdYINbtR/vGgays/7xzjWioWVjbgNsWiFdpmZ/Fch1H9q
+m7UoFGNcTPDQrsg5rI2fKU/JBxWWqaUlWQ6DClhzwBp55DY3MGCoPesiiIU0HN/7
+GyqwDIklkHOX6pRRmlXb5ZEK31Bo4qvwv/yolil83NL1q/Lk3C64jLmPEtH5rJy1
+JaY6tu+MsA==
+-----END CERTIFICATE-----
+subject=OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+
+issuer=C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 3885 bytes and written 683 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 20 (unable to get local issuer certificate)
+---
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;At this point, openssl has successfully established the connection and is awaiting a case-sensitive command. Let&amp;rsquo;s send the HTTP 1.0 packet to the autodiscover URL. You may need to press ENTER a couple of times:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;GET /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 401 Unauthorized
+Server: Microsoft-IIS/10.0
+request-id: e1722265-bc09-4d32-a25e-02bf98f7d8f9
+X-SOAP-Enabled: True
+X-WSSecurity-Enabled: True
+X-WSSecurity-For: None
+X-OAuth-Enabled: True
+X-OWA-Version: 15.1.2308.14
+WWW-Authenticate: Negotiate
+WWW-Authenticate: NTLM
+X-Powered-By: ASP.NET
+X-FEServer: EXCHANGE02
+WWW-Authenticate: Basic realm=&amp;#34;10.1.0.31&amp;#34;
+Date: Fri, 17 Sep 2021 19:04:53 GMT
+Connection: keep-alive
+Content-Length: 0
+Strict-Transport-Security: max-age=15552000
+
+closed
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;And there it is! The internal server name and IP, in black and white. Thanks for nothing, IIS.&lt;/p&gt;
+&lt;p&gt;Alright, let&amp;rsquo;s go about fixing this. Instead of fixing this in IIS with the URL-Rewrite module, I decided to use Netscaler.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The same change is made on just 2 Netscaler devices, vs. 5 Exchange servers&lt;/li&gt;
+&lt;li&gt;The changes are not dependant on IIS, which may possibly be reset by patches or other installed software&lt;/li&gt;
+&lt;li&gt;Netscaler is where I generally do this sort of thing (consistency leads to ease of administration)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In any case, this is what Netscaler will do:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Any replies from the Webmail object are inspected for the WWW-Authenticate header.&lt;/li&gt;
+&lt;li&gt;If it’s found, the WWW-Authenticate header is deleted as well as any X-FEServer header.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I accomplished this with a couple of Responder Policies in Netscaler:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;add rewrite action RW_ACTION_OWA_FEServer delete_http_header X-FEServer
+add rewrite action RW_ACTION_OWA_WWWAuthenticate delete_http_header WWW-Authenticate
+add rewrite policy RW_POLICY_OWA_FEServer &amp;#34;HTTP.RES.HEADER(\&amp;#34;X-FEServer\&amp;#34;).EXISTS&amp;#34; RW_ACTION_OWA_FEServer NOREWRITE
+add rewrite policy RW_POLICY_OWA_WWWAuthenticate &amp;#34;HTTP.RES.HEADER(\&amp;#34;WWW-Authenticate\&amp;#34;).EXISTS&amp;#34; RW_ACTION_OWA_WWWAuthenticate NOREWRITE
+
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_WWWAuthenticate -priority 100 -gotoPriorityExpression NEXT -type RESPONSE
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_FEServer -priority 110 -gotoPriorityExpression END -type RESPONSE
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s repeat the test and make sure that the internal information is no longer returned:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;get /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 401 Unauthorized
+Server: Microsoft-IIS/10.0
+request-id: 068763fb-67ff-4f09-8ca9-02139957f4c2
+X-SOAP-Enabled: True
+X-WSSecurity-Enabled: True
+X-WSSecurity-For: None
+X-OAuth-Enabled: True
+X-OWA-Version: 15.1.2308.14
+X-Powered-By: ASP.NET
+Date: Fri, 17 Sep 2021 19:16:43 GMT
+Connection: keep-alive
+Content-Length: 0
+Strict-Transport-Security: max-age=15552000
+
+closed
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
+        <title>Powershell &amp; Netscaler API</title>
+        <link>https://gbeifuss.github.io/p/powershell-netscaler-api/</link>
+        <pubDate>Fri, 09 Jul 2021 16:04:02 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/powershell-netscaler-api/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve been learning how to use Powershell to work with APIs, so I decided to write a quick script that will query our two Netscaler devices for the running configuration, and dump it. This is a quick way to backup the configuration regularly, because I often forget to grab a copy for backup purposes (unless I&amp;rsquo;m performing extensive work, or upgrading the firmware).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;#These credentials are encrypted by ServiceAccount on Server&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$credFilePath&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;\\SERVER\PATH\creds.xml&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$netscalerId&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Import-Clixml&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$credFilePath&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;UserName&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$netscalerPwd&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Runtime.InteropServices.Marshal&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;PtrToStringAuto&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Runtime.InteropServices.Marshal&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SecureStringToBSTR&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Import-Clixml&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$credFilePath&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;password&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$formatedDate&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-Date&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Format&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;yyyyMMdd&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$FilePath&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;\\SERVER\PATH&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$headers&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;X-NITRO-USER&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;nsroot&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;X-NITRO-PASS&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;DFt$LG6%6L3F&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;#grab Netscaler01&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$uri&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://netscaler01.company.com/nitro/v1/config/nsrunningconfig&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$result&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Invoke-RestMethod&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Method&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Get&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Uri&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$uri&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Headers&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$headers&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;nsrunningconfig&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;response&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$result&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Convertto-Json&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Out-File&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$FilePath&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;\Netscaler01_&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;${formatedDate}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;.txt&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;#grab Netscaler03&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$uri&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://netscaler03.company.com/nitro/v1/config/nsrunningconfig&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$result&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Invoke-RestMethod&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Method&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Get&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Uri&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$uri&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ContentType&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;application&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;json&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Headers&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$headers&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;nsrunningconfig&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;response&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$result&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ConvertTo-Json&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Out-File&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$FilePath&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;\Netscaler03_&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;${formatedDate}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;.txt&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Greg&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

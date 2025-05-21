@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Change the cluster owner for an Exchange DAG via. Powershell and PRTG">
+<title>Exchange DAGs and Cluster Ownership</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Exchange DAGs and Cluster Ownership">
+<meta property='og:description' content="Change the cluster owner for an Exchange DAG via. Powershell and PRTG">
+<meta property='og:url' content='https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Exchange' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='PRTG' /><meta property='article:published_time' content='2021-09-06T22:12:49-04:00'/><meta property='article:modified_time' content='2021-09-06T22:12:49-04:00'/>
+<meta name="twitter:title" content="Exchange DAGs and Cluster Ownership">
+<meta name="twitter:description" content="Change the cluster owner for an Exchange DAG via. Powershell and PRTG">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/exchange-dags-and-cluster-ownership/">Exchange DAGs and Cluster Ownership</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Change the cluster owner for an Exchange DAG via. Powershell and PRTG
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 06, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>We run Exchange on a multiserver DAG, which behaves similarly to a cluster. It&rsquo;s built on the same principles as a cluster, but it&rsquo;s technically not a cluster and is administered differently than a cluster. It&rsquo;s &hellip; <em>clusterish</em>.</p>
+<p>One of the issues that we run in to occasionally is that Cluster Owner changes to another DAG member server, which causes problems with our backup software. (The backup software can&rsquo;t truely handle a cluster and wants to connect to the IP of a single server). The fix is pretty simple - change the owner back to the server it should be! Powershell makes this really easy:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">H:</span><span class="p">\&gt;</span> <span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Move-ClusterGroup</span> <span class="n">-Node</span> <span class="n">Exchange05</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>                                    <span class="n">OwnerNode</span>                               <span class="n">State</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                                    <span class="p">---------</span>                               <span class="p">-----</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span>                       <span class="n">EXCHANGE04</span>                              <span class="n">Offline</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>                          <span class="n">Exchange03</span>                              <span class="n">Offline</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">H:</span><span class="p">\&gt;</span> <span class="nb">Get-ClusterGroup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>                                    <span class="n">OwnerNode</span>                               <span class="n">State</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                                    <span class="p">---------</span>                               <span class="p">-----</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span>                       <span class="n">Exchange05</span>                              <span class="n">Offline</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>                          <span class="n">Exchange05</span>                              <span class="n">Online</span>
+</span></span></code></pre></div><p>To prevent any complications with our backups, I would like:</p>
+<ol>
+<li>The Owner Node to be monitored</li>
+<li>The Owner Node to be corrected to the proper values, if it&rsquo;s not on Exchange05.</li>
+</ol>
+<p>We run PRTG for server monitoring&hellip;. Fortunately, PRTG can do this for us! The (old) article <a class="link" href="https://kb.paessler.com/en/topic/70294-how-can-i-monitor-with-prtg-which-node-is-active-in-a-microsoft-cluster"  target="_blank" rel="noopener"
+    >Monitoring Active Cluster Nodes With PRTG</a> outlines the process. I only used this as a guide, as I ended up sourcing Jannos-443&rsquo;s <a class="link" href="https://github.com/Jannos-443/PRTG-MSCluster-PrefNodes"  target="_blank" rel="noopener"
+    >PRTG-MSCluster-PrefNodes.ps1</a> script.</p>
+<p>I started by checking the Preferred Node setting for these two cluster objects:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Get-ClusterOwnerNode</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ClusterObject</span>     <span class="n">OwnerNodes</span>
+</span></span><span class="line"><span class="cl"><span class="p">-------------</span>     <span class="p">----------</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>    <span class="p">{}</span>
+</span></span></code></pre></div><p>Just peachy. Neither object has a preferred owner. Let&rsquo;s fix that:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">set-ClusterOwnerNode</span> <span class="n">Exchange05</span><span class="p">.</span><span class="py">corp</span><span class="p">.</span><span class="py">agricorp</span><span class="p">.</span><span class="py">com</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Get-ClusterOwnerNode</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ClusterObject</span>     <span class="n">OwnerNodes</span>
+</span></span><span class="line"><span class="cl"><span class="p">-------------</span>     <span class="p">----------</span>
+</span></span><span class="line"><span class="cl"><span class="n">Available</span> <span class="n">Storage</span> <span class="p">{</span><span class="n">Exchange05</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Cluster</span> <span class="nb">Group </span>    <span class="p">{</span><span class="n">Exchange05</span><span class="p">}</span>
+</span></span></code></pre></div><p>That&rsquo;s better. With that out of the way, I created a new PRTG sensor to monitor that the Cluster was Owned by the Preferred Node:</p>
+<ol>
+<li>Save the Cluster-checking script to <code>${env:ProgramFiles(x86)}\PRTG Network Monitor\Custom Sensors\EXEXML</code> on the PRTG probe server.</li>
+<li>Open PRTG and browsed to the Exchange05 server object. This is the server that should be the Owner</li>
+<li>Create a new sensor. Select a sensor type &ldquo;EXE/Script Advanced Sensor&rdquo;.</li>
+<li>Select <code>PRTG-MSCluster-PrefNodes.ps1</code> from the dropdown list. Provide the Exchange Cluster name as a parameter. In my case, I entered <code>Exchange2016</code>.</li>
+<li>Set the Security Context of the sensor to <code>Use Windows credentials of parent device</code></li>
+<li>Save changes. Query the sensor a couple of times to make sure that it&rsquo;s working properly. When one or more nodes isn&rsquo;t on the Preferred Node, then the sensor will change to &lsquo;Warning&rsquo;.</li>
+</ol>
+<p>Next, I want PRTG&rsquo;s Notification action to correct the Owner of the cluster object. We&rsquo;ll create a custom notification that will run a short Powershell script I wrote:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="cm">&lt;#
+</span></span></span><span class="line"><span class="cl"><span class="cm">    .</span><span class="sd">SYNOPSIS</span><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Force Cluster Owner to a specific server
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    .</span><span class="sd">DESCRIPTION</span><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    https://kb.paessler.com/en/topic/40713-can-i-automatically-restart-a-windows-service-with-prtg
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Copy this script to the main PRTG server&#39;s Notifications\EXE scripts folder (${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE)
+</span></span></span><span class="line"><span class="cl"><span class="cm">    and create a new Notification Template &gt; Execute Program. Choose this script from the dropdown and provide the SERVERNAME as a parameter.
+</span></span></span><span class="line"><span class="cl"><span class="cm">    The Credentials need to be generated under the instance that PRTG is running as (NT Authority\System). These domain creds allow PRTG
+</span></span></span><span class="line"><span class="cl"><span class="cm">    to remotely run code on the remote system and manipulate the Cluster Groups.
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    .PARAMETER Server
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Server FQDN or NetBIOS Name
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    .</span><span class="sd">EXAMPLE</span><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Sample call from PRTG EXE/Script Advanced
+</span></span></span><span class="line"><span class="cl"><span class="cm">    PRTG-MSCluster-MoveClusterGroup.ps1 EXCHANGE01
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">    Author:  Greg Beifuss
+</span></span></span><span class="line"><span class="cl"><span class="cm">    7:48 AM 9/8/2021
+</span></span></span><span class="line"><span class="cl"><span class="cm">#&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">param</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[</span><span class="no">string</span><span class="p">]</span><span class="nv">$Server</span> <span class="p">=</span> <span class="vm">$null</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$id</span> <span class="p">=</span> <span class="nb">Import-Clixml</span> <span class="s2">&#34;C:\Program Files (x86)\PRTG Network Monitor\Notifications\EXE\powershell.xml&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$Scriptblock</span> <span class="p">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ClusterGroup</span> <span class="p">|</span> <span class="nb">Move-ClusterGroup</span> <span class="n">-Node</span> <span class="nv">$env:COMPUTERNAME</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-Command</span> <span class="n">-ComputerName</span> <span class="nv">$Server</span> <span class="n">-ScriptBlock</span> <span class="nv">$Scriptblock</span> <span class="n">-Credential</span> <span class="nv">$id</span>
+</span></span></code></pre></div><ol start="0">
+<li>Use <code>Export-CLIXML</code> to store credentials that can log into the destination server (in my case, Exchange05)</li>
+<li>Save this script to <code>${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE</code>)` on the main PRTG server. This is the server that Notifications run from - the other PRTG servers simply won&rsquo;t have the Notifications directory.</li>
+<li>Create a new Notification Template in PRTG. Choose &lsquo;Execute Program&rsquo;, and select the PRTG-MSCluster-MoveClusterGroup.ps1 script. Provide a cluster member server name as the parameter. This will be passed into the script. Save.</li>
+<li>Browse to the PRTG sensor that was previously created. Select &lsquo;Notification Triggers&rsquo;. Enable a State Trigger that will perform the Notification Template you just created. I used:
+<ul>
+<li>When sensor state is Warning for at least 60 seconds, perform PRTG-MSCluster-MoveClusterGroup</li>
+</ul>
+</li>
+<li>Save &amp; test.</li>
+</ol>
+<p>You can see below that at 7:49ish, both the cluster object owners changed from the preferred nodes. I know this since PRTG detected this as &ldquo;2&rdquo;, not &ldquo;1&rdquo;. In any case, after the sensor had been in this state for 60 seconds, the notification task started and moved the cluser objects back to their proper &lsquo;home&rsquo;. The sensor value reset to &ldquo;0&rdquo; clusters on a non-preferred node.</p>
+<p><img src="/img/prtg-cluster.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/exchange/">Exchange</a>
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+            <a href="/tags/prtg/">PRTG</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/managing-mailbox-moves-in-exchange-2016/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Managing Mailbox moves in Exchange 2016</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/exchange-deletecontent/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Exchange &amp; -DeleteContent</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/powershell-exchange-tls/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Powershell, Exchange &amp; TLS</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
