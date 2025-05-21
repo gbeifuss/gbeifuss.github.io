@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>HP ILO on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/hp-ilo/</link>
+        <description>Recent content in HP ILO on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sun, 01 May 2022 10:51:36 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/hp-ilo/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Reverting an ESXi Upgrade</title>
+        <link>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</link>
+        <pubDate>Sun, 01 May 2022 10:51:36 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</guid>
+        <description>&lt;p&gt;I was looking at the configuration of 3 VSphere servers at work today and determined that they were running an old BIOS. I upgraded their HP DL380 G9 BIOS from &lt;code&gt;P89 v1.50 (07/20/2015)&lt;/code&gt; to &lt;code&gt;P89 v2.72 (03/25/2019)&lt;/code&gt; using iLO.&lt;/p&gt;
+&lt;p&gt;The first two updates went out without a hitch. The last server? Not so good, as there was a cascading chain of errors.&lt;/p&gt;
+&lt;p&gt;After rebooting the server (which is necessary for the BIOS update to take effect), the ESXi cluster complained that the server was not reachable. I couldn&amp;rsquo;t ping it either.&lt;/p&gt;
+&lt;p&gt;I connected via. the Direct Console User Interface (DCUI) and found that the ESXi IP &amp;amp; DNS settings had reverted to old settings from several years ago.
+I manually reset them to the proper values and rebooted.&lt;/p&gt;
+&lt;p&gt;I then reconnected the server to the cluster, which failed because of a SSL certificate naming error. I had to rejoin it again, which resulted in an IO error:&lt;br&gt;
+&lt;code&gt;Registration/Unregistration of third-party IO filter storage providers fails on a hosts&lt;/code&gt; &lt;em&gt;(yes, the error message contains a subject/verb mismatch)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Dell has KB000058590: &lt;a class=&#34;link&#34; href=&#34;https://www.dell.com/support/kbdoc/en-ca/000058590/vxrail-alarm-for-registration-unregistration-of-third-party-io-filter-storage-providers-fails&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Dell EMC VxRail: Alarm for Registration/Unregistration of third-party IO filter storage providers fails&lt;/a&gt;. I followed the steps to replace the castore.pem file with one from a working server, and rebooted.&lt;/p&gt;
+&lt;p&gt;That resulted in &lt;code&gt;&amp;quot;error loading /sb.v00 fatal error 33 (inconsistent data)&amp;quot;&lt;/code&gt; when trying to boot the ESXi OS.&lt;/p&gt;
+&lt;p&gt;At this point I reverted back to the prior hypervisor via. DCUI:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;In the console screen of the ESXi host, press Ctrl+Alt+F2 to see the Direct Console User Interface (DCUI) screen.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press F12 to view the shutdown options for the ESXi host.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press F11 to reboot.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;When the Hypervisor progress bar starts loading, press Shift+R (This must be done while the bar is loading, and not after). You will see the warning:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Current hypervisor will permanently be replaced  
+with build: X.X.X-XXXXXX. Are you sure? [y/n]
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press Y to roll back the build.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press Enter to boot.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ESXi came back online properly, but still complained about the IO filters.
+At this point, I noticed that while the IP was correct, DNS reverted to old entries. I set it back to the proper values.&lt;/p&gt;
+&lt;p&gt;The ESXi host is finally healthy in the cluster!&amp;hellip; but now I have to upgrade it from 6.0 to 6.5 again.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Resolving HP iLO NAND Error</title>
+        <link>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</link>
+        <pubDate>Mon, 27 Dec 2021 00:09:54 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/resolving-hp-ilo-nand-error/</guid>
+        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where patches had been sorely neglected for a couple of years. There were a number of HP DL380 G9 servers still running iLO 1.4. Once I gained access to iLO, I started by upgrading those HP servers to iLO 2.79, the most recent version.&lt;/p&gt;
+&lt;p&gt;After the mandatory reboot to apply the new iLO firmware, 2/3 of the servers now displayed an iLO login screen warning of &lt;code&gt;Embedded Flash\NAND error&lt;/code&gt;:
+&lt;img src=&#34;https://gbeifuss.github.io/img/iLO-nand-error.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;fantastic excel art&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;I found HP Knowledge Base article &lt;code&gt;Document ID: c04996097&lt;/code&gt; outlining my symptoms.&lt;/p&gt;
+&lt;p&gt;I started by resetting iLO and cycling the server, which had no effect.&lt;br&gt;
+The next step was to format the NAND:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Log into iLO&lt;/li&gt;
+&lt;li&gt;Expand &lt;code&gt;Information &amp;gt; Diagnostics&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;code&gt;iLO Health&lt;/code&gt;. The status should read something like:&lt;br&gt;
+&lt;code&gt;Embedded Flash/SD-CARD | Controller firmware revision 2.10.00 Embedded media initialization failed due to media write-verify test failure&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Read the warning:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;WARNING: Formatting the Embedded Flash erases all data on the iLO partition and cannot be undone. External providers (like BIOS, Intelligent Provisioning, OneView and FLM) will need to be re-configured.
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;code&gt;Format Embedded Flash and reset iLO&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Accept the confirmation. iLO will reset.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After the mandatory reboot, the same error was displayed on the iLO login page.
+The next suggestion in the article (if the NAND reset didn&amp;rsquo;t work) was to perform a cold boot of the server. I shut down the server, removed the power cord for 15 seconds, plugged in the cord again and started the server.&lt;/p&gt;
+&lt;p&gt;This time iLO didn&amp;rsquo;t complain about problems with the flash memory. Hurrah!&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;The articles I referenced when figuring this out were:
+&lt;a class=&#34;link&#34; href=&#34;https://support.hpe.com/hpesc/public/docDisplay?docId=emr_na-c04996097&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;HPE Integrated Lights-Out 4 (iLO 4) - HPE Active Health System (AHS) Logs and HPE OneView Profiles May Be Unavailable Causing iLO Self-Test Error 8192, Embedded Media Manager and Other Errors&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://support.hpe.com/hpesc/public/docDisplay?docId=emr_na-a00048622en_us&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;HPE Integrated Lights-Out 4 (iLO 4) - How to Format the NAND Used to Store AHS logs, OneView Profiles, and Intelligent Provisioning&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>HP iLO C7000 Credential Reset</title>
+        <link>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</link>
+        <pubDate>Mon, 27 Dec 2021 00:09:41 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/hp-ilo-c7000-credential-reset/</guid>
+        <description>&lt;p&gt;As previously mentioned in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/&#34; &gt;ESXi 6.0 to 6.5 Upgrade&lt;/a&gt;, I recently took over a manufacturing site where some administrative passwords that weren&amp;rsquo;t known. In particular, there were two HP Blade C7000 chassis with no credentials for the Blade Onboard Administrator.&lt;/p&gt;
+&lt;p&gt;The easiest way to reset the Administrator credential is by plugging a USB key (with a reset script) in the chassis, then use the Insight LCD to run the script.&lt;/p&gt;
+&lt;p&gt;Create a new text file containing only the following string: &lt;code&gt;SET USER PASSWORD &amp;quot;Administrator&amp;quot; &amp;quot;password&amp;quot;&lt;/code&gt; and save it with a .cfg extension on a USB key.
+On the Insight LCD, select &lt;code&gt;USB Menu &amp;gt; Restore Configuration &amp;gt; usb://d1/resetadmin.cfg&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This will reset the Administrator password to &lt;code&gt;password&lt;/code&gt;. Launch your browser of choice, connect to the BOA and log in with &lt;code&gt;Administrator: password&lt;/code&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;resetadmin.cfg
+
+SET USER PASSWORD &amp;#34;Administrator&amp;#34; &amp;#34;password&amp;#34;
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        
+    </channel>
+</rss>

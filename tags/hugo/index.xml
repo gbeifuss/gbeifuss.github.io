@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Hugo on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/hugo/</link>
+        <description>Recent content in Hugo on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Wed, 10 Jul 2024 14:34:17 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Website Publishing with Hugo and GitHub</title>
+        <link>https://gbeifuss.github.io/p/website-publishing-with-hugo-and-github/</link>
+        <pubDate>Wed, 10 Jul 2024 14:34:17 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/website-publishing-with-hugo-and-github/</guid>
+        <description>&lt;p&gt;This website is primarily generated through hugo. I recently switched my main computer from a Surface Pro (v4) to a Dell Latitude 7320, which means that I had to reconfigure my website authoring environment from scratch. Along the way, there were lots of little hiccups because of a) changes to hugo since the last install and b) steps and tweaks that I&amp;rsquo;d not documented anywhere. It took a couple of hours, but everything is configured and publishing the way that I like again.&lt;/p&gt;
+&lt;p&gt;Generally speaking, I:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;took a backup of my existing site&lt;/li&gt;
+&lt;li&gt;installed hugo-extended and git&lt;/li&gt;
+&lt;li&gt;created my hugo site&lt;/li&gt;
+&lt;li&gt;used git to link my site with github pages&lt;/li&gt;
+&lt;li&gt;restored files&lt;/li&gt;
+&lt;li&gt;published&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I started by creating a .zip backup of my existing files. Then, &lt;em&gt;I deleted all the existing files&lt;/em&gt; as they are in OneDrive. I don&amp;rsquo;t want the cloud copies being automatically pushed back down to my laptop while I&amp;rsquo;m configuring everything.&lt;/p&gt;
+&lt;p&gt;Next, I installed &lt;em&gt;hugo-extended&lt;/em&gt; and &lt;em&gt;git&lt;/em&gt; with chocolately package manager and powershell:&lt;br&gt;
+&lt;code&gt;chocolatey install hugo-extended git -y&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;After that, I created my directories again, and told hugo that this was a new site:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;hugo new site .
+Congratulations! Your new Hugo site was created in C:\Users\Greg\OneDrive\myblog.dev.repo.
+
+Just a few more steps...
+
+1. Change the current directory to C:\Users\Greg\OneDrive\myblog.dev.repo.
+2. Create or install a theme:
+   - Create a new theme with the command &amp;#34;hugo new theme &amp;lt;THEMENAME&amp;gt;&amp;#34;
+   - Or, install a theme from https://themes.gohugo.io/
+3. Edit hugo.toml, setting the &amp;#34;theme&amp;#34; property to the theme name.
+4. Create new content with the command &amp;#34;hugo new content &amp;lt;SECTIONNAME&amp;gt;\&amp;lt;FILENAME&amp;gt;.&amp;lt;FORMAT&amp;gt;&amp;#34;.
+5. Start the embedded web server with the command &amp;#34;hugo server --buildDrafts&amp;#34;.
+
+See documentation at https://gohugo.io/.
+
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;dir
+ Volume in drive C has no label.
+ Volume Serial Number is D8FC-8442
+
+ Directory of C:\Users\Greg\OneDrive\myblog.dev.repo
+
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          .
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          ..
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          archetypes
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          assets
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          content
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          data
+2024-07-10  11:53 AM                83 hugo.toml
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          i18n
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          layouts
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          static
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          themes
+               1 File(s)             83 bytes
+              10 Dir(s)  434,143,707,136 bytes free
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;hugo server
+Watching for changes in C:\Users\Greg\OneDrive\myblog.dev.repo\{archetypes,assets,content,data,i18n,layouts,static}
+Watching for config changes in C:\Users\Greg\OneDrive\myblog.dev.repo\hugo.toml
+Start building sites …
+hugo v0.128.2-de36c1a95d28595d8243fd8b891665b069ed0850+extended windows/amd64 BuildDate=2024-07-04T08:13:25Z VendorInfo=gohugoio
+
+WARN  found no layout file for &amp;#34;html&amp;#34; for kind &amp;#34;home&amp;#34;: You should create a template file which matches Hugo Layouts Lookup Rules for this combination.
+WARN  found no layout file for &amp;#34;html&amp;#34; for kind &amp;#34;taxonomy&amp;#34;: You should create a template file which matches Hugo Layouts Lookup Rules for this combination.
+
+                   | EN
+-------------------+-----
+  Pages            |  4
+  Paginator pages  |  0
+  Non-page files   |  0
+  Static files     |  0
+  Processed images |  0
+  Aliases          |  0
+  Cleaned          |  0
+
+Built in 7 ms
+Environment: &amp;#34;development&amp;#34;
+Serving pages from disk
+Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+Web Server is available at http://localhost:1313/ (bind address 127.0.0.1)
+Press Ctrl+C to stop
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;dir
+ Volume in drive C has no label.
+ Volume Serial Number is D8FC-8442
+
+ Directory of C:\Users\Greg\OneDrive\myblog.dev.repo
+
+2024-07-10  12:15 PM    &amp;lt;DIR&amp;gt;          .
+2024-07-10  12:15 PM    &amp;lt;DIR&amp;gt;          ..
+2024-07-10  12:15 PM                 0 .hugo_build.lock
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          archetypes
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          assets
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          content
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          data
+2024-07-10  11:53 AM                83 hugo.toml
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          i18n
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          layouts
+2024-07-10  12:15 PM    &amp;lt;DIR&amp;gt;          public
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          static
+2024-07-10  11:53 AM    &amp;lt;DIR&amp;gt;          themes
+               2 File(s)             83 bytes
+              11 Dir(s)  434,142,384,128 bytes free
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I launched &amp;amp; killed hugo (above) just so that it can create all the files and directories that aren&amp;rsquo;t automatically generated (like /public). I then grabbed a copy of the &lt;em&gt;stack&lt;/em&gt; theme and installed it in the themes directory:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;git init
+Initialized empty Git repository in C:/Users/Greg/OneDrive/myblog.dev.repo/.git/
+
+C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;git submodule add git@github.com:gbeifuss/hugo-theme-stack themes/hugo-theme-stack
+Cloning into &amp;#39;C:/Users/Greg/OneDrive/myblog.dev.repo/themes/hugo-theme-stack&amp;#39;...
+remote: Enumerating objects: 3111, done.
+remote: Total 3111 (delta 0), reused 0 (delta 0), pack-reused 3111
+Receiving objects: 100% (3111/3111), 852.37 KiB | 2.10 MiB/s, done.
+Resolving deltas: 100% (1964/1964), done.
+warning: in the working copy of &amp;#39;.gitmodules&amp;#39;, LF will be replaced by CRLF the next time Git touches it
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After this, I restored all all of the necessary configuration files &amp;amp; assets from the backup into their appropriate locations. hugo.toml, archtypes/default.md, /static, /layout, /contents, etc.&lt;br&gt;
+The next step is to link this back up with my github page. I did grab a copy of my id_ed25519.pub file (has my SSH key for github authentication) from my old laptop and validated a successful connection:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;ssh -T git@github.com
+Hi gbeifuss! You&amp;#39;ve successfully authenticated, but GitHub does not provide shell access.
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git remote add origin https://github.com/gbeifuss/gbeifuss.github.io.git
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git remote -v
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (fetch)
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (push)
+
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git push origin main
+error: src refspec main does not match any
+error: failed to push some refs to &amp;#39;https://github.com/gbeifuss/gbeifuss.github.io.git&amp;#39;
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git checkout -b main
+Switched to a new branch &amp;#39;main&amp;#39;
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git push --force origin main
+Enumerating objects: 372, done.
+Counting objects: 100% (372/372), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (230/230), done.
+Writing objects: 100% (372/372), 1.74 MiB | 1.72 MiB/s, done.
+Total 372 (delta 152), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (152/152), done.
+To https://github.com/gbeifuss/gbeifuss.github.io.git
+ + e4d1dbd...cccf12b main -&amp;gt; main (forced update)
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git push origin main
+Everything up-to-date
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Finally, create new content:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo&amp;gt;hugo new content/post/esxi_vmware_converter_error.md
+Content &amp;#34;C:\\Users\\Greg\\OneDrive\\myblog.dev.repo\\content\\post\\esxi_vmware_converter_error.md&amp;#34; created
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Use &lt;code&gt;hugo server -D&lt;/code&gt; to run the server in Draft mode, showing all published &lt;em&gt;and&lt;/em&gt; draft content.
+Use &lt;code&gt;hugo&lt;/code&gt; to create the entire static copy of the site for publishing.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Hugo &amp; Google Analytics</title>
+        <link>https://gbeifuss.github.io/p/hugo-google-analytics/</link>
+        <pubDate>Tue, 05 Oct 2021 14:54:15 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/hugo-google-analytics/</guid>
+        <description>&lt;p&gt;Hugo has integrated support (via. Internal Templates) for Google Analytics. An internal template adds support for some very common use cases on static websites. For example: Google Analytics, Disqus comments, Google News, and Twitter Cards. Internal templates certainly exist in v.0.87 and higher, but I&amp;rsquo;m not sure when support for them was first added. If your install of Hugo is out of date, now might be a good time to update it.&lt;/p&gt;
+&lt;p&gt;The first step, is to sign up for Google Analytics and adding your particular site (aka. &lt;em&gt;property&lt;/em&gt;), if you&amp;rsquo;ve not done so already. I&amp;rsquo;ll wait while you do that&amp;hellip;
+&lt;em&gt;&amp;hellip;twiddles thumbs&amp;hellip;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Next, we need to find the Measurement ID (previously, &lt;em&gt;Tracking ID&lt;/em&gt;) that Google has assigned to the property that you have setup.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Click Admin&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Data Streams&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click on your property from the list&lt;/li&gt;
+&lt;li&gt;Measurement ID should appear in the upper-right portion of the panel&lt;/li&gt;
+&lt;li&gt;Copy or make a note of the Measurement ID&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Measurement ID should have the format &lt;code&gt;G-HMPAE821CR&lt;/code&gt;. The ID is unique! With this in hand, let&amp;rsquo;s tell Hugo to use it for all our webpages.&lt;/p&gt;
+&lt;p&gt;Open the &lt;code&gt;config&lt;/code&gt; file. (This will be located in the root directory of your Hugo site. The &lt;code&gt;config&lt;/code&gt; file can be variety of different formats - mine is YAML so it&amp;rsquo;s named &lt;code&gt;config.yaml&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;There will be a line that looks something like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# GA Tracking ID&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;googleAnalytics&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Add the Measurement ID that you&amp;rsquo;d previously noted to the &lt;code&gt;googleAnalytics:&lt;/code&gt; field:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# GA Tracking ID&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;googleAnalytics&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;G-HMPAE821CR&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Save the file.&lt;/p&gt;
+&lt;p&gt;That’s really all you have to do to set the Google Analytics Tracking ID in Hugo. My theme - &lt;a class=&#34;link&#34; href=&#34;https://docs.stack.jimmycai.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;hugo-stack-theme&lt;/a&gt;] - automatically has support for this internal template, so my site started sending tracking data to Google Analytics right away.&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;An article I referenced when figuring this out was:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://cloudywithachanceofdevops.com/posts/2018/05/17/setting-up-google-analytics-on-hugo/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Setting Up Google Analytics on Hugo&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Hugo error - REF_NOT_FOUND</title>
+        <link>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</link>
+        <pubDate>Mon, 13 Sep 2021 23:35:09 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/hugo-error-ref_not_found/</guid>
+        <description>&lt;p&gt;I tried generating updated content for my website the other day and Hugo threw an error instead:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hugo v0.88.1-5BC54738+extended windows/amd64 BuildDate=2021-09-04T09:39:19Z VendorInfo=gohugoio
+ERROR 2021/09/10 14:59:54 [en] REF_NOT_FOUND: Ref &amp;#34;exchange-clustergroup.md&amp;#34;: &amp;#34;C:\myblog.dev.repo\content\post\exchange-transaction-logs.md:15:458&amp;#34;: page not found
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I went back and triplechecked my code: the formatting of the &lt;code&gt;ref&lt;/code&gt; block was proper and had no typographical errors.&lt;/p&gt;
+&lt;p&gt;I finally realized that my Front Matter tag &lt;code&gt;draft:&lt;/code&gt; on the destination page was set to &lt;code&gt;true&lt;/code&gt;. This meant that when Hugo was building the code, the destination page wasn&amp;rsquo;t being generated, which meant that there was no destination page for this reference to link to.&lt;/p&gt;
+&lt;p&gt;Changing the Front Matter to &lt;code&gt;draft: false&lt;/code&gt; allowed Hugo to generate the content properly.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Page References in Hugo</title>
+        <link>https://gbeifuss.github.io/p/page-references-in-hugo/</link>
+        <pubDate>Thu, 02 Sep 2021 07:37:44 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/page-references-in-hugo/</guid>
+        <description>&lt;p&gt;There are special shortcodes that tell Hugo to generate the proper link(s) to other pages in your site, or other sections on the current page.&lt;/p&gt;
+&lt;p&gt;I originally learned this when I wanted to include a link to another post I&amp;rsquo;d written. I used a &lt;em&gt;reference&lt;/em&gt; shortcode (&lt;code&gt;ref&lt;/code&gt;) for this:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;[Querying PowerPlatform API via. Powershell]( {{&amp;lt; ref &amp;quot;powershell-powerplatform-api.md&amp;quot; &amp;gt;}})&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Links to other artifacts in your site can be done with &lt;code&gt;ref&lt;/code&gt; (reference) or &lt;code&gt;relref&lt;/code&gt; (relative reference). The only difference between them is whether the resulting URL is absolute (&lt;a class=&#34;link&#34; href=&#34;http://site.com/about/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://site.com/about/&lt;/a&gt;) or relative (/about/). The &lt;em&gt;ref&lt;/em&gt; and &lt;em&gt;relref&lt;/em&gt; shortcodes require a single parameter: the path to a content document, with or without a file extension, with or without an anchor. Hugo will try to match the parameter to content in your site. The &lt;em&gt;relref&lt;/em&gt; shortcode is handy when you have two pages with the same name, but in different locations, so that Hugo knows which one you want to refer to.&lt;/p&gt;
+&lt;p&gt;Links to a heading on the current page, or a completely difference page, can be specified with an &lt;em&gt;anchor&lt;/em&gt;, which are specified with a pound/hashtag symbol (#).&lt;br&gt;
+Link to a heading on the current page: &lt;code&gt;{{&amp;lt; ref &amp;quot;#reference&amp;quot; &amp;gt;}}&lt;/code&gt;&lt;br&gt;
+Link to a heading on a different page: &lt;code&gt;{{&amp;lt; ref &amp;quot;document.md#reference&amp;quot; &amp;gt;}}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This can all be found in the official Hugo documentation &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/content-management/cross-references/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Shortcodes for creating links to documents&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Another shortcode trick I learned when writing this post is that escaping curly braces &lt;code&gt;{{&lt;/code&gt; in Hugo can be tricky when using the escape character. Using the backslash will result in some variation of this:&lt;br&gt;
+&lt;code&gt;\{{&amp;lt; myshortcode &amp;gt;\}}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;A simple way to escape this is by adding &lt;code&gt;/*&lt;/code&gt; after the opening &lt;code&gt;&amp;lt;&lt;/code&gt; and adding &lt;code&gt;*/&lt;/code&gt; after the closing &lt;code&gt;&amp;gt;&lt;/code&gt;.&lt;br&gt;
+&lt;code&gt;{{&amp;lt;/*/* myshortcode */&amp;gt;}}&lt;/code&gt; will produce &lt;code&gt;{{&amp;lt; shortcode &amp;gt;}}&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Use .Summary in Hugo with the Stack theme</title>
+        <link>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</link>
+        <pubDate>Wed, 25 Aug 2021 08:15:17 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/use-.summary-in-hugo-with-the-stack-theme/</guid>
+        <description>&lt;p&gt;I decided to update my site to make it more &amp;lsquo;search engine-friendly&amp;rsquo; by making better use of the &lt;code&gt;meta description&lt;/code&gt; field. My particular theme, &lt;a class=&#34;link&#34; href=&#34;https://docs.stack.jimmycai.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Stack&lt;/a&gt;, does pull the .Description
+field from Front Matter, BUT it also uses the .Description field to populate a brief summary of the article on the home page. I don&amp;rsquo;t want SEO-friendly content displaying as a summary on my home page, so I decided to use another Front Matter field and update the theme to use that for the &lt;code&gt;meta description&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;First, I edited the default markdown archetype (&lt;code&gt;/archetypes/default.md&lt;/code&gt;) in Hugo to include the .summary field:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;title: {{ replace .Name &amp;#34;-&amp;#34; &amp;#34; &amp;#34; | title }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;date: {{ .Date }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;description:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;summary:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;draft: true
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tags:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With that done, I needed to tell Hugo that when it generates the web content, it should populate the &lt;code&gt;meta description&lt;/code&gt; field with .summary. This way the .description Front Matter can still be used by the theme to populate the subtitles on my home page, while using the .summary field to generate text for SEO:&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s the original &lt;code&gt;layouts\partials\head\head.html&lt;/code&gt; contents:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;charset&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;utf-8&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;viewport&amp;#39;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;width=device-width, initial-scale=1&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- $description := partialCached &amp;#34;data/description&amp;#34; . .RelPermalink -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;description&amp;#39;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;{{ .description }}&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- $title := partialCached &amp;#34;data/title&amp;#34; . .RelPermalink -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;{{ $title }}&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;link&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;rel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;canonical&amp;#39;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;href&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;{{ .Permalink }}&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/style.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/script.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/opengraph/include.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- range .AlternativeOutputFormats -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;link&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;rel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ .Rel }}&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;type&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ .MediaType.Type }}&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;href&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ .Permalink | safeURL }}&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- end -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{ with .Site.Params.favicon }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;link&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;rel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;shortcut icon&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;href&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ . }}&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{ end }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- template &amp;#34;_internal/google_analytics.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/custom.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I replaced the line &lt;code&gt;&amp;lt;meta name=&#39;description&#39; content=&#39;{{ .description }}&#39;&amp;gt;&lt;/code&gt; with &lt;code&gt;&amp;lt;meta name=&#39;description&#39; content=&#39;{{ .summary | truncate 130 }}&#39;&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This tells Hugo to refer to the .Summary Front Matter field, and not the .Description, when generating the meta description. I also capped the meta description at 130 characters, just in case I write more than that. Search Engines typically consider somewhere between 25-160 characters, but check with your specific search engine for the exact values.&lt;/p&gt;
+&lt;p&gt;This is my final &lt;code&gt;layouts\partials\head\head.html&lt;/code&gt; file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;charset&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;utf-8&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;viewport&amp;#39;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;width=device-width, initial-scale=1&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- $description := partialCached &amp;#34;data/description&amp;#34; . .RelPermalink -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;description&amp;#39;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;{{ .summary | truncate 130 }}&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- $title := partialCached &amp;#34;data/title&amp;#34; . .RelPermalink -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;{{ $title }}&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;link&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;rel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;canonical&amp;#39;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;href&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#39;{{ .Permalink }}&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/style.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/script.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/opengraph/include.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- range .AlternativeOutputFormats -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;link&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;rel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ .Rel }}&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;type&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ .MediaType.Type }}&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;href&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ .Permalink | safeURL }}&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- end -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{ with .Site.Params.favicon }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;link&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;rel&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;shortcut icon&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;href&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;{{ . }}&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{ end }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- template &amp;#34;_internal/google_analytics.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{- partial &amp;#34;head/custom.html&amp;#34; . -}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Troubleshooting Hugo&#39;s &#39;Port 1313 already in use&#39; error</title>
+        <link>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</link>
+        <pubDate>Fri, 20 Aug 2021 14:12:12 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/troubleshooting-hugos-port-1313-already-in-use-error/</guid>
+        <description>&lt;p&gt;Today I:&lt;br&gt;
+&amp;hellip; started my computer, as usual&lt;br&gt;
+&amp;hellip; checked for patches, as usual&lt;br&gt;
+&amp;hellip; checked for updated software (via chocolatey!), as usual&lt;br&gt;
+&amp;hellip; started Hugo&amp;rsquo;s local server&amp;hellip; as not usual!&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\gbeifuss\blog&amp;gt;hugo server -D -v -p 1313
+port 1313 already in use, attempting to use an available port
+Start building sites …
+hugo v0.87.0-B0C541E4+extended windows/amd64 BuildDate=2021-08-03T10:57:28Z VendorInfo=gohugoio
+INFO 2021/08/20 11:20:57 syncing static files to C:\Users\gbeifuss\blog\
+WARN 2021/08/20 11:20:57 Search page not found. Create a page with layout: search.
+WARN 2021/08/20 11:20:57 Archives page not found. Create a page with layout: archives.
+
+                   | EN
+-------------------+-----
+  Pages            | 45
+  Paginator pages  |  5
+  Non-page files   |  0
+  Static files     |  5
+  Processed images |  5
+  Aliases          | 12
+  Sitemaps         |  1
+  Cleaned          |  0
+
+Built in 135 ms
+Watching for changes in C:\Users\gbeifuss\blog\{archetypes,content,data,layouts,static,themes}
+Watching for config changes in C:\Users\gbeifuss\blog\config.yaml
+Environment: &amp;#34;development&amp;#34;
+Serving pages from memory
+Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+Web Server is available at http://localhost:15823/ (bind address 127.0.0.1)
+Press Ctrl+C to stop
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This has never been a problem before. How can port 1313 already be in use? There&amp;rsquo;s nothing else on my system configured to use that port!&lt;/p&gt;
+&lt;p&gt;I pulled up &lt;code&gt;netstat&lt;/code&gt; to confirm:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\gbeifuss&amp;gt;netstat -ano | find &amp;#34;1313&amp;#34;
+C:\Users\gbeifuss&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Well, if nothing is using the port, then why can&amp;rsquo;t Hugo use it? If there&amp;rsquo;s nothing actively blocking Hugo, then Hugo must be prevented from using that port by another mechanism.&lt;/p&gt;
+&lt;p&gt;I checked the reservations that Windows knows about with &lt;code&gt;netsh&lt;/code&gt;:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\gbeifuss\blog&amp;gt;netsh int ipv4 show excludedportrange protocol=tcp
+
+Protocol tcp Port Exclusion Ranges
+
+Start Port    End Port
+----------    --------
+      1214        1313
+      8004        8004
+     11801       11900
+     29480       29579
+     30221       30320
+     32822       32921
+     49680       49779
+     50000       50059     *
+     50160       50259
+     50261       50360
+     50378       50477
+
+* - Administered port exclusions.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Well, there we go! What&amp;rsquo;s reserved that port?&lt;br&gt;
+I stopped &lt;code&gt;Docker Desktop Service&lt;/code&gt; and made sure all the Hyper-V services weren&amp;rsquo;t running either, but that reservation was still there.&lt;/p&gt;
+&lt;p&gt;It turns out that the range 1214-1313 was reserved by the &lt;code&gt;Windows NAT Driver&lt;/code&gt; (WinNat) service.&lt;/p&gt;
+&lt;p&gt;I stopped the winnat service via. the command line (as Administrator):&lt;br&gt;
+&lt;code&gt;net stop winnat&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then I started Hugo, which happily grabbed port 1313:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\gbeifuss\blog&amp;gt;hugo server -D
+Start building sites …
+hugo v0.87.0-B0C541E4+extended windows/amd64 BuildDate=2021-08-03T10:57:28Z VendorInfo=gohugoio
+WARN 2021/08/20 14:12:16 Search page not found. Create a page with layout: search.
+WARN 2021/08/20 14:12:16 Archives page not found. Create a page with layout: archives.
+
+                   | EN
+-------------------+-----
+  Pages            | 46
+  Paginator pages  |  5
+  Non-page files   |  0
+  Static files     |  5
+  Processed images |  8
+  Aliases          | 12
+  Sitemaps         |  1
+  Cleaned          |  0
+
+Built in 481 ms
+Watching for changes in C:\Users\gbeifuss\blog\{archetypes,content,data,layouts,static,themes}
+Watching for config changes in C:\Users\gbeifuss\blog\config.yaml
+Environment: &amp;#34;development&amp;#34;
+Serving pages from memory
+Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+Web Server is available at http://localhost:1313/ (bind address 127.0.0.1)
+Press Ctrl+C to stop
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Then I started the winnat service again:&lt;br&gt;
+&lt;code&gt;net start winnat&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Pushing Hugo Content to GitHub</title>
+        <link>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</link>
+        <pubDate>Wed, 04 Aug 2021 07:49:02 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/pushing-hugo-content-to-github/</guid>
+        <description>&lt;p&gt;This blog content is generated by the &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hugo&lt;/a&gt; static site generator and integrated with GitHub (which you can clearly tell by the URL), but I&amp;rsquo;m always struggling to remember the steps in pushing the newest content publicly.&lt;/p&gt;
+&lt;p&gt;But I&amp;rsquo;m getting ahead of myself. Before I get there, hugo and github need to be integrated. I&amp;rsquo;m using Windows 10, so I needed to start by installing git locally.
+Once that was complete, I had the &lt;em&gt;git bash shell&lt;/em&gt; that I could use to generate the SSH keys that my computer will use to connect with my github account. On Windows 10, the .ssh directory is located at C:\Users\Administrator.ssh&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Start by generating a new SSH key to use for this connection. I used the ed25519 algorithm, which is faster and more &amp;lsquo;secure&amp;rsquo; than the RSA-2048 key that&amp;rsquo;s commonly used today:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Administrator@AC08871 MINGW64 ~/.ssh
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;$ ssh-keygen -t ed25519 -C &lt;span class=&#34;s2&#34;&gt;&amp;#34;email@email.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Then, copy the newly generated public key to the clipboard, because we&amp;rsquo;re going to paste it to github:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Administrator@AC08871 MINGW64 ~/.ssh
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;$ clip &amp;lt; id_ed25519.pub
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Log into github &amp;gt; Settings &amp;gt; SSH &amp;amp; GPG Keys. Create a new SSH key, and paste in the contents of the clipboard (which is the public key I just created)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Test the connection via. &lt;em&gt;git bash shell&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Administrator@AC08871 MINGW64 ~/.ssh
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;$ ssh -T git@github.com
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Hi gbeifuss! You&lt;span class=&#34;err&#34;&gt;&amp;#39;&lt;/span&gt;ve successfully authenticated, but GitHub does not provide shell access.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now that the connection between my computer and github is established, let&amp;rsquo;s configure github as a remote repository:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt; git remote add origin https://github.com/gbeifuss/gbeifuss.github.io.git
+
+C:\Users\Greg\OneDrive\myblog.dev.repo\public&amp;gt;git remote -v
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (fetch)
+origin  https://github.com/gbeifuss/gbeifuss.github.io.git (push)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Finally, I&amp;rsquo;m ready to push my content up:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Change to your site&amp;rsquo;s local directory, then tell Hugo to build the content:&lt;br&gt;
+&lt;code&gt;cd myblog.dev.repo&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;hugo&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Change to your site&amp;rsquo;s public directory (where the new content was just generated):&lt;br&gt;
+&lt;code&gt;cd public&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add all of the new files to git. This command analyzes the repository files, adding all modified and/or untracked files in the current directory and subdirectories to staged status. This prepares them for inclusion in the next &lt;code&gt;git commit&lt;/code&gt;. The &lt;code&gt;.gitignore&lt;/code&gt; file can be used to define any files/patterns that should be skipped:&lt;br&gt;
+&lt;code&gt;git add .&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Commit the locally staged files with a comment. This command will add &lt;em&gt;all&lt;/em&gt; the changed files, so be aware of that if you&amp;rsquo;re only intending to commit/push select files!:&lt;br&gt;
+&lt;code&gt;git commit -m &amp;quot;Website update 2021-08-03&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Push the local content up to GitHub. &lt;em&gt;origin&lt;/em&gt; is the remote repository name (alias) and &lt;em&gt;main&lt;/em&gt; is the branch name. (Since October 2020, main is the default branch that must exist on any repository):&lt;br&gt;
+&lt;code&gt;git push origin main&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And here it all is in a glorious code block, so that in the future, I can just copy and paste!&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cd myblog.dev.repo
+hugo
+cd public
+git add .
+git commit -m &amp;#34;Website update 2021-08-03&amp;#34;
+git push origin main
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I&amp;rsquo;ve also been trying to sort out how to update the theme I use (Stack), which is periodically updated. Right now my process is to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;log into github and pull the latest release into my fork&lt;/li&gt;
+&lt;li&gt;delete the contents of &lt;code&gt;\themes\hugo-stack-theme&lt;/code&gt; on my computer&lt;/li&gt;
+&lt;li&gt;tell git to repopulate the directory:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-git&#34; data-lang=&#34;git&#34;&gt;\myblog.dev.repo\themes&amp;gt; git clone git@github.com:gbeifuss/hugo-theme-stack hugo-theme-stack
+
+Cloning into &amp;#39;hugo-theme-stack&amp;#39;...
+remote: Enumerating objects: 3111, done.
+remote: Counting objects: 100% (1026/1026), done.
+remote: Compressing objects: 100% (416/416), done.
+remote: Total 3111 (delta 796), reused 695 (delta 601), pack-reused 2085
+Receiving objects: 100% (3111/3111), 841.36 KiB | 2.85 MiB/s, done.
+Resolving deltas: 100% (1958/1958), done.
+
+\myblog.dev.repo\themes&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;recopy my avatar image to &lt;code&gt;\themes\hugo-stack-theme\assets\img\&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

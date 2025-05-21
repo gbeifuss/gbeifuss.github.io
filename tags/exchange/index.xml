@@ -1,0 +1,1008 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Exchange on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/exchange/</link>
+        <description>Recent content in Exchange on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Thu, 28 Oct 2021 08:54:40 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/exchange/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Managing Mailbox moves in Exchange 2016</title>
+        <link>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</link>
+        <pubDate>Thu, 28 Oct 2021 08:54:40 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/managing-mailbox-moves-in-exchange-2016/</guid>
+        <description>&lt;p&gt;I manage a 5-server Exchange 2016 DAG at my workplace. Recently, I needed to migrate about 60 users from one database to another. I happen to hate the browser-based Exchange Administration Console (EAC) because it&amp;rsquo;s not very helpful - there&amp;rsquo;s no way to see the status for many &amp;ldquo;in progress&amp;rdquo; tasks, and &lt;em&gt;cancelling&lt;/em&gt; a task generally means you have no way of knowing if was completely cancelled, or partially cancelled&amp;hellip; &lt;strong&gt;very frustrating!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I have a love for Powershell, so I fired up the EMC - hurrah!&lt;br&gt;
+The default number of active migrations is configurable via. Powershell, but I really don&amp;rsquo;t like changing server defaults if there&amp;rsquo;s another way to accomplish what I want. Changing server defaults means that there&amp;rsquo;s one more configuration variation that needs to be tracked in case I need to rebuild a server, or add another server to the DAG.&lt;/p&gt;
+&lt;p&gt;Generally speaking, I like to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Migrate all mailboxes&lt;/li&gt;
+&lt;li&gt;Suspend all Move Requests&lt;/li&gt;
+&lt;li&gt;Have Powershell report on the status of the migration every 30 seconds:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;While&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;InProgress&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nb&#34;&gt;Clear-Host&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;InProgress&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-MoveRequestStatistics&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;sort &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;PercentComplete&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Descending&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nb&#34;&gt;Start-Sleep&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Seconds&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;30&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Open a second EMC instance and have Powershell ensure there are 5 migrations happening concurrently. If there aren&amp;rsquo;t, resume another one:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;While&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;suspended&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-gt&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;If&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;inprogress&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}).&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;count&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-lt&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MoveRequest&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Where-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;status&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;suspended&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;})[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Resume-MoveRequest&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;nb&#34;&gt;Start-Sleep&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Seconds&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;300&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also like to make sure that Indexing is disabled when migrating mailboxes: &lt;code&gt;Set-MailboxDatabase tier3-d -IndexEnabled:$false&lt;/code&gt;&lt;br&gt;
+This helps to speed up the process, since Exchange isn&amp;rsquo;t trying to index the mailbox as the move is occurring.&lt;/p&gt;
+&lt;p&gt;If you don&amp;rsquo;t disable the indexing, you may see your migration slow to a crawl, with the error &lt;code&gt;StalledDueToTarget_ContentIndexing&lt;/code&gt;. Oof.&lt;/p&gt;
+&lt;p&gt;After the move is complete, be sure to enable Indexing again, or your users won&amp;rsquo;t be able to search: &lt;code&gt;Set-MailboxDatabase tier3-d -IndexEnabled:$true&lt;/code&gt;&lt;br&gt;
+Then, validate that Indexing is set correctly on all the databases: &lt;code&gt;Get-MailboxDatabase | Select Name,IndexEnabled&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</title>
+        <link>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</link>
+        <pubDate>Tue, 21 Sep 2021 10:18:20 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;ve already written about &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/&#34; &gt;Remediating an Internal IP Disclosure with Netscaler&lt;/a&gt;, but I found out today that the route I&amp;rsquo;d chosen prevents Outlook from authenticating. Oops!&lt;/p&gt;
+&lt;p&gt;To summarize the earlier post, Exchange was leaking an internal IP and servername when an HTTP/1.0 packet was set &lt;em&gt;without a host header&lt;/em&gt; to &lt;code&gt;/autodiscover/autodiscover.xml&lt;/code&gt;. I initially tried to fix it by deleting the WWW-Authenticate and X-FEServer headers from the replies using Netscaler.&lt;/p&gt;
+&lt;p&gt;However, while that prevents the information from being leaked, it also prevents Outlook from properly loading when the traffic flows through Netscaler. In our case, internal traffic was fine, but people who rely on Outlook and autodiscover outside of our network couldn&amp;rsquo;t log in. I tested and removing the X-FEServer header permitted Outlook to load normally; it was removing the WWW-Authenticate header that caused the problem.&lt;/p&gt;
+&lt;p&gt;I tried out some alternate methods of blocking an internal IP in the WWW-Authenticate field (specifically, a reply containing &lt;code&gt;basic realm=&amp;quot;10.10.10.10&lt;/code&gt;), but it seems like there&amp;rsquo;s important authentication using that field. I came up with another approach which seems to be working: Since this vulnerability is the result of a HTTP/1.0 request, rewrite HTTP/1.0 requests to HTTP/1.1. HTTP/1.1 &lt;em&gt;requires&lt;/em&gt; the host header field, which means that IIS won&amp;rsquo;t happily disclose internal IPs in response to a missing host header. HTTP/1.1 has been a standard since 1997 and there should literally be no device in the past 20 years which does not support it.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s get to work. I&amp;rsquo;ll create a rewrite policy that looks for HTTP/1.0. If it&amp;rsquo;s found, replace it with HTTP/1.1.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;add rewrite action RW_ACTION_HTTP1.0 replace HTTP.REQ.VERSION.MINOR &amp;#34;\&amp;#34;1\&amp;#34;&amp;#34;
+add rewrite policy RW_POLICY_HTTP1.0 &amp;#34;HTTP.REQ.VERSION.MINOR.EQ(0)&amp;#34; RW_ACTION_HTTP1.0
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_HTTP1.0 -priority 110 -gotoPriorityExpression END -type REQUEST
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s test and make sure that the internal information is no longer returned:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;GET /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 400 Bad Request
+Content-Type: text/html; charset=us-ascii
+Server: Microsoft-HTTPAPI/2.0
+Date: Tue, 21 Sep 2021 14:16:46 GMT
+Connection: close
+Content-Length: 334
+Strict-Transport-Security: max-age=15552000
+
+&amp;lt;!DOCTYPE HTML PUBLIC &amp;#34;-//W3C//DTD HTML 4.01//EN&amp;#34;&amp;#34;http://www.w3.org/TR/html4/strict.dtd&amp;#34;&amp;gt;
+&amp;lt;HTML&amp;gt;&amp;lt;HEAD&amp;gt;&amp;lt;TITLE&amp;gt;Bad Request&amp;lt;/TITLE&amp;gt;
+&amp;lt;META HTTP-EQUIV=&amp;#34;Content-Type&amp;#34; Content=&amp;#34;text/html; charset=us-ascii&amp;#34;&amp;gt;&amp;lt;/HEAD&amp;gt;
+&amp;lt;BODY&amp;gt;&amp;lt;h2&amp;gt;Bad Request - Invalid Hostname&amp;lt;/h2&amp;gt;
+&amp;lt;hr&amp;gt;&amp;lt;p&amp;gt;HTTP Error 400. The request hostname is invalid.&amp;lt;/p&amp;gt;
+&amp;lt;/BODY&amp;gt;&amp;lt;/HTML&amp;gt;
+closed
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Great! The request is rejected (404) because HTTP/1.1 requires a host header, and this rewritten HTTP/1.0 request doesn&amp;rsquo;t have one.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Remediating an Internal IP Disclosure with Netscaler</title>
+        <link>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</link>
+        <pubDate>Fri, 17 Sep 2021 15:49:45 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/</guid>
+        <description>&lt;p&gt;Our security administrator sent over a few security &amp;lsquo;vulnerabilities&amp;rsquo; that had been flagged during a recent audit. One of them was a finding that one of our websites was leaking an internal IP. All I was given to track this down was the output from the auditor&amp;rsquo;s Nessus scan:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Nessus was able to verify the issue with the following request :
+
+GET autodiscover/autodiscover.xml HTTP/1.0
+Accept-Charset: iso-8859-1,utf-8;q=0.9,*;q=0.1
+Accept-Language: en
+Connection: Close
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)
+Pragma: no-cache
+AcceptL image/gif, image/x-xbitmap, image/jpeg, impage/pjpeg, image/png, */*
+
+Which returned the following IP address :
+
+10.10.0.31
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After some quick research, I learned that this is actually  &lt;strong&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.tenable.com/plugins/nessus/77026&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Microsoft Exchange Client Access Server Information Disclosure&lt;/a&gt;&lt;/strong&gt;. That it was being termed a vulnerability was pretty generous use of the term by our auditors in the PCI Compliance Report. Knowing an internal IP isn&amp;rsquo;t actually going to open the door for an attacker, but it could be useful as part of the enumeration or in a wider attack, the internal IP address might be very useful.&lt;/p&gt;
+&lt;p&gt;This vulnerability is usually found in conjunction with &lt;a class=&#34;link&#34; href=&#34;https://www.tenable.com/plugins/nessus/10759&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Web Server HTTP Header Internal IP Disclosure&lt;/a&gt;, which returns the internal IP in the location field. However, a previous audit had found that and I&amp;rsquo;d remediated it. I wonder how come this first audit didn&amp;rsquo;t find the Microsoft Exchange Client Access Server Information Disclosure vulnerability? Hmm.&lt;/p&gt;
+&lt;p&gt;In both of these &amp;lsquo;vulnerabilities&amp;rsquo;, an attacker can send an IIS webserver a specially-crafted HTTP 1.0 GET request, without any host header set. This causes the server to return its internal IP address in the reply. The reason for this is that the HTTP 1.0 protocol does not require the host header to be set by the client in the request. The HTTP 1.1 protocol requires the client to specify a host in the header, so is not affected.&lt;/p&gt;
+&lt;p&gt;Once I sorted out &lt;em&gt;what&lt;/em&gt; I was looking for, it was time to replicate the findings, so that I can self-test that the &amp;lsquo;vulnerability&amp;rsquo; has been remediated.&lt;/p&gt;
+&lt;p&gt;I love the &lt;a class=&#34;link&#34; href=&#34;https://chocolatey.org&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;chocolatey&lt;/a&gt; package manager for Powershell, especially since Windows doesn&amp;rsquo;t ship with anything useful. (WinGet seems to be what Microsoft is positioning as their Package Manager, but it&amp;rsquo;s far behind chocolatey at this point). In any case, since I have chocolatey already installed, let&amp;rsquo;s use it to download and install the openssl package:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;choco install openssl&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Wow, that was pretty easy, right? Let&amp;rsquo;s get started by opening a connection to the Exchange server using SSL/TLS:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Program Files\OpenSSL-Win64\bin&amp;gt;openssl s_client -host 206.98.14.28 -port 443
+
+CONNECTED(00000130)
+Can&amp;#39;t use SSL_get_servername
+depth=1 C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+verify return:1
+---
+Certificate chain
+ 0 s:OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+   i:C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+ 1 s:C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+   i:C = US, ST = New Jersey, L = Jersey City, O = The USERTRUST Network, CN = USERTrust RSA Certification Authority
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIGkzCCBXugAwIBAgIQeMhcbdyCJZhuKNK1eI9BnDANBgkqhkiG9w0BAQsFADCB
+jzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G
+A1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTcwNQYDVQQD
+Ey5TZWN0aWdvIFJTQSBEb21haW4gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENB
+MB4XDTE5MTEwNTAwMDAwMFoXDTIxMTEwNDIzNTk1OVowZTEhMB8GA1UECxMYRG9t
+YWluIENvbnRyb2wgVmFsaWRhdGVkMSEwHwYDVQQLExhQb3NpdGl2ZVNTTCBNdWx0
+aS1Eb21haW4xHTAbBgNVBAMTFHdlYm1haWwuYWdyaWNvcnAuY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AM11BCgKCAQEAzkoRlNCs5fI4iiNvh2YcaV3y3KynScoj
+F7sk8frQY1iYBrQ4oLfDI2h+Np7a21kvdMyYufLzWeAz1n0EDu29/kkp8QBIVaDU
+CgCNdsocnvwC41E7Qyc9wumBRNWbz0c4B7tyDvhImgBfl6IIXUe+cy/KsrqWb3Tq
+mJKJ7acSBNzRcPgK8qUbUCdtNixhBRruWKjnQ7qwmzLwsRozFZGExUCms5/MX4Od
+uZ5UHWGYZed+w30vu86Hy1/jf0VWeDGSAsiPUySLq55fvwClyRftN1aS9bwROrvE
+sTJ1rAkR26wUFNyQi9ijkOEPCh2TqyclQNvRnokSI346ZMKKkaPpFwIDAQABo4ID
+EjCCAw4wHwYDVR0jBBgwFoAUjYxexFStiuF36Zv5mwXhuAGNYeEwHQYDVR0OBBYE
+FKb+bHu4DBzyNq5bUYs8Ppfr2EXFMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBJBgNVHSAEQjBAMDQG
+CysGAQQBsjEBAgIHMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20v
+Q1BTMAgGBmeBDAECATCBhAYIKwYBBQUHAQEEeDB2ME8GCCsGAQUFBzAChkNodHRw
+Oi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29SU0FEb21haW5WYWxpZGF0aW9uU2Vj
+dXJlU2VydmVyQ0EuY3J0MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdv
+LmNvbTA6BgNVHREEMzAxghR3ZWJtYWlsLmFncmljb3JwLmNvbYIZYXV0b2Rpc2Nv
+dmVyLmFncmljb3JwLmNvbTCCAX8GCisGAQQB1nkCBAIEggFvBIIBawFpAHYAfT7y
++I//iFVoJMLAyp5SiXkrxQ54CX8uapdomX4i8NcAAAFuPDgr2gAABAMARzBFAiAi
+1bJ3H3IUyTUswT99xLn8P2xHsFjAm4FjcuqpbSdgxAIhAPZOftlPa1H1jQPQ1ESb
+IMox3lbDRSrPOOESq+oGMCPZAHcARJRlLrDuzq/EQAfYqP4owNrmgr7YyzG1P9Mz
+lrW2gagAAAFuPDgrzgAABAMASDBGAiEAgNOhZoOzgj8DwuR516eWmpms/RmaQ61x
+5z8CAnfYOL0CIQD5ODhJYisT5s7oRmqXgEzCg84dWeysi5/DjYzWvlqzFQB2AFWB
+1MIWkDYBSuoLm1c8U/DA5Dh4cCUIFy+jqh0HE9MMAAABbjw4K5wAAAQDAEcwRQIg
+adxDdH5iWyGh6tReXl/1t0zLEBcPwXe24St5WYnSwlcCIQC5RKhMAD63eyKpojIo
+6fJocT/P6SBsfAykYhwThDFIPDANBgkqhkiG9w0BAQsFAAOCAQEAnUwWuOimEN5k
+zzXFVVDFdwRYmTdnW7fzOgXnQKVmtkqAXiL0Qp05OnUq7qPJuTaOR+KaGPS0nnLN
+b3/U3SimzH+tukkDZWcVch7tFzrEzpmWzighsQrzdCO0fv7SL3un7aKxQzf/u+se
+iCZ5F8W40+YmZq8mW7LUdYINbtR/vGgays/7xzjWioWVjbgNsWiFdpmZ/Fch1H9q
+m7UoFGNcTPDQrsg5rI2fKU/JBxWWqaUlWQ6DClhzwBp55DY3MGCoPesiiIU0HN/7
+GyqwDIklkHOX6pRRmlXb5ZEK31Bo4qvwv/yolil83NL1q/Lk3C64jLmPEtH5rJy1
+JaY6tu+MsA==
+-----END CERTIFICATE-----
+subject=OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+
+issuer=C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 3885 bytes and written 683 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 20 (unable to get local issuer certificate)
+---
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;At this point, openssl has successfully established the connection and is awaiting a case-sensitive command. Let&amp;rsquo;s send the HTTP 1.0 packet to the autodiscover URL. You may need to press ENTER a couple of times:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;GET /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 401 Unauthorized
+Server: Microsoft-IIS/10.0
+request-id: e1722265-bc09-4d32-a25e-02bf98f7d8f9
+X-SOAP-Enabled: True
+X-WSSecurity-Enabled: True
+X-WSSecurity-For: None
+X-OAuth-Enabled: True
+X-OWA-Version: 15.1.2308.14
+WWW-Authenticate: Negotiate
+WWW-Authenticate: NTLM
+X-Powered-By: ASP.NET
+X-FEServer: EXCHANGE02
+WWW-Authenticate: Basic realm=&amp;#34;10.1.0.31&amp;#34;
+Date: Fri, 17 Sep 2021 19:04:53 GMT
+Connection: keep-alive
+Content-Length: 0
+Strict-Transport-Security: max-age=15552000
+
+closed
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;And there it is! The internal server name and IP, in black and white. Thanks for nothing, IIS.&lt;/p&gt;
+&lt;p&gt;Alright, let&amp;rsquo;s go about fixing this. Instead of fixing this in IIS with the URL-Rewrite module, I decided to use Netscaler.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The same change is made on just 2 Netscaler devices, vs. 5 Exchange servers&lt;/li&gt;
+&lt;li&gt;The changes are not dependant on IIS, which may possibly be reset by patches or other installed software&lt;/li&gt;
+&lt;li&gt;Netscaler is where I generally do this sort of thing (consistency leads to ease of administration)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In any case, this is what Netscaler will do:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Any replies from the Webmail object are inspected for the WWW-Authenticate header.&lt;/li&gt;
+&lt;li&gt;If it’s found, the WWW-Authenticate header is deleted as well as any X-FEServer header.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I accomplished this with a couple of Responder Policies in Netscaler:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;add rewrite action RW_ACTION_OWA_FEServer delete_http_header X-FEServer
+add rewrite action RW_ACTION_OWA_WWWAuthenticate delete_http_header WWW-Authenticate
+add rewrite policy RW_POLICY_OWA_FEServer &amp;#34;HTTP.RES.HEADER(\&amp;#34;X-FEServer\&amp;#34;).EXISTS&amp;#34; RW_ACTION_OWA_FEServer NOREWRITE
+add rewrite policy RW_POLICY_OWA_WWWAuthenticate &amp;#34;HTTP.RES.HEADER(\&amp;#34;WWW-Authenticate\&amp;#34;).EXISTS&amp;#34; RW_ACTION_OWA_WWWAuthenticate NOREWRITE
+
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_WWWAuthenticate -priority 100 -gotoPriorityExpression NEXT -type RESPONSE
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_FEServer -priority 110 -gotoPriorityExpression END -type RESPONSE
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s repeat the test and make sure that the internal information is no longer returned:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;get /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 401 Unauthorized
+Server: Microsoft-IIS/10.0
+request-id: 068763fb-67ff-4f09-8ca9-02139957f4c2
+X-SOAP-Enabled: True
+X-WSSecurity-Enabled: True
+X-WSSecurity-For: None
+X-OAuth-Enabled: True
+X-OWA-Version: 15.1.2308.14
+X-Powered-By: ASP.NET
+Date: Fri, 17 Sep 2021 19:16:43 GMT
+Connection: keep-alive
+Content-Length: 0
+Strict-Transport-Security: max-age=15552000
+
+closed
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
+        <title>Exchange Transaction Logs won&#39;t clear</title>
+        <link>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</link>
+        <pubDate>Thu, 09 Sep 2021 09:29:17 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/</guid>
+        <description>&lt;p&gt;I solved a problem today that&amp;rsquo;s been plaguing me for a two weeks now. Exchange transaction logs are a record of every single operation that changes the state of any data in the database. Adding a new item, deleting an old item, modifying an existing item - all of these  are recorded in a transaction log at the same time they&amp;rsquo;re applied to the database itself. When an Exchange database is mounted, the transaction logs are reprocessed to make sure there aren&amp;rsquo;t any discrepancies or database errors. If there are, the transaction logs are used to rebuild the database state. This same process applied to the DAG as well. The entire purpose of transaction logs in Exchange is to provide information on the transactions that occurred since the last time you ran a complete backup of your Exchange environment.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re using Exchange-aware backup software, Exchange will &amp;lsquo;know&amp;rsquo; when a full backup occurs and then it&amp;rsquo;ll delete all transaction logs prior to that point. They&amp;rsquo;re no longer needed for a database rebuild because there&amp;rsquo;s a backup.&lt;/p&gt;
+&lt;p&gt;The problem I ran into is that the transaction logs were not being purged despite a successful backup (by our Exchange-aware software) and filled up the volume, which caused a database dismount&amp;hellip; which led to some unhappy employees. Fortunately, it was just 1 of our 6 databases and I was able to fix it within 15 minutes, so not many people even noticed an issue. I wrote about workarounds and solutions for that in &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/&#34; &gt;Exchange DAGs and Cluster Ownership&lt;/a&gt;. As I mentioned in that post, I believed that the root cause was that the Owner of our DAG cluster objects wasn&amp;rsquo;t the proper host. However, this wasn&amp;rsquo;t the case because the transaction logs continued to grow!&lt;/p&gt;
+&lt;p&gt;The Transaction Logs for Journaling are causing the problem. Despite no old logs (they&amp;rsquo;re all timestamped AFTER our daily backup occurs, which tells me that the backup is working properly and Exchange is aware of it), they&amp;rsquo;re consuming 10+ GB more disk space each passing day. Yesterday morning they occupied 60GB, and 24 hours later they&amp;rsquo;re already consuming 84GB.&lt;/p&gt;
+&lt;p&gt;I checked the Queues and found dozens of messages in the Journaling queue:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-QueueDigest&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Dag&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange2016&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ft &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-a&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;GroupByValue&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MessageCount&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DeferredMessageCount&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;LockedMessageCount&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;StaleMessageCount&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Details&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;------------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;------------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;--------------------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;------------------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;-----------------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;-------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;journaling&lt;/span&gt;   &lt;span class=&#34;mf&#34;&gt;85&lt;/span&gt;           &lt;span class=&#34;mf&#34;&gt;85&lt;/span&gt;                   &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;                  &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;                 &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exchange06&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;EXCHANGE04&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;get-queue&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Identity&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange04&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Identity&lt;/span&gt;     &lt;span class=&#34;n&#34;&gt;DeliveryType&lt;/span&gt;          &lt;span class=&#34;n&#34;&gt;Status&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MessageCount&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Velocity&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;RiskLevel&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;OutboundIPPool&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;NextHopDomain&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;--------&lt;/span&gt;     &lt;span class=&#34;p&#34;&gt;------------&lt;/span&gt;          &lt;span class=&#34;p&#34;&gt;------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;------------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;--------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;---------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;--------------&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;-------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;EXCHANGE04&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;SmtpDeliveryToMailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Ready&lt;/span&gt;  &lt;span class=&#34;mf&#34;&gt;29&lt;/span&gt;           &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;Normal&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;              &lt;span class=&#34;n&#34;&gt;journaling&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I took a look at one of these messages via. the Exchange Toolbox\Queue Viewer GUI. This message has been stuck in the Journaling queue for &lt;em&gt;almost 30 days&lt;/em&gt; (since August 13/21):&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Identity: EXCHANGE04\4\75801877807477
+Subject: Fw:&amp;#39;RE: 137396- Ray &amp;amp; Rachel Application&amp;#39;.
+Internet Message ID: &amp;lt;59d5803a-273b-4123-a41f-dfb67fc6cf1e@journal.report.generator&amp;gt;
+From Address: &amp;lt;&amp;gt;
+Status: Retry
+Size (KB): 11170
+Message Source Name: Journaling
+Source IP: 255.255.255.255
+SCL: 0
+Date Received: 8/13/2021 10:48:12 AM
+Expiration Time:
+Last Error: 400 4.4.7 The server responded with: 554 5.2.0 STOREDRV.Deliver.Exception:MessageSubmissionExceededException.MapiExceptionMaxSubmissionExceeded; Failed to process message due to a permanent exception with message Cannot save changes made to an item to store. 16.55847:09020000, 17.43559:0000000090000000000000000100000000000000, 20.52176:010F04890E00000000000000, 20.50032:010F04897E17103100000000, 0.35180:010F0489, 255.23226:00000000, 255.27962:0E000000, 255.31418:21000000, 16.55847:E3000000, 17.43559:0000000070010000000000000000000000000000, 20.52176:010F04890E00001080030400, 20.50032:010F04897E17F01F010F0489, 0.35180:2C000000, 255.23226:2C000000, 255.27962:0A000000, 255.27962:0C000000, 255.17082:DA040000, 0.18273:00000000, 4.21921:DA040000, 255.27962:FA000000, 255.1494:010F0489, 5.59176:0000A0004C696D69746174696F6E001005000780, 5.34600:A418B00043757272656E7453697A65000F010480, 4.42792:DA040000, 7.40748:000000000000000031343163, 7.57132:000000000000000005000780, 1.63016:0C000000, 4.39640:DA040000, 8.45434:7EFF3D197915D443BAF1677741440BB605000780, 5.10786:0000000031352E30312E323330382E3031343A45786368616E676530353A36623134316338652D663135382D346465612D616564652D3837656131656238336534310080, 255.1750:2C000000, 255.31418:2C000000, 0.21457:010F0489, 4.19665:DA040000, 0.37632:DA040000, 4.37888:DA040000 [Stage: CreateMessage]. The failure was replaced by a retry response because the message was marked for retry if rejected.
+Queue ID: EXCHANGE04\4
+Recipients:  Tier3M.Journaling@Company.com;3;3;[{LED=400 4.4.7 The server responded with: 554 5.2.0 STOREDRV.Deliver.Exception:MessageSubmissionExceededException.MapiExceptionMaxSubmissionExceeded; Failed to process message due to a permanent exception with message Cannot save changes made to an item to store. 16.55847:09020000, 17.43559:0000000090000000000000000100000000000000, 20.52176:010F04890E00000000000000, 20.50032:010F04897E17103100000000, 0.35180:010F0489, 255.23226:00000000, 255.27962:0E000000, 255.31418:21000000, 16.55847:E3000000, 17.43559:0000000070010000000000000000000000000000, 20.52176:010F04890E00001080030400, 20.50032:010F04897E17F01F010F0489, 0.35180:2C000000, 255.23226:2C000000, 255.27962:0A000000, 255.27962:0C000000, 255.17082:DA040000, 0.18273:00000000, 4.21921:DA040000, 255.27962:FA000000, 255.1494:010F0489, 5.59176:0000A0004C696D69746174696F6E001005000780, 5.34600:A418B00043757272656E7453697A65000F010480, 4.42792:DA040000, 7.40748:000000000000000031343163, 7.57132:000000000000000005000780, 1.63016:0C000000, 4.39640:DA040000, 8.45434:7EFF3D197915D443BAF1677741440BB605000780, 5.10786:0000000031352E30312E323330382E3031343A45786368616E676530353A36623134316338652D663135382D346465612D616564652D3837656131656238336534310080, 255.1750:2C000000, 255.31418:2C000000, 0.21457:010F0489, 4.19665:DA040000, 0.37632:DA040000, 4.37888:DA040000 [Stage: CreateMessage]. The failure was replaced by a retry response because the message was marked for retry if rejected.};{MSG=};{FQDN=};{IP=};{LRT=}];0;CN=Journaling,CN=Databases,CN=Exchange Administrative Group (FYDIBOHF23SPDLT),CN=Administrative Groups,CN=Company,CN=Microsoft Exchange,CN=Services,CN=Configuration,DC=corp,DC=Company,DC=com;0
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The error is &lt;em&gt;MessageSubmissionExceededException&lt;/em&gt;, which made me suspect a size limit problem. Indeed, all 28 messages in the Journaling queue have a size &amp;gt; 10MB. Our standard maximum message size is 10GB across the organization (to discourage people from using email as a file transfer/file storage mechanism), but last month an exception was granted for one of our customer service mailboxes. That mailbox has a maximum message size of 30MB.&lt;/p&gt;
+&lt;p&gt;I realized that this current problem is probably stemming from the changes made several weeks ago to allow large messages to this mailbox - they arrive there, but the Journaling process cannot handle them because the &lt;em&gt;Journal mailbox limit is still 10MB&lt;/em&gt;. The Journaling process continually tries to add them to the Journaling mailbox which causes the retry process to generate a huge volume of transaction logs. I checked the mailbox message limits to be sure the sizes matched my hypothesis:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;get-mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;contact&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;select &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;MaxSendSize&lt;/span&gt;              &lt;span class=&#34;n&#34;&gt;MaxReceiveSize&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;-----------&lt;/span&gt;              &lt;span class=&#34;p&#34;&gt;--------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;contact&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;30&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;31&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;457&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;280&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;30&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;31&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;457&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;280&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;get-mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Tier&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;select &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;              &lt;span class=&#34;n&#34;&gt;MaxSendSize&lt;/span&gt;              &lt;span class=&#34;n&#34;&gt;MaxReceiveSize&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;              &lt;span class=&#34;p&#34;&gt;-----------&lt;/span&gt;              &lt;span class=&#34;p&#34;&gt;--------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Tier3A&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journaling&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Tier3B&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journaling&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Tier3C&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journaling&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Tier3D&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journaling&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Tier3L&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journaling&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Tier3M&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Journaling&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;485&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;760&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bytes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I increased the max message size that Journaling mailboxes can handle:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;get-mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Tier&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Set-mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-MaxReceiveSize&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;30&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;MB&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-MaxSendSize&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;30&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;MB&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This flushed the 28 queued messages within 15 minutes.&lt;/p&gt;
+&lt;p&gt;I then ran a pair of consecutive diskshadow backups on Exchange05, which is the server that has mounted the Journaling database. This cleared out the logs on disk within 30 minutes. Instead of taking 84GB, the logs now consume a much-more-reasonable 2GB.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Exchange DAGs and Cluster Ownership</title>
+        <link>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</link>
+        <pubDate>Mon, 06 Sep 2021 22:12:49 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/</guid>
+        <description>&lt;p&gt;We run Exchange on a multiserver DAG, which behaves similarly to a cluster. It&amp;rsquo;s built on the same principles as a cluster, but it&amp;rsquo;s technically not a cluster and is administered differently than a cluster. It&amp;rsquo;s &amp;hellip; &lt;em&gt;clusterish&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;One of the issues that we run in to occasionally is that Cluster Owner changes to another DAG member server, which causes problems with our backup software. (The backup software can&amp;rsquo;t truely handle a cluster and wants to connect to the IP of a single server). The fix is pretty simple - change the owner back to the server it should be! Powershell makes this really easy:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;H:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&amp;gt;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Move-ClusterGroup&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Node&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;                                    &lt;span class=&#34;n&#34;&gt;OwnerNode&lt;/span&gt;                               &lt;span class=&#34;n&#34;&gt;State&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;                                    &lt;span class=&#34;p&#34;&gt;---------&lt;/span&gt;                               &lt;span class=&#34;p&#34;&gt;-----&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt;                       &lt;span class=&#34;n&#34;&gt;EXCHANGE04&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Offline&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;                          &lt;span class=&#34;n&#34;&gt;Exchange03&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Offline&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;H:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&amp;gt;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;                                    &lt;span class=&#34;n&#34;&gt;OwnerNode&lt;/span&gt;                               &lt;span class=&#34;n&#34;&gt;State&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;                                    &lt;span class=&#34;p&#34;&gt;---------&lt;/span&gt;                               &lt;span class=&#34;p&#34;&gt;-----&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt;                       &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Offline&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;                          &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;                              &lt;span class=&#34;n&#34;&gt;Online&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To prevent any complications with our backups, I would like:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The Owner Node to be monitored&lt;/li&gt;
+&lt;li&gt;The Owner Node to be corrected to the proper values, if it&amp;rsquo;s not on Exchange05.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;We run PRTG for server monitoring&amp;hellip;. Fortunately, PRTG can do this for us! The (old) article &lt;a class=&#34;link&#34; href=&#34;https://kb.paessler.com/en/topic/70294-how-can-i-monitor-with-prtg-which-node-is-active-in-a-microsoft-cluster&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Monitoring Active Cluster Nodes With PRTG&lt;/a&gt; outlines the process. I only used this as a guide, as I ended up sourcing Jannos-443&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://github.com/Jannos-443/PRTG-MSCluster-PrefNodes&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PRTG-MSCluster-PrefNodes.ps1&lt;/a&gt; script.&lt;/p&gt;
+&lt;p&gt;I started by checking the Preferred Node setting for these two cluster objects:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterOwnerNode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;ClusterObject&lt;/span&gt;     &lt;span class=&#34;n&#34;&gt;OwnerNodes&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-------------&lt;/span&gt;     &lt;span class=&#34;p&#34;&gt;----------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;{}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Just peachy. Neither object has a preferred owner. Let&amp;rsquo;s fix that:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;set-ClusterOwnerNode&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;corp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;agricorp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;com&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Get-ClusterOwnerNode&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;ClusterObject&lt;/span&gt;     &lt;span class=&#34;n&#34;&gt;OwnerNodes&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-------------&lt;/span&gt;     &lt;span class=&#34;p&#34;&gt;----------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Available&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Storage&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Cluster&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group &lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Exchange05&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;That&amp;rsquo;s better. With that out of the way, I created a new PRTG sensor to monitor that the Cluster was Owned by the Preferred Node:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Save the Cluster-checking script to &lt;code&gt;${env:ProgramFiles(x86)}\PRTG Network Monitor\Custom Sensors\EXEXML&lt;/code&gt; on the PRTG probe server.&lt;/li&gt;
+&lt;li&gt;Open PRTG and browsed to the Exchange05 server object. This is the server that should be the Owner&lt;/li&gt;
+&lt;li&gt;Create a new sensor. Select a sensor type &amp;ldquo;EXE/Script Advanced Sensor&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;PRTG-MSCluster-PrefNodes.ps1&lt;/code&gt; from the dropdown list. Provide the Exchange Cluster name as a parameter. In my case, I entered &lt;code&gt;Exchange2016&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Set the Security Context of the sensor to &lt;code&gt;Use Windows credentials of parent device&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Save changes. Query the sensor a couple of times to make sure that it&amp;rsquo;s working properly. When one or more nodes isn&amp;rsquo;t on the Preferred Node, then the sensor will change to &amp;lsquo;Warning&amp;rsquo;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Next, I want PRTG&amp;rsquo;s Notification action to correct the Owner of the cluster object. We&amp;rsquo;ll create a custom notification that will run a short Powershell script I wrote:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;&amp;lt;#
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;SYNOPSIS&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Force Cluster Owner to a specific server
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;DESCRIPTION&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    https://kb.paessler.com/en/topic/40713-can-i-automatically-restart-a-windows-service-with-prtg
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Copy this script to the main PRTG server&amp;#39;s Notifications\EXE scripts folder (${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    and create a new Notification Template &amp;gt; Execute Program. Choose this script from the dropdown and provide the SERVERNAME as a parameter.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    The Credentials need to be generated under the instance that PRTG is running as (NT Authority\System). These domain creds allow PRTG
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    to remotely run code on the remote system and manipulate the Cluster Groups.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .PARAMETER Server
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Server FQDN or NetBIOS Name
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    .&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;EXAMPLE&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Sample call from PRTG EXE/Script Advanced
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    PRTG-MSCluster-MoveClusterGroup.ps1 EXCHANGE01
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    Author:  Greg Beifuss
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;    7:48 AM 9/8/2021
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cm&#34;&gt;#&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;param&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$Server&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;$null&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$id&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Import-Clixml&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;C:\Program Files (x86)\PRTG Network Monitor\Notifications\EXE\powershell.xml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$Scriptblock&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Get-ClusterGroup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Move-ClusterGroup&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Node&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$env:COMPUTERNAME&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Invoke-Command&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ComputerName&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Server&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ScriptBlock&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Scriptblock&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Credential&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$id&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;0&#34;&gt;
+&lt;li&gt;Use &lt;code&gt;Export-CLIXML&lt;/code&gt; to store credentials that can log into the destination server (in my case, Exchange05)&lt;/li&gt;
+&lt;li&gt;Save this script to &lt;code&gt;${env:ProgramFiles(x86)}\PRTG Network Monitor\Notifications\EXE&lt;/code&gt;)` on the main PRTG server. This is the server that Notifications run from - the other PRTG servers simply won&amp;rsquo;t have the Notifications directory.&lt;/li&gt;
+&lt;li&gt;Create a new Notification Template in PRTG. Choose &amp;lsquo;Execute Program&amp;rsquo;, and select the PRTG-MSCluster-MoveClusterGroup.ps1 script. Provide a cluster member server name as the parameter. This will be passed into the script. Save.&lt;/li&gt;
+&lt;li&gt;Browse to the PRTG sensor that was previously created. Select &amp;lsquo;Notification Triggers&amp;rsquo;. Enable a State Trigger that will perform the Notification Template you just created. I used:
+&lt;ul&gt;
+&lt;li&gt;When sensor state is Warning for at least 60 seconds, perform PRTG-MSCluster-MoveClusterGroup&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Save &amp;amp; test.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;You can see below that at 7:49ish, both the cluster object owners changed from the preferred nodes. I know this since PRTG detected this as &amp;ldquo;2&amp;rdquo;, not &amp;ldquo;1&amp;rdquo;. In any case, after the sensor had been in this state for 60 seconds, the notification task started and moved the cluser objects back to their proper &amp;lsquo;home&amp;rsquo;. The sensor value reset to &amp;ldquo;0&amp;rdquo; clusters on a non-preferred node.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/prtg-cluster.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Truncate Exchange Transaction Logs</title>
+        <link>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</link>
+        <pubDate>Fri, 03 Sep 2021 21:40:09 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/truncate-exchange-transaction-logs/</guid>
+        <description>&lt;p&gt;I received an alert today that the disk drive with our Exchange transaction logs was low on disk space. How low? 160KB free of 190GB! In fact, it was so low that Exchange dismounted the database on that server and moved it over to another host in the DAG.&lt;/p&gt;
+&lt;p&gt;Something like this is usually the result of backup problems. Exchange won&amp;rsquo;t purge transaction logs until it &lt;em&gt;knows&lt;/em&gt; that they&amp;rsquo;ve been successfully backed up, since a successful restore of backup data requires a full backup &lt;em&gt;plus&lt;/em&gt; all incremental transaction logs since then.&lt;/p&gt;
+&lt;p&gt;Of course, there&amp;rsquo;s a nice little trick to tell Exchange that a full backup was just performed&amp;hellip; without actually performing a full backup. That lets Exchange start purging the transaction logs, which frees up disk space, which means Exchange can remount your database(s). It&amp;rsquo;s all thanks to the magic of VSS and DiskShadow.exe.&lt;/p&gt;
+&lt;p&gt;This needs to be done in an elevated command prompt &lt;em&gt;on the server where the databases are mounted&lt;/em&gt;. If your databases and transaction logs are on different volumes, you&amp;rsquo;ll need to add both of them. In my case, Transaction Logs are on D:\ and Databases are on E:\ .&lt;/p&gt;
+&lt;p&gt;At a high level:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Load diskshadow&lt;/li&gt;
+&lt;li&gt;add volumes&lt;/li&gt;
+&lt;li&gt;begin backup&lt;/li&gt;
+&lt;li&gt;create&lt;/li&gt;
+&lt;li&gt;end backup&lt;/li&gt;
+&lt;li&gt;exit&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Windows\system32&amp;gt;diskshadow
+Microsoft DiskShadow version 1.0
+Copyright (C) 2013 Microsoft Corporation
+On computer:  EXCHANGE04,  9/3/2021 2:00:14 PM
+
+DISKSHADOW&amp;gt; add volume d:
+DISKSHADOW&amp;gt; add volume e:
+DISKSHADOW&amp;gt; begin backup
+DISKSHADOW&amp;gt; create
+
+Alias VSS_SHADOW_1 for shadow ID {b7d4f4f0-8293-4dbd-8bae-3901023e3e6b} set as environment variable.
+Alias VSS_SHADOW_2 for shadow ID {c994095e-dbdb-4950-b285-cf73b3e5ca1a} set as environment variable.
+Alias VSS_SHADOW_SET for shadow set ID {a0f96cbf-f4f2-40d9-9453-e84e6986c932} set as environment variable.
+
+Querying all shadow copies with the shadow copy set ID {a0f96cbf-f4f2-40d9-9453-e84e6986c932}
+
+        * Shadow copy ID = {b7d4f4f0-8293-4dbd-8bae-3901023e3e6b}               %VSS_SHADOW_1%
+                - Shadow copy set: {a0f96cbf-f4f2-40d9-9453-e84e6986c932}       %VSS_SHADOW_SET%
+                - Original count of shadow copies = 2
+                - Original volume name: \\?\Volume{c19abc70-413e-4ea7-b4d4-1ed69c382d6f}\ [D:\]
+                - Creation time: 9/3/2021 3:27:13 PM
+                - Shadow copy device name: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy63
+                - Originating machine: EXCHANGE04.company.com
+                - Service machine: EXCHANGE04.company.com
+                - Not exposed
+                - Provider ID: {b5946137-7b9f-4925-af80-51abd60b20d5}
+                - Attributes:  Auto_Release Differential
+
+        * Shadow copy ID = {c994095e-dbdb-4950-b285-cf73b3e5ca1a}               %VSS_SHADOW_2%
+                - Shadow copy set: {a0f96cbf-f4f2-40d9-9453-e84e6986c932}       %VSS_SHADOW_SET%
+                - Original count of shadow copies = 2
+                - Original volume name: \\?\Volume{64abb4bb-d15b-42f9-893f-224c5a2f25a5}\ [E:\]
+                - Creation time: 9/3/2021 3:27:13 PM
+                - Shadow copy device name: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy64
+                - Originating machine: EXCHANGE04.company.com
+                - Service machine: EXCHANGE04.company.com
+                - Not exposed
+                - Provider ID: {b5946137-7b9f-4925-af80-51abd60b20d5}
+                - Attributes:  Auto_Release Differential
+
+Number of shadow copies listed: 2
+
+DISKSHADOW&amp;gt; end backup
+DISKSHADOW&amp;gt; exit
+
+C:\Windows\system32&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The EMC/Powershell can display the last backup that Exchange is aware of:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;PS&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Windows&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;system32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-MailboxDatabase&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-status&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;select &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;LastFullBackup&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ft
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;       &lt;span class=&#34;n&#34;&gt;LastFullBackup&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;       &lt;span class=&#34;p&#34;&gt;--------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Journaling&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;35&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;06&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Tier3-C&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;35&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;07&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Tier3-D&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;35&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;06&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Tier3-A&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;04&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;43&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;AM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Tier3-M&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;04&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;43&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;AM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Tier3-X&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;04&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;43&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;AM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Tier3-L&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;35&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;06&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Tier3-B&lt;/span&gt;    &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2021&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;34&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;48&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;An alternate trick is to delete any unmounted database copies on the server that&amp;rsquo;s out of Transaction Log space through proper Exchange methods (EAC or Powershell). Once that&amp;rsquo;s done, delete the Transaction Logs belonging to that database. It should free up a small amount of space - perhaps enough breathing room to get a database online, users up and running again, and time for you to take proper measures.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re running Exchange as a VM or the disks are on a SAN, you could also provision more disk space, then extend the volume.&lt;/p&gt;
+&lt;p&gt;The DiskShadow/VSS method should result in the following entries in the Application Event Log. These are from Windows Server 2016:&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;&lt;/th&gt;
+          &lt;th&gt;Event ID&lt;/th&gt;
+          &lt;th&gt;Source&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchange VSS Writer metadata preparation&lt;/td&gt;
+          &lt;td&gt;2021&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchange VSS Writer database preparation&lt;/td&gt;
+          &lt;td&gt;2110&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchange VSS Writer prepared for backup&lt;/td&gt;
+          &lt;td&gt;2023&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;A Full Shadow copy was started&lt;/td&gt;
+          &lt;td&gt;2005&lt;/td&gt;
+          &lt;td&gt;ESE&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Backup starting&lt;/td&gt;
+          &lt;td&gt;960&lt;/td&gt;
+          &lt;td&gt;ESE BACKUP&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Shadow copy freeze started&lt;/td&gt;
+          &lt;td&gt;2001&lt;/td&gt;
+          &lt;td&gt;ESE&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchange VSS Writer freezes databases&lt;/td&gt;
+          &lt;td&gt;2027&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Shadow copy freeze ended&lt;/td&gt;
+          &lt;td&gt;2003&lt;/td&gt;
+          &lt;td&gt;ESE&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchage VSS Writer freeze ended&lt;/td&gt;
+          &lt;td&gt;2029&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;VSS Writer backup success&lt;/td&gt;
+          &lt;td&gt;2046&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Shadow copy success&lt;/td&gt;
+          &lt;td&gt;2006&lt;/td&gt;
+          &lt;td&gt;ESE&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchange VSS Writer backup completion&lt;/td&gt;
+          &lt;td&gt;2033&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchange VSS Writer backup ended&lt;/td&gt;
+          &lt;td&gt;2037&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Exchange VSS Writer post-backup processing&lt;/td&gt;
+          &lt;td&gt;2035&lt;/td&gt;
+          &lt;td&gt;MSExchangeRepl&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Tombstone table cleanup&lt;/td&gt;
+          &lt;td&gt;40013&lt;/td&gt;
+          &lt;td&gt;MSExchangeIS&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;Tombstone table cleanup complete&lt;/td&gt;
+          &lt;td&gt;40017&lt;/td&gt;
+          &lt;td&gt;MSExchange IS&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;You may also see events for:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Exchange VSS Writer preparation (Event ID 9811, MSExchangeIS)&lt;/li&gt;
+&lt;li&gt;Logs are now purged (Event ID 224, ESE)&lt;/li&gt;
+&lt;li&gt;Backup is now complete (Event ID 9780, MSExchangeIS)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:03:28 AM
+Event ID:      2021
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer has successfully collected the metadata document in preparation for backup.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:04:40 AM
+Event ID:      2110
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully prepared for a full or a copy backup of database &amp;#39;Tier3-L&amp;#39;.  The following database will be backed up: Tier3-L.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:33 AM
+Event ID:      2023
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21) successfully prepared for backup.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 9:26:35 AM
+Event ID:      2005
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Journaling (23412,G,0,15.01.2308.014) Shadow copy instance 1 starting. This will be a Full shadow copy.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        ESE BACKUP
+Date:          9/6/2021 9:26:40 AM
+Event ID:      960
+Task Category: General
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+msexchangerepl (5596) This computer is performing a surrogate backup.  The master server is Exchange04.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 9:26:40 AM
+Event ID:      2001
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Tier3-D (37104,D,0,15.01.2308.014) Tier3-D: Shadow copy instance 1 freeze started.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:40 AM
+Event ID:      2027
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21 has successfully frozen the databases.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 9:26:42 AM
+Event ID:      2003
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Tier3-C (8036,G,0,15.01.2308.014) Shadow copy instance 1 freeze ended.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:42 AM
+Event ID:      2029
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange VSS Writer instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21 has successfully thawed the databases.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2046
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42 has successfully completed the backup of database &amp;#39;Tier3-A&amp;#39;.
+
+Database log truncation has been requested for this database. Log truncation will occur on the active copy after the next log generation is created. Log truncation will occur automatically on the passive copies after that log file is copied.
+
+
+
+Log Name:      Application
+Source:        ESE
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2006
+Task Category: ShadowCopy
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+Information Store - Tier3-A (35276,G,0,15.01.2308.014) Shadow copy instance 1 completed successfully.
+
+For more information, click http://www.microsoft.com/contentredirect.asp.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2033
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42) has successfully processed the backup completion event.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 10:09:08 AM
+Event ID:      2037
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 02f75633-f3a1-4ac2-8e6e-5fb60f168e42) backup has been successfully shut down.
+
+
+
+Log Name:      Application
+Source:        MSExchangeRepl
+Date:          9/6/2021 9:26:42 AM
+Event ID:      2035
+Task Category: Exchange VSS Writer
+Level:         Information
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The Microsoft Exchange Replication service VSS Writer (Instance 39cca171-a3ed-43e5-85d4-4c66dfae6e21) has successfully processed the post-snapshot event.
+
+
+
+Log Name:      Application
+Source:        MSExchangeIS
+Date:          9/6/2021 9:36:15 AM
+Event ID:      40013
+Task Category: Logical Data Model
+Level:         Warning
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The tombstone table has reached an excessive number of entries and/or total size. A maintenance task has been dispatched to perform urgent cleanup.
+
+Database: Journaling (6b141c8e-f158-4dea-aede-87ea1eb83e41)
+Number of entries (estimated): 1453
+Total size of entries (estimated): 5369912232 bytes
+
+
+
+Log Name:      Application
+Source:        MSExchangeIS
+Date:          9/6/2021 9:36:26 AM
+Event ID:      40017
+Task Category: Logical Data Model
+Level:         Warning
+Keywords:      Classic
+User:          N/A
+Computer:      Exchange04.company.com
+Description:
+The urgent tombstone table cleanup task has finished executing.
+
+Database: Journaling (6b141c8e-f158-4dea-aede-87ea1eb83e41)
+Message tombstones deleted: 134
+Subobject tombstones deleted: 1315
+Total size of deleted entries: 5358535877 bytes
+Remaining number of entries (estimated): 4
+Total size of remaining entries (estimated): 11376355 bytes
+Elapsed time: 11.1328017 seconds
+Pass completed: True
+Subobjects in-use: 4
+Mailboxes quarantined: 0
+Mailboxes locked: 0
+Mailboxes should stop maintenance: 0
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
+        <title>Exchange &amp; -DeleteContent</title>
+        <link>https://gbeifuss.github.io/p/exchange-deletecontent/</link>
+        <pubDate>Wed, 11 Aug 2021 15:01:20 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/exchange-deletecontent/</guid>
+        <description>&lt;p&gt;Our FOI/Privacy Officer was informed of a an unauthorized disclosure of PII via email by one of our staff members. I was looped in to&lt;br&gt;
+a) quantify how many other people in our organization had that particular email in their mailbox, and&lt;br&gt;
+b) administratively remove it.&lt;/p&gt;
+&lt;p&gt;This is fairly straightforward with Powershell. The hardest part is finding the right message(s) among hundreds of mailboxes containing thousands of messages each.&lt;/p&gt;
+&lt;p&gt;To start, I got the message details. When I&amp;rsquo;m not familiar with the information I&amp;rsquo;ll get back, I like to store the output in a variable before manipulating it. It saves time because I don&amp;rsquo;t need to requery the information (all Exchange mailboxes in this case). I then used the &lt;code&gt;Search-Mailbox&lt;/code&gt; cmdlet to track it down:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;get-mailbox&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Search-Mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-SearchQuery&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;subject:Attention: John Doe AND from:customer@gmail.com AND received:07/28/2021&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Well that&amp;rsquo;s not good. There were no results. This time, I&amp;rsquo;ll look for the specific attachment that contained the PII, then display any results that have a resultcount &amp;gt; 0 (that is, a message with the attachment was found):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;get-mailbox&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Search-Mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-SearchQuery&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;attachment:tax_07-10-2021-080049.pdf&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-EstimateResultOnly&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$results&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;where &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;resultitemscount&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;select &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;identity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;resultitemscount&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ft &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-a&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Identity&lt;/span&gt;                                   &lt;span class=&#34;n&#34;&gt;ResultItemsCount&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;--------&lt;/span&gt;                                   &lt;span class=&#34;p&#34;&gt;----------------&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;company&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Corporate&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;JDoe&lt;/span&gt;                &lt;span class=&#34;mf&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;company&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;com&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Corporate&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;GWashington&lt;/span&gt;         &lt;span class=&#34;mf&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Much better! 5 messages found across Exchange. Now, let&amp;rsquo;s purge them from JDoe&amp;rsquo;s mailbox, but leave them in GWashington&amp;rsquo;s mailbox. We need the -DeleteContent switch for that:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;JDoe&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Search-Mailbox&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-SearchQuery&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;attachment:tax_07-10-2021-080049.pdf&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-DeleteContent&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Powershell, Exchange &amp; TLS</title>
+        <link>https://gbeifuss.github.io/p/powershell-exchange-tls/</link>
+        <pubDate>Mon, 19 Jul 2021 16:53:03 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/powershell-exchange-tls/</guid>
+        <description>&lt;p&gt;I was recently curious about what sort of SSL/TLS connections were being used to access our Exchange cluster via. IIS. We have systems spanning twenty years: from Windows XP all the way to Windows Server 2019. Who knows what &amp;ldquo;solutions&amp;rdquo; developers or power users have come up with over the years to integrate with our mail system?&lt;/p&gt;
+&lt;p&gt;Previously, I&amp;rsquo;d followed MS guidance in &lt;a class=&#34;link&#34; href=&#34;https://techcommunity.microsoft.com/t5/exchange-team-blog/exchange-server-tls-guidance-part-2-enabling-tls-1-2-and/ba-p/607761&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Enabling TLS 1.2&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://www.microsoft.com/security/blog/2017/09/07/new-iis-functionality-to-help-identify-weak-tls-usage/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;New IIS Functionality to Help Identify Weak TLS Usage&lt;/a&gt;. The IIS blog explains how to set 4 server variables in IIS to track security protocols and cipher suites:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CRYPT_PROTOCOL&lt;/li&gt;
+&lt;li&gt;CRYPT_CIPHER_ALG_ID&lt;/li&gt;
+&lt;li&gt;CRYPT_HASH_ALG_ID&lt;/li&gt;
+&lt;li&gt;CRYPT_KEYEXCHANGE_ALG_ID&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;First, I needed to figure out what was actually being recorded by the logs.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;#Date: 2021-03-04 00:00:03
+#Fields: date time s-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) cs(Referer) sc-status sc-substatus sc-win32-status time-taken crypt-protocol crypt-cipher crypt-hash crypt-keyexchange OriginalClientIP
+2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;amp;CorrelationID=&amp;lt;empty&amp;gt;;&amp;amp;cafeReqId=7a4501f0-3d61-425d-8d1f-0c3d5c9e6d13; 443 DOMAIN\webmail 10.10.1.58 ExchangeServicesClient/15.00.0913.015 - 200 0 0 38 400 660e 800c ae06 -
+2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;amp;CorrelationID=&amp;lt;empty&amp;gt;;&amp;amp;cafeReqId=42acb956-ea0a-4a32-a097-0bc73ae92860; 443 - 10.10.12.120 ExchangeServicesClient/15.00.0913.015 - 401 1 2148074254 1 400 660e 800c ae06 -
+2021-03-03 23:59:55 10.10.1.103 POST /EWS/Exchange.asmx &amp;amp;CorrelationID=&amp;lt;empty&amp;gt;;&amp;amp;cafeReqId=0e312297-90fc-4b4d-8a28-24c3c60bcb7e; 443 - 10.10.12.120 ExchangeServicesClient/15.00.0913.015 - 401 1 2148074254 2 400 660e 800c ae06 -
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The information I needed was in the 15th field (crypt-protocol). A value of &amp;lsquo;400&amp;rsquo; correlates to TLS 1.2, &amp;lsquo;40&amp;rsquo; represents TLS 1.0, &amp;lsquo;10&amp;rsquo; represents SSLv3 and so forth. There&amp;rsquo;s Microsoft documentation that explains the various values.&lt;/p&gt;
+&lt;p&gt;So, let&amp;rsquo;s write some sloppy proof-of-concept code to parse the IIS log files on 1 server. We can then wrap it in a &lt;code&gt;foreach&lt;/code&gt; statement, or something like that, to query all the servers once it&amp;rsquo;s working. Let&amp;rsquo;s do some rough calculations on how long this will take by wrapping it in a &lt;code&gt;measure-command&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Measure-Command&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nb&#34;&gt;Import-Csv&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;inetpub&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;logs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;LogFiles&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W3SVC1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u_ex210713_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;log&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Delimiter&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-Header&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;date&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;time&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;s-ip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cs-method&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cs-uri&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-stem&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cs-uri&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-query&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;s-port&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cs-username&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;c-ip&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;cs(user-Agent)&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;cs(Referer)&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;sc-status&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;sc-substatus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;sc-win32&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;-status&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;time-taken&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;crypt-protocol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;crypt-cipher&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;crypt-hash&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;crypt-keyexchange&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;OriginalClientIP&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ForEach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;crypt-protocol&amp;#39;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-Content&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;inetpub&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;logs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;LogFiles&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W3SVC1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u_ex210713_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt; lines processed.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Days&lt;/span&gt;              &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Hours&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Minutes&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;17&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Seconds&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Milliseconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;253&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Ticks&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10212530494&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalDays&lt;/span&gt;         &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.0118200584421296&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalHours&lt;/span&gt;        &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.283681402611111&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMinutes&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;17.0208841566667&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalSeconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1021.2530494&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMilliseconds&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1021253.0494&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This command took 17 minutes to run against one file on one server! I have 10 log files on each server (I wrote a separate script to automatically purge files older than that in order to save disk space). Aside from this script seeming ridiculously slow, it&amp;rsquo;ll be a whole day before my curiosity is satisfied - this simply won&amp;rsquo;t do!&lt;/p&gt;
+&lt;p&gt;Instead of the slow process of reading the whole file into memory, enumerating the columns and adding data to an array that we&amp;rsquo;re constantly resizing, let&amp;rsquo;s use a faster method. I&amp;rsquo;ll read in 1000 rows at a time, split each row to find the 15th column, exclude irrelevant information, and add those results to an array.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Measure-Command&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$nlines&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nb&#34;&gt;Get-Content&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;inetpub&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;logs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;LogFiles&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W3SVC1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u_ex210713_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;log&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ReadCount&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1000&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ForEach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;ForEach&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;k&#34;&gt;If&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;400&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;-&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;time-taken&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;::1&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;127.0.0.1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nv&#34;&gt;$nlines&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Length&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group-Object&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Format&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;{1} lines&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$nlines&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Days&lt;/span&gt;              &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Hours&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Minutes&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;12&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Seconds&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;14&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Milliseconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;149&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Ticks&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;7341497722&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalDays&lt;/span&gt;         &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.00849710384490741&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalHours&lt;/span&gt;        &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.203930492277778&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMinutes&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;12.2358295366667&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalSeconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;734.1497722&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMilliseconds&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;734149.7722&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Well, 12 minutes is somewhat better - a 30% improvement - but still not good enough. Let&amp;rsquo;s get rid of the two tremendously slow array additions, which even activate in conjunction, slowing things down further. Arrays are fixed sizes. When you use the &lt;code&gt;+=&lt;/code&gt; operator, PowerShell actually creates a &lt;em&gt;new&lt;/em&gt; array with the values of the original array &lt;em&gt;plus&lt;/em&gt; the added value. Each time I add a value, the entire existing array is replicated into a new array with one more value. It&amp;rsquo;s terribly inefficient when you have large amounts of data like the 129,102 entries in this file.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s use a .NET method to fix this speed issue. An ArrayList with a .Add() method is far more efficient for what I&amp;rsquo;m doing.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Measure-Command&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Collections.ArrayList&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nb&#34;&gt;Get-Content&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;inetpub&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;logs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;LogFiles&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W3SVC1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;u_ex210713_x&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;log&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ReadCount&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1000&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ForEach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;If&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;400&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;-&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;time-taken&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;::1&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;127.0.0.1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;vm&#34;&gt;$null&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Days&lt;/span&gt;              &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Hours&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Minutes&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Seconds&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Milliseconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;314&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Ticks&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;83145768&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalDays&lt;/span&gt;         &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;62335277777778E&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;05&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalHours&lt;/span&gt;        &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.00230960466666667&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMinutes&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.13857628&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalSeconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;8.3145768&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMilliseconds&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;8314.5768&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;A 12180% speed increase from my first code is much better. Now let&amp;rsquo;s run this against all 10 files in the directory, then dump the statistics I&amp;rsquo;m interested in:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;Measure-Command&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;no&#34;&gt;System.Collections.ArrayList&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;vm&#34;&gt;@&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nb&#34;&gt;Get-Content&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W3SVC1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;log&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-ReadCount&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1000&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;ForEach-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;If&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;400&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;-&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;15&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;time-taken&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;::1&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-and&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-ne&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;127.0.0.1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;vm&#34;&gt;$null&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Add&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;Split&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)[&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Select-Object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt; matching entries in &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-Content&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W3SVC1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt; processed lines.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Days&lt;/span&gt;              &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Hours&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Minutes&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Seconds&lt;/span&gt;           &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Milliseconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;7&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Ticks&lt;/span&gt;             &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;680073775&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalDays&lt;/span&gt;         &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.000787122424768519&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalHours&lt;/span&gt;        &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.0188909381944444&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMinutes&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1.13345629166667&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalSeconds&lt;/span&gt;      &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;68.0073775&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;TotalMilliseconds&lt;/span&gt; &lt;span class=&#34;err&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;68007.3775&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&amp;gt;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Group-Object&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Select-Object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;Count&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;-----&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;----&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;mf&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10.1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;32&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; &lt;span class=&#34;mf&#34;&gt;1340&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;10.1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;250&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;mf&#34;&gt;8&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;169.254&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;178&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;   &lt;span class=&#34;mf&#34;&gt;85&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;172.16&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;py&#34;&gt;12&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;PS &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&amp;gt;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$Protocol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt; matching entries in &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;Get-Content&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;C:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;W3SVC1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;\*.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt; processed lines.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;mf&#34;&gt;1445&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;matching&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;entries&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;1589761&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;processed&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;lines&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This code for &lt;em&gt;all 10 files&lt;/em&gt; is 1400% faster than the code I started with to read a &lt;em&gt;single file&lt;/em&gt;. There are 4 IPs connecting to Exchange using something other than TLS 1.2, but they&amp;rsquo;re all private IPs for the Exchange cluster itself, or the replication network.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

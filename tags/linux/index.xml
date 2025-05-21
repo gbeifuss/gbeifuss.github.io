@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Linux on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/linux/</link>
+        <description>Recent content in Linux on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Thu, 11 Apr 2024 10:11:58 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Configuring Docker instance of ichapod</title>
+        <link>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</link>
+        <pubDate>Thu, 11 Apr 2024 10:11:58 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/configuring-docker-instance-of-ichapod/</guid>
+        <description>&lt;p&gt;One of my favourite &amp;rsquo;listening experiences&amp;rsquo; is the radio show &lt;a class=&#34;link&#34; href=&#34;https://ciut.fm/shows-by-day/higher-ground&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Higher Ground&lt;/a&gt; on CUIT 89.5. It&amp;rsquo;s hosted by Jason Palma and I&amp;rsquo;ve been listening for 20+ years.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;tldr; I&amp;rsquo;ve been downloading the show for many years&lt;/em&gt;&lt;br&gt;
+When I first discovered this show circa. 2000, the station allowed streaming of that week&amp;rsquo;s show with RealAudio. I discovered that the stream file could be opened, giving me the URL for the underlying .ra file. I faithfully downloaded the file weekly, and listened to the shows while working on my college labs. Later on, the station quit that, and the show would post the MP3s on a third party site. I downloaded all of those too, which were shows from 2008-2010.&lt;br&gt;
+Sometime in/around September 2014, I managed to infect my laptop with CryptoWall (1.0). In the process of recovering/reformatting my laptop, I erased &lt;em&gt;all&lt;/em&gt; of my historical archives of Higher Ground shows. The only ones I had left were encrypted copies of the 2008-2010 shows. Of course, by 2014 the site hosting the originals had quit offering that service, so there was no way to re-download them. The station at that point was only hosting the .mp3 for the current show - each week a new file was posted for streaming.&lt;br&gt;
+By then I was into Powershell and scripting, so I set up a scheduled task that ran my script to download the .mp3 file each week. This ran faithfully for a few years, until the station changed things again. Higher Ground was by this time posting the files to Podbean.com.&lt;/p&gt;
+&lt;p&gt;I use &lt;a class=&#34;link&#34; href=&#34;https://www.openmediavault.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;OMV&lt;/a&gt; to host a SMB share plus a small &lt;a class=&#34;link&#34; href=&#34;https://jellyfin.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Jellyfin&lt;/a&gt; instance. I figured that with its embedded support for Docker, this would be a great opportunity to have OMV handle the downloading for me. I found a great docker container (ichapod) that will parse a podcast playlist and download all the files, including prefixing the filename with the posted date so that I can listen in order. If there&amp;rsquo;s nothing to download, ichapod will terminate.&lt;/p&gt;
+&lt;p&gt;OMV &amp;gt; Services &amp;gt; Compose &amp;gt; Files &amp;gt; Add&lt;/p&gt;
+&lt;p&gt;I used this configuration file:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;version: &amp;#39;3&amp;#39;
+services:
+  ichapod:
+    image: shikasta/ichapod
+    build: .
+    volumes:
+      - &amp;#34;./podcasts.yml:/var/lib/ichapod/podcasts.yml&amp;#34;
+      - &amp;#34;/srv/dev-disk-by-uuid-964d6de1-d26d-4f07-b743-30799f1c511d/backup/archive:/podcasts&amp;#34; ##saves to Higher Ground Radio folder
+    command:
+      - &amp;#34;/var/lib/ichapod/podcasts.yml&amp;#34;
+      - &amp;#34;/podcasts&amp;#34;
+    user: &amp;#34;1000:10000&amp;#34;
+    restart: &amp;#39;always&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The &lt;em&gt;volumes&lt;/em&gt; entries tell the Docker instance to present the &lt;code&gt;podcasts.yml&lt;/code&gt; file as &lt;code&gt;/var/lib/ichapod/podcasts.yml&lt;/code&gt;, which is where ichapod expects to find the list of podcasts. I also present my &lt;code&gt;/backup/archive directory&lt;/code&gt; as &lt;code&gt;/podcasts&lt;/code&gt;, which is where ichapod will create a directory named after the podcast series, and save the playlist files.&lt;/p&gt;
+&lt;p&gt;I created a &lt;code&gt;podcasts.yml&lt;/code&gt; file with the following content:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;---
+- series: Higher Ground Radio
+  url: https://feed.podbean.com/ciuthigherground/feed.xml
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://hub.docker.com/r/shikasta/ichapod&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://hub.docker.com/r/shikasta/ichapod&lt;/a&gt;&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://github.com/shikasta-net/Ichapod&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/shikasta-net/Ichapod&lt;/a&gt;&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://ciut.fm/shows-by-day/higher-ground&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Higher Ground Radio&lt;/a&gt;&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://www.facebook.com/groups/highergroundradio/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Higher Ground Radio Facebook Group&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Configure SSH access via. Windows Terminal &amp; a private key</title>
+        <link>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</link>
+        <pubDate>Tue, 05 Mar 2024 10:13:04 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/configure-ssh-access-via.-windows-terminal-a-private-key/</guid>
+        <description>&lt;p&gt;Windows Terminal is one of my most loved features of recent Windows releases. Seriously Microsoft, where was this application in Windows 2000? I can launch Powershell, Command Prompt &lt;em&gt;and&lt;/em&gt; ssh sessions from the same window - simply amazing! (Yes, I know that Linux has supported this for decades).&lt;/p&gt;
+&lt;p&gt;I wanted to create a profile that would let me administer my omv Linux server, without having to input credentials &lt;em&gt;every. single. time.&lt;/em&gt; To do that, a public/private key needs to be created, before copying the public key over to the destination server. Then, when I connect via. SSH and present my private key, the connection is transparently (to me) approved.&lt;/p&gt;
+&lt;p&gt;Start by running the command &lt;code&gt;ssh-keygen -t rsa&lt;/code&gt; to generate a keypair. I accepted all the defaults, and skipped a passphrase:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg&amp;gt;ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (C:\Users\Greg/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in C:\Users\Greg/.ssh/id_rsa.
+Your public key has been saved in C:\Users\Greg/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:IaBSPSCx3y416+iY7qLYbMf9FoxBNhSNbAR/SMRh5yM greg@DESKTOP-SU06DHB
+The key&amp;#39;s randomart image is:
++---[RSA 3072]----+
+|o.oooBO=.        |
+| + .o=O+.        |
+|o .  =E.=        |
+| o .  .+ o       |
+|  . +  +S        |
+|   o o. o        |
+|  ..o.   .       |
+|o=.+o . .        |
+|X==..  o.        |
++----[SHA256]-----+
+
+C:\Users\Greg&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Now we copy the public key over to the omv server:&lt;br&gt;
+&lt;code&gt;cat ~/.ssh/id_rsa.pub | ssh root@192.168.4.107 &amp;quot;mkdir -p ~/.ssh &amp;amp;&amp;amp; chmod 700 ~/.ssh &amp;amp;&amp;amp; cat &amp;gt;&amp;gt;  ~/.ssh/authorized_keys&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Finally, we setup the connection profile in Windows Terminal via. &lt;code&gt;Launch Terminal &amp;gt; Settings &amp;gt; Open JSON&lt;/code&gt; &lt;br&gt;
+Paste this configuration string into the profiles section. You&amp;rsquo;ll need to update the username and IP address to reflect your situation:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+    &amp;#34;commandline&amp;#34;: &amp;#34;ssh -i \&amp;#34;~/.ssh/id_rsa\&amp;#34; root@192.168.4.107&amp;#34;,
+    &amp;#34;font&amp;#34;: {&amp;#34;size&amp;#34;: 10.0},
+    &amp;#34;guid&amp;#34;: &amp;#34;{0caa0dad-35be-5f56-a8ff-afceaeaa6103}&amp;#34;,
+    &amp;#34;hidden&amp;#34;: false,
+    &amp;#34;name&amp;#34;: &amp;#34;OMV Server&amp;#34;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Save the settings, then test the connection!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Dell USB driver halts Linux boot</title>
+        <link>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</link>
+        <pubDate>Mon, 06 Mar 2023 15:21:01 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/dell-usb-driver-halts-linux-boot/</guid>
+        <description>&lt;p&gt;I ran into an issue this week where a work server stopped booting after a linux kernel patch (3.10.0-xxxx.83.xxxx) was deployed.&lt;/p&gt;
+&lt;p&gt;The server would always get &amp;lsquo;stuck&amp;rsquo; trying to load drivers for an Avocent USB Keyboard/Mouse. These seemed to be the Dell iDRAC drivers, because the virtual console lacked keyboard/mouse inputs.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/initrd.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Linux Error&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;If the old kernel (3.10.0-1160.80.xxxx) was selected during boot, the OS loaded properly. I&amp;rsquo;m not a Unix expert, so I looped in one of my colleagues.&lt;/p&gt;
+&lt;p&gt;He explained that the kernel was trying to use old (or corrupted) drivers from the &lt;code&gt;initrd&lt;/code&gt; (initial ram disk) scheme. These drivers can be rebuilt by running &lt;code&gt;yum install kernel&lt;/code&gt;.&lt;br&gt;
+After running the command, I rebooted the server which booted properly.&lt;/p&gt;
+&lt;p&gt;Dell seems to have several similar KBs on this issue, like this one about &lt;a class=&#34;link&#34; href=&#34;https://www.dell.com/support/manuals/en-ca/redhat-enterprise-linux-v8.0/rhel8_rn_pub/drivers-available-in-oemdrv-drive-are-not-installed-during-the-operating-system-installation?guid=guid-f650622c-3711-404a-9f1d-2bca352b62be&amp;amp;lang=en-us&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Drivers available in OEMDRV drive are not installed during the operating system installation&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Expand a Linux Disk in ESXi</title>
+        <link>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</link>
+        <pubDate>Wed, 11 May 2022 10:51:54 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
+        <description>&lt;p&gt;I came across a Linux Database VM at work that desperately needed more disk space. The DBA outlined how they wanted the storage to be allocated, so I set about with the work!&lt;/p&gt;
+&lt;p&gt;First, I added new disks in ESXi to match the disk space requested. I added space in 500 or 1000 GB blocks to give flexibility with storage and vmotion. Disks were balanced across SCSI controllers as well.&lt;/p&gt;
+&lt;p&gt;Then, I logged into the linux VM with admin credentials.&lt;/p&gt;
+&lt;p&gt;At a high-level, I&amp;rsquo;ll:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Capture the existing disk statistics &amp;amp; configuration for reference:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;fdisk -l
+lvs
+df -TH | grep Disk
+lsblk
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Add space to the disk group, then expand the logical volume to make use of that space:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo vgextend oralogvg /dev/sdaa
+sudo pvresize /dev/sdaa
+sudo lvextend -l+100%FREE /dev/oralogvg/oraloglv
+sudo xfs_growfs /dev/oralogvg/oraloglv
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;VMWare has an article outlining this process (&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/1006371&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Extending a logical volume in a virtual machine running Red Hat or Cent OS&lt;/a&gt;), but it  assumes the creation of a disk partition prior to adding it to the disk group. The existing disks I dealt with aren&amp;rsquo;t configured like that, so I didn&amp;rsquo;t want to deviate from what&amp;rsquo;s already in place.&lt;/p&gt;
+&lt;p&gt;I dumped the current disks to determine how Linux has labelled the new disks that I added in ESXi. They should be at the end of the list and not be mapped to any logical volumes or disk groups:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ lsblk
+NAME                                            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                                               8:0    0   68G  0 disk
+├─sda1                                            8:1    0    1M  0 part
+├─sda2                                            8:2    0    1G  0 part /boot
+└─sda3                                            8:3    0   62G  0 part
+├─vg00-LogVol00_root                          253:0    0    5G  0 lvm  /
+├─vg00-LogVol00_swap                          253:1    0   22G  0 lvm  [SWAP]
+├─vg00-LogVol00_usr                           253:2    0   10G  0 lvm  /usr
+├─vg00-LogVol00_vlogaudit                     253:10   0    2G  0 lvm  /var/log/audit
+├─vg00-LogVol00_vlog                          253:11   0    2G  0 lvm  /var/log
+├─vg00-LogVol00_vtmp                          253:12   0    2G  0 lvm  /var/tmp
+├─vg00-LogVol00_tmp                           253:13   0    5G  0 lvm  /tmp
+├─vg00-LogVol00_var                           253:14   0    5G  0 lvm  /var
+├─vg00-LogVol00_opt                           253:15   0    6G  0 lvm  /opt
+└─vg00-LogVol00_home                          253:16   0    2G  0 lvm  /home
+sdb                                               8:16   0  220G  0 disk
+└─oraredo1vg-oraredo1lv                         253:20   0  370G  0 lvm  /oraredo1
+sdc                                               8:32   0   12G  0 disk
+└─oratempvg-oratemplv                           253:5    0   12G  0 lvm  /oratemp
+sdd                                               8:48   0   10G  0 disk
+└─flash_recovery_area_vg-flash_recovery_area_lv 253:6    0   10G  0 lvm  /flash_recovery_area
+sde                                               8:64   0  256G  0 disk
+└─oraredo3vg-oraredo3lv                         253:4    0  406G  0 lvm  /oraredo3
+sdf                                               8:80   0  257G  0 disk
+└─oraredo4vg-oraredo4lv                         253:18   0  407G  0 lvm  /oraredo4
+sdg                                               8:96   0   70G  0 disk
+└─oraclevg-oraclelv                             253:21   0   70G  0 lvm  /oracle
+sdh                                               8:112  0   30G  0 disk
+└─oradatavg-oradatalv                           253:17   0   30G  0 lvm  /oradata
+sdi                                               8:128  0  220G  0 disk
+└─oraredo2vg-oraredo2lv                         253:19   0  370G  0 lvm  /oraredo2
+sdj                                               8:144  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdk                                               8:160  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdl                                               8:176  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdm                                               8:192  0   20G  0 disk
+└─oraidxvg-oraidxlv                             253:9    0   20G  0 lvm  /oraidx
+sdn                                               8:208  0   22G  0 disk
+└─oralogvg-oraloglv                             253:7    0   22G  0 lvm  /oralog
+sdo                                               8:224  0   25G  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sdp                                               8:240  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdq                                              65:0    0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdr                                              65:16   0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sds                                              65:32   0 1000G  0 disk
+└─sds1                                           65:33   0 1000G  0 part
+└─oradata1vg-oradata1lv                       253:8    0   11T  0 lvm  /oradata1
+sdt                                              65:48   0  1.5T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdu                                              65:64   0  1.5T  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sdv                                              65:80   0  150G  0 disk
+└─oraredo1vg-oraredo1lv                         253:20   0  370G  0 lvm  /oraredo1
+sdw                                              65:96   0  150G  0 disk
+└─oraredo2vg-oraredo2lv                         253:19   0  370G  0 lvm  /oraredo2
+sdx                                              65:112  0  150G  0 disk
+└─oraredo3vg-oraredo3lv                         253:4    0  406G  0 lvm  /oraredo3
+sdy                                              65:128  0  150G  0 disk
+└─oraredo4vg-oraredo4lv                         253:18   0  407G  0 lvm  /oraredo4
+sdz                                              65:144  0  1.2T  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sr0                                              11:0    1 1024M  0 rom
+sdaa                                             65:160  0  1.5T  0 disk
+sdab                                             65:176  0  1.5T  0 disk
+[admin@DB030035 ~]$
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Next, extend the existing group to include the new disk:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo vgextend oralogvg /dev/sdaa
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdaa&amp;#34; successfully created.
+Volume group &amp;#34;oralogvg&amp;#34; successfully extended
+[admin@DB030035 ~]$ sudo vgextend oralogvg /dev/sdab
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdab&amp;#34; successfully created.
+Volume group &amp;#34;oralogvg&amp;#34; successfully extended
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Then, resize the physical volume:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo pvresize /dev/sdaa
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdaa&amp;#34; changed
+1 physical volume(s) resized or updated / 0 physical volume(s) not resized
+[admin@DB030035 ~]$ sudo pvresize /dev/sdab
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdab&amp;#34; changed
+1 physical volume(s) resized or updated / 0 physical volume(s) not resized
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Extend the logical volume to consume 100% of the free space in the disk group:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo lvextend -l+100%FREE /dev/oralogvg/oraloglv
+Size of logical volume oralogvg/oraloglv changed from &amp;lt;22.00 GiB (5631 extents) to 2.95 TiB (773629 extents).
+Logical volume oralogvg/oraloglv successfully resized.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Finally, resize the file system to consume all the new space in the logical volume:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo xfs_growfs /dev/oralogvg/oraloglv
+meta-data=/dev/mapper/oralogvg-oraloglv isize=512    agcount=4, agsize=1441536 blks
+= sectsz=512   attr=2, projid32bit=1
+= crc=1        finobt=0 spinodes=0
+data = bsize=4096   blocks=5766144, imaxpct=25
+= sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=2815, version=2
+= sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 5766144 to 792196096
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;At this point, the new space should be available on the volume. Run &lt;code&gt;fdisk&lt;/code&gt; to confirm the new size of the mount point:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo fdisk -l | grep &amp;#34;Disk /dev/mapper/oralogvg-oraloglv&amp;#34;
+Disk /dev/mapper/oralogvg-oraloglv: 3244.8 GB, 3244835209216 bytes, 6337568768 sectors
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
+        <title>Reset Root on RHEL 4</title>
+        <link>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</link>
+        <pubDate>Sat, 02 Apr 2022 09:35:22 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/reset-root-on-rhel-4/</guid>
+        <description>&lt;p&gt;One of the legacy systems I inherited at my job was a standalone Red Hat Enterprise Linux 4.0 server with no documented credentials or purpose&amp;hellip; at least, none that I could find, or that anyone in the business could recall. It&amp;rsquo;s difficult to decide if a server is still necessary when there&amp;rsquo;s no information! L33T hacking skills to the rescue!&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Reboot the server. We need to edit the startup configuration in order to reset the ROOT password.&lt;/li&gt;
+&lt;li&gt;As the server begins to boot again, the GRUB screen will appear for a few seconds. Press a key in order to interrupt the boot sequence.&lt;br&gt;
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-1.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
+&lt;li&gt;If you interrupted the boot in time, you&amp;rsquo;ll be presented with a menu. Use the arrow keys to select the top option and press E.
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-2.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
+&lt;li&gt;Use the arrow keys to highlight the line starting with &lt;em&gt;kernel&lt;/em&gt; and press E.
+&lt;img src=&#34;https://gbeifuss.github.io/img/rhel-boot-3.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/li&gt;
+&lt;li&gt;Add the word &lt;em&gt;single&lt;/em&gt; to the end of the line you&amp;rsquo;re editing, and press ENTER to save the change. This instructs the boot process to load in single user mode:&lt;br&gt;
+&lt;code&gt;kernel /vmlinuz-2.6.9-55.ELsmp ro root=LABEL=/1 nousb single&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Press &lt;code&gt;b&lt;/code&gt; to continue the boot process.&lt;/li&gt;
+&lt;li&gt;Once the boot process is finished, you&amp;rsquo;ll be left at the prompt. Use the &lt;code&gt;passwd&lt;/code&gt; command to reset the password for the current user (Root).&lt;/li&gt;
+&lt;li&gt;Issue the &lt;code&gt;reboot&lt;/code&gt; command to restart the computer. It should boot normally, at which point you can use the new Root password to log in.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I logged in and found that this server seemed to only run a very old copy of sendmail (which no longer had a valid configuration), so I took the server offline for a scream test. In a few days, I&amp;rsquo;ll formally decommission it!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux Upskill Challenge</title>
+        <link>https://gbeifuss.github.io/p/linux-upskill-challenge/</link>
+        <pubDate>Thu, 28 Oct 2021 08:54:12 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/linux-upskill-challenge/</guid>
+        <description>&lt;p&gt;I recently completed the &lt;a class=&#34;link&#34; href=&#34;https://reddit.com/r/linuxupskillchallenge&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Linux Upskill Challenge&lt;/a&gt;, a month-long, self-paced, self-led course curated on Reddit. It&amp;rsquo;s hands-on and is best run with a publically accessible remote server, so that you&amp;rsquo;re mimicing a production server that your organization might host online. (There&amp;rsquo;s &lt;em&gt;less pressure&lt;/em&gt; in administering a server that&amp;rsquo;s only locally available!)&lt;/p&gt;
+&lt;p&gt;These are my thoughts and notes about each day&amp;rsquo;s content - not formal study notes, but informal jot notes on the things I found interesting and important.&lt;/p&gt;
+&lt;h1 id=&#34;rlinuxupskillschallenge&#34;&gt;/r/linuxupskillschallenge
+&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;Day 0 - Getting Started&lt;/strong&gt;&lt;br&gt;
+Created new Azure Ubuntu VM. Used SSH key for authentication.&lt;br&gt;
+Azure returned a .PEM file. Kitty won&amp;rsquo;t take this - I had to use puttygen.exe to load the PEM and output a PPK. I then created a Kitty profile using this PPK (Connection -&amp;gt; SSH -&amp;gt; Auth) and username &lt;code&gt;azureuser&lt;/code&gt; (Connection -&amp;gt; Data -&amp;gt; Autologin username)&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://docs.bitnami.com/azure/faq/get-started/connect-ssh/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://docs.bitnami.com/azure/faq/get-started/connect-ssh/&lt;/a&gt;&lt;br&gt;
+&lt;em&gt;&lt;strong&gt;linux is case-sensitive&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 1 - Getting Connected&lt;/strong&gt;&lt;br&gt;
+Log in with Windows Terminal (Powershell): &lt;code&gt;ssh -i .\Downloads\Ubuntu_SSH.pem azureuser@23.96.4.131&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;uname -a&lt;/code&gt; shows some server/OS information&lt;br&gt;
+&lt;code&gt;uptime&lt;/code&gt; shows the uptime&lt;br&gt;
+&lt;code&gt;free&lt;/code&gt; shows memory information&lt;br&gt;
+&lt;code&gt;df -h&lt;/code&gt; shows disk space information&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 2 - Navigation&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;cd&lt;/code&gt; and &lt;code&gt;cd ~&lt;/code&gt; do the same thing - return you to your home directory&lt;br&gt;
+&lt;code&gt;man&lt;/code&gt; brings up the manual/help for commands&lt;br&gt;
+&lt;code&gt;pushd&lt;/code&gt; is a way to create a trail of where you&amp;rsquo;ve been. &lt;code&gt;dirs -v&lt;/code&gt; will list the trail easily. &lt;code&gt;popd&lt;/code&gt; will move you around the stack of directories&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 3 - Working as Administrator&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;/etc/shadow&lt;/code&gt; is where the hashed passwords are kept&lt;br&gt;
+&lt;code&gt;sudo&lt;/code&gt; will let you run a command as root&lt;br&gt;
+&lt;code&gt;sudo -i&lt;/code&gt; will pop an interactive sudo session if you&amp;rsquo;ve a number of commands to run. &lt;code&gt;logoff&lt;/code&gt; or &lt;code&gt;exit&lt;/code&gt; will bring you back. The command prompt will change from &lt;code&gt;$&lt;/code&gt; to &lt;code&gt;#&lt;/code&gt; to show you&amp;rsquo;re running as sudo.&lt;br&gt;
+All sudo uses are logged in &lt;code&gt;/var/log/auth.log&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;sudo hostnamectl set-hostname XXXX&lt;/code&gt; will change the hostname of the server&lt;br&gt;
+&lt;code&gt;timedatectl&lt;/code&gt; will adjust the time/date settings. &lt;code&gt;TAB&lt;/code&gt; will autocomplete and/or show other subsequent commands&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 4 - Package Management &amp;amp; File Structure&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;apt&lt;/code&gt; is the Ubuntu package manager for working with applications&lt;br&gt;
+&lt;code&gt;apt search &amp;quot;search term&amp;quot;&lt;/code&gt; will find matching packages&lt;br&gt;
+&lt;code&gt;apt list --installed&lt;/code&gt; will list all installed packages&lt;br&gt;
+&lt;code&gt;apt install &amp;quot;packagename&amp;quot;&lt;/code&gt; will install the package&lt;br&gt;
+Linux uses a different tree structure than Windows.&lt;br&gt;
+&lt;code&gt;/&lt;/code&gt; is the mountpoint - this is eqivalent to C:\&lt;br&gt;
+&lt;code&gt;/root&lt;/code&gt; is the home directory for the root user&lt;br&gt;
+&lt;code&gt;/usr/&lt;/code&gt; is where user directories are kept&lt;br&gt;
+&lt;code&gt;/var&lt;/code&gt; is where variable files are stored. &lt;code&gt;/var/log&lt;/code&gt; is primarily where logs are stored.&lt;br&gt;
+&lt;code&gt;/bin&lt;/code&gt; is where binary files (non-system level) are stored&lt;br&gt;
+&lt;code&gt;/sbin&lt;/code&gt; is where system-level binaries are stored&lt;br&gt;
+&lt;code&gt;/etc&lt;/code&gt; is where most configuration files are stored&lt;br&gt;
+&lt;code&gt;/etc/passwd&lt;/code&gt; is the file containing userids, SSIDs and passwords&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 5 - Less&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;less&lt;/code&gt; is similar to &lt;code&gt;more&lt;/code&gt;, except it doesn&amp;rsquo;t read the whole file at load. In &lt;code&gt;less&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;G&lt;/code&gt; skips to the end&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;g&lt;/code&gt; skipts to the beginning&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;q&lt;/code&gt; quits&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The bash shell stores your command history, writing it all to /usr/azureuser/.bash_history (files beginning with a &lt;code&gt;.&lt;/code&gt; are hidden). &lt;code&gt;history&lt;/code&gt; will list the contents of the file and allow you to manipulate it. Pressing &lt;code&gt;up&lt;/code&gt; or &lt;code&gt;down&lt;/code&gt; will navigate the history from the prompt.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 6 - vi and vim&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;vi&lt;/code&gt; is the classic unix editor. On most modern *nix systems, &lt;code&gt;vi&lt;/code&gt; is an alias for &lt;code&gt;vim&lt;/code&gt; - vi improved.&lt;br&gt;
+&lt;code&gt;h, j, k, l&lt;/code&gt; act as the arrow keys within vim, although modern vim instances also have support for the arrow keys&lt;br&gt;
+&lt;em&gt;vi&lt;/em&gt; has two modes: normal mode and insert mode. insert mode actually allows editing of what&amp;rsquo;s on the screen, while normal mode is used for inputing commands. &lt;code&gt;esc esc&lt;/code&gt; will always return to normal mode.&lt;br&gt;
+Many vi commands are made from an operator and a motion. For example, &lt;code&gt;dw&lt;/code&gt; will delete (&lt;code&gt;d&lt;/code&gt;) a word (&lt;code&gt;w&lt;/code&gt;). Quick list of motions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;w&lt;/code&gt; will jump to the next word&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;e&lt;/code&gt; will jump to the end of the current word&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$&lt;/code&gt; will jump to the end of the line&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Typing a number before a motion will repeat it that many times&lt;br&gt;
+&lt;code&gt;u&lt;/code&gt; will undo actions &lt;br&gt;
+&lt;code&gt;x&lt;/code&gt; will delete the character your cursor is on &lt;br&gt;
+&lt;code&gt;i&lt;/code&gt; (insert), &lt;code&gt;a&lt;/code&gt; (append), &lt;code&gt;c&lt;/code&gt; (change), &lt;code&gt;r&lt;/code&gt; (replace) &lt;br&gt;
+&lt;code&gt;ce&lt;/code&gt; will delete the remaining letters in the current word, after the cursor&lt;br&gt;
+&lt;code&gt;c$&lt;/code&gt; will delete the remaining text in the line&lt;br&gt;
+&lt;code&gt;33dd&lt;/code&gt; will cut the line 33 times (equivalent to deleting 33 rows). They can be pasted wherever your cursor is with &lt;code&gt;p&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;gg&lt;/code&gt; will jump to the start of the file, while &lt;code&gt;G&lt;/code&gt; will jump to the end.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;:s/old/new&lt;/code&gt; will substitute &amp;rsquo;new&amp;rsquo; for the first instance of &amp;lsquo;old&amp;rsquo; in the current line&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;:s/old/new/g&lt;/code&gt; will substitute &amp;rsquo;new&amp;rsquo; for all instances of &amp;lsquo;old&amp;rsquo; in the current line&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;#,#s/old/new/g&lt;/code&gt; will substitute &amp;rsquo;new&amp;rsquo; for all instances of &amp;lsquo;old&amp;rsquo; between the two line numbers provides&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;%s/old/new/g&lt;/code&gt; will substitute &amp;rsquo;new&amp;rsquo; for all instances of &amp;lsquo;old&amp;rsquo; in the file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;/SEARCHTERM&lt;/code&gt; will search for the first instance of the searchterm in the file. &lt;code&gt;n&lt;/code&gt; will jump to the next instance&lt;br&gt;
+&lt;code&gt;%&lt;/code&gt; while on any bracket/parenthesis will jump to its match&lt;br&gt;
+&lt;code&gt;v&lt;/code&gt; starts a Visual selection. Then use an operator (ie. &lt;code&gt;:w&lt;/code&gt; to write the selected text to a file)&lt;br&gt;
+&lt;code&gt;:r FILENAME&lt;/code&gt; will merge the contents of FILENAME into the open file.&lt;br&gt;
+&lt;code&gt;:r !ls&lt;/code&gt; will merge the output of &lt;code&gt;ls&lt;/code&gt; into the current file.&lt;br&gt;
+&lt;code&gt;:!COMMAND&lt;/code&gt; will execute an external program in vi. For example &lt;code&gt;:!ls&lt;/code&gt; will print the directory listing.&lt;br&gt;
+&lt;code&gt;:q!&lt;/code&gt; will quit without saving&lt;br&gt;
+&lt;code&gt;:w&lt;/code&gt; will write/save the file with the current file name. &lt;code&gt;:w FILENAME&lt;/code&gt; will save it with the specified filename.&lt;br&gt;
+&lt;code&gt;:wq&lt;/code&gt; will save and quit&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 7 - Server &amp;amp; Services&lt;/strong&gt;&lt;br&gt;
+install apache2 (&lt;em&gt;httpd&lt;/em&gt;)&lt;br&gt;
+stop the apache service: &lt;code&gt;sudo systemctl stop apache2&lt;/code&gt;&lt;br&gt;
+start the apache service: &lt;code&gt;sudo systemctl start apache2&lt;/code&gt;&lt;br&gt;
+check the status: &lt;code&gt;sudo systemctl status apache2&lt;/code&gt;. This pulls information from the logs.&lt;br&gt;
+Application configuration is controlled by files under the &lt;code&gt;/etc&lt;/code&gt; directory for most Linux distros. The Apache config is in &lt;code&gt;/etc/apache2/apache2.conf&lt;/code&gt;&lt;br&gt;
+In /etc/apache2/apache2.conf there&amp;rsquo;s the line with the text: &lt;code&gt;IncludeOptional conf-enabled/*.conf&lt;/code&gt; This tells Apache that the *.conf files in the subdirectory conf-enabled should be merged in with those from &lt;code&gt;/etc/apache2/apache2.conf&lt;/code&gt; at load.&lt;br&gt;
+The location of the default webpage is defined by the &lt;em&gt;DocumentRoot&lt;/em&gt; parameter in the file &lt;code&gt;/etc/apache2/sites-enabled/000-default.conf&lt;/code&gt; &amp;hellip; in this case, it&amp;rsquo;s &lt;code&gt;/var/www/html&lt;/code&gt;, so &lt;code&gt;/var/www/html/index.html&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;sudo apt update&lt;/code&gt;, then &lt;code&gt;sudo apt upgrade&lt;/code&gt; will install all upgraded packages for any software that&amp;rsquo;s been installed with the apt package manager.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 8 - &lt;em&gt;grep&lt;/em&gt; and others&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 9 - networking &amp;amp; ports&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;ss&lt;/code&gt; is the replacement for the &lt;code&gt;netstat&lt;/code&gt; comment. &lt;code&gt;ss -ltpn&lt;/code&gt; will print the open ports. (use &lt;code&gt;sudo&lt;/code&gt; for it to list the Processes that control these listeners)&lt;br&gt;
+&lt;code&gt;iptables&lt;/code&gt;, &lt;code&gt;nftables&lt;/code&gt; and &lt;code&gt;ufw&lt;/code&gt; are all firewall utilities for Linux.&lt;br&gt;
+&lt;code&gt;sudo iptables -L&lt;/code&gt; will list firewall rules in place.&lt;br&gt;
+Set UFW rules to allow SSH but deny HTTP: &lt;code&gt;sudo ufw allow ssh; sudo ufw deny http&lt;/code&gt;&lt;br&gt;
+Enable UFW: &lt;code&gt;sudo ufw enable&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 10 - scheduled tasks&lt;/strong&gt;&lt;br&gt;
+see your scheduled tasks with &lt;code&gt;crontab -l&lt;/code&gt;, or &lt;em&gt;root&lt;/em&gt; with &lt;code&gt;sudo crontab -l&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;/etc/cron&lt;/code&gt; lists the timing of daily, weekly &amp;amp; monthly jobs that run from &lt;code&gt;/etc/cron.daily&lt;/code&gt;, &lt;code&gt;etc/cron.weekly&lt;/code&gt;, etc.&lt;br&gt;
+&lt;code&gt;systemd&lt;/code&gt; starts and stops services, but can also be used to run tasks via. timers: &lt;code&gt;systemctl list-timers&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 11 - finding things&lt;/strong&gt;&lt;br&gt;
+&lt;em&gt;locate&lt;/em&gt; will search an index for &lt;code&gt;&amp;quot;*something*&amp;quot;&lt;/code&gt; by default. The index is built by a nightly &lt;code&gt;cron&lt;/code&gt; job but can be updated with &lt;code&gt;sudo updatedb&lt;/code&gt;&lt;br&gt;
+&lt;em&gt;find&lt;/em&gt; will try to match a file(s) based on criteria: &lt;code&gt;find /var -name access.log&lt;/code&gt; or &lt;code&gt;find /home -mtime -3&lt;/code&gt; (find any file under /home modified in the last 3 days)&lt;br&gt;
+&lt;em&gt;grep&lt;/em&gt; will search within plaintext files for specific text. &lt;code&gt;grep -R -i &amp;quot;PermitRootLogin&amp;quot; /etc/*&lt;/code&gt; will search recursively through /etc/ for files containing the case-insensitive string &amp;lsquo;permitrootlogin&amp;rsquo;&lt;br&gt;
+&lt;em&gt;which&lt;/em&gt; will list the patch from  the PATH statement that a utility runs from: &lt;code&gt;which nano&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 12 - transferring things&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;winscp&amp;gt; open sftp://azureuser@23.96.4.131 -privatekey=&amp;quot;c:\users\gbeifuss\downloads\ubuntu_ssh.ppk&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 13 - permissions&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;ls -l&lt;/code&gt; will list permissions: owner(user), group, others&lt;br&gt;
+&lt;code&gt;chmod u-w filename.txt&lt;/code&gt; will remove the W permission for the user&lt;br&gt;
+&lt;code&gt;chmod g-w filename.txt&lt;/code&gt; will remove the W permission for the group&lt;br&gt;
+&lt;code&gt;chmod o-w filename.txt&lt;/code&gt; will remove the W permission for others&lt;br&gt;
+&lt;code&gt;chmod u+w filename.txt&lt;/code&gt; will add the W permission for the user&lt;br&gt;
+&lt;code&gt;groups&lt;/code&gt; will list the groups a user belongs to&lt;br&gt;
+&lt;code&gt;groupadd&lt;/code&gt; will add a new group (&lt;code&gt;sudo groupadd newgroup&lt;/code&gt;)&lt;br&gt;
+&lt;code&gt;usermod -a -G group username&lt;/code&gt; will add &lt;em&gt;username&lt;/em&gt; to &lt;em&gt;group&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 14 - users &amp;amp; groups&lt;/strong&gt;&lt;br&gt;
+Add a new user with &lt;code&gt;sudo adduser helen&lt;/code&gt;. (If not prompted by a password, set one for helen: &lt;code&gt;sudo passwd helen&lt;/code&gt;)&lt;br&gt;
+Login as helen: &lt;code&gt;sudo su helen&lt;/code&gt;&lt;br&gt;
+Permissions for &lt;em&gt;sudo&lt;/em&gt; are controlled by the &lt;code&gt;visudo&lt;/code&gt; utility&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 15 - repositories&amp;hellip;&lt;/strong&gt;&lt;br&gt;
+Linux versions control the versions of applications that can be installed. Ubuntu 18.04 ships with Apache 2.4.29 - even if you install apache with &lt;em&gt;apt&lt;/em&gt; 5 years later, you&amp;rsquo;ll get 2.4.29 installed. (Security patches are made to repositories, but by backporting fixes (from fixed versions) into older versions).&lt;br&gt;
+&lt;code&gt;/etc/apt/sources.list&lt;/code&gt; is the default &lt;em&gt;apt&lt;/em&gt; repository source. This can be edited to enable &lt;em&gt;multiverse/universe&lt;/em&gt; repositories, which &amp;ldquo;*may contain software which has been classified as non-free &amp;hellip; and may not include security updates&amp;rdquo;.&lt;br&gt;
+Ubuntu 20.04 ships with 99589 packages (&lt;code&gt;apt-cache dump | grep &amp;quot;Package:&amp;quot; | wc -l&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 16 - archiving &amp;amp; compressing&lt;/strong&gt;&lt;br&gt;
+Unlike Windows, Linux gathers content in one step, and compresses in another.&lt;br&gt;
+&lt;code&gt;tar&lt;/code&gt; stands for &amp;lsquo;Tape ARchive&amp;rsquo;&lt;br&gt;
+&lt;code&gt;tar -cvf myinits.tar /etc/init.d&lt;/code&gt; takes a snapshof of the files currently in &lt;em&gt;/etc/init.d&lt;/em&gt;&lt;br&gt;
+This file can then be compressed: &lt;code&gt;gzip myinits.tar&lt;/code&gt;, which will create &lt;code&gt;myinits.tar.gz&lt;/code&gt;, a &lt;em&gt;tarball&lt;/em&gt;. Tarballs often use the extension .tgz&lt;br&gt;
+&lt;em&gt;.bz2&lt;/em&gt; files use a different compression than &lt;em&gt;gzip&lt;/em&gt; - it uses higher compression, but takes longer. A &lt;em&gt;.bz2&lt;/em&gt; file can only contain a single file, so it&amp;rsquo;s usually used to futher compress a tarball or other archive.
+In practice, these two steps can be condensed into on: &lt;code&gt;tar -cvzf myinits.tgz /etc/init.d&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;c = create&lt;/li&gt;
+&lt;li&gt;v = verbose&lt;/li&gt;
+&lt;li&gt;z = zip/compress&lt;/li&gt;
+&lt;li&gt;f = specify the output file&lt;/li&gt;
+&lt;li&gt;x = extract (expand)&lt;/li&gt;
+&lt;li&gt;j = uncompress a &lt;em&gt;.bz2&lt;/em&gt; file first&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Day 17 - from the source&lt;/strong&gt;&lt;br&gt;
+&lt;em&gt;build-essential&lt;/em&gt; is a standard bundle of complilers and similar tools: &lt;code&gt;sudo apt install build-essential&lt;/code&gt;&lt;br&gt;
+Download the latest nmap: &lt;code&gt;wget -v https:/nmap.org/dist/nmap-7.92.tar.bz2&lt;/code&gt;&lt;br&gt;
+Extract the files: &lt;code&gt;tar -jxvf nmap-7.92.tarb.bz2&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;./configure&lt;/code&gt;  is a script which checks the server&lt;br&gt;
+&lt;code&gt;make&lt;/code&gt; complies the software, typically via the GNU complier &lt;em&gt;gcc&lt;/em&gt;&lt;br&gt;
+&lt;code&gt;sudo make install&lt;/code&gt; will take the compiled files, install them plus documentation, and in some cases setup services and scheduled tasks.&lt;br&gt;
+Any software installed outside of &lt;em&gt;apt&lt;/em&gt; won&amp;rsquo;t be updated by &lt;code&gt;apt update&lt;/code&gt;, so new releases and security fixes need to be manually tracked.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 18 - log rotation&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;logrotate&lt;/code&gt; is used by &lt;em&gt;cron&lt;/em&gt; to rotate logs (&lt;em&gt;/etc/cron.daily/logrotate&lt;/em&gt;), (&lt;em&gt;/etc/logrotate.conf&lt;/em&gt; + &lt;em&gt;/etc/logrotate.d&lt;/em&gt;)&lt;br&gt;
+For example, edit &lt;em&gt;/etc/logrotate.d/apache2&lt;/em&gt; to adjust the configuration for all apache logs.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Day 19 - inodes, symlinks and other shortcuts&lt;/strong&gt;&lt;br&gt;
+Linux disks use &lt;em&gt;ext3&lt;/em&gt;, &lt;em&gt;ext4&lt;/em&gt;, &lt;em&gt;zfs&lt;/em&gt;, or perhaps&lt;em&gt;ntrfs&lt;/em&gt;. Above that sits the VFS - Linux Virtual FileSystem&lt;br&gt;
+Each filename points to an inode (a numerical value), which is seen most easily in two places: &lt;code&gt;ls -i&lt;/code&gt; and &lt;code&gt;stat&lt;/code&gt;:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-linux&#34; data-lang=&#34;linux&#34;&gt;ls -li /etc/hosts
+ 35356766 -rw------- 1 root root 260 Nov 25 04:59 /etc/hosts
+ 
+stat /etc/hosts
+ File: `/etc/hosts&amp;#39;
+ Size: 260           Blocks: 8           IO Block: 4096   regular file
+ Device: 2ch/44d     Inode: 35356766     Links: 1
+ Access: (0600/-rw-------)  Uid: (  0/   root)   Gid: (	0/	root)
+ Access: 2012-11-28 13:09:10.000000000 +0400
+ Modify: 2012-11-25 04:59:55.000000000 +0400
+ Change: 2012-11-25 04:59:55.000000000 +0400
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Several filenames could point to the same inode, and have the same contents/permissions/ownerships.dates. These attributes are stored at the inode level, &lt;em&gt;hard links&lt;/em&gt;.
+&lt;code&gt;ln&lt;/code&gt; is used to create hard and symbolic links (symlinks):&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-linux&#34; data-lang=&#34;linux&#34;&gt;ln /etc/passwd link1
+ln -s /etc/passwd link2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Hard links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;point to files, not directories&lt;/li&gt;
+&lt;li&gt;can&amp;rsquo;t reference a file on another disk/volume&lt;/li&gt;
+&lt;li&gt;link references work even if it is moved&lt;/li&gt;
+&lt;li&gt;refer to physical locations/inodes on disk&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Symbolic links (symlinks):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;can link to directories&lt;/li&gt;
+&lt;li&gt;can reference files/directories on another disk/volume&lt;/li&gt;
+&lt;li&gt;remain if the original file is deleted&lt;/li&gt;
+&lt;li&gt;will NOT reference the file anymore if it&amp;rsquo;s moved&lt;/li&gt;
+&lt;li&gt;reference abstract names and not physical locations&lt;/li&gt;
+&lt;li&gt;have their own inode&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Day 20 - scripts&lt;/strong&gt;&lt;br&gt;
+Scripts are regular files with the X permission &lt;code&gt;chmod +x filename&lt;/code&gt;&lt;br&gt;
+Scripts typically start with &lt;code&gt;#!/bin/bash&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

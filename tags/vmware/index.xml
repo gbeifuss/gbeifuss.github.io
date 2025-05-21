@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>VMWare on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/vmware/</link>
+        <description>Recent content in VMWare on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Thu, 15 Aug 2024 17:48:28 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/vmware/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>VMWare Converter Error</title>
+        <link>https://gbeifuss.github.io/p/vmware-converter-error/</link>
+        <pubDate>Thu, 15 Aug 2024 17:48:28 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vmware-converter-error/</guid>
+        <description>&lt;p&gt;I was trying to use the VMWare Standalone Converter tool today to P2V a very old physical server, running CentOS 5.2. The age of the OS meant that I had to use Converter v.5 as newer converters would not connect to the source server OS. I also had to build a brand new ESXi 5.5 host, as newer ESXi versions require modern security protocols &amp;amp; ciphers which aren&amp;rsquo;t supported by Converter 5.5.&lt;/p&gt;
+&lt;p&gt;After setting everything up, I ran the Converter wizard. The task failed with the following message:&lt;br&gt;
+&lt;strong&gt;FAILED: Unable to obtain the IP address of the helper virtual machine&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;It turns out that the VM receiving the data couldn&amp;rsquo;t obtain an DHCP address from the network. This, in turn, meant there was no IP for the Converter to send the data to.&lt;/p&gt;
+&lt;p&gt;When running through the Conversion wizard, you can set &lt;code&gt;Helper VM Network Options&lt;/code&gt; via. the &lt;strong&gt;Options&lt;/strong&gt; screen. Simply assign a compatible static IP and the Helper VM will boot with those settings.&lt;/p&gt;
+&lt;p&gt;After manually setting the IP, the migration task proceeded normally.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ESXI VCentre Certificates</title>
+        <link>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</link>
+        <pubDate>Wed, 19 Jul 2023 13:28:02 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-vcentre-certificates/</guid>
+        <description>&lt;p&gt;Someone on our VDI team informed me that they were getting an error when trying to log into their VSCA:
+&amp;ldquo;An error occurred during authentication.&amp;rdquo;
+&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-error.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;VSCA Authentication Error&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;I started with the usual troubleshooting - did it work with my credentials? (No, it did not). Did it work in a private browser window, to rule out a caching issue? (No, it did not).&lt;/p&gt;
+&lt;p&gt;I tried logging in locally, but none of the accounts that &lt;em&gt;should&lt;/em&gt; have worked, actually worked. So, before actually troubleshooting the issue, I had to break into the VCSA. Following the advice in &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2147144&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Resetting root password in vCenter Server Appliance 6.5 / 6.7 / 7.x (2147144)&lt;/a&gt;, I:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;took a snapshot (including memory) of the VCSA as currently configured&lt;/li&gt;
+&lt;li&gt;Reboot the vCenter Server Appliance.&lt;/li&gt;
+&lt;li&gt;After the VCSA Photon OS starts, press the e key to enter the GNU GRUB Edit Menu.&lt;/li&gt;
+&lt;li&gt;Locate the line that begins with the word Linux, then appending these entries to the end of the line: &lt;code&gt;rw init=/bin/bash&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Press F10 to continue booting. Ran the command &lt;code&gt;mount -o remount,rw /&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;In the Command prompt, enter the command passwd and provide a new root password (twice for confirmation): &lt;code&gt;passwd&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Unmount the filesystem by running the &lt;em&gt;umount&lt;/em&gt; command: &lt;code&gt;umount /&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Reboot the vCenter Server Appliance via &lt;code&gt;reboot -f&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Confirm that you can access the vCenter Server Appliance using the new root password.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;At that point, I was finally in via CLI.
+I then had to reset the password for &lt;a class=&#34;link&#34; href=&#34;mailto:administrator@vsphere.local&#34; &gt;administrator@vsphere.local&lt;/a&gt;. I followed the steps in &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2146224&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to unlock and reset SSO password in vSphere 6.x/7.x using the vdcadmintool (2146224)&lt;/a&gt; to use the &lt;code&gt;/usr/lib/vmware-vmdir/bin/vdcadmintool&lt;/code&gt; tool for this.&lt;/p&gt;
+&lt;p&gt;A look in &lt;code&gt;/var/log/vmware/vsphere-ui/logs/vsphere_client_virgo.log&lt;/code&gt; showed entries similar to this:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;The SSL certificate does not match when connecting to the vCenter Single Sign-On.
+com.vmware.vim.vmomi.client.exception.VlsiCertificateException: Server certificate chain is not trusted and thumnprint verification is not configured.
+![VSCA Log Errors](/img/esxi-vcsa-cert-log.png)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;That confirmed that this was likely a certificate error. I started by checking the STS certificate, following the advice in &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/79248&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Checking Expiration of STS Certificate on vCenter Servers (79248)&lt;/a&gt;, but the STS certificate was valid until 2029.&lt;/p&gt;
+&lt;p&gt;I then looked at the other certificates by using &lt;code&gt;check-trust-anchors -cml&lt;/code&gt;, which showed that the certificates had indeed expired 10 days ago:
+&lt;img src=&#34;https://gbeifuss.github.io/img/esxi-vcsa-cert-expired.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;VSCA Expired Certificates&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;I followed the advice in &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2112283&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to regenerate vSphere 6.x, 7.x, and 8.0 certificates using self-signed VMCA (2112283)&lt;/a&gt; to generate a new certificate:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Connect via. SSL or console&lt;/li&gt;
+&lt;li&gt;Launch the vSphere 6.x Certificate Manager: &lt;code&gt;/usr/lib/vmware-vmca/bin/certificate-manager&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Select Option 4 (Regenerate a new VMCA Root Certificate and replace all certificates)&lt;/li&gt;
+&lt;li&gt;Type the &lt;a class=&#34;link&#34; href=&#34;mailto:administrator@vsphere.local&#34; &gt;administrator@vsphere.local&lt;/a&gt; password when prompted.&lt;/li&gt;
+&lt;li&gt;Enter the appropriate values when prompted by the VMCA&lt;/li&gt;
+&lt;li&gt;Confirm proceeding: &lt;code&gt;You are going to regenerate Root Certificate and all other certificates using VMCA. Continue operation : Option[Y/N] ? : Y&lt;/code&gt;
+After 5 minutes, the operation completed and the new certificates were in place.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Refreshing the VCSA website allowed me to log in, and the VDI team confirmed that everything was working again. Hurrah!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ESXi CPU Ready Time statistics</title>
+        <link>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</link>
+        <pubDate>Mon, 03 Apr 2023 17:00:36 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-cpu-ready-time-statistics/</guid>
+        <description>&lt;p&gt;I worked on an issue at work today that was really interesting (from a technical troubleshooting perspective), so I thought that I&amp;rsquo;d write about it.&lt;/p&gt;
+&lt;p&gt;Our organization is in the midst of moving from one datacentre to another. The PKI team reported that their new, just-spun-up servers at the new site were all performing very poorly. Their servers were all running at about 50% CPU usage on an 8 vCPU, 16GB RAM server, but took forever to boot or shutdown, and the GUI had noticible lag when clicking or moving around windows. They suspected a CPU issue - instead of having their 8 vCPU allocated as 8 sockets x 1 core each, they wanted 2 sockets x 4 core, or 1 socket x 8 core because they believed this would improve performance.&lt;br&gt;
+According to VMWare, this allocation doesn&amp;rsquo;t make any real difference in terms of performance since ESXi 6.5/6.7 (but may be needed for licensing compliance).&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s what the VM metrics looked like:
+&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-stats.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Monthly CPU Stats&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Migrating to another ESXi host in the cluster made no difference. The host servers in the cluster were all running at about 50% load, so it didn&amp;rsquo;t seem to be an oversubscription issue (my first suspicion).&lt;/p&gt;
+&lt;p&gt;Even doubling the resources (to 16 vCPU, 32GB RAM) on a VM made no real difference in performance, although I could see that the VM CPU load dropped to about 30% from 50%.&lt;/p&gt;
+&lt;p&gt;I found the CPU Ready Time metric and after reading up on what it was and what acceptable values should be, figured out that the problem was that the VM&amp;rsquo;s CPU couldn&amp;rsquo;t get &lt;em&gt;scheduled time&lt;/em&gt; on the host server.&lt;br&gt;
+&lt;em&gt;CPU Ready Time in VSphere is a metric that records the amount of time that a VM is ready to use CPU, but cannot because all CPU resources (on an ESXi host) are busy.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-wait.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;CPU Ready Time&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;The VM in question was averaging 1000 second wait time for each CPU call (1.05M ms) over the prior day. VMWare documentation suggests that CPU Ready Time at or over 5% could indicate a performance problem. I quickly crunched some numbers using the &lt;a class=&#34;link&#34; href=&#34;https://vmcalc.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;vmcalc.com&lt;/a&gt; website. An average wait time of 1046000ms works out to a CPU Ready Time of about 656%&amp;hellip; well above the 5% threshold!&lt;/p&gt;
+&lt;p&gt;I compared the PKI Server&amp;rsquo;s CPU Ready Time (1.05M ms) to that of a random server on another cluster, which had an average of just 30 ms!&lt;/p&gt;
+&lt;p&gt;I worked with a colleague to find the cause of this CPU throttling, which turned out to be a Resource Group limit set on the entire PKI &amp;lsquo;folder&amp;rsquo;, affecting 27 VMs.&lt;/p&gt;
+&lt;p&gt;We changed the CPU Limit from 30,000 MHz to 60,000 Mhz, effectively doubling the amount of CPU that the servers in this PKI group could consume.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-policy.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Resource Policy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;We also checked each VM to make sure that limits were not set on individual VMs. Each one &lt;em&gt;did&lt;/em&gt; have the CPU capped to 19200 MHz, which works out to 2.4GHz (when all 8 vCPU are considered). An effective 2.4GHz vCPU rate should be enough to run PKI, so this was contributing to the performance issue that the PKI team was experiencing.&lt;/p&gt;
+&lt;p&gt;After applying the Limit change, we immediately saw the CPU Ready Time drop on the PKI VMs to something in the 300-400 ms range.&lt;br&gt;
+It doesn&amp;rsquo;t show well in this image because the scale is too vast, but you can clearly see it drop off from 40000-80000 ms to a negligable level.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gbeifuss.github.io/img/cpu-ready-fixed.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;CPU Performance&#34;
+	
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Using ovftool to migrate VMs between ESXi hosts</title>
+        <link>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</link>
+        <pubDate>Mon, 13 Mar 2023 15:38:51 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/</guid>
+        <description>&lt;p&gt;Last week I found some Shadow IT at work - a single business-managed ESXi server hosting legacy VMs for code testing. We have an arm of our business that supports products for 25 years, so releases need to be tested on Windows XP servers and other OSes of that era. In any case, this server was happily chugging along &amp;hellip; on ESXi 5.0! Needless to say, I need to bring these VMs into the IT-fold and migrate them to a modern ESXi server: VxRail running ESXi 7.0. But with such an obsolete product, migration can&amp;rsquo;t rely on some of the modern tools that I normally rely on.&lt;/p&gt;
+&lt;p&gt;That meant it was time for Open Virtualization Formal Tool (ovftool) to come to my rescue! This is a VMWare tool used to manipulate VMs to OVFs (or OVAs), OVFs to VMs, and VM-to-VM migrations. Exactly what I need! The only caveat is that that no vmotion is possible - the VMs need to be powered down.&lt;/p&gt;
+&lt;p&gt;I downloaded &lt;a class=&#34;link&#34; href=&#34;https://developer.vmware.com/web/tool/4.4.0/ovf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ovftool 4.4.3&lt;/a&gt; to my laptop and got to work. The syntax for a VM-VM migration on a VxRail took me quite a bit of time to figure out, because the documentation isn&amp;rsquo;t very helpful, and all of examples I found with Google-fu claimed that I could just use the destination server name or IP. (&lt;em&gt;Hint: I couldn&amp;rsquo;t.&lt;/em&gt;)&lt;/p&gt;
+&lt;p&gt;The source server, source VM, destination storage and destination server (and credentials!) are needed, according to the documentation. Also, the &lt;em&gt;datastore&lt;/em&gt; is the destination file system, not the source.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://userid@domain.com@destination.server.hostname -ds=vxrail-vsan1
+Error: Unexpected option:  -ds=vxrail-vsan1
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I took a quick look at the help file and determined I should be providing the information like this:
+&lt;code&gt;Usage: ovftool [options] &amp;lt;source&amp;gt; [&amp;lt;target&amp;gt;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;I found that I could specify only the information above, but then I&amp;rsquo;d be prompted for credentials each time I ran the command, and typing in credentials became old very fast&amp;hellip; so I added them to the command:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://userid@domain.com@destination.server.hostname
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Error: Found wrong kind of object (Folder). Possible completions are:
+  site/
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Clearly I need to add &amp;lsquo;site/&amp;rsquo; to the destination server path, so that OVFTool knows where to create the file. Note that I need to add &amp;ldquo;host/&amp;rdquo; too:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Error: Found wrong kind of object (Folder). Possible completions are:
+  site-vxrail/
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;em&gt;sigh&lt;/em&gt; another folder to add to the destination server path. Your path may differ based on the heirarchy of your ESXi cluster. ovftool will continue generating an error about the Folder if you&amp;rsquo;re not at the final path:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Opening VI target: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Error: No network mapping specified. OVF networks:   VM Network. Target networks:   Management Network-92c1a646-e30f-436e-bfd6-b05f32371c4d  Virtual SAN-92c1a646-e30f-436e-bfd6-b05f32371c4d  VxRail Management-92c1a646-e30f-436e-bfd6-b05f32371c4d  site-VLAN101  site-VLAN200  site-VLAN210  vCenter Server Network-92c1a646-e30f-436e-bfd6-b05f32371c4d  vSphere vMotion-92c1a646-e30f-436e-bfd6-b05f32371c4d
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Oh, this is finally promising!
+I need to add the network mapping to the command, so I pick the appropriate target network (in this case, site-VLAN210)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/ -nw=site-VLAN210
+Error: Unexpected option: -nw=site-VLAN210
+Completed with errors
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Grrrr&amp;hellip; foiled again by the order of the information I provide. One more time!&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 -nw=site-VLAN210 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
+Enter login information for target vi://destination.server.hostname/
+Username: username@hostname
+Password: ****************
+Opening VI target: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Deploying to VI: vi://username@hostname@destination.server.hostname:443/site/host/site-vxrail/
+Transfer Completed
+Completed successfully
+ 
+C:\apps\ovftool&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Hurrah! A quick check on the VxRail and I can see that the VM has been migrated, stored on the right datastore and joined to the right network. I power it on as a quick test and confirm that I can ping it. Success!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ESXi upgrade generates Dependency Errors</title>
+        <link>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</link>
+        <pubDate>Mon, 06 Mar 2023 14:27:52 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-upgrade-generates-dependency-errors/</guid>
+        <description>&lt;p&gt;I was patching ESXi hosts at work (again!) and ran into an issue with dependencies.&lt;/p&gt;
+&lt;p&gt;Update Manager generated an error when trying to patch ESXi 6.5, so I tried updating from the CLI:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server00:~] esxcli software vib update -d &amp;#34;/vmfs/volumes/ecd3afaf-295422fc/VMware-VMvisor-Installer-6.5.0.update03-20502893.x86_64-DellEMC_Customized-A10.zip&amp;#34; --dry-run
+
+[DependencyError]
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+Please refer to the log file for more details.
+[root@server00:~]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;One server was patched by downloading the &lt;code&gt;DellEMC-ESXi-6.5U3-20502893-A10.iso&lt;/code&gt; image to the Update Manager and creating a baseline from it. I then attached it to the host and let it Remediate.&lt;/p&gt;
+&lt;p&gt;Another server didn&amp;rsquo;t upgrade with the custom baseline I created, so I tried to remove the dependencies via. CLI:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server00:~] esxcli software vib list | grep -i brocade
+net-bna                        3.1.0.0-1OEM.500.0.0.472560           Brocade   VMwareCertified   2014-02-19
+scsi-bfa                       3.1.0.0-1OEM.500.0.0.472560           Brocade   VMwareCertified   2014-02-19
+ 
+[root@server00:~] esxcli software vib remove -n net-bna
+[DependencyError]
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_scsi-bfa_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+Please refer to the log file for more details.
+[root@server00:~] esxcli software vib remove -n scsi-bfa
+[DependencyError]
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires com.vmware.driverAPI-9.2.0.0, but the requirement cannot be satisfied within the ImageProfile.
+VIB Brocade_bootbank_net-bna_3.1.0.0-1OEM.500.0.0.472560 requires vmkapi_2_0_0_0, but the requirement cannot be satisfied within the ImageProfile.
+Please refer to the log file for more details.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;As the error above shows, that didn&amp;rsquo;t work, because there were sub-requirements that were not met.&lt;/p&gt;
+&lt;p&gt;I finally managed to apply the update via. CLI by instructing ESXi that it was okay to remove VIBs not associated with the profile being installed:
+&lt;code&gt;esxcli software profile install -p DellEMC-ESXi-6.5U3-14320405-A03 -d /vmfs/volumes/datastore/ISO/VMware-VMvisor-Installer-6.5.0.update03-14320405.x86_64-DellEMC_Customized-A03.zip --ok-to-remove&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ESXi Staging Volume Full</title>
+        <link>https://gbeifuss.github.io/p/esxi-staging-volume-full/</link>
+        <pubDate>Mon, 06 Mar 2023 14:27:15 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-staging-volume-full/</guid>
+        <description>&lt;p&gt;Another tale of ESXi patching adventures. My company has some ESXi hosts in remote locations that don&amp;rsquo;t get much care. As long as they&amp;rsquo;re running the VMs and business users don&amp;rsquo;t complain, the hosts don&amp;rsquo;t get much attention.&lt;/p&gt;
+&lt;p&gt;Today I was trying to patch a server with all the ESXi 6.5 patches released to date, but it was failing with this error:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;02 / 27 / 2023, 2:14:57 PM  The VFAT filesystem mpx.vmhba32:C0:T0:L0:8 (UUID 577b5b9f-bf67afef-822f-246e960d8318) is ...
+02 / 27 / 2023, 2:56:00 PM  Could not stage image profile &amp;#39;(Updated) ESXi-5.5.0-20150104001-standard&amp;#39;: (&amp;#39;VMware_locker_tools-light_6.5.0-3.191.20448942&amp;#39;, &amp;#39;[Errno 32] Broken pipe&amp;#39;)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Some quick searching revealed that this error is likely because the locker partition is out of space. Lo and behold, it was:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+[root@server02:~] ls -ltrh / | grep store
+lrwxrwxrwx    1 root     root           6 Feb 27 20:21 locker -&amp;gt; /store
+lrwxrwxrwx    1 root     root          49 Feb 27 20:21 store -&amp;gt; /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318
+[root@server02:~]
+
+[root@server02: / vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318/packages] df -h
+Filesystem   Size   Used Available Use% Mounted on
+NFS          4.0T   2.2T      1.8T  55% /vmfs/volumes/vmds05
+NFS          4.0T   2.9T      1.1T  72% /vmfs/volumes/vmds06
+NFS          4.0T   2.4T      1.6T  61% /vmfs/volumes/vmds04
+NFS          4.0T   2.9T      1.1T  73% /vmfs/volumes/vmds03
+NFS          4.0T   2.3T      1.7T  56% /vmfs/volumes/vmds02
+NFS          7.0T   6.5T    517.3G  93% /vmfs/volumes/vmds01
+vfat       285.8M 285.8M     56.0K 100% /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318
+vfat       249.7M 166.1M     83.6M  67% /vmfs/volumes/930098e3-722a9454-fdea-b663aa3b7053
+vfat       249.7M 166.1M     83.6M  67% /vmfs/volumes/3bc3cee8-10f1c748-e8e5-d729b7af1e64
+
+[root@server02:~] df /locker
+Filesystem         Bytes          Used     Available Use% Mounted on
+vfat           299712512     299655168         57344 100% /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Using the disk and partition information in the error, I formatted the partition with vfat:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server02:~] vmkfstools -C vfat /dev/disks/mpx.vmhba32:C0:T0:L0:8
+create fs deviceName:&amp;#39;/dev/disks/mpx.vmhba32:C0:T0:L0:8&amp;#39;, fsShortName:&amp;#39;vfat&amp;#39;, fsName:&amp;#39;(null)&amp;#39;
+deviceFullPath:/dev/disks/mpx.vmhba32:C0:T0:L0:8 deviceFile:mpx.vmhba32:C0:T0:L0:8
+Checking if remote hosts are using this device as a valid file system. This may take a few seconds...
+Creating vfat file system on &amp;#34;mpx.vmhba32:C0:T0:L0:8&amp;#34; with blockSize 1048576 and volume label &amp;#34;none&amp;#34;.
+Successfully created new volume: 577b5b9f-bf67afef-822f-246e960d8318
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Then, I recreated the symlinks:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ln -snf /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318 /store
+ln -snf /vmfs/volumes/577b5b9f-bf67afef-822f-246e960d8318 /locker
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After a reboot, I found another host server running the same ESXi version and path level, then copied the contents of the store to my newly formatted partition. After another reboot (just to be safe), I was able to patch the host server without any problems.&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;An article I referenced when figuring this out was:&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://blog.ntitta.in/?p=254&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Fixing the broken/corrupt Locker Partition on Esxi&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Cancel Vmware Tools Installation on ESXi</title>
+        <link>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</link>
+        <pubDate>Mon, 06 Mar 2023 14:26:42 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/cancel-vmware-tools-installation-on-esxi/</guid>
+        <description>&lt;p&gt;I ran into an issue at work where a migraton was halted because of a VM waiting for a VMWare Tools install to finish&amp;hellip; but I didn&amp;rsquo;t want to deal with it right then. Tracking down the owner and getting permission to reboot it outside of the normal schedule was going to be a hassle.&lt;/p&gt;
+&lt;p&gt;Luckily, these installs can be cancelled via. SSH on the host server:&lt;/p&gt;
+&lt;p&gt;List all the VMs on the host: &lt;code&gt;vim-cmd vmsvc/getallvms&lt;/code&gt;
+Cancel the installation for the specific guest VM by using the ID (from above): &lt;code&gt;vim-cmd vmsvc/tools.cancelinstall &amp;lt;VM ID&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@server01:~] vim-cmd vmsvc/getallvms
+Vmid     Name                     File                        Guest OS          Version                                      Annotation
+1      GUEST24   [vmds03] GUEST24/GUEST24.vmx     windows8Server64Guest   vmx-13
+2      GUEST38   [vmds03] GUEST38/GUEST38.vmx     windows8Server64Guest   vmx-13
+38     GUEST00   [vmds04] GUEST00/GUEST00.vmx     rhel6_64Guest           vmx-08    Initially created to refresh guest03 - cancelled later
+Now used as test server.
+40     GUEST16   [vmds01] GUEST16_1/GUEST16.vmx   rhel7_64Guest           vmx-13
+45     GUEST09   [vmds01] GUEST09/GUEST09.vmx     rhel7_64Guest           vmx-13
+47     GUEST43   [vmds05] GUEST43/GUEST43.vmx     rhel7_64Guest           vmx-13
+48     GUEST02   [vmds01] GUEST02/GUEST02.vmx     rhel5Guest              vmx-10
+49     GUEST39   [vmds06] GUEST39/GUEST39.vmx     windows7Server64Guest   vmx-10
+
+[root@server01:~] vim-cmd vmsvc/tools.cancelinstall 48
+[root@server01:~]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After cancelling the install, I was able to finish the migration.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>VMWare ESXi - Disable SLP</title>
+        <link>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</link>
+        <pubDate>Mon, 06 Mar 2023 14:26:07 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vmware-esxi-disable-slp/</guid>
+        <description>&lt;p&gt;ESXi vulnerablities are in the news recently as they are being exploited &lt;em&gt;en masse&lt;/em&gt;&amp;hellip; not that active news coverage should be the sole driver for patching a server. The SLP (Service Location Protocol) service runs as root and parses network input without authentication. Since 2021 the recommendation from VMWare has been to disable the service. Newer versions (ie. 7.0 U2c and 8.0) disable it by default.&lt;/p&gt;
+&lt;p&gt;VMWare has an article - &lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/76372&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to Disable/Enable the SLP Service on VMware ESXi (76372)&lt;/a&gt; - describing how to disable the service.&lt;/p&gt;
+&lt;p&gt;Essentially, enable SSH on the host server, then connect to it with pUTTY or a similar tool.
+Stop the SLD service: &lt;code&gt;/etc/init.d/slpd stop&lt;/code&gt;
+Disable the SLP service: &lt;code&gt;esxcli network firewall ruleset set -r CIMSLP -e 0&lt;/code&gt;
+Make the change persistent across reboots: &lt;code&gt;chkconfig slpd off&lt;/code&gt;
+Confirm the change is persistent: &lt;code&gt;chkconfig --list | grep slpd&lt;/code&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+The server does not need a reboot for this change to take effect.
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
+        <title>VMWare Tools Update/Install/Uninstall fails</title>
+        <link>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</link>
+        <pubDate>Thu, 13 Oct 2022 09:03:35 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vmware-tools-update/install/uninstall-fails/</guid>
+        <description>&lt;p&gt;I&amp;rsquo;m in the midst of migrating a number of VMs from ESXi 6.5 hosts to ESXi 7.0.3, which means there are newer versions of the VMWare Tools available for the guests. Usually, selecting &amp;ldquo;Upgrade VMWare Tools&amp;rdquo; works seamlessly, but occassionally, the installer cannot properly uninstall the old version of the Tools, which results in the error &lt;code&gt;Error upgrading VMWare Tools&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Attempting to remove it directly from the guest OS (x64 Windows, in my case) results in the installer prompting for a location for  missing file &lt;code&gt;VMWare Tools64.msi&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The fix for this is easy, but convoluted.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Determine the version of VMWare Tools currently installed. I found the &lt;a class=&#34;link&#34; href=&#34;https://packages.vmware.com/tools/versions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;VMWare version-mapping file&lt;/a&gt; helpful.&lt;/li&gt;
+&lt;li&gt;Download that version of the VMWare Tools package from &lt;a class=&#34;link&#34; href=&#34;https://packages,vmware.com/tools/esx/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;VMWare.com&lt;/a&gt;. I prefer to use the ISO.&lt;/li&gt;
+&lt;li&gt;Copy the ISO to your guest VM.&lt;/li&gt;
+&lt;li&gt;Mount this ISO (in Windows, this is done by right-clicking and choosing &amp;lsquo;mount&amp;rsquo;)&lt;/li&gt;
+&lt;li&gt;Open a command prompt and browse to the newly mounted drive.&lt;/li&gt;
+&lt;li&gt;Locate the &lt;code&gt;setup.exe&lt;/code&gt; file, which should be at the root&lt;/li&gt;
+&lt;li&gt;Type &lt;code&gt;setup.exe /a&lt;/code&gt; and press &lt;code&gt;&amp;lt;ENTER&amp;gt;&lt;/code&gt;. You&amp;rsquo;ll be prompted for a location to save the extracted files&lt;/li&gt;
+&lt;li&gt;After the files are extracted, re-uninstall VMWare Tools inside the guest.&lt;/li&gt;
+&lt;li&gt;When prompted for the &lt;code&gt;VMWare Tools64.msi&lt;/code&gt; file, browse to the location you just finished extracting the files to&lt;/li&gt;
+&lt;li&gt;The uninstall should complete&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Reboot the guest VM, then install the updated version of VMWare Tools!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Thick-provisioned VMs on vSAN - Fixing a vSAN Alert</title>
+        <link>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</link>
+        <pubDate>Mon, 08 Aug 2022 20:06:08 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/thick-provisioned-vms-on-vsan-fixing-a-vsan-alert/</guid>
+        <description>&lt;p&gt;We recently installed a VMWare/Dell VXRail deployment at my work to replace older ESXi 6.5 servers. I&amp;rsquo;m transitioning existing systems in the server room to the new VXRail through physical-to-virtual (P2V) or virtual-to-virtual (V2V) migrations. Since VMWare has removed their standalone converter, I&amp;rsquo;m using Veeam for the P2V.&lt;/p&gt;
+&lt;p&gt;I had an issue a couple of days ago where I performed a P2V as usual, but the VM was showing up with thick provisioned disks on the vSAN, instead of thin provisioned ones, as the assigned storage policy mandates. I was alerted to this by a vSAN online health check, as the &amp;ldquo;Thick-provisioned VMs on vSAN&amp;rdquo; alert tripped. This alarm triggers when vSAN detects thick-provisioned VMs, which in my case was occurring despite the presence of Object Space Reservation = 0 (thin provisioned) in the applied vSAN Storage Policy.provisioned.&lt;/p&gt;
+&lt;p&gt;There is no way in ESXi 7 to forcibly re-apply the currently-assigned storage policy, so I fixed this by cloning the existing policy, applying &lt;em&gt;that&lt;/em&gt;, then reapplying the original policy again.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the &lt;strong&gt;Policies and Profiles&lt;/strong&gt; menu, and select &lt;strong&gt;VM Storage Policies&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Select the existing vSAN storage policy and click &lt;strong&gt;Clone&lt;/strong&gt;. We&amp;rsquo;ll create an exact copy of the existing profile and apply it to the problem disks.&lt;/li&gt;
+&lt;li&gt;Assign a new name. I appended &amp;ldquo;Clone&amp;rdquo; to the end of my existing policy name. Press &lt;strong&gt;Next&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;There is nothing to change under &lt;em&gt;2 Policy Structure&lt;/em&gt;. Press &lt;strong&gt;Next&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Under &lt;em&gt;3 vSAN&lt;/em&gt;, select the &lt;em&gt;Advanced Policy Rules&lt;/em&gt; tab. Ensure that &lt;em&gt;Object Space Reservation = Thin Provisioning&lt;/em&gt;. Press &lt;strong&gt;Next&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;There is nothing to change under &lt;em&gt;4 Storage Compatibility&lt;/em&gt;. Press &lt;strong&gt;Next&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;There is nothing to change under &lt;em&gt;5 Review and Finish&lt;/em&gt;. Verify that &lt;em&gt;Object Space Reservation = Thin Provisioning&lt;/em&gt;. Press &lt;strong&gt;Finish&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Right-click the VM that has Thick Provisioned disks, select &lt;strong&gt;VM Policies &amp;gt; Edit VM Storage Policies&lt;/strong&gt;. Change the applied &lt;strong&gt;Storage Policy&lt;/strong&gt; to the newly created one. After selecting the new policy, the edit policy wizard will display the change (decrease) in storage consumption. Click OK to apply the change.&lt;/p&gt;
+&lt;p&gt;Wait for the policy to apply, which could take 10-15 minutes, depending on the size of your disks. The disk should now show that it&amp;rsquo;s Thin Provisioned.&lt;/p&gt;
+&lt;p&gt;After this is complete, reapply the original policy.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Expand a Linux Disk in ESXi</title>
+        <link>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</link>
+        <pubDate>Wed, 11 May 2022 10:51:54 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/</guid>
+        <description>&lt;p&gt;I came across a Linux Database VM at work that desperately needed more disk space. The DBA outlined how they wanted the storage to be allocated, so I set about with the work!&lt;/p&gt;
+&lt;p&gt;First, I added new disks in ESXi to match the disk space requested. I added space in 500 or 1000 GB blocks to give flexibility with storage and vmotion. Disks were balanced across SCSI controllers as well.&lt;/p&gt;
+&lt;p&gt;Then, I logged into the linux VM with admin credentials.&lt;/p&gt;
+&lt;p&gt;At a high-level, I&amp;rsquo;ll:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Capture the existing disk statistics &amp;amp; configuration for reference:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;fdisk -l
+lvs
+df -TH | grep Disk
+lsblk
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Add space to the disk group, then expand the logical volume to make use of that space:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo vgextend oralogvg /dev/sdaa
+sudo pvresize /dev/sdaa
+sudo lvextend -l+100%FREE /dev/oralogvg/oraloglv
+sudo xfs_growfs /dev/oralogvg/oraloglv
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;VMWare has an article outlining this process (&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/1006371&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Extending a logical volume in a virtual machine running Red Hat or Cent OS&lt;/a&gt;), but it  assumes the creation of a disk partition prior to adding it to the disk group. The existing disks I dealt with aren&amp;rsquo;t configured like that, so I didn&amp;rsquo;t want to deviate from what&amp;rsquo;s already in place.&lt;/p&gt;
+&lt;p&gt;I dumped the current disks to determine how Linux has labelled the new disks that I added in ESXi. They should be at the end of the list and not be mapped to any logical volumes or disk groups:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ lsblk
+NAME                                            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                                               8:0    0   68G  0 disk
+├─sda1                                            8:1    0    1M  0 part
+├─sda2                                            8:2    0    1G  0 part /boot
+└─sda3                                            8:3    0   62G  0 part
+├─vg00-LogVol00_root                          253:0    0    5G  0 lvm  /
+├─vg00-LogVol00_swap                          253:1    0   22G  0 lvm  [SWAP]
+├─vg00-LogVol00_usr                           253:2    0   10G  0 lvm  /usr
+├─vg00-LogVol00_vlogaudit                     253:10   0    2G  0 lvm  /var/log/audit
+├─vg00-LogVol00_vlog                          253:11   0    2G  0 lvm  /var/log
+├─vg00-LogVol00_vtmp                          253:12   0    2G  0 lvm  /var/tmp
+├─vg00-LogVol00_tmp                           253:13   0    5G  0 lvm  /tmp
+├─vg00-LogVol00_var                           253:14   0    5G  0 lvm  /var
+├─vg00-LogVol00_opt                           253:15   0    6G  0 lvm  /opt
+└─vg00-LogVol00_home                          253:16   0    2G  0 lvm  /home
+sdb                                               8:16   0  220G  0 disk
+└─oraredo1vg-oraredo1lv                         253:20   0  370G  0 lvm  /oraredo1
+sdc                                               8:32   0   12G  0 disk
+└─oratempvg-oratemplv                           253:5    0   12G  0 lvm  /oratemp
+sdd                                               8:48   0   10G  0 disk
+└─flash_recovery_area_vg-flash_recovery_area_lv 253:6    0   10G  0 lvm  /flash_recovery_area
+sde                                               8:64   0  256G  0 disk
+└─oraredo3vg-oraredo3lv                         253:4    0  406G  0 lvm  /oraredo3
+sdf                                               8:80   0  257G  0 disk
+└─oraredo4vg-oraredo4lv                         253:18   0  407G  0 lvm  /oraredo4
+sdg                                               8:96   0   70G  0 disk
+└─oraclevg-oraclelv                             253:21   0   70G  0 lvm  /oracle
+sdh                                               8:112  0   30G  0 disk
+└─oradatavg-oradatalv                           253:17   0   30G  0 lvm  /oradata
+sdi                                               8:128  0  220G  0 disk
+└─oraredo2vg-oraredo2lv                         253:19   0  370G  0 lvm  /oraredo2
+sdj                                               8:144  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdk                                               8:160  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdl                                               8:176  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdm                                               8:192  0   20G  0 disk
+└─oraidxvg-oraidxlv                             253:9    0   20G  0 lvm  /oraidx
+sdn                                               8:208  0   22G  0 disk
+└─oralogvg-oraloglv                             253:7    0   22G  0 lvm  /oralog
+sdo                                               8:224  0   25G  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sdp                                               8:240  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdq                                              65:0    0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdr                                              65:16   0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sds                                              65:32   0 1000G  0 disk
+└─sds1                                           65:33   0 1000G  0 part
+└─oradata1vg-oradata1lv                       253:8    0   11T  0 lvm  /oradata1
+sdt                                              65:48   0  1.5T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdu                                              65:64   0  1.5T  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sdv                                              65:80   0  150G  0 disk
+└─oraredo1vg-oraredo1lv                         253:20   0  370G  0 lvm  /oraredo1
+sdw                                              65:96   0  150G  0 disk
+└─oraredo2vg-oraredo2lv                         253:19   0  370G  0 lvm  /oraredo2
+sdx                                              65:112  0  150G  0 disk
+└─oraredo3vg-oraredo3lv                         253:4    0  406G  0 lvm  /oraredo3
+sdy                                              65:128  0  150G  0 disk
+└─oraredo4vg-oraredo4lv                         253:18   0  407G  0 lvm  /oraredo4
+sdz                                              65:144  0  1.2T  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sr0                                              11:0    1 1024M  0 rom
+sdaa                                             65:160  0  1.5T  0 disk
+sdab                                             65:176  0  1.5T  0 disk
+[admin@DB030035 ~]$
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Next, extend the existing group to include the new disk:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo vgextend oralogvg /dev/sdaa
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdaa&amp;#34; successfully created.
+Volume group &amp;#34;oralogvg&amp;#34; successfully extended
+[admin@DB030035 ~]$ sudo vgextend oralogvg /dev/sdab
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdab&amp;#34; successfully created.
+Volume group &amp;#34;oralogvg&amp;#34; successfully extended
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Then, resize the physical volume:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo pvresize /dev/sdaa
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdaa&amp;#34; changed
+1 physical volume(s) resized or updated / 0 physical volume(s) not resized
+[admin@DB030035 ~]$ sudo pvresize /dev/sdab
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &amp;#34;/dev/sdab&amp;#34; changed
+1 physical volume(s) resized or updated / 0 physical volume(s) not resized
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Extend the logical volume to consume 100% of the free space in the disk group:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo lvextend -l+100%FREE /dev/oralogvg/oraloglv
+Size of logical volume oralogvg/oraloglv changed from &amp;lt;22.00 GiB (5631 extents) to 2.95 TiB (773629 extents).
+Logical volume oralogvg/oraloglv successfully resized.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Finally, resize the file system to consume all the new space in the logical volume:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo xfs_growfs /dev/oralogvg/oraloglv
+meta-data=/dev/mapper/oralogvg-oraloglv isize=512    agcount=4, agsize=1441536 blks
+= sectsz=512   attr=2, projid32bit=1
+= crc=1        finobt=0 spinodes=0
+data = bsize=4096   blocks=5766144, imaxpct=25
+= sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=2815, version=2
+= sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 5766144 to 792196096
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;At this point, the new space should be available on the volume. Run &lt;code&gt;fdisk&lt;/code&gt; to confirm the new size of the mount point:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[admin@DB030035 ~]$ sudo fdisk -l | grep &amp;#34;Disk /dev/mapper/oralogvg-oraloglv&amp;#34;
+Disk /dev/mapper/oralogvg-oraloglv: 3244.8 GB, 3244835209216 bytes, 6337568768 sectors
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
+        <title>VMWare VCSA 6.7 Backup Failure</title>
+        <link>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</link>
+        <pubDate>Thu, 05 May 2022 09:44:16 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/vmware-vcsa-6.7-backup-failure/</guid>
+        <description>&lt;p&gt;I set out to apply patches today on a relatively-newly-installed VCSA 6.7 virtual appliance today.&lt;/p&gt;
+&lt;p&gt;I started with taking a backup, as recommended by VMWare. The FTP backup would start, but then sit at &lt;code&gt;Creating backup target directory&lt;/code&gt; until it reported the error:
+&lt;code&gt;Structure com.vmware.appliance.recovery.backup.job.details.info has a union with a field not required for this case = end_time&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Most of the articles I found on the topic were related to permissions being incorrectly set. However, my account had full permissions both within the FileZilla FTP Server software and within Windows. The logs showed the VCSA logging in and creating directories, but the backup would fail with the above error before transferring data.&lt;/p&gt;
+&lt;p&gt;It turns out that the VCSA backup uses passive FTP for the actual transfer, and strict Windows Firewall rules prevented this from being established. Of course, security policies prevented me from temporarily disabling the firewall&amp;hellip; thanks a lot, corporate IT Security! I ended up creating a temporary Firewall rule to permit TCP 1024-1048, then configured the passive ports used by FileZilla FTP Server to use the same range.&lt;/p&gt;
+&lt;p&gt;After this, the backup completed successfully, and I proceeded with patching the VCSA.&lt;/p&gt;
+&lt;p&gt;In case anyone wonders, I reverted all my changes so that IT Security stays happy :)&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Reverting an ESXi Upgrade</title>
+        <link>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</link>
+        <pubDate>Sun, 01 May 2022 10:51:36 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/reverting-an-esxi-upgrade/</guid>
+        <description>&lt;p&gt;I was looking at the configuration of 3 VSphere servers at work today and determined that they were running an old BIOS. I upgraded their HP DL380 G9 BIOS from &lt;code&gt;P89 v1.50 (07/20/2015)&lt;/code&gt; to &lt;code&gt;P89 v2.72 (03/25/2019)&lt;/code&gt; using iLO.&lt;/p&gt;
+&lt;p&gt;The first two updates went out without a hitch. The last server? Not so good, as there was a cascading chain of errors.&lt;/p&gt;
+&lt;p&gt;After rebooting the server (which is necessary for the BIOS update to take effect), the ESXi cluster complained that the server was not reachable. I couldn&amp;rsquo;t ping it either.&lt;/p&gt;
+&lt;p&gt;I connected via. the Direct Console User Interface (DCUI) and found that the ESXi IP &amp;amp; DNS settings had reverted to old settings from several years ago.
+I manually reset them to the proper values and rebooted.&lt;/p&gt;
+&lt;p&gt;I then reconnected the server to the cluster, which failed because of a SSL certificate naming error. I had to rejoin it again, which resulted in an IO error:&lt;br&gt;
+&lt;code&gt;Registration/Unregistration of third-party IO filter storage providers fails on a hosts&lt;/code&gt; &lt;em&gt;(yes, the error message contains a subject/verb mismatch)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Dell has KB000058590: &lt;a class=&#34;link&#34; href=&#34;https://www.dell.com/support/kbdoc/en-ca/000058590/vxrail-alarm-for-registration-unregistration-of-third-party-io-filter-storage-providers-fails&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Dell EMC VxRail: Alarm for Registration/Unregistration of third-party IO filter storage providers fails&lt;/a&gt;. I followed the steps to replace the castore.pem file with one from a working server, and rebooted.&lt;/p&gt;
+&lt;p&gt;That resulted in &lt;code&gt;&amp;quot;error loading /sb.v00 fatal error 33 (inconsistent data)&amp;quot;&lt;/code&gt; when trying to boot the ESXi OS.&lt;/p&gt;
+&lt;p&gt;At this point I reverted back to the prior hypervisor via. DCUI:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;In the console screen of the ESXi host, press Ctrl+Alt+F2 to see the Direct Console User Interface (DCUI) screen.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press F12 to view the shutdown options for the ESXi host.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press F11 to reboot.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;When the Hypervisor progress bar starts loading, press Shift+R (This must be done while the bar is loading, and not after). You will see the warning:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Current hypervisor will permanently be replaced  
+with build: X.X.X-XXXXXX. Are you sure? [y/n]
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press Y to roll back the build.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Press Enter to boot.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ESXi came back online properly, but still complained about the IO filters.
+At this point, I noticed that while the IP was correct, DNS reverted to old entries. I set it back to the proper values.&lt;/p&gt;
+&lt;p&gt;The ESXi host is finally healthy in the cluster!&amp;hellip; but now I have to upgrade it from 6.0 to 6.5 again.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Creating an ESXi Thin Disk</title>
+        <link>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</link>
+        <pubDate>Sat, 26 Feb 2022 09:34:35 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/creating-an-esxi-thin-disk/</guid>
+        <description>&lt;p&gt;I built a new Windows 2019 Server VM the other day on our ESXi platform. I&amp;rsquo;ll migrate some services currently running on a Windows 2008R2 Server over, then decommission the old VM. One of the challenges I faced was getting our corporate image, which is stored as an image file in Phoenix, Arizona. Because of the way our storage is setup, I couldn&amp;rsquo;t directly transfer it to our storage system.&lt;/p&gt;
+&lt;p&gt;I downloaded the VMDK file to my laptop first. ESXi had to expand the file from 24GB to the full 80GB during the download, which took an hour or so.
+Next, I uploaded the 80GB VMDK file to our local ESXi cluster. A couple of hours later, it was finished!&lt;/p&gt;
+&lt;p&gt;I attached it to a new VM, and then did a storage vMotion. Fortunately, I have a couple of datastores to choose from!&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Right-click the virtual machine and select Migrate.&lt;/li&gt;
+&lt;li&gt;In Step 1 of the Wizard (Select a Migration Type), select &lt;strong&gt;Change Storage Only&lt;/strong&gt; and click &lt;strong&gt;Next&lt;/strong&gt;. We don&amp;rsquo;t need to move the VM to a new host, only the files.&lt;/li&gt;
+&lt;li&gt;In Step 2 of the Wizard (Select Storage) select the option &lt;strong&gt;Configure Per Disk&lt;/strong&gt; in the upper right.&lt;/li&gt;
+&lt;li&gt;Select the disk to modify.&lt;/li&gt;
+&lt;li&gt;Under Storage category, select the destination datastore. Under the &lt;strong&gt;Disk Format&lt;/strong&gt; option select &lt;strong&gt;Thin Provision&lt;/strong&gt;, and click &lt;strong&gt;Next&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;In Step 3 of the Wizard (Ready to Complete), review the information and click &lt;strong&gt;Finish&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/2014832&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Changing the thick or thin provisioning of a virtual disk (2014832)&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Remediating Log4j in VMWare VCenter 6.5</title>
+        <link>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</link>
+        <pubDate>Wed, 22 Dec 2021 16:17:50 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/remediating-log4j-in-vmware-vcenter-6.5/</guid>
+        <description>&lt;p&gt;The log3j vulnerability in an Apache Java component is one of the more serious and widespread software/security flaws to be identified in some time&amp;hellip; although, it does seem like that&amp;rsquo;s said every few months.
+Basically, the flaw is triggered when a specific string is sent to the logging module. This string can be used to trigger a lookup on a remote server, returning a Java script that is then injected into the process. This then lets the attacker execute commands at the same privilege level as the application using the logging library. In short, it allows for remote code execution, and complete control by an attacker.&lt;/p&gt;
+&lt;p&gt;I had a number of ESXi 6.5 servers that needed to be patched. Fortunately, VMWare has a Python script that can be used for automated remediation.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Enable SSH login on the VCenter appliance:&lt;br&gt;
+Browse to https://vcenterappliance:5480/, then choose &lt;code&gt;Access &amp;gt; Edit &amp;gt; Enable SSH login&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Download the current Python script from VMWare:&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/87081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Workaround instructions to address CVE-2021-44228 and CVE-2021-45046 in vCenter Server and vCenter Cloud Gateway (87081)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Launch Kitty, or your SSH application of choice. Connect to your VCenter appliance and load the shell:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;login as: root
+Pre-authentication banner message from server:
+| VMware vCenter Server Appliance 6.5.0.35000
+|
+| Type: vCenter Server with an embedded Platform Services Controller
+End of banner message from server
+Keyboard-interactive authentication prompts from server:
+| Password:
+End of keyboard-interactive prompts from server
+Connected to service
+
+* List APIS: &amp;#34;help api list&amp;#34;
+* List Plugins: &amp;#34;help pi list&amp;#34;
+* Launch BASH: &amp;#34;shell&amp;#34;
+
+Command&amp;gt; shell
+Shell access is granted to root
+root@servername [ ~ ]#
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Create a new file in VI. Press &lt;code&gt;I&lt;/code&gt; for Insert mode, then paste in the script contents that were downloaded from VMWare by right-clicking in the terminal. After the paste is complete, press &lt;code&gt;ESC&lt;/code&gt;, then &lt;code&gt;:wq&lt;/code&gt; to save the file and quit VI. I also validate the size of the new file:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root@servername [ ~ ]# vi /tmp/vmsa-2021-0028-kb87081.py
+root@servername [ ~ ]# ls /tmp/vmsa* -l
+-rw-r--r-- 1 root root 44290 Dec 21 20:43 /tmp/vmsa-2021-0028-kb87081.py
+root@servername [ ~ ]#
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Run the script with the command &lt;code&gt;python /tmp/vmsa-2021-0028-kb87081.py&lt;/code&gt;:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root@servername [ ~ ]# python /tmp/vmsa-2021-0028-kb87081.py
+2021-12-21T20:45:37 INFO main: Script version: 1.6.0
+2021-12-21T20:45:37 INFO main: VCenter type: Version: 6.5.0.35000; Build: 179949
+27; Deployment type: embedded; Gateway: False; VCHA: False; Windows: False;
+A service stop and start is required to complete this operation. Continue? [y] y
+2021-12-21T20:45:44 INFO Stop: stopping services
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;The script will run for some time. After it&amp;rsquo;s complete, review the output to make sure it completed successfully.&lt;/li&gt;
+&lt;li&gt;For my own sanity, I run the script a second time with the &lt;code&gt;-r&lt;/code&gt; flag in order to validate the results:
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root@servername [ ~ ] python /tmp/vmsa-2021-0028-ib87081.py -r
+2021-12-21T20:55:17 INFO main: Script version: 1.6.0
+2021-12-21T20:55:17 INFO main: vCenter type: Version: 6.5.0.35000: Build: 17994927: Deployment type: embedded: Ga
+teway: False: VCHA: False: Windows: False:
+2021-12-21T20:55:17 INFO main: Running in dryrun mode.
+2021-12-21T20:56:01 INFO print_summary:
+Summary
+No vulnerable files found!
+Total found: 0
+Log file: /var/log/vmsa-2021-0028_2021_12_21_20_55_17.log
+2021-12-21T20:56:01 INFO main: Done.
+ROOT@servername [ ~ ]:
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;The articles I referenced when figuring this out were:&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://kb.vmware.com/s/article/87081&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Workaround instructions to address CVE-2021-44228 and CVE-2021-45046 in vCenter Server and vCenter Cloud Gateway (87081)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.virtubytes.com/2021/12/15/mitigate-log4j-vmware-vulnerability-workaround&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to Mitigate Log4j VMware Vulnerability – Workaround&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ESXi 6.0 to 6.5 Upgrade</title>
+        <link>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</link>
+        <pubDate>Mon, 20 Dec 2021 23:38:30 -0500</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/esxi-6.0-to-6.5-upgrade/</guid>
+        <description>&lt;p&gt;Almost two months ago, I assumed responsibility for a new site. It turned out that no one had really performed any administration at the site in about two years and there was a lot of basic work to do. There were failed UPSes, cables left hanging from racks when servers had been decommissioned, no administrative IDs for some hardware (iLO and iDRAC) and no patching. They had several ESXi clusters still running 6.0 (which has no HTML 5 support) so access and administration was a nightmare, to say nothing of the security risks. Updating to 6.5 was high on my priority list!&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Download the offline bundle ZIP from VMWare for my HP DL380 G9 hardware.&lt;/li&gt;
+&lt;li&gt;Upload the offline bundle zip to a datastore accessible by the host via. VCenter GUI&lt;/li&gt;
+&lt;li&gt;Enable SSH mode for the host hardware. This can be done in the VCenter GUI via. Settings -&amp;gt; Configure -&amp;gt; System/Services/SSH.&lt;/li&gt;
+&lt;li&gt;SSH to the host with your terminal of choice and sign in. I&amp;rsquo;m partial to &lt;a class=&#34;link&#34; href=&#34;https://github.com/kovidgoyal/kitty&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Kitty&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;If you haven&amp;rsquo;t already done so, move all guests to other hosts, then place the host server in Migration Mode:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli system maintenanceMode set --enable true
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;Update the software:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli software vib update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip
+
+[DependencyError]
+
+VIB VMW_bootbank_ehci-ehci-hcd_1.0-4vmw.650.0.14.5146846 requires com.vmware.usb-10.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ata-pata-pdc2027x_1.0-3vmw.650.0.0.4564106 requires com.vmware.libata-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB Intel_bootbank_net-igb_5.2.10-1OEM.550.0.0.1331820 requires com.vmware.driverAPI-9.2.2.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB Broadcom_bootbank_scsi-bnx2fc_1.710.70.v55.3-1OEM.550.0.0.1331820 requires com.vmware.libfc-9.2.2.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ata-pata-serverworks_0.4.3-3vmw.650.0.0.4564106 requires com.vmware.driverAPI-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ipmi-ipmi-msghandler_39.1-5vmw.650.2.50.8294253 requires com.vmware.driverAPI-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Ugh. Of course this can&amp;rsquo;t be a straightforward upgrade!
+I tried to work around the error. A quick search revealed that apparently, if I specify the profile, I can override these prerequistes. First, I determined the profile in the package, then tried to update the profile by using the &lt;em&gt;-p&lt;/em&gt; flag:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli software sources profile list -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip
+
+Name                                                       Vendor                      Acceptance Level
+
+---------------------------------------------------------  --------------------------  ----------------
+
+HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36  Hewlett Packard Enterprise  PartnerSupported
+
+
+[root@vsphere-sap01:~] esxcli software profile update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip -p HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36
+
+[InstallationError]
+
+(&amp;#39;VMware_bootbank_esx-ui_1.34.2-16361878&amp;#39;, &amp;#39;Could not find a trusted signer.&amp;#39;)
+
+       vibs = VMware_bootbank_esx-ui_1.34.2-16361878
+
+Please refer to the log file for more details.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;That clearly didn&amp;rsquo;t work. I decided to tell ESXi to ignore the signing errors with the &amp;ndash;no-sig-check flag and tried again to update the profile:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] esxcli software profile update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip -p HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36 --no-sig-check
+
+Update Result
+
+   Message: The update completed successfully, but the system needs to be rebooted for the changes to be effective.
+
+   Reboot Required: true
+
+   VIBs Installed: Avago_bootbank_lsi-mr3_7.706.09.00-1OEM.650.0.0.4598673, Avago_bootbank_scsi-mpt2sas_15.10.07.00-1OEM.550.0.0.1331820, BCM_bootbank_bnxtnet_218.0.38.0-1OEM.650.0.0.4598673, BCM_bootbank_bnxtroce_218.0.16.0-1OEM.650.0.0.4598673, ELX_bootbank_elx-esx-libelxima.so_12.0.1108.0-03, EMU_bootbank_brcmfcoe_12.0.1278.0-1OEM.650.0.0.4598673, EMU_bootbank_elxiscsi_12.0.1108.0-1OEM.650.0.0.4598673, EMU_bootbank_elxnet_12.0.1216.4-1OEM.650.0.0.4598673, EMU_bootbank_lpfc_12.8.317.0-1OEM.650.0.0.4598673, HPE_bootbank_amsd_650.11.8.0.15-1.4240417, HPE_bootbank_amshelpr_650.11.8.0.8-1.4240417, HPE_bootbank_bootcfg_6.0.0.02-06.00.16.2494585, HPE_bootbank_conrep_650.10.8.0.12-6.5.0.2494585, HPE_bootbank_cru_650.6.5.10.4-1OEM.650.0.0.4240417, HPE_bootbank_fc-enablement_650.3.8.0.6-4240417, HPE_bootbank_hponcfg_6.0.0.5.5-0.37.2494585, HPE_bootbank_ilo_650.10.7.5.2-1OEM.650.0.0.4240417, HPE_bootbank_ilorest_650.3.3.0.2-4240417, HPE_bootbank_oem-build_650.U3.10.8.0.2-4240417, HPE_bootbank_scsi-hpdsa_6.0.0.76-1OEM.600.0.0.2494585, HPE_bootbank_scsi-hpvsa_5.5.0.102-1OEM.550.0.0.1331820, HPE_bootbank_smx-provider_650.03.16.00.4-4240417, HPE_bootbank_sut_6.5.0.2.9.0.0-23, HPE_bootbank_sutesxcli_6.5.0.2.9.0.0-18, HPE_bootbank_testevent_6.5.0.02-01.00.9.4240417, INT_bootbank_i40en_1.10.6-1OEM.650.0.0.4598673, INT_bootbank_icen_1.5.5.0-1OEM.650.0.0.4598673, INT_bootbank_igbn_1.5.2.0-1OEM.650.0.0.4598673, INT_bootbank_ixgben_1.9.11.0-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-core_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-en_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-rdma_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx5-core_4.16.71.1-1OEM.650.0.0.4598673, MEL_bootbank_nmlx5-rdma_4.16.71.1-1OEM.650.0.0.4598673, MEL_bootbank_nmst_4.12.0.105-1OEM.650.0.0.4598673, MIS_bootbank_hpessacli_5.20.8.0-6.5.0.4240417.oem, MSCC_bootbank_smartpqi_65.4150.0.119-1OEM.650.0.0.4598673, Microsemi_bootbank_nhpsa_65.0072.0.149-1OEM.650.0.0.4598673, PEN_bootbank_ionic-en_18.0.0-1OEM.650.0.0.4598673, QLC_bootbank_qcnic_1.0.59.0-1OEM.650.0.0.4598673, QLC_bootbank_qedentv_3.11.16.0-1OEM.650.0.0.4598673, QLC_bootbank_qedf_1.3.42.50-1OEM.600.0.0.2768847, QLC_bootbank_qedrntv_3.11.16.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3_1.1.17.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3f_1.1.25.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3i_1.1.5.0-1OEM.650.0.0.4598673, QLC_bootbank_scsi-qedil_1.15.15.0-1OEM.600.0.0.2494585, QLogic_bootbank_qlnativefc_2.1.101.0-1OEM.600.0.0.2768847, VMW_bootbank_ata-libata-92_3.00.9.2-16vmw.650.0.0.4564106, VMW_bootbank_ata-pata-amd_0.3.10-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-atiixp_0.4.6-4vmw.650.0.0.4564106, VMW_bootbank_ata-pata-cmd64x_0.2.5-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-hpt3x2n_0.3.4-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-pdc2027x_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-serverworks_0.4.3-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-sil680_0.4.8-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-via_0.3.3-2vmw.650.0.0.4564106, VMW_bootbank_block-cciss_3.6.14-10vmw.650.0.0.4564106, VMW_bootbank_char-random_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ehci-ehci-hcd_1.0-4vmw.650.0.14.5146846, VMW_bootbank_hid-hid_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ipmi-ipmi-devintf_39.1-5vmw.650.2.50.8294253, VMW_bootbank_ipmi-ipmi-msghandler_39.1-5vmw.650.2.50.8294253, VMW_bootbank_ipmi-ipmi-si-drv_39.1-4vmw.650.0.0.4564106, VMW_bootbank_lsi-msgpt35_09.00.00.00-5vmw.650.3.96.13932383, VMW_bootbank_lsi-msgpt3_17.00.02.00-1vmw.650.3.96.13932383, VMW_bootbank_misc-drivers_6.5.0-3.96.13932383, VMW_bootbank_mtip32xx-native_3.9.5-1vmw.650.0.0.4564106, VMW_bootbank_ne1000_0.8.3-8vmw.650.2.75.10884925, VMW_bootbank_nenic_1.0.29.0-1vmw.650.3.96.13932383, VMW_bootbank_net-cdc-ether_1.0-3vmw.650.0.0.4564106, VMW_bootbank_net-e1000_8.0.3.1-5vmw.650.3.153.17459147, VMW_bootbank_net-e1000e_3.2.2.1-2vmw.650.0.0.4564106, VMW_bootbank_net-enic_2.1.2.38-2vmw.650.0.0.4564106, VMW_bootbank_net-fcoe_1.0.29.9.3-7vmw.650.0.0.4564106, VMW_bootbank_net-forcedeth_0.61-2vmw.650.0.0.4564106, VMW_bootbank_net-libfcoe-92_1.0.24.9.4-8vmw.650.0.0.4564106, VMW_bootbank_net-usbnet_1.0-3vmw.650.0.0.4564106, VMW_bootbank_net-vmxnet3_1.1.3.0-3vmw.650.3.138.16576891, VMW_bootbank_ntg3_4.1.3.2-1vmw.650.2.75.10884925, VMW_bootbank_nvme_1.2.2.28-5vmw.650.3.170.18678235, VMW_bootbank_nvmxnet3_2.0.0.23-1vmw.650.1.36.7388607, VMW_bootbank_ohci-usb-ohci_1.0-3vmw.650.0.0.4564106, VMW_bootbank_pvscsi_0.1-1vmw.650.1.26.5969303, VMW_bootbank_qflge_1.1.0.3-1vmw.650.0.0.4564106, VMW_bootbank_sata-ahci_3.0-26vmw.650.1.26.5969303, VMW_bootbank_sata-ata-piix_2.12-10vmw.650.0.0.4564106, VMW_bootbank_sata-sata-nv_3.5-4vmw.650.0.0.4564106, VMW_bootbank_sata-sata-promise_2.12-3vmw.650.0.0.4564106, VMW_bootbank_sata-sata-sil24_1.1-1vmw.650.0.0.4564106, VMW_bootbank_sata-sata-sil_2.3-4vmw.650.0.0.4564106, VMW_bootbank_sata-sata-svw_2.3-3vmw.650.0.0.4564106, VMW_bootbank_scsi-aacraid_1.1.5.1-9vmw.650.0.0.4564106, VMW_bootbank_scsi-adp94xx_1.0.8.12-6vmw.650.0.0.4564106, VMW_bootbank_scsi-aic79xx_3.1-5vmw.650.0.0.4564106, VMW_bootbank_scsi-fnic_1.5.0.45-3vmw.650.0.0.4564106, VMW_bootbank_scsi-ips_7.12.05-4vmw.650.0.0.4564106, VMW_bootbank_scsi-iscsi-linux-92_1.0.0.2-3vmw.650.0.0.4564106, VMW_bootbank_scsi-libfc-92_1.0.40.9.3-5vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid-mbox_2.20.5.1-6vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid-sas_6.603.55.00-2vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid2_2.00.4-9vmw.650.0.0.4564106, VMW_bootbank_scsi-mptsas_4.23.01.00-10vmw.650.0.0.4564106, VMW_bootbank_scsi-mptspi_4.23.01.00-10vmw.650.0.0.4564106, VMW_bootbank_shim-iscsi-linux-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-iscsi-linux-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libata-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libata-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfc-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfc-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfcoe-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfcoe-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-3-0_6.5.0-0.0.4564106, VMW_bootbank_uhci-usb-uhci_1.0-3vmw.650.0.0.4564106, VMW_bootbank_usb-storage-usb-storage_1.0-3vmw.650.0.0.4564106, VMW_bootbank_usbcore-usb_1.0-3vmw.650.2.50.8294253, VMW_bootbank_vmkata_0.1-1vmw.650.1.36.7388607, VMW_bootbank_vmkplexer-vmkplexer_6.5.0-0.0.4564106, VMW_bootbank_vmkusb_0.1-1vmw.650.3.170.18678235, VMW_bootbank_vmw-ahci_1.1.6-1vmw.650.3.96.13932383, VMW_bootbank_xhci-xhci_1.0-3vmw.650.0.0.4564106, VMware_bootbank_cpu-microcode_6.5.0-3.134.16576879, VMware_bootbank_emulex-esx-elxnetcli_11.1.28.0-0.0.4564106, VMware_bootbank_esx-base_6.5.0-3.170.18678235, VMware_bootbank_esx-dvfilter-generic-fastpath_6.5.0-1.36.7388607, VMware_bootbank_esx-tboot_6.5.0-3.170.18678235, VMware_bootbank_esx-ui_1.34.2-16361878, VMware_bootbank_esx-xserver_6.5.0-3.120.15256549, VMware_bootbank_lsu-hp-hpsa-plugin_2.0.0-16vmw.650.3.96.13932383, VMware_bootbank_lsu-lsi-drivers-plugin_1.0.0-1vmw.650.2.79.11925212, VMware_bootbank_lsu-lsi-lsi-mr3-plugin_1.0.0-11vmw.650.2.75.10884925, VMware_bootbank_lsu-lsi-lsi-msgpt3-plugin_1.0.0-8vmw.650.2.79.11925212, VMware_bootbank_lsu-lsi-megaraid-sas-plugin_1.0.0-8vmw.650.1.26.5969303, VMware_bootbank_lsu-lsi-mpt2sas-plugin_2.0.0-6vmw.650.1.26.5969303, VMware_bootbank_native-misc-drivers_6.5.0-3.120.15256549, VMware_bootbank_rste_2.0.2.0088-4vmw.650.0.0.4564106, VMware_bootbank_vmware-esx-esxcli-nvme-plugin_1.2.0.36-3.96.13932383, VMware_bootbank_vsan_6.5.0-3.170.18569621, VMware_bootbank_vsanhealth_6.5.0-3.170.18569625, VMware_locker_tools-light_6.5.0-3.166.18677441
+
+   VIBs Removed: EMU_bootbank_lpfc_10.4.236.0-1OEM.600.0.0.2159203, Emulex_bootbank_elxnet_10.5.65.4-1OEM.550.0.0.1331820, Hewlett-Packard_bootbank_char-hpcru_6.0.6.14-1OEM.600.0.0.2159203, Hewlett-Packard_bootbank_char-hpilo_600.9.0.2.8-1OEM.600.0.0.2159203, Hewlett-Packard_bootbank_hp-ams_600.10.2.0-22.2159203, Hewlett-Packard_bootbank_hp-build_600.9.3.30.2-2159203, Hewlett-Packard_bootbank_hp-conrep_6.0.0.1-0.0.13.2159203, Hewlett-Packard_bootbank_hp-esxi-fc-enablement_550.2.3.16-1198610, Hewlett-Packard_bootbank_hp-smx-provider_600.03.08.00.13-2159203, Hewlett-Packard_bootbank_hpbootcfg_6.0.0.02-01.00.11.2159203, Hewlett-Packard_bootbank_hponcfg_6.0.0.04-00.13.17.2159203, Hewlett-Packard_bootbank_hpssacli_2.20.11.0-6.0.0.2159203, Hewlett-Packard_bootbank_hptestevent_6.0.0.01-00.00.8.2159203, Hewlett-Packard_bootbank_scsi-hpdsa_5.5.0.36-1OEM.550.0.0.1331820, Hewlett-Packard_bootbank_scsi-hpvsa_5.5.0.100-1OEM.550.0.0.1331820, LSI_bootbank_scsi-mpt2sas_15.10.06.00.1vmw-1OEM.550.0.0.1198610, QLogic_bootbank_qlnativefc_2.1.20.0-1OEM.600.0.0.2159203, VMWARE_bootbank_mtip32xx-native_3.8.5-1vmw.600.0.0.2494585, VMware_bootbank_ata-pata-serverworks_0.4.3-3vmw.600.0.0.2494585, VMware_bootbank_ata-pata-sil680_0.4.8-3vmw.600.0.0.2494585, VMware_bootbank_ata-pata-via_0.3.3-2vmw.600.0.0.2494585, VMware_bootbank_block-cciss_3.6.14-10vmw.600.0.0.2494585, VMware_bootbank_cpu-microcode_6.0.0-0.0.2494585, VMware_bootbank_ehci-ehci-hcd_1.0-3vmw.600.2.52.4600944, VMware_bootbank_emulex-esx-elxnetcli_10.2.309.6v-0.0.2494585, VMware_bootbank_esx-base_6.0.0-2.52.4600944, VMware_bootbank_esx-dvfilter-generic-fastpath_6.0.0-0.0.2494585, VMware_bootbank_esx-tboot_6.0.0-2.34.3620759, VMware_bootbank_esx-ui_1.9.0-4392584, VMware_bootbank_esx-xserver_6.0.0-0.0.2494585, VMware_bootbank_ipmi-ipmi-devintf_39.1-4vmw.600.0.0.2494585, VMware_bootbank_ipmi-ipmi-msghandler_39.1-4vmw.600.0.0.2494585, VMware_bootbank_ipmi-ipmi-si-drv_39.1-4vmw.600.0.0.2494585, VMware_bootbank_lsi-mr3_6.605.08.00-7vmw.600.1.17.3029758, VMware_bootbank_lsi-msgpt3_06.255.12.00-8vmw.600.1.17.3029758, VMware_bootbank_lsu-hp-hpsa-plugin_2.0.0-3vmw.600.2.52.4600944, VMware_bootbank_lsu-lsi-lsi-mr3-plugin_1.0.0-2vmw.600.0.11.2809209, VMware_bootbank_lsu-lsi-lsi-msgpt3-plugin_1.0.0-1vmw.600.0.0.2494585, VMware_bootbank_lsu-lsi-megaraid-sas-plugin_1.0.0-2vmw.600.0.11.2809209, VMware_bootbank_lsu-lsi-mpt2sas-plugin_1.0.0-4vmw.600.1.17.3029758, VMware_bootbank_misc-drivers_6.0.0-2.52.4600944, VMware_bootbank_net-e1000_8.0.3.1-5vmw.600.0.0.2494585, VMware_bootbank_net-e1000e_3.2.2.1-1vmw.600.1.26.3380124, VMware_bootbank_net-forcedeth_0.61-2vmw.600.0.0.2494585, VMware_bootbank_nmlx4-core_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nmlx4-en_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nmlx4-rdma_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nvme_1.0e.0.35-1vmw.600.2.34.3620759, VMware_bootbank_ohci-usb-ohci_1.0-3vmw.600.0.0.2494585, VMware_bootbank_rste_2.0.2.0088-4vmw.600.0.0.2494585, VMware_bootbank_sata-ahci_3.0-22vmw.600.2.34.3620759, VMware_bootbank_sata-ata-piix_2.12-10vmw.600.0.0.2494585, VMware_bootbank_sata-sata-nv_3.5-4vmw.600.0.0.2494585, VMware_bootbank_sata-sata-sil24_1.1-1vmw.600.0.0.2494585, VMware_bootbank_sata-sata-sil_2.3-4vmw.600.0.0.2494585, VMware_bootbank_scsi-aacraid_1.1.5.1-9vmw.600.0.0.2494585, VMware_bootbank_scsi-adp94xx_1.0.8.12-6vmw.600.0.0.2494585, VMware_bootbank_scsi-aic79xx_3.1-5vmw.600.0.0.2494585, VMware_bootbank_scsi-fnic_1.5.0.45-3vmw.600.0.0.2494585, VMware_bootbank_scsi-ips_7.12.05-4vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid-mbox_2.20.5.1-6vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid-sas_6.603.55.00-2vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid2_2.00.4-9vmw.600.0.0.2494585, VMware_bootbank_scsi-mptsas_4.23.01.00-9vmw.600.0.0.2494585, VMware_bootbank_vsan_6.0.0-2.52.4590152, VMware_bootbank_vsanhealth_6.0.0-3000000.3.0.2.52.4527730, VMware_bootbank_xhci-xhci_1.0-3vmw.600.2.52.4600944, VMware_locker_tools-light_6.0.0-2.43.4192238
+
+   VIBs Skipped: VMW_bootbank_ima-qla4xxx_2.02.18-1vmw.650.0.0.4564106, VMW_bootbank_net-nx-nic_5.0.621-5vmw.650.0.0.4564106, VMW_bootbank_net-tg3_3.131d.v60.4-2vmw.650.0.0.4564106, VMW_bootbank_scsi-qla4xxx_5.01.03.2-7vmw.650.0.0.4564106
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Much better. Let&amp;rsquo;s issue the reboot:&lt;br&gt;
+&lt;code&gt;[root@vsphere-sap01:~] reboot&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&amp;hellip; and validate the version after the system comes back online:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[root@vsphere-sap01:~] vmware -v
+VMware ESXi 6.5.0 build-18678235
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Since it&amp;rsquo;s been two years since this cluster had any attention, there must be patches that should be applied. Since the host is already in maintenance mode with the guests hosted elsewhere, let&amp;rsquo;s take advantage and use the GUI to patch this system.&lt;/p&gt;
+&lt;p&gt;Once all the patching and rebooting is finished, exit maintenance mode:&lt;br&gt;
+&lt;code&gt;[root@vsphere-sap01:~] esxcli system maintenanceMode set --enable false&lt;/code&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

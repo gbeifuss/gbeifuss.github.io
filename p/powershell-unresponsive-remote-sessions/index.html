@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Killing A Remote Powershell Session">
+<title>Powershell &amp; Unresponsive Remote Sessions</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Powershell & Unresponsive Remote Sessions">
+<meta property='og:description' content="Killing A Remote Powershell Session">
+<meta property='og:url' content='https://gbeifuss.github.io/p/powershell-unresponsive-remote-sessions/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-07-22T22:09:32-04:00'/><meta property='article:modified_time' content='2021-07-22T22:09:32-04:00'/>
+<meta name="twitter:title" content="Powershell & Unresponsive Remote Sessions">
+<meta name="twitter:description" content="Killing A Remote Powershell Session">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/powershell-unresponsive-remote-sessions/">Powershell &amp; Unresponsive Remote Sessions</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Killing A Remote Powershell Session
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 22, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>The other day I started a remote powershell session with <code>Invoke-Command</code> and my script ran&hellip;<br>
+and ran&hellip;<br>
+and ran&hellip;<br>
+I finally tired of waiting, so I decided that I&rsquo;d RDP in and get the information via. GUI, but the server was sluggish. This isn&rsquo;t an underspec&rsquo;ed server where routine use might cause a small but noticable performance hit. I took a look at taskman and saw that the wsmprovhost.exe process was consuming 50/64GB RAM.</p>
+<p>It turns out that this is the process responsible for remote Powershell sessions. While I could just kill it, I wanted to see what is going on behind the scenes.</p>
+<p>First, I grabbed the URI for WSMan connections:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="nv">$URI</span> <span class="p">=</span> <span class="p">(</span><span class="s1">&#39;http://{0}:5985/wsman&#39;</span> <span class="o">-f</span> <span class="nv">$env:computername</span><span class="p">);</span> <span class="nv">$URI</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">SERVER</span><span class="err">:</span><span class="mf">5985</span><span class="p">/</span><span class="n">wsman</span>
+</span></span></code></pre></div><p>Then, I listed the connections to that URI. I could have filtered on the sessions owned by my user ID to avoid impacting others who might have active sessions, but I&rsquo;m the only IT staff who uses Powershell, so that&rsquo;s unnecessary:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="nv">$connection</span> <span class="p">=</span> <span class="nb">Get-WSManInstance</span> <span class="n">-ConnectionURI</span> <span class="nv">$URI</span> <span class="n">-ResourceURI</span> <span class="n">shell</span> <span class="n">-Enumerate</span><span class="p">;</span> <span class="nv">$connection</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">rsp</span>             <span class="err">:</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">schemas</span><span class="p">.</span><span class="py">microsoft</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">wbem</span><span class="p">/</span><span class="n">wsman</span><span class="p">/</span><span class="mf">1</span><span class="p">/</span><span class="n">windows</span><span class="p">/</span><span class="n">shell</span>
+</span></span><span class="line"><span class="cl"><span class="n">lang</span>            <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellId</span>         <span class="err">:</span> <span class="n">4C1DF700</span><span class="p">-</span><span class="n">45AE</span><span class="p">-</span><span class="mf">4322</span><span class="p">-</span><span class="n">8FAC-E4E688F3F52C</span>
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>            <span class="err">:</span> <span class="n">Runspace10</span>
+</span></span><span class="line"><span class="cl"><span class="n">ResourceUri</span>     <span class="err">:</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">schemas</span><span class="p">.</span><span class="py">microsoft</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">powershell</span><span class="p">/</span><span class="n">Microsoft</span><span class="p">.</span><span class="py">PowerShell</span>
+</span></span><span class="line"><span class="cl"><span class="n">Owner</span>           <span class="err">:</span> <span class="n">DOMAIN</span><span class="p">\</span><span class="n">USERNAME</span>
+</span></span><span class="line"><span class="cl"><span class="n">ClientIP</span>        <span class="err">:</span> <span class="mf">192.168</span><span class="p">.</span><span class="py">0</span><span class="p">.</span><span class="py">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">ProcessId</span>       <span class="err">:</span> <span class="mf">20956</span>
+</span></span><span class="line"><span class="cl"><span class="n">IdleTimeOut</span>     <span class="err">:</span> <span class="n">PT7200</span><span class="p">.</span><span class="py">000S</span>
+</span></span><span class="line"><span class="cl"><span class="n">InputStreams</span>    <span class="err">:</span> <span class="n">stdin</span> <span class="n">pr</span>
+</span></span><span class="line"><span class="cl"><span class="n">OutputStreams</span>   <span class="err">:</span> <span class="n">stdout</span>
+</span></span><span class="line"><span class="cl"><span class="n">MaxIdleTimeOut</span>  <span class="err">:</span> <span class="n">PT2147483</span><span class="p">.</span><span class="py">647S</span>
+</span></span><span class="line"><span class="cl"><span class="n">Locale</span>          <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">DataLocale</span>      <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">CompressionMode</span> <span class="err">:</span> <span class="n">XpressCompression</span>
+</span></span><span class="line"><span class="cl"><span class="n">ProfileLoaded</span>   <span class="err">:</span> <span class="n">Yes</span>
+</span></span><span class="line"><span class="cl"><span class="n">Encoding</span>        <span class="err">:</span> <span class="n">UTF8</span>
+</span></span><span class="line"><span class="cl"><span class="n">BufferMode</span>      <span class="err">:</span> <span class="n">Block</span>
+</span></span><span class="line"><span class="cl"><span class="n">State</span>           <span class="err">:</span> <span class="n">Connected</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellRunTime</span>    <span class="err">:</span> <span class="n">P3DT2H43M28S</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellInactivity</span> <span class="err">:</span> <span class="n">P0DT0H1M21S</span>
+</span></span><span class="line"><span class="cl"><span class="n">MemoryUsed</span>      <span class="err">:</span> <span class="mf">6</span><span class="p">MB</span>
+</span></span><span class="line"><span class="cl"><span class="n">ChildProcesses</span>  <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">rsp</span>             <span class="err">:</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">schemas</span><span class="p">.</span><span class="py">microsoft</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">wbem</span><span class="p">/</span><span class="n">wsman</span><span class="p">/</span><span class="mf">1</span><span class="p">/</span><span class="n">windows</span><span class="p">/</span><span class="n">shell</span>
+</span></span><span class="line"><span class="cl"><span class="n">lang</span>            <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellId</span>         <span class="err">:</span> <span class="n">3A169BBF-C590</span><span class="p">-</span><span class="n">4D36-A055</span><span class="p">-</span><span class="n">88ED9B9F741C</span>
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>            <span class="err">:</span> <span class="n">Runspace24</span>
+</span></span><span class="line"><span class="cl"><span class="n">ResourceUri</span>     <span class="err">:</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">schemas</span><span class="p">.</span><span class="py">microsoft</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">powershell</span><span class="p">/</span><span class="n">Microsoft</span><span class="p">.</span><span class="py">PowerShell</span>
+</span></span><span class="line"><span class="cl"><span class="n">Owner</span>           <span class="err">:</span> <span class="n">DOMAIN</span><span class="p">\</span><span class="n">USERNAME</span>
+</span></span><span class="line"><span class="cl"><span class="n">ClientIP</span>        <span class="err">:</span> <span class="mf">192.168</span><span class="p">.</span><span class="py">0</span><span class="p">.</span><span class="py">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">ProcessId</span>       <span class="err">:</span> <span class="mf">18776</span>
+</span></span><span class="line"><span class="cl"><span class="n">IdleTimeOut</span>     <span class="err">:</span> <span class="n">PT7200</span><span class="p">.</span><span class="py">000S</span>
+</span></span><span class="line"><span class="cl"><span class="n">InputStreams</span>    <span class="err">:</span> <span class="n">stdin</span> <span class="n">pr</span>
+</span></span><span class="line"><span class="cl"><span class="n">OutputStreams</span>   <span class="err">:</span> <span class="n">stdout</span>
+</span></span><span class="line"><span class="cl"><span class="n">MaxIdleTimeOut</span>  <span class="err">:</span> <span class="n">PT2147483</span><span class="p">.</span><span class="py">647S</span>
+</span></span><span class="line"><span class="cl"><span class="n">Locale</span>          <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">DataLocale</span>      <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">CompressionMode</span> <span class="err">:</span> <span class="n">XpressCompression</span>
+</span></span><span class="line"><span class="cl"><span class="n">ProfileLoaded</span>   <span class="err">:</span> <span class="n">Yes</span>
+</span></span><span class="line"><span class="cl"><span class="n">Encoding</span>        <span class="err">:</span> <span class="n">UTF8</span>
+</span></span><span class="line"><span class="cl"><span class="n">BufferMode</span>      <span class="err">:</span> <span class="n">Block</span>
+</span></span><span class="line"><span class="cl"><span class="n">State</span>           <span class="err">:</span> <span class="n">Connected</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellRunTime</span>    <span class="err">:</span> <span class="n">P0DT15H38M57S</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellInactivity</span> <span class="err">:</span> <span class="n">P0DT0H0M27S</span>
+</span></span><span class="line"><span class="cl"><span class="n">MemoryUsed</span>      <span class="err">:</span> <span class="mf">48818</span><span class="p">MB</span>
+</span></span><span class="line"><span class="cl"><span class="n">ChildProcesses</span>  <span class="err">:</span> <span class="mf">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">rsp</span>             <span class="err">:</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">schemas</span><span class="p">.</span><span class="py">microsoft</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">wbem</span><span class="p">/</span><span class="n">wsman</span><span class="p">/</span><span class="mf">1</span><span class="p">/</span><span class="n">windows</span><span class="p">/</span><span class="n">shell</span>
+</span></span><span class="line"><span class="cl"><span class="n">lang</span>            <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellId</span>         <span class="err">:</span> <span class="mf">337E488F</span><span class="p">-</span><span class="mf">5385</span><span class="p">-</span><span class="n">485B-A74B-DDF5FB76AEF5</span>
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>            <span class="err">:</span> <span class="n">Runspace17</span>
+</span></span><span class="line"><span class="cl"><span class="n">ResourceUri</span>     <span class="err">:</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">schemas</span><span class="p">.</span><span class="py">microsoft</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">powershell</span><span class="p">/</span><span class="n">Microsoft</span><span class="p">.</span><span class="py">PowerShell</span>
+</span></span><span class="line"><span class="cl"><span class="n">Owner</span>           <span class="err">:</span> <span class="n">DOMAIN</span><span class="p">\</span><span class="n">USERNAME</span>
+</span></span><span class="line"><span class="cl"><span class="n">ClientIP</span>        <span class="err">:</span> <span class="mf">192.168</span><span class="p">.</span><span class="py">0</span><span class="p">.</span><span class="py">1</span>
+</span></span><span class="line"><span class="cl"><span class="n">ProcessId</span>       <span class="err">:</span> <span class="mf">11288</span>
+</span></span><span class="line"><span class="cl"><span class="n">IdleTimeOut</span>     <span class="err">:</span> <span class="n">PT7200</span><span class="p">.</span><span class="py">000S</span>
+</span></span><span class="line"><span class="cl"><span class="n">InputStreams</span>    <span class="err">:</span> <span class="n">stdin</span> <span class="n">pr</span>
+</span></span><span class="line"><span class="cl"><span class="n">OutputStreams</span>   <span class="err">:</span> <span class="n">stdout</span>
+</span></span><span class="line"><span class="cl"><span class="n">MaxIdleTimeOut</span>  <span class="err">:</span> <span class="n">PT2147483</span><span class="p">.</span><span class="py">647S</span>
+</span></span><span class="line"><span class="cl"><span class="n">Locale</span>          <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">DataLocale</span>      <span class="err">:</span> <span class="nb">en-US</span>
+</span></span><span class="line"><span class="cl"><span class="n">CompressionMode</span> <span class="err">:</span> <span class="n">XpressCompression</span>
+</span></span><span class="line"><span class="cl"><span class="n">ProfileLoaded</span>   <span class="err">:</span> <span class="n">Yes</span>
+</span></span><span class="line"><span class="cl"><span class="n">Encoding</span>        <span class="err">:</span> <span class="n">UTF8</span>
+</span></span><span class="line"><span class="cl"><span class="n">BufferMode</span>      <span class="err">:</span> <span class="n">Block</span>
+</span></span><span class="line"><span class="cl"><span class="n">State</span>           <span class="err">:</span> <span class="n">Connected</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellRunTime</span>    <span class="err">:</span> <span class="n">P3DT0H19M58S</span>
+</span></span><span class="line"><span class="cl"><span class="n">ShellInactivity</span> <span class="err">:</span> <span class="n">P0DT0H1M49S</span>
+</span></span><span class="line"><span class="cl"><span class="n">MemoryUsed</span>      <span class="err">:</span> <span class="mf">12</span><span class="p">MB</span>
+</span></span><span class="line"><span class="cl"><span class="n">ChildProcesses</span>  <span class="err">:</span> <span class="mf">0</span>
+</span></span></code></pre></div><p>Bingo! There&rsquo;s the session consuming 48818MB of RAM. I don&rsquo;t recall what my other sessions are for, so I&rsquo;ll just kill them all.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$connection</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">Remove-WSManInstance</span> <span class="n">-ConnectionURI</span> <span class="nv">$URI</span> <span class="n">shell</span> <span class="vm">@</span><span class="p">{</span><span class="n">ShellID</span><span class="p">=</span><span class="nv">$_</span><span class="p">.</span><span class="n">ShellID</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>After a few seconds, taskman showed that the wsmprovhost.exe process was rapidly releasing RAM:<br>
+50GB&hellip;<br>
+37GB&hellip;<br>
+24GB&hellip;<br>
+12GB&hellip;<br>
+process ended.</p>
+<p>And with that, the server was back to being its usual snappy self.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

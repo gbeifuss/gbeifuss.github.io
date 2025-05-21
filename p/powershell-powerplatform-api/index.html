@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Querying PowerPlatform API via. Powershell">
+<title>Powershell &amp; PowerPlatform API</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/powershell-powerplatform-api/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Powershell & PowerPlatform API">
+<meta property='og:description' content="Querying PowerPlatform API via. Powershell">
+<meta property='og:url' content='https://gbeifuss.github.io/p/powershell-powerplatform-api/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='API' /><meta property='article:tag' content='Dynamics' /><meta property='article:published_time' content='2021-07-09T16:04:57-04:00'/><meta property='article:modified_time' content='2021-07-09T16:04:57-04:00'/>
+<meta name="twitter:title" content="Powershell & PowerPlatform API">
+<meta name="twitter:description" content="Querying PowerPlatform API via. Powershell">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/powershell-powerplatform-api/">Powershell &amp; PowerPlatform API</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Querying PowerPlatform API via. Powershell
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 09, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I found out that our netadmins are regularly checking the amount of free space we have in our Power Platform (Dynamics) subscription with the following process:</p>
+<ol>
+<li>Launch a browser</li>
+<li>Authenticate to portal.office.com</li>
+<li>Click <code>Admin</code>. A new window opens.</li>
+<li>Click <code>All Admin Centers</code>.</li>
+<li>Click <code>Power Apps</code>. A new window opens.</li>
+<li>Expand <code>Resources -&gt; Capacity</code>.</li>
+<li>Look at the <code>Storage Capacity Usage</code> field and make sure we&rsquo;re below our capacity.</li>
+</ol>
+<p>Whew! I&rsquo;m tired typing that up once! I don&rsquo;t think I could stand doing it daily (or weekly, or whenever they remember), so let&rsquo;s automate it!</p>
+<p>We need to know the total capacity and what we&rsquo;re using. If we cross some threshold, trigger an action. That&rsquo;s pretty straightforward.</p>
+<p><strong>Used Storage</strong><br>
+We can grab this from the Business App Platform API, but there are some hoops to jump through. We need to setup an account that&rsquo;ll have permissions for this, Register an Admin Management Application in PowerPlatform, then query the API.</p>
+<p><em>Setup the Account</em><br>
+<a class="link" href="https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal"  target="_blank" rel="noopener"
+    >How to: Use the portal to create an Azure AD application and service principal that can access resources</a></p>
+<p><em>Register an Admin Management Application</em></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">#Region RegisterAdminManagementApplication</span>
+</span></span><span class="line"><span class="cl"><span class="c">#https://docs.microsoft.com/en-us/power-platform/admin/powershell-create-service-principal</span>
+</span></span><span class="line"><span class="cl"><span class="c">#</span><span class="k">Requires</span><span class="w"> </span><span class="err">Powershell</span><span class="na"> 5.1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nb">Import-Module</span> <span class="n">Microsoft</span><span class="p">.</span><span class="py">PowerApps</span><span class="p">.</span><span class="py">Administration</span><span class="p">.</span><span class="py">PowerShell</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Import-Module</span> <span class="n">Microsoft</span><span class="p">.</span><span class="py">PowerApps</span><span class="p">.</span><span class="py">PowerShell</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$appId</span> <span class="p">=</span> <span class="s2">&#34;APPID_FROM_AZURE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$tenantId</span> <span class="p">=</span> <span class="s2">&#34;TENANTID_FROM_AZURE&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Login interactively with a tenant administrator for Power Platform</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Add-PowerAppsAccount</span> <span class="n">-Endpoint</span> <span class="n">prod</span> <span class="n">-TenantID</span> <span class="nv">$tenantId</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Register a new application, this gives the SPN / client application same permissions as a tenant admin</span>
+</span></span><span class="line"><span class="cl"><span class="nb">New-PowerAppManagementApp</span> <span class="n">-ApplicationId</span> <span class="nv">$appId</span>
+</span></span><span class="line"><span class="cl"><span class="c">#EndRegion RegisterAdminManagementApplication</span>
+</span></span></code></pre></div><p><em>Query the API</em></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">#Region AuthenticateAsServicePrincipalDynamic</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$clientID</span> <span class="p">=</span> <span class="s2">&#34;CLIENTID_FROM_AZURE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$clientSecret</span> <span class="p">=</span> <span class="s2">&#34;PASSWORD_FROM_AZURE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$tenantdomain</span> <span class="p">=</span> <span class="s2">&#34;company.onmicrosoft.com&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$loginURL</span> <span class="p">=</span> <span class="s2">&#34;https://login.microsoftonline.com/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$resource</span> <span class="p">=</span> <span class="s2">&#34;https://api.bap.microsoft.com/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$body</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="n">grant_type</span> <span class="p">=</span> <span class="s2">&#34;client_credentials&#34;</span><span class="p">;</span> <span class="n">resource</span> <span class="p">=</span> <span class="nv">$resource</span><span class="p">;</span> <span class="n">client_id</span> <span class="p">=</span> <span class="nv">$clientID</span><span class="p">;</span> <span class="n">client_secret</span> <span class="p">=</span> <span class="nv">$clientSecret</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$oauth</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Uri</span> <span class="nv">$loginURL</span><span class="p">/</span><span class="nv">$tenantdomain</span><span class="p">/</span><span class="n">oauth2</span><span class="p">/</span><span class="n">token</span><span class="k">?</span><span class="nb">api-version</span><span class="p">=</span><span class="mf">1.0</span> <span class="n">-Body</span> <span class="nv">$body</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$headerParams</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="s1">&#39;Authorization&#39;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">token_type</span><span class="p">)</span><span class="s2"> </span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">access_token</span><span class="p">)</span><span class="s2">&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c">#EndRegion  AuthenticateAsServicePrincipalDynamics</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$request</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">get</span> <span class="n">-Headers</span> <span class="nv">$headerParams</span> <span class="n">-Uri</span> <span class="s1">&#39;https://api.bap.microsoft.com/providers/Microsoft.BusinessAppPlatform/scopes/admin/environments?api-version=2020-10-01&amp;$expand=properties.capacity&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$UsedStorage</span> <span class="p">=</span> <span class="s2">&#34;{0:n2}&#34;</span> <span class="o">-f</span> <span class="p">((</span><span class="nv">$request</span><span class="p">.</span><span class="py">value</span><span class="p">.</span><span class="py">properties</span><span class="p">.</span><span class="py">capacity</span> <span class="p">|</span> <span class="nb">Measure-Object</span> <span class="n">-Property</span> <span class="n">RatedConsumption</span> <span class="n">-Sum</span><span class="p">).</span><span class="py">sum</span> <span class="p">/</span> <span class="mf">1024</span><span class="p">)</span>
+</span></span></code></pre></div><p><strong>Storage Capacity</strong><br>
+The available Storage Capacity is more complicated to determine, since it&rsquo;s not stored anywhere that I could find. It seems to be dynamically generated, which means this script will have to do the legwork. Each tenant gets a base 10GB of Storage Capacity, and additional storage is added per licensed user, or by purchasing more Storage Capacity. We can pull the licesing information from the MS Graph API:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">#Region AuthenticateAsServicePrincipalGraph</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$resource</span> <span class="p">=</span> <span class="s2">&#34;https://graph.microsoft.com/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$body</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="n">grant_type</span> <span class="p">=</span> <span class="s2">&#34;client_credentials&#34;</span><span class="p">;</span> <span class="n">resource</span> <span class="p">=</span> <span class="nv">$resource</span><span class="p">;</span> <span class="n">client_id</span> <span class="p">=</span> <span class="nv">$clientID</span><span class="p">;</span> <span class="n">client_secret</span> <span class="p">=</span> <span class="nv">$clientSecret</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$oauth</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Uri</span> <span class="nv">$loginURL</span><span class="p">/</span><span class="nv">$tenantdomain</span><span class="p">/</span><span class="n">oauth2</span><span class="p">/</span><span class="n">token</span> <span class="n">-Body</span> <span class="nv">$body</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$headerParams</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="s1">&#39;Authorization&#39;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">token_type</span><span class="p">)</span><span class="s2"> </span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">access_token</span><span class="p">)</span><span class="s2">&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c">#EndRegion  AuthenticateAsServicePrincipalGraph</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$request</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">get</span> <span class="n">-Headers</span> <span class="nv">$headerParams</span> <span class="n">-Uri</span> <span class="s1">&#39;https://graph.microsoft.com/v1.0/subscribedskus&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#calculate total space in GB</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$BaseStorage</span> <span class="p">=</span> <span class="mf">10</span> <span class="c">#fixed value per tenant</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$DYN_365_SALES</span> <span class="p">=</span> <span class="mf">.25</span> <span class="p">*</span> <span class="p">(</span><span class="nv">$request</span><span class="p">.</span><span class="py">value</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="py">skupartnumber</span> <span class="o">-eq</span> <span class="s2">&#34;dyn365_enterprise_sales&#34;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">prepaidunits</span><span class="p">).</span><span class="py">enabled</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$CRMStorage</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$request</span><span class="p">.</span><span class="py">value</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="py">skupartnumber</span> <span class="o">-eq</span> <span class="s2">&#34;CRMSTORAGE&#34;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">prepaidunits</span><span class="p">).</span><span class="py">enabled</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$TotalStorage</span> <span class="p">=</span> <span class="s2">&#34;{0:n2}&#34;</span> <span class="o">-f</span> <span class="p">(</span><span class="nv">$BaseStorage</span> <span class="p">+</span> <span class="nv">$DYN_365_SALES</span> <span class="p">+</span> <span class="nv">$CRMStorage</span><span class="p">)</span>
+</span></span></code></pre></div><p>Now let&rsquo;s see the whole thing together, including the actions we&rsquo;ll take after crossing certain  space thresholds, as well as a function to let us know when the Application Password is near expiry:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">#O365-Dynamics-Capacity.ps1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">&lt;#
+</span></span></span><span class="line"><span class="cl"><span class="cm">Script to query the used vs total storage space we have in Power Platform (Dynamics)
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">https://docs.microsoft.com/en-us/power-platform/admin/list-environments
+</span></span></span><span class="line"><span class="cl"><span class="cm">https://jussiroine.com/2019/12/building-a-monitoring-solution-for-power-platform-events-using-powershell-c-azure-log-analytics-and-azure-sentinel/
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">Greg Beifuss
+</span></span></span><span class="line"><span class="cl"><span class="cm">2021-06-14 21:27
+</span></span></span><span class="line"><span class="cl"><span class="cm">#&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">&lt;#
+</span></span></span><span class="line"><span class="cl"><span class="cm">#Region RegisterAdminManagementApplication
+</span></span></span><span class="line"><span class="cl"><span class="cm">#https://docs.microsoft.com/en-us/power-platform/admin/powershell-create-service-principal
+</span></span></span><span class="line"><span class="cl"><span class="cm">#Requires Powershell 5.1
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">Import-Module Microsoft.PowerApps.Administration.PowerShell
+</span></span></span><span class="line"><span class="cl"><span class="cm">Import-Module Microsoft.PowerApps.PowerShell
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm">$appId = &#34;APPID_FROM_AZURE&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cm">$tenantId = &#34;TENANTID_FROM_AZURE&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm"># Login interactively with a tenant administrator for Power Platform
+</span></span></span><span class="line"><span class="cl"><span class="cm">Add-PowerAppsAccount -Endpoint prod -TenantID $tenantId
+</span></span></span><span class="line"><span class="cl"><span class="cm">
+</span></span></span><span class="line"><span class="cl"><span class="cm"># Register a new application, this gives the SPN / client application same permissions as a tenant admin
+</span></span></span><span class="line"><span class="cl"><span class="cm">New-PowerAppManagementApp -ApplicationId $appId
+</span></span></span><span class="line"><span class="cl"><span class="cm">#EndRegion RegisterAdminManagementApplication
+</span></span></span><span class="line"><span class="cl"><span class="cm">#&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Region AuthenticateAsServicePrincipalDynamics</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$clientID</span> <span class="p">=</span> <span class="s2">&#34;CLIENTID_FROM_AZURE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$clientSecret</span> <span class="p">=</span> <span class="s2">&#34;PASSWORD_FROM_AZURE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$tenantdomain</span> <span class="p">=</span> <span class="s2">&#34;company.onmicrosoft.com&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$loginURL</span> <span class="p">=</span> <span class="s2">&#34;https://login.microsoftonline.com/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$resource</span> <span class="p">=</span> <span class="s2">&#34;https://api.bap.microsoft.com/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$body</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="n">grant_type</span> <span class="p">=</span> <span class="s2">&#34;client_credentials&#34;</span><span class="p">;</span> <span class="n">resource</span> <span class="p">=</span> <span class="nv">$resource</span><span class="p">;</span> <span class="n">client_id</span> <span class="p">=</span> <span class="nv">$clientID</span><span class="p">;</span> <span class="n">client_secret</span> <span class="p">=</span> <span class="nv">$clientSecret</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$oauth</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Uri</span> <span class="nv">$loginURL</span><span class="p">/</span><span class="nv">$tenantdomain</span><span class="p">/</span><span class="n">oauth2</span><span class="p">/</span><span class="n">token</span><span class="k">?</span><span class="nb">api-version</span><span class="p">=</span><span class="mf">1.0</span> <span class="n">-Body</span> <span class="nv">$body</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$headerParams</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="s1">&#39;Authorization&#39;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">token_type</span><span class="p">)</span><span class="s2"> </span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">access_token</span><span class="p">)</span><span class="s2">&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c">#EndRegion  AuthenticateAsServicePrincipalDynamics</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$request</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">get</span> <span class="n">-Headers</span> <span class="nv">$headerParams</span> <span class="n">-Uri</span> <span class="s1">&#39;https://api.bap.microsoft.com/providers/Microsoft.BusinessAppPlatform/scopes/admin/environments?api-version=2020-10-01&amp;$expand=properties.capacity&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$UsedStorage</span> <span class="p">=</span> <span class="s2">&#34;{0:n2}&#34;</span> <span class="o">-f</span> <span class="p">((</span><span class="nv">$request</span><span class="p">.</span><span class="py">value</span><span class="p">.</span><span class="py">properties</span><span class="p">.</span><span class="py">capacity</span> <span class="p">|</span> <span class="nb">Measure-Object</span> <span class="n">-Property</span> <span class="n">RatedConsumption</span> <span class="n">-Sum</span><span class="p">).</span><span class="py">sum</span> <span class="p">/</span> <span class="mf">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Region AuthenticateAsServicePrincipalGraph</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$resource</span> <span class="p">=</span> <span class="s2">&#34;https://graph.microsoft.com/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$body</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="n">grant_type</span> <span class="p">=</span> <span class="s2">&#34;client_credentials&#34;</span><span class="p">;</span> <span class="n">resource</span> <span class="p">=</span> <span class="nv">$resource</span><span class="p">;</span> <span class="n">client_id</span> <span class="p">=</span> <span class="nv">$clientID</span><span class="p">;</span> <span class="n">client_secret</span> <span class="p">=</span> <span class="nv">$clientSecret</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$oauth</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Uri</span> <span class="nv">$loginURL</span><span class="p">/</span><span class="nv">$tenantdomain</span><span class="p">/</span><span class="n">oauth2</span><span class="p">/</span><span class="n">token</span> <span class="n">-Body</span> <span class="nv">$body</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$headerParams</span> <span class="p">=</span> <span class="vm">@</span><span class="p">{</span><span class="s1">&#39;Authorization&#39;</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">token_type</span><span class="p">)</span><span class="s2"> </span><span class="p">$(</span><span class="nv">$oauth</span><span class="p">.</span><span class="n">access_token</span><span class="p">)</span><span class="s2">&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c">#EndRegion  AuthenticateAsServicePrincipalGraph</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$request</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">get</span> <span class="n">-Headers</span> <span class="nv">$headerParams</span> <span class="n">-Uri</span> <span class="s1">&#39;https://graph.microsoft.com/v1.0/subscribedskus&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#calculate total space in GB</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$BaseStorage</span> <span class="p">=</span> <span class="mf">10</span> <span class="c">#fixed value per tenant</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$DYN_365_SALES</span> <span class="p">=</span> <span class="mf">.25</span> <span class="p">*</span> <span class="p">(</span><span class="nv">$request</span><span class="p">.</span><span class="py">value</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="py">skupartnumber</span> <span class="o">-eq</span> <span class="s2">&#34;dyn365_enterprise_sales&#34;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">prepaidunits</span><span class="p">).</span><span class="py">enabled</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$CRMStorage</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$request</span><span class="p">.</span><span class="py">value</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="py">skupartnumber</span> <span class="o">-eq</span> <span class="s2">&#34;CRMSTORAGE&#34;</span> <span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-ExpandProperty</span> <span class="n">prepaidunits</span><span class="p">).</span><span class="py">enabled</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$TotalStorage</span> <span class="p">=</span> <span class="s2">&#34;{0:n2}&#34;</span> <span class="o">-f</span> <span class="p">(</span><span class="nv">$BaseStorage</span> <span class="p">+</span> <span class="nv">$DYN_365_SALES</span> <span class="p">+</span> <span class="nv">$CRMStorage</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Send email based on how much storage is left.</span>
+</span></span><span class="line"><span class="cl"><span class="k">Switch</span> <span class="p">(</span><span class="nv">$UsedStorage</span> <span class="p">/</span> <span class="nv">$TotalStorage</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nv">$_</span> <span class="o">-ge</span> <span class="mf">0.70</span> <span class="p">}</span> <span class="p">{</span> <span class="nb">Send-MailMessage</span> <span class="n">-To</span> <span class="n">helpdesk</span><span class="nv">@company</span><span class="p">.</span><span class="py">com</span> <span class="n">-From</span> <span class="n">helpdesk</span><span class="nv">@company</span><span class="p">.</span><span class="py">com</span> <span class="n">-Subject</span> <span class="s2">&#34;Dynamics Capacity - </span><span class="p">$((</span><span class="nv">$_</span><span class="p">*</span><span class="mf">100</span><span class="p">).</span><span class="py">ToString</span><span class="p">(</span><span class="s2">&#34;#.##&#34;</span><span class="p">))</span><span class="s2">% in use!&#34;</span> <span class="n">-Body</span> <span class="s2">&#34;We&#39;re using </span><span class="nv">$UsedStorage</span><span class="s2"> / </span><span class="nv">$TotalStorage</span><span class="s2"> GB. Please immediately escalate to a Netadmin.&#34;</span> <span class="n">-SmtpServer</span> <span class="mf">192.168</span><span class="p">.</span><span class="py">1</span><span class="p">.</span><span class="py">18</span> <span class="p">;</span> <span class="k">break</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nv">$_</span> <span class="o">-gt</span> <span class="mf">0.65</span> <span class="p">}</span> <span class="p">{</span> <span class="nb">Send-MailMessage</span> <span class="n">-To</span> <span class="n">helpdesk</span><span class="nv">@company</span><span class="p">.</span><span class="py">com</span> <span class="n">-From</span> <span class="n">helpdesk</span><span class="nv">@company</span><span class="p">.</span><span class="py">com</span> <span class="n">-Subject</span> <span class="s2">&#34;Dynamics Capacity - 65% in use&#34;</span> <span class="n">-Body</span> <span class="s2">&#34;We&#39;re using </span><span class="nv">$UsedStorage</span><span class="s2"> / </span><span class="nv">$TotalStorage</span><span class="s2"> GB, or </span><span class="p">$(((</span><span class="nv">$UsedStorage</span> <span class="p">/</span> <span class="nv">$TotalStorage</span><span class="p">)*</span><span class="mf">100</span><span class="p">).</span><span class="py">ToString</span><span class="p">(</span><span class="s2">&#34;#.##&#34;</span><span class="p">))</span><span class="s2">%. Please escalate to a Netadmin.&#34;</span> <span class="n">-SmtpServer</span> <span class="mf">192.168</span><span class="p">.</span><span class="py">1</span><span class="p">.</span><span class="py">18</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">#Send email if Application password is near expiry</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">((</span><span class="nb">Get-Date</span><span class="p">).</span><span class="py">adddays</span><span class="p">(</span><span class="mf">14</span><span class="p">)</span> <span class="o">-ge</span> <span class="s2">&#34;6/10/2022&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">Send-MailMessage</span> <span class="n">-To</span> <span class="n">helpdesk</span><span class="nv">@company</span><span class="p">.</span><span class="py">com</span> <span class="n">-From</span> <span class="n">helpdesk</span><span class="nv">@company</span><span class="p">.</span><span class="py">com</span> <span class="n">-Subject</span> <span class="s2">&#34;O365-Dynamics-Capacity.ps1&#34;</span> <span class="n">-Body</span> <span class="s2">&#34;The AzureAD Application Powershell-PowerPlatform-CapacityReport has a Client Secret near expiry. Please escalate to Greg for renewal.&#34;</span> <span class="n">-SmtpServer</span> <span class="mf">192.168</span><span class="p">.</span><span class="py">1</span><span class="p">.</span><span class="py">18</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Greg</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+            <a href="/tags/api/">API</a>
+        
+            <a href="/tags/dynamics/">Dynamics</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/powershell-powerplatform-api-...-now-using-the-graph-api/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Powershell &amp; PowerPlatform API ... now using the Graph API</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/working-with-json-in-powershell/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Working with JSON in Powershell</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/powershell-netscaler-api/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Powershell &amp; Netscaler API</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

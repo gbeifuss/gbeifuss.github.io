@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Fixing Transaction Logs that won't clear after a backup occurs">
+<title>Exchange Transaction Logs won&#39;t clear</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Exchange Transaction Logs won't clear">
+<meta property='og:description' content="Fixing Transaction Logs that won't clear after a backup occurs">
+<meta property='og:url' content='https://gbeifuss.github.io/p/exchange-transaction-logs-wont-clear/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Exchange' /><meta property='article:published_time' content='2021-09-09T09:29:17-04:00'/><meta property='article:modified_time' content='2021-09-09T09:29:17-04:00'/>
+<meta name="twitter:title" content="Exchange Transaction Logs won't clear">
+<meta name="twitter:description" content="Fixing Transaction Logs that won't clear after a backup occurs">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/exchange-transaction-logs-wont-clear/">Exchange Transaction Logs won&#39;t clear</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Fixing Transaction Logs that won&#39;t clear after a backup occurs
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 09, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I solved a problem today that&rsquo;s been plaguing me for a two weeks now. Exchange transaction logs are a record of every single operation that changes the state of any data in the database. Adding a new item, deleting an old item, modifying an existing item - all of these  are recorded in a transaction log at the same time they&rsquo;re applied to the database itself. When an Exchange database is mounted, the transaction logs are reprocessed to make sure there aren&rsquo;t any discrepancies or database errors. If there are, the transaction logs are used to rebuild the database state. This same process applied to the DAG as well. The entire purpose of transaction logs in Exchange is to provide information on the transactions that occurred since the last time you ran a complete backup of your Exchange environment.</p>
+<p>If you&rsquo;re using Exchange-aware backup software, Exchange will &lsquo;know&rsquo; when a full backup occurs and then it&rsquo;ll delete all transaction logs prior to that point. They&rsquo;re no longer needed for a database rebuild because there&rsquo;s a backup.</p>
+<p>The problem I ran into is that the transaction logs were not being purged despite a successful backup (by our Exchange-aware software) and filled up the volume, which caused a database dismount&hellip; which led to some unhappy employees. Fortunately, it was just 1 of our 6 databases and I was able to fix it within 15 minutes, so not many people even noticed an issue. I wrote about workarounds and solutions for that in <a class="link" href="https://gbeifuss.github.io/p/exchange-dags-and-cluster-ownership/" >Exchange DAGs and Cluster Ownership</a>. As I mentioned in that post, I believed that the root cause was that the Owner of our DAG cluster objects wasn&rsquo;t the proper host. However, this wasn&rsquo;t the case because the transaction logs continued to grow!</p>
+<p>The Transaction Logs for Journaling are causing the problem. Despite no old logs (they&rsquo;re all timestamped AFTER our daily backup occurs, which tells me that the backup is working properly and Exchange is aware of it), they&rsquo;re consuming 10+ GB more disk space each passing day. Yesterday morning they occupied 60GB, and 24 hours later they&rsquo;re already consuming 84GB.</p>
+<p>I checked the Queues and found dozens of messages in the Journaling queue:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">Get-QueueDigest</span> <span class="n">-Dag</span> <span class="n">Exchange2016</span> <span class="p">|</span> <span class="nb">ft </span><span class="n">-a</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">GroupByValue</span> <span class="n">MessageCount</span> <span class="n">DeferredMessageCount</span> <span class="n">LockedMessageCount</span> <span class="n">StaleMessageCount</span> <span class="n">Details</span>
+</span></span><span class="line"><span class="cl"><span class="p">------------</span> <span class="p">------------</span> <span class="p">--------------------</span> <span class="p">------------------</span> <span class="p">-----------------</span> <span class="p">-------</span>
+</span></span><span class="line"><span class="cl"><span class="n">journaling</span>   <span class="mf">85</span>           <span class="mf">85</span>                   <span class="mf">0</span>                  <span class="mf">0</span>                 <span class="p">{</span><span class="n">Exchange06</span><span class="p">\</span><span class="mf">4</span><span class="p">,</span> <span class="n">EXCHANGE04</span><span class="p">\</span><span class="mf">4</span><span class="p">,</span> <span class="n">Exchange05</span><span class="p">\</span><span class="mf">5</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">get-queue</span> <span class="n">-Identity</span> <span class="n">Exchange04</span><span class="p">\</span><span class="mf">4</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Identity</span>     <span class="n">DeliveryType</span>          <span class="n">Status</span> <span class="n">MessageCount</span> <span class="n">Velocity</span> <span class="n">RiskLevel</span> <span class="n">OutboundIPPool</span> <span class="n">NextHopDomain</span>
+</span></span><span class="line"><span class="cl"><span class="p">--------</span>     <span class="p">------------</span>          <span class="p">------</span> <span class="p">------------</span> <span class="p">--------</span> <span class="p">---------</span> <span class="p">--------------</span> <span class="p">-------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">EXCHANGE04</span><span class="p">\</span><span class="mf">4</span> <span class="n">SmtpDeliveryToMailbox</span> <span class="n">Ready</span>  <span class="mf">29</span>           <span class="mf">0</span>        <span class="n">Normal</span>    <span class="mf">0</span>              <span class="n">journaling</span>
+</span></span></code></pre></div><p>I took a look at one of these messages via. the Exchange Toolbox\Queue Viewer GUI. This message has been stuck in the Journaling queue for <em>almost 30 days</em> (since August 13/21):</p>
+<pre tabindex="0"><code>Identity: EXCHANGE04\4\75801877807477
+Subject: Fw:&#39;RE: 137396- Ray &amp; Rachel Application&#39;.
+Internet Message ID: &lt;59d5803a-273b-4123-a41f-dfb67fc6cf1e@journal.report.generator&gt;
+From Address: &lt;&gt;
+Status: Retry
+Size (KB): 11170
+Message Source Name: Journaling
+Source IP: 255.255.255.255
+SCL: 0
+Date Received: 8/13/2021 10:48:12 AM
+Expiration Time:
+Last Error: 400 4.4.7 The server responded with: 554 5.2.0 STOREDRV.Deliver.Exception:MessageSubmissionExceededException.MapiExceptionMaxSubmissionExceeded; Failed to process message due to a permanent exception with message Cannot save changes made to an item to store. 16.55847:09020000, 17.43559:0000000090000000000000000100000000000000, 20.52176:010F04890E00000000000000, 20.50032:010F04897E17103100000000, 0.35180:010F0489, 255.23226:00000000, 255.27962:0E000000, 255.31418:21000000, 16.55847:E3000000, 17.43559:0000000070010000000000000000000000000000, 20.52176:010F04890E00001080030400, 20.50032:010F04897E17F01F010F0489, 0.35180:2C000000, 255.23226:2C000000, 255.27962:0A000000, 255.27962:0C000000, 255.17082:DA040000, 0.18273:00000000, 4.21921:DA040000, 255.27962:FA000000, 255.1494:010F0489, 5.59176:0000A0004C696D69746174696F6E001005000780, 5.34600:A418B00043757272656E7453697A65000F010480, 4.42792:DA040000, 7.40748:000000000000000031343163, 7.57132:000000000000000005000780, 1.63016:0C000000, 4.39640:DA040000, 8.45434:7EFF3D197915D443BAF1677741440BB605000780, 5.10786:0000000031352E30312E323330382E3031343A45786368616E676530353A36623134316338652D663135382D346465612D616564652D3837656131656238336534310080, 255.1750:2C000000, 255.31418:2C000000, 0.21457:010F0489, 4.19665:DA040000, 0.37632:DA040000, 4.37888:DA040000 [Stage: CreateMessage]. The failure was replaced by a retry response because the message was marked for retry if rejected.
+Queue ID: EXCHANGE04\4
+Recipients:  Tier3M.Journaling@Company.com;3;3;[{LED=400 4.4.7 The server responded with: 554 5.2.0 STOREDRV.Deliver.Exception:MessageSubmissionExceededException.MapiExceptionMaxSubmissionExceeded; Failed to process message due to a permanent exception with message Cannot save changes made to an item to store. 16.55847:09020000, 17.43559:0000000090000000000000000100000000000000, 20.52176:010F04890E00000000000000, 20.50032:010F04897E17103100000000, 0.35180:010F0489, 255.23226:00000000, 255.27962:0E000000, 255.31418:21000000, 16.55847:E3000000, 17.43559:0000000070010000000000000000000000000000, 20.52176:010F04890E00001080030400, 20.50032:010F04897E17F01F010F0489, 0.35180:2C000000, 255.23226:2C000000, 255.27962:0A000000, 255.27962:0C000000, 255.17082:DA040000, 0.18273:00000000, 4.21921:DA040000, 255.27962:FA000000, 255.1494:010F0489, 5.59176:0000A0004C696D69746174696F6E001005000780, 5.34600:A418B00043757272656E7453697A65000F010480, 4.42792:DA040000, 7.40748:000000000000000031343163, 7.57132:000000000000000005000780, 1.63016:0C000000, 4.39640:DA040000, 8.45434:7EFF3D197915D443BAF1677741440BB605000780, 5.10786:0000000031352E30312E323330382E3031343A45786368616E676530353A36623134316338652D663135382D346465612D616564652D3837656131656238336534310080, 255.1750:2C000000, 255.31418:2C000000, 0.21457:010F0489, 4.19665:DA040000, 0.37632:DA040000, 4.37888:DA040000 [Stage: CreateMessage]. The failure was replaced by a retry response because the message was marked for retry if rejected.};{MSG=};{FQDN=};{IP=};{LRT=}];0;CN=Journaling,CN=Databases,CN=Exchange Administrative Group (FYDIBOHF23SPDLT),CN=Administrative Groups,CN=Company,CN=Microsoft Exchange,CN=Services,CN=Configuration,DC=corp,DC=Company,DC=com;0
+</code></pre><p>The error is <em>MessageSubmissionExceededException</em>, which made me suspect a size limit problem. Indeed, all 28 messages in the Journaling queue have a size &gt; 10MB. Our standard maximum message size is 10GB across the organization (to discourage people from using email as a file transfer/file storage mechanism), but last month an exception was granted for one of our customer service mailboxes. That mailbox has a maximum message size of 30MB.</p>
+<p>I realized that this current problem is probably stemming from the changes made several weeks ago to allow large messages to this mailbox - they arrive there, but the Journaling process cannot handle them because the <em>Journal mailbox limit is still 10MB</em>. The Journaling process continually tries to add them to the Journaling mailbox which causes the retry process to generate a huge volume of transaction logs. I checked the mailbox message limits to be sure the sizes matched my hypothesis:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">get-mailbox</span> <span class="n">contact</span> <span class="p">|</span> <span class="nb">select </span><span class="n">name</span><span class="p">,*</span><span class="n">size</span><span class="p">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>    <span class="n">MaxSendSize</span>              <span class="n">MaxReceiveSize</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>    <span class="p">-----------</span>              <span class="p">--------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">contact</span> <span class="mf">30</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">31</span><span class="p">,</span><span class="mf">457</span><span class="p">,</span><span class="mf">280</span> <span class="n">bytes</span><span class="p">)</span> <span class="mf">30</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">31</span><span class="p">,</span><span class="mf">457</span><span class="p">,</span><span class="mf">280</span> <span class="n">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">get-mailbox</span> <span class="n">Tier</span><span class="p">*</span> <span class="p">|</span> <span class="nb">select </span><span class="n">name</span><span class="p">,*</span><span class="n">size</span><span class="p">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Name</span>              <span class="n">MaxSendSize</span>              <span class="n">MaxReceiveSize</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>              <span class="p">-----------</span>              <span class="p">--------------</span>
+</span></span><span class="line"><span class="cl"><span class="n">Tier3A</span> <span class="n">Journaling</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Tier3B</span> <span class="n">Journaling</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Tier3C</span> <span class="n">Journaling</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Tier3D</span> <span class="n">Journaling</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Tier3L</span> <span class="n">Journaling</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Tier3M</span> <span class="n">Journaling</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span> <span class="mf">10</span> <span class="n">MB</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span><span class="mf">485</span><span class="p">,</span><span class="mf">760</span> <span class="n">bytes</span><span class="p">)</span>
+</span></span></code></pre></div><p>I increased the max message size that Journaling mailboxes can handle:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">[</span><span class="no">PS</span><span class="p">]</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span><span class="nb">get-mailbox</span> <span class="n">Tier</span><span class="p">*</span> <span class="p">|</span> <span class="nb">Set-mailbox</span> <span class="n">-MaxReceiveSize</span> <span class="mf">30</span><span class="p">MB</span> <span class="n">-MaxSendSize</span> <span class="mf">30</span><span class="p">MB</span>
+</span></span></code></pre></div><p>This flushed the 28 queued messages within 15 minutes.</p>
+<p>I then ran a pair of consecutive diskshadow backups on Exchange05, which is the server that has mounted the Journaling database. This cleared out the logs on disk within 30 minutes. Instead of taking 84GB, the logs now consume a much-more-reasonable 2GB.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/exchange/">Exchange</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

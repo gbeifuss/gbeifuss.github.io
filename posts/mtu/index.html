@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Isolating Maximum Transmission Unit Problems">
+<title>Network Troubleshooting and MTU</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/mtu/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Network Troubleshooting and MTU">
+<meta property='og:description' content="Isolating Maximum Transmission Unit Problems">
+<meta property='og:url' content='http://localhost:1313/posts/mtu/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2021-08-11T14:57:19-04:00'/><meta property='article:modified_time' content='2021-08-11T14:57:19-04:00'/>
+<meta name="twitter:title" content="Network Troubleshooting and MTU">
+<meta name="twitter:description" content="Isolating Maximum Transmission Unit Problems">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/mtu/">Network Troubleshooting and MTU</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Isolating Maximum Transmission Unit Problems
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 11, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>These days I do minimal networking, but my college diploma is in an IP Engineering discipline, and prior to that, I had the opportunity to complete the Cisco Networking Academy curriculum in high school. All of that to say that while I&rsquo;ve not pursued that field, I have a decent foundation and understanding on how those things operate. At work, I have my hand in firewalls, switches, DNS, DHCP, routing, subnetting and other wonderful things, but it&rsquo;s not super advanced work.</p>
+<p>For about 8 months now, we&rsquo;ve had a dedicated link setup between our main office and a remote site. This will replace an internet-based VPN tunnel that currently carries traffic. However, it&rsquo;s still not in use because of <em>problems</em>. More specifically, whenever I switch traffic to route over the dedicated link, service becomes extremely problematic. <code>Ping</code> to any system works, but protocols like RDP, SMB and replication (AD &amp; Exchange) work intermittantly at best (RDP), or not at all (SMB, replication). I could RDP to ServerA, but not to ServerB, although they&rsquo;re both VMs hosted on the same Hyper-V server at the remote site. And while RDP worked to the DC at the remote site <strong>and</strong> I could ping all the other DCs, <code>repadmin /replsummary</code> showed that replication was no longer working.</p>
+<p>Here&rsquo;s a simple topology diagram in ASCII art:</p>
+<pre tabindex="0"><code>Head Office core switch - Head Office firewall - VPN Tunnel over internet - SiteA firewall - SiteA core switch
+vs.
+Head Office core switch - dedicated L2 link - SiteA core switch
+</code></pre><p>I knew this was going to be a pain to troubleshoot, especially since I couldn&rsquo;t take the whole DR site offline whenever I wanted during the day to conduct tests. I quintuple checked the configuration and didn&rsquo;t find any errors. I compared it line-by-line to another site we have this same setup (dedicated link between core switches) and everything was configured correctly.</p>
+<p>I finally decided to bite the bullet and spent a couple of late nights trying to gather information so that I could quantify the precise problem. Because the physical layer was out of my control, the data link layer seemed fine (also out of my control&hellip;mostly) and <code>ping</code> worked (layer 3), I was pretty confident the issue originated at the Network layer, or higher.</p>
+<p>I started by looking at the packet sizes. I knew that ping was a tiny packet, while things like replication and SMB would probably exceed the MTU. I ran some tests with the <code>ping -f -l</code> to determine the maximum packet size that could successfully transit the link.</p>
+<pre tabindex="0"><code>No.     Time           Source                Destination           Protocol Length ICMP Length Info
+      1 0.000000       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37568/49298, ttl=128 (reply in 2)
+      2 0.005320       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37568/49298, ttl=126 (request in 1)
+      3 1.005759       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37569/49554, ttl=128 (reply in 4)
+      4 1.011053       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37569/49554, ttl=126 (request in 3)
+      5 2.011301       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37570/49810, ttl=128 (reply in 6)
+      6 2.016662       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37570/49810, ttl=126 (request in 5)
+      7 3.017966       10.1.0.51             192.168.4.3           ICMP     1507   1465        Echo (ping) request  id=0x006b, seq=37571/50066, ttl=128 (reply in 8)
+      8 3.023353       192.168.4.3           10.1.0.51             ICMP     1507   1465        Echo (ping) reply    id=0x006b, seq=37571/50066, ttl=126 (request in 7)
+      9 16.070931      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37576/51346, ttl=128 (reply in 10)
+     10 16.076166      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37576/51346, ttl=126 (request in 9)
+     11 17.075444      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37577/51602, ttl=128 (reply in 12)
+     12 17.080656      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37577/51602, ttl=126 (request in 11)
+     13 18.082161      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37578/51858, ttl=128 (reply in 14)
+     14 18.087498      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37578/51858, ttl=126 (request in 13)
+     15 19.087735      10.1.0.51             192.168.4.3           ICMP     1510   1468        Echo (ping) request  id=0x006b, seq=37579/52114, ttl=128 (reply in 16)
+     16 19.093044      192.168.4.3           10.1.0.51             ICMP     1510   1468        Echo (ping) reply    id=0x006b, seq=37579/52114, ttl=126 (request in 15)
+     17 26.901887      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37580/52370, ttl=128 (no response found!)
+     18 31.753228      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37581/52626, ttl=128 (no response found!)
+     19 36.753276      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37582/52882, ttl=128 (no response found!)
+     20 41.753263      10.1.0.51             192.168.4.3           ICMP     1511   1469        Echo (ping) request  id=0x006b, seq=37583/53138, ttl=128 (no response found!)
+</code></pre><p>I found that where the size was &lt;= 1468, the ping succeeded. At 1469-1472 bytes, there was no response. And at sizes &gt;= 1473, ping helpfully told me that the <code>Packet needs to be fragmented but DF set.</code></p>
+<p>Okay! We&rsquo;re making progress! &hellip;Maybe. Still working on the MTU theory, I took a look at all the network devices that these packets would transit:</p>
+<ul>
+<li>ServerA</li>
+<li>Hyper-V host server</li>
+<li>Remote site core switch
+&hellip; L2 Dedicated Link beyond my control&hellip;</li>
+<li>Head Office core switch</li>
+</ul>
+<p>Both switches were set with an MTU of 1500 bytes, which is pretty standard. The Hyper-V host server used the Windows default of 1500, as did ServerA. So it looked like MTUs haven&rsquo;t been altered in a meaningful way.</p>
+<p>I ran a series of packet captures to see if anything looked unusual. Nothing jumped out at me, but I did notice that whenever the packet size exceeded 1500-ish bytes, there were lots of retranmissions and/or errors.</p>
+<p>Wait! How is it that a server with an MTU of 1500 is sending packets that are 2600 bytes?</p>
+<p>Wireshark uses winpcap (or libpcap) to grab the data <em>before</em> it&rsquo;s handed to the NIC:
+<img src="/img/wireshark.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>Many OS and NIC drivers support <em>TCP Segmentation Offload / Large Segment Offload / Generic Segment Offload</em> which offloads the task of breaking up TCP data into MSS-appropriate pieces. This is handled by the NIC, and saves resource overhead, improving performance. However&hellip; with offloading enabled, this task is now completed <em>after</em> Wireshark has grabbed the data, so it&rsquo;s not seen when capturing from the OS. Using a SPAN port (port mirroring) or TAP would not have this limitation.</p>
+<p>Back to my regularly scheduled commentary&hellip;</p>
+<p>Running with the MTU theory, I decided to set the OS MTU = 1496 bytes. That&rsquo;s 1468, which is the largest setting that worked with the Don&rsquo;tFragment flag set, plus the 28 byte IP header. Let&rsquo;s double check what the MTU is set at on my Windows 2019 DC at SiteA:
+<code>netsh int ipv4 show sub</code>
+(the full command is <em>netsh interface ipv4 show subinterfaces</em>, but I generally use the shorthand).</p>
+<pre tabindex="0"><code>C:\Users&gt;netsh int ipv4 show sub
+
+   MTU  MediaSenseState   Bytes In  Bytes Out  Interface
+------  ---------------  ---------  ---------  -------------
+4294967295                1          0      52364  Loopback Pseudo-Interface 1
+  1500                1  550194231  647147510  Ethernet 2
+</code></pre><p>Let&rsquo;s update this:
+<code>netsh in ipv4 set sub &quot;Ethernet 2&quot; mtu=1496 store=persistent</code>
+(<em>netsh interface ipv4 set subinterface &ldquo;Ethernet 2&rdquo; mtu=1496 store=persistent</em>)</p>
+<pre tabindex="0"><code>C:\Users&gt;netsh int ipv4 show sub
+
+   MTU  MediaSenseState   Bytes In  Bytes Out  Interface
+------  ---------------  ---------  ---------  -------------
+4294967295                1          0      52364  Loopback Pseudo-Interface 1
+  1496                1  55025789  647165843  Ethernet 2
+</code></pre><p>On Windows 2019, this took effect immediately. If it doesn&rsquo;t, a reboot should ensure it applies.
+AD replication - which had been failing - picked right back up as soon as I entered this command.</p>
+<p>Now, I&rsquo;ve proved that it&rsquo;s an MTU issue, so I&rsquo;ve turned it over to our L2 direct link provider. Interestingly enough, the 4 bytes (1500-1496=4) is the exact same size that a QinQ implementation adds. The packet arrives as an 802.1Q frame (tagged), and QinQ will add its own Tag &amp; EType field in the frame. This resulting QinQ frame is often referred to as &lsquo;double tagged&rsquo;.
+<img src="/img/qinq.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>You can read more about QinQ in the Cisco article <a class="link" href="http://www.cisco.com/en/US/tech/tk389/tk689/technologies_tech_note09186a0080094665.shtml"  target="_blank" rel="noopener"
+    >Inter-Switch Link and IEEE 802.1Q Frame Format</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

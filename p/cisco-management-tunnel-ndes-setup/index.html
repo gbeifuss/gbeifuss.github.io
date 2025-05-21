@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Part II - Configure NDES and Certificate Templates">
+<title>Cisco Management Tunnel - NDES Setup</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Cisco Management Tunnel - NDES Setup">
+<meta property='og:description' content="Part II - Configure NDES and Certificate Templates">
+<meta property='og:url' content='https://gbeifuss.github.io/p/cisco-management-tunnel-ndes-setup/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Cisco ASA' /><meta property='article:tag' content='PKI' /><meta property='article:tag' content='Powershell' /><meta property='article:published_time' content='2021-09-24T08:25:46-04:00'/><meta property='article:modified_time' content='2021-09-24T08:25:46-04:00'/>
+<meta name="twitter:title" content="Cisco Management Tunnel - NDES Setup">
+<meta name="twitter:description" content="Part II - Configure NDES and Certificate Templates">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/cisco-management-tunnel-ndes-setup/">Cisco Management Tunnel - NDES Setup</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Part II - Configure NDES and Certificate Templates
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 24, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>This is part 2 of a 3-part series.</p>
+<ol>
+<li><a class="link" href="https://gbeifuss.github.io/p/cisco-management-tunnel/" >Cisco Management Tunnel</a>.</li>
+<li>Cisco Management Tunnel - NDES Setup</li>
+<li><a class="link" href="https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/" >Cisco Management Tunnel - ASA Setup</a>.</li>
+</ol>
+<p>Since an AnyConnect Management Tunnel seems like it will help resolve my organization&rsquo;s work-from-home challenges, let&rsquo;s setup a pilot.</p>
+<p>The first thing we need to do is configure the certificates that are needed for user authentication.</p>
+<h2 id="install-and-configure-ndes">Install and Configure NDES
+</h2><p>We already have a dedicated server running AD Certificate Services (AD CS), acting as our Certificate Authority (CA). Network Device Enrollment Service (NDES) acts as a registration authority for a CA using Simple Certificate Enrollment Protocol (SCEP). The CA has to fully trust the NDES to verify inbound certificate requests. The result is that NDES owns an extremely powerful type of certificate (Exchange Enrollment Agent (Offline request)), which allows NDES to request certificates with almost any subject from the CA. All of that to say, it&rsquo;s important to secure NDES as much as warranted.</p>
+<p><em>The most important advice I can give is to pay attention to the warning that <strong>NDES cannot run on a CA Server</strong>!</em>
+Don&rsquo;t ask me how I know.</p>
+<p>I decided to piggyback NDES on an existing Windows 2016 server we have, so I was able to use Powershell for most of the heavy lifting. I usually roll with Powershell 7, but there are steps that require Powershell 5.1. I&rsquo;ll try to be clear about when Powershell 5.1 is needed.</p>
+<h3 id="create-gmsa">Create gMSA
+</h3><p>Let&rsquo;s start by creating (and testing the creation of) the gMSA:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">New-ADServiceAccount</span> <span class="n">-Name</span> <span class="nb">NDES-gMSA</span> <span class="n">-DNSHostName</span> <span class="nb">NDES-gMSA</span><span class="p">.</span><span class="py">corp</span><span class="p">.</span><span class="py">company</span><span class="p">.</span><span class="py">com</span> <span class="n">-PrincipalsAllowedToRetrieveManagedPassword</span> <span class="n">SERVER</span><span class="p">$</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">Enter-PSSession</span> <span class="n">corpca</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Add-WindowsFeature</span> <span class="nb">RSAT-AD</span><span class="n">-PowerShell</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Install-ADServiceAccount</span> <span class="nb">NDES-gMSA</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Test-ADServiceAccount</span> <span class="nb">NDES-gMSA</span>
+</span></span><span class="line"><span class="cl"><span class="n">exit</span>
+</span></span></code></pre></div><h3 id="install-ndes">Install NDES
+</h3><p>You can&rsquo;t install NDES as a gMSA, but we&rsquo;ll convert it later. I&rsquo;m going to use my admin account for the initial installation, and convert it to a gMSA later. You cannot initially install it as a gMSA. Let&rsquo;s install the NDES role first:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">#Install-AdcsNetworkDeviceEnrollmentService -Force -ServiceAccountName &#34;CORP\admin&#34; -ServiceAccountPassword &#34;System.Security.SecureString&#34; -RAName &#34;SERVER-MSCEP-RA&#34; -RAEmail &#34;helpdesk@company.com&#34; -RACompany &#34;Company&#34; -RADepartment &#34;IT-CNS&#34; -RACity &#34;Guelph&#34; -RAState &#34;Ontario&#34; -RACountry &#34;CA&#34; -SigningProviderName &#34;Microsoft Strong Cryptographic Provider&#34; -SigningKeyLength &#34;2048&#34; -EncryptionProviderName &#34;Microsoft Strong Cryptographic Provider&#34; -EncryptionKeyLength &#34;2048&#34; -CAConfig &#34;corpca.corp.company.com\Company Corporate Issuing CA&#34;</span>
+</span></span></code></pre></div><h3 id="configure-iis">Configure IIS
+</h3><p>Now, add the installation account to the IIS_IUSRS group:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Add-LocalGroupMember</span> <span class="n">-Group</span> <span class="n">IIS_IUSRS</span> <span class="n">-Member</span> <span class="n">corp</span><span class="p">\</span><span class="n">admin</span><span class="p">,</span> <span class="n">corp</span><span class="p">\</span><span class="nb">NDES-gMSA</span>
+</span></span></code></pre></div><p>Since NDES was installed on a server with the Web Enrollment server role, the IIS virtual directories won&rsquo;t show. However, the site is still working and vsible under the IIS Applications, and IIS Application Pools pages. We need to use <em>Powershell 5.1</em> to check that SSL is properly set on the MSCEP_ADMIN site by first querying the current values, then setting them:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-WebConfigurationProperty</span> <span class="n">-pspath</span> <span class="err">‘</span><span class="n">MACHINE</span><span class="p">/</span><span class="n">WEBROOT</span><span class="p">/</span><span class="n">APPHOST</span><span class="err">’</span> <span class="n">-location</span> <span class="err">‘</span><span class="k">Default</span> <span class="n">Web</span> <span class="n">Site</span><span class="p">/</span><span class="n">CertSrv</span><span class="p">/</span><span class="n">mscep_admin</span><span class="err">’</span> <span class="n">-filter</span> <span class="err">“</span><span class="n">system</span><span class="p">.</span><span class="n">webServer</span><span class="p">/</span><span class="n">security</span><span class="p">/</span><span class="n">access</span><span class="err">”</span> <span class="n">-name</span> <span class="err">“</span><span class="n">sslFlags</span><span class="err">”</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-WebConfigurationProperty</span> <span class="n">-pspath</span> <span class="err">‘</span><span class="n">MACHINE</span><span class="p">/</span><span class="n">WEBROOT</span><span class="p">/</span><span class="n">APPHOST</span><span class="err">’</span> <span class="n">-location</span> <span class="err">‘</span><span class="k">Default</span> <span class="n">Web</span> <span class="n">Site</span><span class="p">/</span><span class="n">CertSrv</span><span class="p">/</span><span class="n">mscep_admin</span><span class="err">’</span> <span class="n">-filter</span> <span class="err">“</span><span class="n">system</span><span class="p">.</span><span class="n">webServer</span><span class="p">/</span><span class="n">security</span><span class="p">/</span><span class="n">access</span><span class="err">”</span> <span class="n">-name</span> <span class="err">“</span><span class="n">sslFlags</span><span class="err">”</span> <span class="n">-value</span> <span class="err">“</span><span class="n">Ssl</span><span class="err">”</span>
+</span></span></code></pre></div><p>To return to the stock IIS settings, run this command from <em>Powershell 5.1</em>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Set-WebConfigurationProperty</span> <span class="n">-pspath</span> <span class="err">‘</span><span class="n">MACHINE</span><span class="p">/</span><span class="n">WEBROOT</span><span class="p">/</span><span class="n">APPHOST</span><span class="err">’</span> <span class="n">-location</span> <span class="err">‘</span><span class="k">Default</span> <span class="n">Web</span> <span class="n">Site</span><span class="p">/</span><span class="n">CertSrv</span><span class="p">/</span><span class="n">mscep_admin</span><span class="err">’</span> <span class="n">-filter</span> <span class="err">“</span><span class="n">system</span><span class="p">.</span><span class="n">webServer</span><span class="p">/</span><span class="n">security</span><span class="p">/</span><span class="n">access</span><span class="err">”</span> <span class="n">-name</span> <span class="err">“</span><span class="n">sslFlags</span><span class="err">”</span> <span class="n">-value</span> <span class="err">“</span><span class="n">None</span><span class="err">”</span> <span class="p">`</span>
+</span></span></code></pre></div><p>The SCEP site (MSCEP) <em>must</em> remain accessible via. HTTP, as that&rsquo;s the only mechanism that the ASA supports.</p>
+<h2 id="run-ndes-under-a-gmsa">Run NDES under a gMSA
+</h2><p>Next, I used the IIS GUI to change the SCEP application pool identity (which is actually the NDES Application Pool) to the gMSA (under Advanced Settings), and restarted IIS.</p>
+<p>Since we&rsquo;re using a gMSA, I need to grant that account permissions to manage the private key for the certs we have, but it needs to be done via. powershell since remote GUI access doesn&rsquo;t support it. I modified a script from <a class="link" href="https://www.codyhosterman.com/2019/06/assigning-read-access-to-windows-private-key/"  target="_blank" rel="noopener"
+    >Assigning Read Access to Windows Private Key</a>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$certobj</span> <span class="k">in</span> <span class="p">(</span><span class="nb">gci </span><span class="n">cert</span><span class="err">:</span><span class="p">\</span><span class="n">localmachine</span><span class="p">\</span><span class="n">my</span><span class="p">\</span> <span class="p">|</span> <span class="nb">where </span><span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">subject</span> <span class="o">-like</span> <span class="s2">&#34;E=helpdesk*&#34;</span><span class="p">})){</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$rsaCert</span> <span class="p">=</span> <span class="p">[</span><span class="no">System.Security.Cryptography.X509Certificates.RSACertificateExtensions</span><span class="p">]::</span><span class="n">GetRSAPrivateKey</span><span class="p">(</span><span class="nv">$CertObj</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$fileName</span> <span class="p">=</span> <span class="nv">$rsaCert</span><span class="p">.</span><span class="py">key</span><span class="p">.</span><span class="py">UniqueName</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$path</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$env:ALLUSERSPROFILE</span><span class="s2">\Microsoft\Crypto\rsa\machinekeys\</span><span class="nv">$filename</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$permissions</span> <span class="p">=</span> <span class="nb">Get-Acl</span> <span class="n">-Path</span> <span class="nv">$path</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$rule</span> <span class="p">=</span> <span class="nb">new-object</span> <span class="n">security</span><span class="p">.</span><span class="py">accesscontrol</span><span class="p">.</span><span class="py">filesystemaccessrule</span> <span class="s2">&#34;corp\ndes-gmsa$&#34;</span><span class="p">,</span> <span class="s2">&#34;read&#34;</span><span class="p">,</span> <span class="n">allow</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$permissions</span><span class="p">.</span><span class="py">AddAccessRule</span><span class="p">(</span><span class="nv">$rule</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">Set-Acl</span> <span class="n">-Path</span> <span class="nv">$path</span> <span class="n">-AclObject</span> <span class="nv">$permissions</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nb">get-acl</span> <span class="n">-path</span> <span class="nv">$path</span><span class="p">).</span><span class="py">access</span> <span class="c">#*validate that the settings worked</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">FileSystemRights</span>  <span class="err">:</span> <span class="n">FullControl</span>
+</span></span><span class="line"><span class="cl"><span class="n">AccessControlType</span> <span class="err">:</span> <span class="n">Allow</span>
+</span></span><span class="line"><span class="cl"><span class="n">IdentityReference</span> <span class="err">:</span> <span class="n">NT</span> <span class="n">AUTHORITY</span><span class="p">\</span><span class="n">SYSTEM</span>
+</span></span><span class="line"><span class="cl"><span class="n">IsInherited</span>       <span class="err">:</span> <span class="n">False</span>
+</span></span><span class="line"><span class="cl"><span class="n">InheritanceFlags</span>  <span class="err">:</span> <span class="n">None</span>
+</span></span><span class="line"><span class="cl"><span class="n">PropagationFlags</span>  <span class="err">:</span> <span class="n">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">FileSystemRights</span>  <span class="err">:</span> <span class="n">FullControl</span>
+</span></span><span class="line"><span class="cl"><span class="n">AccessControlType</span> <span class="err">:</span> <span class="n">Allow</span>
+</span></span><span class="line"><span class="cl"><span class="n">IdentityReference</span> <span class="err">:</span> <span class="n">BUILTIN</span><span class="p">\</span><span class="n">Administrators</span>
+</span></span><span class="line"><span class="cl"><span class="n">IsInherited</span>       <span class="err">:</span> <span class="n">False</span>
+</span></span><span class="line"><span class="cl"><span class="n">InheritanceFlags</span>  <span class="err">:</span> <span class="n">None</span>
+</span></span><span class="line"><span class="cl"><span class="n">PropagationFlags</span>  <span class="err">:</span> <span class="n">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">FileSystemRights</span>  <span class="err">:</span> <span class="n">Read</span><span class="p">,</span> <span class="n">Synchronize</span>
+</span></span><span class="line"><span class="cl"><span class="n">AccessControlType</span> <span class="err">:</span> <span class="n">Allow</span>
+</span></span><span class="line"><span class="cl"><span class="n">IdentityReference</span> <span class="err">:</span> <span class="n">CORP</span><span class="p">\</span><span class="nb">ndes-gmsa</span><span class="p">$</span>
+</span></span><span class="line"><span class="cl"><span class="n">IsInherited</span>       <span class="err">:</span> <span class="n">False</span>
+</span></span><span class="line"><span class="cl"><span class="n">InheritanceFlags</span>  <span class="err">:</span> <span class="n">None</span>
+</span></span><span class="line"><span class="cl"><span class="n">PropagationFlags</span>  <span class="err">:</span> <span class="n">None</span>
+</span></span></code></pre></div><p>Now, configure NDES to use the certificate template we&rsquo;ll create in the next step. I&rsquo;m going to create a certificate template named &lsquo;AnyConnect&rsquo; for NDES to issue to my ASA via. SCEP.
+Change the default GeneralTemplateProperty registry value from &ldquo;IPSECIntermediateOffline&rdquo; to &ldquo;AnyConnect&rdquo;, and set NDES to not require a password:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="n">HKLM</span><span class="err">:</span><span class="n">SOFTWARE</span><span class="p">\</span><span class="n">Microsoft</span><span class="p">\</span><span class="n">Cryptography</span><span class="p">\</span><span class="n">MSCEP</span><span class="p">\</span> <span class="n">-Name</span> <span class="n">GeneralPurposeTemplate</span> <span class="n">-Value</span> <span class="s2">&#34;AnyConnect&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Set-ItemProperty</span> <span class="n">-Path</span> <span class="n">HKLM</span><span class="err">:</span><span class="n">SOFTWARE</span><span class="p">\</span><span class="n">Microsoft</span><span class="p">\</span><span class="n">Cryptography</span><span class="p">\</span><span class="n">MSCEP</span><span class="p">\</span><span class="n">EnforcePassword</span> <span class="n">-Name</span> <span class="n">EnforcePassword</span> <span class="n">-Value</span> <span class="mf">0</span>
+</span></span></code></pre></div><h2 id="create-certificate-template">Create Certificate Template
+</h2><p>Let&rsquo;s create a new template to use for issuing to AnyConnect. I prefer to create new template because we can modify it in many ways not available when we just use the default &lsquo;User&rsquo; template.</p>
+<ul>
+<li>Open the Certificate Templates MMC.</li>
+<li>Make a copy of the &lsquo;User&rsquo; template, and configure these settings:
+<ul>
+<li>rename to &lsquo;AnyConnect&rsquo; (General tab)</li>
+<li>set OS compatibility (Compatibility tab)</li>
+<li>edit Extensions/Applition Policies and remove all entries EXCEPT Client Authentication</li>
+<li>edit Security and add the CORP\NDES-gMSA$ account. (If using the GUI to browse for this account, you may need to change the account filtering options to list gMSAs). Allow the account Enroll permission only.</li>
+<li>set Subject Name to &lsquo;supply in the request&rsquo;. Accept the popup notification.</li>
+</ul>
+</li>
+<li>Clikc OK and close the Templates MMC.</li>
+</ul>
+<p>In the CA MMC, right-click Certificate Templates, select New, Certificate Template to Issue, then select AnyConnect. Your new template is now ready to issue!
+Reboot the NDES server for the registry settings made earlier to take effect.</p>
+<p>Now, let&rsquo;s tackle the ASA configuration in <a class="link" href="https://gbeifuss.github.io/p/cisco-management-tunnel-asa-configuration/" >Cisco Management Tunnel - ASA Setup</a>.</p>
+<h2 id="references">References
+</h2><p>Some articles I referenced when figuring this out were:</p>
+<p><a class="link" href="https://gsecse.wordpress.com/2015/10/06/ndes-deployment-and-troubleshooting/"  target="_blank" rel="noopener"
+    >NDES Deployment and troubleshooting</a></p>
+<p><a class="link" href="https://www.sysadmins.lv/retired-msft-blogs/pki/setting-up-ndes-using-a-group-managed-service-account-gmsa.aspx"  target="_blank" rel="noopener"
+    >Setting up NDES using a Group Managed Service Account (gMSA)</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/cisco-asa/">Cisco ASA</a>
+        
+            <a href="/tags/pki/">PKI</a>
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/cisco-management-tunnel-asa-configuration/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Cisco Management Tunnel - ASA Configuration</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/cisco-management-tunnel/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Cisco Management Tunnel</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

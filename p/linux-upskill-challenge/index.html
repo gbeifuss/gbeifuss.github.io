@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="My notes from completing /r/linuxupskillschallenge">
+<title>Linux Upskill Challenge</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/linux-upskill-challenge/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Linux Upskill Challenge">
+<meta property='og:description' content="My notes from completing /r/linuxupskillschallenge">
+<meta property='og:url' content='https://gbeifuss.github.io/p/linux-upskill-challenge/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Linux' /><meta property='article:published_time' content='2021-10-28T08:54:12-04:00'/><meta property='article:modified_time' content='2021-10-28T08:54:12-04:00'/>
+<meta name="twitter:title" content="Linux Upskill Challenge">
+<meta name="twitter:description" content="My notes from completing /r/linuxupskillschallenge">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/linux-upskill-challenge/">Linux Upskill Challenge</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            My notes from completing /r/linuxupskillschallenge
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 28, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I recently completed the <a class="link" href="https://reddit.com/r/linuxupskillchallenge"  target="_blank" rel="noopener"
+    >Linux Upskill Challenge</a>, a month-long, self-paced, self-led course curated on Reddit. It&rsquo;s hands-on and is best run with a publically accessible remote server, so that you&rsquo;re mimicing a production server that your organization might host online. (There&rsquo;s <em>less pressure</em> in administering a server that&rsquo;s only locally available!)</p>
+<p>These are my thoughts and notes about each day&rsquo;s content - not formal study notes, but informal jot notes on the things I found interesting and important.</p>
+<h1 id="rlinuxupskillschallenge">/r/linuxupskillschallenge
+</h1><p><strong>Day 0 - Getting Started</strong><br>
+Created new Azure Ubuntu VM. Used SSH key for authentication.<br>
+Azure returned a .PEM file. Kitty won&rsquo;t take this - I had to use puttygen.exe to load the PEM and output a PPK. I then created a Kitty profile using this PPK (Connection -&gt; SSH -&gt; Auth) and username <code>azureuser</code> (Connection -&gt; Data -&gt; Autologin username)<br>
+<a class="link" href="https://docs.bitnami.com/azure/faq/get-started/connect-ssh/"  target="_blank" rel="noopener"
+    >https://docs.bitnami.com/azure/faq/get-started/connect-ssh/</a><br>
+<em><strong>linux is case-sensitive</strong></em></p>
+<p><strong>Day 1 - Getting Connected</strong><br>
+Log in with Windows Terminal (Powershell): <code>ssh -i .\Downloads\Ubuntu_SSH.pem azureuser@23.96.4.131</code><br>
+<code>uname -a</code> shows some server/OS information<br>
+<code>uptime</code> shows the uptime<br>
+<code>free</code> shows memory information<br>
+<code>df -h</code> shows disk space information</p>
+<p><strong>Day 2 - Navigation</strong><br>
+<code>cd</code> and <code>cd ~</code> do the same thing - return you to your home directory<br>
+<code>man</code> brings up the manual/help for commands<br>
+<code>pushd</code> is a way to create a trail of where you&rsquo;ve been. <code>dirs -v</code> will list the trail easily. <code>popd</code> will move you around the stack of directories</p>
+<p><strong>Day 3 - Working as Administrator</strong><br>
+<code>/etc/shadow</code> is where the hashed passwords are kept<br>
+<code>sudo</code> will let you run a command as root<br>
+<code>sudo -i</code> will pop an interactive sudo session if you&rsquo;ve a number of commands to run. <code>logoff</code> or <code>exit</code> will bring you back. The command prompt will change from <code>$</code> to <code>#</code> to show you&rsquo;re running as sudo.<br>
+All sudo uses are logged in <code>/var/log/auth.log</code><br>
+<code>sudo hostnamectl set-hostname XXXX</code> will change the hostname of the server<br>
+<code>timedatectl</code> will adjust the time/date settings. <code>TAB</code> will autocomplete and/or show other subsequent commands</p>
+<p><strong>Day 4 - Package Management &amp; File Structure</strong><br>
+<code>apt</code> is the Ubuntu package manager for working with applications<br>
+<code>apt search &quot;search term&quot;</code> will find matching packages<br>
+<code>apt list --installed</code> will list all installed packages<br>
+<code>apt install &quot;packagename&quot;</code> will install the package<br>
+Linux uses a different tree structure than Windows.<br>
+<code>/</code> is the mountpoint - this is eqivalent to C:\<br>
+<code>/root</code> is the home directory for the root user<br>
+<code>/usr/</code> is where user directories are kept<br>
+<code>/var</code> is where variable files are stored. <code>/var/log</code> is primarily where logs are stored.<br>
+<code>/bin</code> is where binary files (non-system level) are stored<br>
+<code>/sbin</code> is where system-level binaries are stored<br>
+<code>/etc</code> is where most configuration files are stored<br>
+<code>/etc/passwd</code> is the file containing userids, SSIDs and passwords</p>
+<p><strong>Day 5 - Less</strong><br>
+<code>less</code> is similar to <code>more</code>, except it doesn&rsquo;t read the whole file at load. In <code>less</code>:</p>
+<ul>
+<li><code>G</code> skips to the end</li>
+<li><code>g</code> skipts to the beginning</li>
+<li><code>q</code> quits</li>
+</ul>
+<p>The bash shell stores your command history, writing it all to /usr/azureuser/.bash_history (files beginning with a <code>.</code> are hidden). <code>history</code> will list the contents of the file and allow you to manipulate it. Pressing <code>up</code> or <code>down</code> will navigate the history from the prompt.</p>
+<p><strong>Day 6 - vi and vim</strong><br>
+<code>vi</code> is the classic unix editor. On most modern *nix systems, <code>vi</code> is an alias for <code>vim</code> - vi improved.<br>
+<code>h, j, k, l</code> act as the arrow keys within vim, although modern vim instances also have support for the arrow keys<br>
+<em>vi</em> has two modes: normal mode and insert mode. insert mode actually allows editing of what&rsquo;s on the screen, while normal mode is used for inputing commands. <code>esc esc</code> will always return to normal mode.<br>
+Many vi commands are made from an operator and a motion. For example, <code>dw</code> will delete (<code>d</code>) a word (<code>w</code>). Quick list of motions:</p>
+<ul>
+<li><code>w</code> will jump to the next word</li>
+<li><code>e</code> will jump to the end of the current word</li>
+<li><code>$</code> will jump to the end of the line</li>
+</ul>
+<p>Typing a number before a motion will repeat it that many times<br>
+<code>u</code> will undo actions <br>
+<code>x</code> will delete the character your cursor is on <br>
+<code>i</code> (insert), <code>a</code> (append), <code>c</code> (change), <code>r</code> (replace) <br>
+<code>ce</code> will delete the remaining letters in the current word, after the cursor<br>
+<code>c$</code> will delete the remaining text in the line<br>
+<code>33dd</code> will cut the line 33 times (equivalent to deleting 33 rows). They can be pasted wherever your cursor is with <code>p</code><br>
+<code>gg</code> will jump to the start of the file, while <code>G</code> will jump to the end.</p>
+<ul>
+<li><code>:s/old/new</code> will substitute &rsquo;new&rsquo; for the first instance of &lsquo;old&rsquo; in the current line</li>
+<li><code>:s/old/new/g</code> will substitute &rsquo;new&rsquo; for all instances of &lsquo;old&rsquo; in the current line</li>
+<li><code>#,#s/old/new/g</code> will substitute &rsquo;new&rsquo; for all instances of &lsquo;old&rsquo; between the two line numbers provides</li>
+<li><code>%s/old/new/g</code> will substitute &rsquo;new&rsquo; for all instances of &lsquo;old&rsquo; in the file</li>
+</ul>
+<p><code>/SEARCHTERM</code> will search for the first instance of the searchterm in the file. <code>n</code> will jump to the next instance<br>
+<code>%</code> while on any bracket/parenthesis will jump to its match<br>
+<code>v</code> starts a Visual selection. Then use an operator (ie. <code>:w</code> to write the selected text to a file)<br>
+<code>:r FILENAME</code> will merge the contents of FILENAME into the open file.<br>
+<code>:r !ls</code> will merge the output of <code>ls</code> into the current file.<br>
+<code>:!COMMAND</code> will execute an external program in vi. For example <code>:!ls</code> will print the directory listing.<br>
+<code>:q!</code> will quit without saving<br>
+<code>:w</code> will write/save the file with the current file name. <code>:w FILENAME</code> will save it with the specified filename.<br>
+<code>:wq</code> will save and quit</p>
+<p><strong>Day 7 - Server &amp; Services</strong><br>
+install apache2 (<em>httpd</em>)<br>
+stop the apache service: <code>sudo systemctl stop apache2</code><br>
+start the apache service: <code>sudo systemctl start apache2</code><br>
+check the status: <code>sudo systemctl status apache2</code>. This pulls information from the logs.<br>
+Application configuration is controlled by files under the <code>/etc</code> directory for most Linux distros. The Apache config is in <code>/etc/apache2/apache2.conf</code><br>
+In /etc/apache2/apache2.conf there&rsquo;s the line with the text: <code>IncludeOptional conf-enabled/*.conf</code> This tells Apache that the *.conf files in the subdirectory conf-enabled should be merged in with those from <code>/etc/apache2/apache2.conf</code> at load.<br>
+The location of the default webpage is defined by the <em>DocumentRoot</em> parameter in the file <code>/etc/apache2/sites-enabled/000-default.conf</code> &hellip; in this case, it&rsquo;s <code>/var/www/html</code>, so <code>/var/www/html/index.html</code><br>
+<code>sudo apt update</code>, then <code>sudo apt upgrade</code> will install all upgraded packages for any software that&rsquo;s been installed with the apt package manager.</p>
+<p><strong>Day 8 - <em>grep</em> and others</strong></p>
+<p><strong>Day 9 - networking &amp; ports</strong><br>
+<code>ss</code> is the replacement for the <code>netstat</code> comment. <code>ss -ltpn</code> will print the open ports. (use <code>sudo</code> for it to list the Processes that control these listeners)<br>
+<code>iptables</code>, <code>nftables</code> and <code>ufw</code> are all firewall utilities for Linux.<br>
+<code>sudo iptables -L</code> will list firewall rules in place.<br>
+Set UFW rules to allow SSH but deny HTTP: <code>sudo ufw allow ssh; sudo ufw deny http</code><br>
+Enable UFW: <code>sudo ufw enable</code></p>
+<p><strong>Day 10 - scheduled tasks</strong><br>
+see your scheduled tasks with <code>crontab -l</code>, or <em>root</em> with <code>sudo crontab -l</code><br>
+<code>/etc/cron</code> lists the timing of daily, weekly &amp; monthly jobs that run from <code>/etc/cron.daily</code>, <code>etc/cron.weekly</code>, etc.<br>
+<code>systemd</code> starts and stops services, but can also be used to run tasks via. timers: <code>systemctl list-timers</code></p>
+<p><strong>Day 11 - finding things</strong><br>
+<em>locate</em> will search an index for <code>&quot;*something*&quot;</code> by default. The index is built by a nightly <code>cron</code> job but can be updated with <code>sudo updatedb</code><br>
+<em>find</em> will try to match a file(s) based on criteria: <code>find /var -name access.log</code> or <code>find /home -mtime -3</code> (find any file under /home modified in the last 3 days)<br>
+<em>grep</em> will search within plaintext files for specific text. <code>grep -R -i &quot;PermitRootLogin&quot; /etc/*</code> will search recursively through /etc/ for files containing the case-insensitive string &lsquo;permitrootlogin&rsquo;<br>
+<em>which</em> will list the patch from  the PATH statement that a utility runs from: <code>which nano</code></p>
+<p><strong>Day 12 - transferring things</strong><br>
+<code>winscp&gt; open sftp://azureuser@23.96.4.131 -privatekey=&quot;c:\users\gbeifuss\downloads\ubuntu_ssh.ppk&quot;</code></p>
+<p><strong>Day 13 - permissions</strong><br>
+<code>ls -l</code> will list permissions: owner(user), group, others<br>
+<code>chmod u-w filename.txt</code> will remove the W permission for the user<br>
+<code>chmod g-w filename.txt</code> will remove the W permission for the group<br>
+<code>chmod o-w filename.txt</code> will remove the W permission for others<br>
+<code>chmod u+w filename.txt</code> will add the W permission for the user<br>
+<code>groups</code> will list the groups a user belongs to<br>
+<code>groupadd</code> will add a new group (<code>sudo groupadd newgroup</code>)<br>
+<code>usermod -a -G group username</code> will add <em>username</em> to <em>group</em></p>
+<p><strong>Day 14 - users &amp; groups</strong><br>
+Add a new user with <code>sudo adduser helen</code>. (If not prompted by a password, set one for helen: <code>sudo passwd helen</code>)<br>
+Login as helen: <code>sudo su helen</code><br>
+Permissions for <em>sudo</em> are controlled by the <code>visudo</code> utility</p>
+<p><strong>Day 15 - repositories&hellip;</strong><br>
+Linux versions control the versions of applications that can be installed. Ubuntu 18.04 ships with Apache 2.4.29 - even if you install apache with <em>apt</em> 5 years later, you&rsquo;ll get 2.4.29 installed. (Security patches are made to repositories, but by backporting fixes (from fixed versions) into older versions).<br>
+<code>/etc/apt/sources.list</code> is the default <em>apt</em> repository source. This can be edited to enable <em>multiverse/universe</em> repositories, which &ldquo;*may contain software which has been classified as non-free &hellip; and may not include security updates&rdquo;.<br>
+Ubuntu 20.04 ships with 99589 packages (<code>apt-cache dump | grep &quot;Package:&quot; | wc -l</code>)</p>
+<p><strong>Day 16 - archiving &amp; compressing</strong><br>
+Unlike Windows, Linux gathers content in one step, and compresses in another.<br>
+<code>tar</code> stands for &lsquo;Tape ARchive&rsquo;<br>
+<code>tar -cvf myinits.tar /etc/init.d</code> takes a snapshof of the files currently in <em>/etc/init.d</em><br>
+This file can then be compressed: <code>gzip myinits.tar</code>, which will create <code>myinits.tar.gz</code>, a <em>tarball</em>. Tarballs often use the extension .tgz<br>
+<em>.bz2</em> files use a different compression than <em>gzip</em> - it uses higher compression, but takes longer. A <em>.bz2</em> file can only contain a single file, so it&rsquo;s usually used to futher compress a tarball or other archive.
+In practice, these two steps can be condensed into on: <code>tar -cvzf myinits.tgz /etc/init.d</code></p>
+<ul>
+<li>c = create</li>
+<li>v = verbose</li>
+<li>z = zip/compress</li>
+<li>f = specify the output file</li>
+<li>x = extract (expand)</li>
+<li>j = uncompress a <em>.bz2</em> file first</li>
+</ul>
+<p><strong>Day 17 - from the source</strong><br>
+<em>build-essential</em> is a standard bundle of complilers and similar tools: <code>sudo apt install build-essential</code><br>
+Download the latest nmap: <code>wget -v https:/nmap.org/dist/nmap-7.92.tar.bz2</code><br>
+Extract the files: <code>tar -jxvf nmap-7.92.tarb.bz2</code><br>
+<code>./configure</code>  is a script which checks the server<br>
+<code>make</code> complies the software, typically via the GNU complier <em>gcc</em><br>
+<code>sudo make install</code> will take the compiled files, install them plus documentation, and in some cases setup services and scheduled tasks.<br>
+Any software installed outside of <em>apt</em> won&rsquo;t be updated by <code>apt update</code>, so new releases and security fixes need to be manually tracked.</p>
+<p><strong>Day 18 - log rotation</strong><br>
+<code>logrotate</code> is used by <em>cron</em> to rotate logs (<em>/etc/cron.daily/logrotate</em>), (<em>/etc/logrotate.conf</em> + <em>/etc/logrotate.d</em>)<br>
+For example, edit <em>/etc/logrotate.d/apache2</em> to adjust the configuration for all apache logs.</p>
+<p><strong>Day 19 - inodes, symlinks and other shortcuts</strong><br>
+Linux disks use <em>ext3</em>, <em>ext4</em>, <em>zfs</em>, or perhaps<em>ntrfs</em>. Above that sits the VFS - Linux Virtual FileSystem<br>
+Each filename points to an inode (a numerical value), which is seen most easily in two places: <code>ls -i</code> and <code>stat</code>:</p>
+<pre tabindex="0"><code class="language-linux" data-lang="linux">ls -li /etc/hosts
+ 35356766 -rw------- 1 root root 260 Nov 25 04:59 /etc/hosts
+ 
+stat /etc/hosts
+ File: `/etc/hosts&#39;
+ Size: 260           Blocks: 8           IO Block: 4096   regular file
+ Device: 2ch/44d     Inode: 35356766     Links: 1
+ Access: (0600/-rw-------)  Uid: (  0/   root)   Gid: (	0/	root)
+ Access: 2012-11-28 13:09:10.000000000 +0400
+ Modify: 2012-11-25 04:59:55.000000000 +0400
+ Change: 2012-11-25 04:59:55.000000000 +0400
+</code></pre><p>Several filenames could point to the same inode, and have the same contents/permissions/ownerships.dates. These attributes are stored at the inode level, <em>hard links</em>.
+<code>ln</code> is used to create hard and symbolic links (symlinks):</p>
+<pre tabindex="0"><code class="language-linux" data-lang="linux">ln /etc/passwd link1
+ln -s /etc/passwd link2
+</code></pre><p>Hard links:</p>
+<ul>
+<li>point to files, not directories</li>
+<li>can&rsquo;t reference a file on another disk/volume</li>
+<li>link references work even if it is moved</li>
+<li>refer to physical locations/inodes on disk</li>
+</ul>
+<p>Symbolic links (symlinks):</p>
+<ul>
+<li>can link to directories</li>
+<li>can reference files/directories on another disk/volume</li>
+<li>remain if the original file is deleted</li>
+<li>will NOT reference the file anymore if it&rsquo;s moved</li>
+<li>reference abstract names and not physical locations</li>
+<li>have their own inode</li>
+</ul>
+<p><strong>Day 20 - scripts</strong><br>
+Scripts are regular files with the X permission <code>chmod +x filename</code><br>
+Scripts typically start with <code>#!/bin/bash</code></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/linux/">Linux</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

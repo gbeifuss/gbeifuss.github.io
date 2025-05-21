@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="A step-by-step guide">
+<title>ESXi 6.0 to 6.5 Upgrade</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/esxi-60-65-upgrade/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="ESXi 6.0 to 6.5 Upgrade">
+<meta property='og:description' content="A step-by-step guide">
+<meta property='og:url' content='http://localhost:1313/posts/esxi-60-65-upgrade/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='VMWare' /><meta property='article:published_time' content='2021-12-20T23:38:30-05:00'/><meta property='article:modified_time' content='2021-12-20T23:38:30-05:00'/>
+<meta name="twitter:title" content="ESXi 6.0 to 6.5 Upgrade">
+<meta name="twitter:description" content="A step-by-step guide">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/esxi-60-65-upgrade/">ESXi 6.0 to 6.5 Upgrade</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            A step-by-step guide
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 20, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Almost two months ago, I assumed responsibility for a new site. It turned out that no one had really performed any administration at the site in about two years and there was a lot of basic work to do. There were failed UPSes, cables left hanging from racks when servers had been decommissioned, no administrative IDs for some hardware (iLO and iDRAC) and no patching. They had several ESXi clusters still running 6.0 (which has no HTML 5 support) so access and administration was a nightmare, to say nothing of the security risks. Updating to 6.5 was high on my priority list!</p>
+<ol>
+<li>Download the offline bundle ZIP from VMWare for my HP DL380 G9 hardware.</li>
+<li>Upload the offline bundle zip to a datastore accessible by the host via. VCenter GUI</li>
+<li>Enable SSH mode for the host hardware. This can be done in the VCenter GUI via. Settings -&gt; Configure -&gt; System/Services/SSH.</li>
+<li>SSH to the host with your terminal of choice and sign in. I&rsquo;m partial to <a class="link" href="https://github.com/kovidgoyal/kitty"  target="_blank" rel="noopener"
+    >Kitty</a></li>
+<li>If you haven&rsquo;t already done so, move all guests to other hosts, then place the host server in Migration Mode:</li>
+</ol>
+<pre tabindex="0"><code>[root@vsphere-sap01:~] esxcli system maintenanceMode set --enable true
+</code></pre><ol start="6">
+<li>Update the software:</li>
+</ol>
+<pre tabindex="0"><code>[root@vsphere-sap01:~] esxcli software vib update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip
+
+[DependencyError]
+
+VIB VMW_bootbank_ehci-ehci-hcd_1.0-4vmw.650.0.14.5146846 requires com.vmware.usb-10.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ata-pata-pdc2027x_1.0-3vmw.650.0.0.4564106 requires com.vmware.libata-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB Intel_bootbank_net-igb_5.2.10-1OEM.550.0.0.1331820 requires com.vmware.driverAPI-9.2.2.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB Broadcom_bootbank_scsi-bnx2fc_1.710.70.v55.3-1OEM.550.0.0.1331820 requires com.vmware.libfc-9.2.2.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ata-pata-serverworks_0.4.3-3vmw.650.0.0.4564106 requires com.vmware.driverAPI-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+
+VIB VMW_bootbank_ipmi-ipmi-msghandler_39.1-5vmw.650.2.50.8294253 requires com.vmware.driverAPI-9.2.3.0, but the requirement cannot be satisfied within the ImageProfile.
+</code></pre><p>Ugh. Of course this can&rsquo;t be a straightforward upgrade!
+I tried to work around the error. A quick search revealed that apparently, if I specify the profile, I can override these prerequistes. First, I determined the profile in the package, then tried to update the profile by using the <em>-p</em> flag:</p>
+<pre tabindex="0"><code>[root@vsphere-sap01:~] esxcli software sources profile list -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip
+
+Name                                                       Vendor                      Acceptance Level
+
+---------------------------------------------------------  --------------------------  ----------------
+
+HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36  Hewlett Packard Enterprise  PartnerSupported
+
+
+[root@vsphere-sap01:~] esxcli software profile update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip -p HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36
+
+[InstallationError]
+
+(&#39;VMware_bootbank_esx-ui_1.34.2-16361878&#39;, &#39;Could not find a trusted signer.&#39;)
+
+       vibs = VMware_bootbank_esx-ui_1.34.2-16361878
+
+Please refer to the log file for more details.
+</code></pre><p>That clearly didn&rsquo;t work. I decided to tell ESXi to ignore the signing errors with the &ndash;no-sig-check flag and tried again to update the profile:</p>
+<pre tabindex="0"><code>[root@vsphere-sap01:~] esxcli software profile update -d /vmfs/volumes/Tintri02-SAP/ISO/VMware-ESXi-6.5.0-Update3-18678235-HPE-Gen9plus-650.U3.10.8.0.36-Oct2021-depot.zip -p HPE-ESXi-6.5.0-Update3-18678235-Gen9plus-650.U3.10.8.0.36 --no-sig-check
+
+Update Result
+
+   Message: The update completed successfully, but the system needs to be rebooted for the changes to be effective.
+
+   Reboot Required: true
+
+   VIBs Installed: Avago_bootbank_lsi-mr3_7.706.09.00-1OEM.650.0.0.4598673, Avago_bootbank_scsi-mpt2sas_15.10.07.00-1OEM.550.0.0.1331820, BCM_bootbank_bnxtnet_218.0.38.0-1OEM.650.0.0.4598673, BCM_bootbank_bnxtroce_218.0.16.0-1OEM.650.0.0.4598673, ELX_bootbank_elx-esx-libelxima.so_12.0.1108.0-03, EMU_bootbank_brcmfcoe_12.0.1278.0-1OEM.650.0.0.4598673, EMU_bootbank_elxiscsi_12.0.1108.0-1OEM.650.0.0.4598673, EMU_bootbank_elxnet_12.0.1216.4-1OEM.650.0.0.4598673, EMU_bootbank_lpfc_12.8.317.0-1OEM.650.0.0.4598673, HPE_bootbank_amsd_650.11.8.0.15-1.4240417, HPE_bootbank_amshelpr_650.11.8.0.8-1.4240417, HPE_bootbank_bootcfg_6.0.0.02-06.00.16.2494585, HPE_bootbank_conrep_650.10.8.0.12-6.5.0.2494585, HPE_bootbank_cru_650.6.5.10.4-1OEM.650.0.0.4240417, HPE_bootbank_fc-enablement_650.3.8.0.6-4240417, HPE_bootbank_hponcfg_6.0.0.5.5-0.37.2494585, HPE_bootbank_ilo_650.10.7.5.2-1OEM.650.0.0.4240417, HPE_bootbank_ilorest_650.3.3.0.2-4240417, HPE_bootbank_oem-build_650.U3.10.8.0.2-4240417, HPE_bootbank_scsi-hpdsa_6.0.0.76-1OEM.600.0.0.2494585, HPE_bootbank_scsi-hpvsa_5.5.0.102-1OEM.550.0.0.1331820, HPE_bootbank_smx-provider_650.03.16.00.4-4240417, HPE_bootbank_sut_6.5.0.2.9.0.0-23, HPE_bootbank_sutesxcli_6.5.0.2.9.0.0-18, HPE_bootbank_testevent_6.5.0.02-01.00.9.4240417, INT_bootbank_i40en_1.10.6-1OEM.650.0.0.4598673, INT_bootbank_icen_1.5.5.0-1OEM.650.0.0.4598673, INT_bootbank_igbn_1.5.2.0-1OEM.650.0.0.4598673, INT_bootbank_ixgben_1.9.11.0-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-core_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-en_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx4-rdma_3.16.70.2-1OEM.650.0.0.4598673, MEL_bootbank_nmlx5-core_4.16.71.1-1OEM.650.0.0.4598673, MEL_bootbank_nmlx5-rdma_4.16.71.1-1OEM.650.0.0.4598673, MEL_bootbank_nmst_4.12.0.105-1OEM.650.0.0.4598673, MIS_bootbank_hpessacli_5.20.8.0-6.5.0.4240417.oem, MSCC_bootbank_smartpqi_65.4150.0.119-1OEM.650.0.0.4598673, Microsemi_bootbank_nhpsa_65.0072.0.149-1OEM.650.0.0.4598673, PEN_bootbank_ionic-en_18.0.0-1OEM.650.0.0.4598673, QLC_bootbank_qcnic_1.0.59.0-1OEM.650.0.0.4598673, QLC_bootbank_qedentv_3.11.16.0-1OEM.650.0.0.4598673, QLC_bootbank_qedf_1.3.42.50-1OEM.600.0.0.2768847, QLC_bootbank_qedrntv_3.11.16.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3_1.1.17.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3f_1.1.25.0-1OEM.650.0.0.4598673, QLC_bootbank_qfle3i_1.1.5.0-1OEM.650.0.0.4598673, QLC_bootbank_scsi-qedil_1.15.15.0-1OEM.600.0.0.2494585, QLogic_bootbank_qlnativefc_2.1.101.0-1OEM.600.0.0.2768847, VMW_bootbank_ata-libata-92_3.00.9.2-16vmw.650.0.0.4564106, VMW_bootbank_ata-pata-amd_0.3.10-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-atiixp_0.4.6-4vmw.650.0.0.4564106, VMW_bootbank_ata-pata-cmd64x_0.2.5-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-hpt3x2n_0.3.4-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-pdc2027x_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-serverworks_0.4.3-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-sil680_0.4.8-3vmw.650.0.0.4564106, VMW_bootbank_ata-pata-via_0.3.3-2vmw.650.0.0.4564106, VMW_bootbank_block-cciss_3.6.14-10vmw.650.0.0.4564106, VMW_bootbank_char-random_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ehci-ehci-hcd_1.0-4vmw.650.0.14.5146846, VMW_bootbank_hid-hid_1.0-3vmw.650.0.0.4564106, VMW_bootbank_ipmi-ipmi-devintf_39.1-5vmw.650.2.50.8294253, VMW_bootbank_ipmi-ipmi-msghandler_39.1-5vmw.650.2.50.8294253, VMW_bootbank_ipmi-ipmi-si-drv_39.1-4vmw.650.0.0.4564106, VMW_bootbank_lsi-msgpt35_09.00.00.00-5vmw.650.3.96.13932383, VMW_bootbank_lsi-msgpt3_17.00.02.00-1vmw.650.3.96.13932383, VMW_bootbank_misc-drivers_6.5.0-3.96.13932383, VMW_bootbank_mtip32xx-native_3.9.5-1vmw.650.0.0.4564106, VMW_bootbank_ne1000_0.8.3-8vmw.650.2.75.10884925, VMW_bootbank_nenic_1.0.29.0-1vmw.650.3.96.13932383, VMW_bootbank_net-cdc-ether_1.0-3vmw.650.0.0.4564106, VMW_bootbank_net-e1000_8.0.3.1-5vmw.650.3.153.17459147, VMW_bootbank_net-e1000e_3.2.2.1-2vmw.650.0.0.4564106, VMW_bootbank_net-enic_2.1.2.38-2vmw.650.0.0.4564106, VMW_bootbank_net-fcoe_1.0.29.9.3-7vmw.650.0.0.4564106, VMW_bootbank_net-forcedeth_0.61-2vmw.650.0.0.4564106, VMW_bootbank_net-libfcoe-92_1.0.24.9.4-8vmw.650.0.0.4564106, VMW_bootbank_net-usbnet_1.0-3vmw.650.0.0.4564106, VMW_bootbank_net-vmxnet3_1.1.3.0-3vmw.650.3.138.16576891, VMW_bootbank_ntg3_4.1.3.2-1vmw.650.2.75.10884925, VMW_bootbank_nvme_1.2.2.28-5vmw.650.3.170.18678235, VMW_bootbank_nvmxnet3_2.0.0.23-1vmw.650.1.36.7388607, VMW_bootbank_ohci-usb-ohci_1.0-3vmw.650.0.0.4564106, VMW_bootbank_pvscsi_0.1-1vmw.650.1.26.5969303, VMW_bootbank_qflge_1.1.0.3-1vmw.650.0.0.4564106, VMW_bootbank_sata-ahci_3.0-26vmw.650.1.26.5969303, VMW_bootbank_sata-ata-piix_2.12-10vmw.650.0.0.4564106, VMW_bootbank_sata-sata-nv_3.5-4vmw.650.0.0.4564106, VMW_bootbank_sata-sata-promise_2.12-3vmw.650.0.0.4564106, VMW_bootbank_sata-sata-sil24_1.1-1vmw.650.0.0.4564106, VMW_bootbank_sata-sata-sil_2.3-4vmw.650.0.0.4564106, VMW_bootbank_sata-sata-svw_2.3-3vmw.650.0.0.4564106, VMW_bootbank_scsi-aacraid_1.1.5.1-9vmw.650.0.0.4564106, VMW_bootbank_scsi-adp94xx_1.0.8.12-6vmw.650.0.0.4564106, VMW_bootbank_scsi-aic79xx_3.1-5vmw.650.0.0.4564106, VMW_bootbank_scsi-fnic_1.5.0.45-3vmw.650.0.0.4564106, VMW_bootbank_scsi-ips_7.12.05-4vmw.650.0.0.4564106, VMW_bootbank_scsi-iscsi-linux-92_1.0.0.2-3vmw.650.0.0.4564106, VMW_bootbank_scsi-libfc-92_1.0.40.9.3-5vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid-mbox_2.20.5.1-6vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid-sas_6.603.55.00-2vmw.650.0.0.4564106, VMW_bootbank_scsi-megaraid2_2.00.4-9vmw.650.0.0.4564106, VMW_bootbank_scsi-mptsas_4.23.01.00-10vmw.650.0.0.4564106, VMW_bootbank_scsi-mptspi_4.23.01.00-10vmw.650.0.0.4564106, VMW_bootbank_shim-iscsi-linux-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-iscsi-linux-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libata-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libata-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfc-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfc-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfcoe-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-libfcoe-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-1-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-2-0_6.5.0-0.0.4564106, VMW_bootbank_shim-vmklinux-9-2-3-0_6.5.0-0.0.4564106, VMW_bootbank_uhci-usb-uhci_1.0-3vmw.650.0.0.4564106, VMW_bootbank_usb-storage-usb-storage_1.0-3vmw.650.0.0.4564106, VMW_bootbank_usbcore-usb_1.0-3vmw.650.2.50.8294253, VMW_bootbank_vmkata_0.1-1vmw.650.1.36.7388607, VMW_bootbank_vmkplexer-vmkplexer_6.5.0-0.0.4564106, VMW_bootbank_vmkusb_0.1-1vmw.650.3.170.18678235, VMW_bootbank_vmw-ahci_1.1.6-1vmw.650.3.96.13932383, VMW_bootbank_xhci-xhci_1.0-3vmw.650.0.0.4564106, VMware_bootbank_cpu-microcode_6.5.0-3.134.16576879, VMware_bootbank_emulex-esx-elxnetcli_11.1.28.0-0.0.4564106, VMware_bootbank_esx-base_6.5.0-3.170.18678235, VMware_bootbank_esx-dvfilter-generic-fastpath_6.5.0-1.36.7388607, VMware_bootbank_esx-tboot_6.5.0-3.170.18678235, VMware_bootbank_esx-ui_1.34.2-16361878, VMware_bootbank_esx-xserver_6.5.0-3.120.15256549, VMware_bootbank_lsu-hp-hpsa-plugin_2.0.0-16vmw.650.3.96.13932383, VMware_bootbank_lsu-lsi-drivers-plugin_1.0.0-1vmw.650.2.79.11925212, VMware_bootbank_lsu-lsi-lsi-mr3-plugin_1.0.0-11vmw.650.2.75.10884925, VMware_bootbank_lsu-lsi-lsi-msgpt3-plugin_1.0.0-8vmw.650.2.79.11925212, VMware_bootbank_lsu-lsi-megaraid-sas-plugin_1.0.0-8vmw.650.1.26.5969303, VMware_bootbank_lsu-lsi-mpt2sas-plugin_2.0.0-6vmw.650.1.26.5969303, VMware_bootbank_native-misc-drivers_6.5.0-3.120.15256549, VMware_bootbank_rste_2.0.2.0088-4vmw.650.0.0.4564106, VMware_bootbank_vmware-esx-esxcli-nvme-plugin_1.2.0.36-3.96.13932383, VMware_bootbank_vsan_6.5.0-3.170.18569621, VMware_bootbank_vsanhealth_6.5.0-3.170.18569625, VMware_locker_tools-light_6.5.0-3.166.18677441
+
+   VIBs Removed: EMU_bootbank_lpfc_10.4.236.0-1OEM.600.0.0.2159203, Emulex_bootbank_elxnet_10.5.65.4-1OEM.550.0.0.1331820, Hewlett-Packard_bootbank_char-hpcru_6.0.6.14-1OEM.600.0.0.2159203, Hewlett-Packard_bootbank_char-hpilo_600.9.0.2.8-1OEM.600.0.0.2159203, Hewlett-Packard_bootbank_hp-ams_600.10.2.0-22.2159203, Hewlett-Packard_bootbank_hp-build_600.9.3.30.2-2159203, Hewlett-Packard_bootbank_hp-conrep_6.0.0.1-0.0.13.2159203, Hewlett-Packard_bootbank_hp-esxi-fc-enablement_550.2.3.16-1198610, Hewlett-Packard_bootbank_hp-smx-provider_600.03.08.00.13-2159203, Hewlett-Packard_bootbank_hpbootcfg_6.0.0.02-01.00.11.2159203, Hewlett-Packard_bootbank_hponcfg_6.0.0.04-00.13.17.2159203, Hewlett-Packard_bootbank_hpssacli_2.20.11.0-6.0.0.2159203, Hewlett-Packard_bootbank_hptestevent_6.0.0.01-00.00.8.2159203, Hewlett-Packard_bootbank_scsi-hpdsa_5.5.0.36-1OEM.550.0.0.1331820, Hewlett-Packard_bootbank_scsi-hpvsa_5.5.0.100-1OEM.550.0.0.1331820, LSI_bootbank_scsi-mpt2sas_15.10.06.00.1vmw-1OEM.550.0.0.1198610, QLogic_bootbank_qlnativefc_2.1.20.0-1OEM.600.0.0.2159203, VMWARE_bootbank_mtip32xx-native_3.8.5-1vmw.600.0.0.2494585, VMware_bootbank_ata-pata-serverworks_0.4.3-3vmw.600.0.0.2494585, VMware_bootbank_ata-pata-sil680_0.4.8-3vmw.600.0.0.2494585, VMware_bootbank_ata-pata-via_0.3.3-2vmw.600.0.0.2494585, VMware_bootbank_block-cciss_3.6.14-10vmw.600.0.0.2494585, VMware_bootbank_cpu-microcode_6.0.0-0.0.2494585, VMware_bootbank_ehci-ehci-hcd_1.0-3vmw.600.2.52.4600944, VMware_bootbank_emulex-esx-elxnetcli_10.2.309.6v-0.0.2494585, VMware_bootbank_esx-base_6.0.0-2.52.4600944, VMware_bootbank_esx-dvfilter-generic-fastpath_6.0.0-0.0.2494585, VMware_bootbank_esx-tboot_6.0.0-2.34.3620759, VMware_bootbank_esx-ui_1.9.0-4392584, VMware_bootbank_esx-xserver_6.0.0-0.0.2494585, VMware_bootbank_ipmi-ipmi-devintf_39.1-4vmw.600.0.0.2494585, VMware_bootbank_ipmi-ipmi-msghandler_39.1-4vmw.600.0.0.2494585, VMware_bootbank_ipmi-ipmi-si-drv_39.1-4vmw.600.0.0.2494585, VMware_bootbank_lsi-mr3_6.605.08.00-7vmw.600.1.17.3029758, VMware_bootbank_lsi-msgpt3_06.255.12.00-8vmw.600.1.17.3029758, VMware_bootbank_lsu-hp-hpsa-plugin_2.0.0-3vmw.600.2.52.4600944, VMware_bootbank_lsu-lsi-lsi-mr3-plugin_1.0.0-2vmw.600.0.11.2809209, VMware_bootbank_lsu-lsi-lsi-msgpt3-plugin_1.0.0-1vmw.600.0.0.2494585, VMware_bootbank_lsu-lsi-megaraid-sas-plugin_1.0.0-2vmw.600.0.11.2809209, VMware_bootbank_lsu-lsi-mpt2sas-plugin_1.0.0-4vmw.600.1.17.3029758, VMware_bootbank_misc-drivers_6.0.0-2.52.4600944, VMware_bootbank_net-e1000_8.0.3.1-5vmw.600.0.0.2494585, VMware_bootbank_net-e1000e_3.2.2.1-1vmw.600.1.26.3380124, VMware_bootbank_net-forcedeth_0.61-2vmw.600.0.0.2494585, VMware_bootbank_nmlx4-core_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nmlx4-en_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nmlx4-rdma_3.0.0.0-1vmw.600.0.0.2494585, VMware_bootbank_nvme_1.0e.0.35-1vmw.600.2.34.3620759, VMware_bootbank_ohci-usb-ohci_1.0-3vmw.600.0.0.2494585, VMware_bootbank_rste_2.0.2.0088-4vmw.600.0.0.2494585, VMware_bootbank_sata-ahci_3.0-22vmw.600.2.34.3620759, VMware_bootbank_sata-ata-piix_2.12-10vmw.600.0.0.2494585, VMware_bootbank_sata-sata-nv_3.5-4vmw.600.0.0.2494585, VMware_bootbank_sata-sata-sil24_1.1-1vmw.600.0.0.2494585, VMware_bootbank_sata-sata-sil_2.3-4vmw.600.0.0.2494585, VMware_bootbank_scsi-aacraid_1.1.5.1-9vmw.600.0.0.2494585, VMware_bootbank_scsi-adp94xx_1.0.8.12-6vmw.600.0.0.2494585, VMware_bootbank_scsi-aic79xx_3.1-5vmw.600.0.0.2494585, VMware_bootbank_scsi-fnic_1.5.0.45-3vmw.600.0.0.2494585, VMware_bootbank_scsi-ips_7.12.05-4vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid-mbox_2.20.5.1-6vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid-sas_6.603.55.00-2vmw.600.0.0.2494585, VMware_bootbank_scsi-megaraid2_2.00.4-9vmw.600.0.0.2494585, VMware_bootbank_scsi-mptsas_4.23.01.00-9vmw.600.0.0.2494585, VMware_bootbank_vsan_6.0.0-2.52.4590152, VMware_bootbank_vsanhealth_6.0.0-3000000.3.0.2.52.4527730, VMware_bootbank_xhci-xhci_1.0-3vmw.600.2.52.4600944, VMware_locker_tools-light_6.0.0-2.43.4192238
+
+   VIBs Skipped: VMW_bootbank_ima-qla4xxx_2.02.18-1vmw.650.0.0.4564106, VMW_bootbank_net-nx-nic_5.0.621-5vmw.650.0.0.4564106, VMW_bootbank_net-tg3_3.131d.v60.4-2vmw.650.0.0.4564106, VMW_bootbank_scsi-qla4xxx_5.01.03.2-7vmw.650.0.0.4564106
+</code></pre><p>Much better. Let&rsquo;s issue the reboot:<br>
+<code>[root@vsphere-sap01:~] reboot</code></p>
+<p>&hellip; and validate the version after the system comes back online:</p>
+<pre tabindex="0"><code>[root@vsphere-sap01:~] vmware -v
+VMware ESXi 6.5.0 build-18678235
+</code></pre><p>Since it&rsquo;s been two years since this cluster had any attention, there must be patches that should be applied. Since the host is already in maintenance mode with the guests hosted elsewhere, let&rsquo;s take advantage and use the GUI to patch this system.</p>
+<p>Once all the patching and rebooting is finished, exit maintenance mode:<br>
+<code>[root@vsphere-sap01:~] esxcli system maintenanceMode set --enable false</code></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/vmware/">VMWare</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

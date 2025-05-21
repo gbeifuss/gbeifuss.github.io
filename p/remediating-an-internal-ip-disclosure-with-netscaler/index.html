@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Resolving a Host Header vulnerability in Exchange">
+<title>Remediating an Internal IP Disclosure with Netscaler</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Remediating an Internal IP Disclosure with Netscaler">
+<meta property='og:description' content="Resolving a Host Header vulnerability in Exchange">
+<meta property='og:url' content='https://gbeifuss.github.io/p/remediating-an-internal-ip-disclosure-with-netscaler/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Netscaler' /><meta property='article:tag' content='Exchange' /><meta property='article:published_time' content='2021-09-17T15:49:45-04:00'/><meta property='article:modified_time' content='2021-09-17T15:49:45-04:00'/>
+<meta name="twitter:title" content="Remediating an Internal IP Disclosure with Netscaler">
+<meta name="twitter:description" content="Resolving a Host Header vulnerability in Exchange">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/remediating-an-internal-ip-disclosure-with-netscaler/">Remediating an Internal IP Disclosure with Netscaler</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Resolving a Host Header vulnerability in Exchange
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 17, 2021</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Our security administrator sent over a few security &lsquo;vulnerabilities&rsquo; that had been flagged during a recent audit. One of them was a finding that one of our websites was leaking an internal IP. All I was given to track this down was the output from the auditor&rsquo;s Nessus scan:</p>
+<pre tabindex="0"><code>Nessus was able to verify the issue with the following request :
+
+GET autodiscover/autodiscover.xml HTTP/1.0
+Accept-Charset: iso-8859-1,utf-8;q=0.9,*;q=0.1
+Accept-Language: en
+Connection: Close
+User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)
+Pragma: no-cache
+AcceptL image/gif, image/x-xbitmap, image/jpeg, impage/pjpeg, image/png, */*
+
+Which returned the following IP address :
+
+10.10.0.31
+</code></pre><p>After some quick research, I learned that this is actually  <strong><a class="link" href="https://www.tenable.com/plugins/nessus/77026"  target="_blank" rel="noopener"
+    >Microsoft Exchange Client Access Server Information Disclosure</a></strong>. That it was being termed a vulnerability was pretty generous use of the term by our auditors in the PCI Compliance Report. Knowing an internal IP isn&rsquo;t actually going to open the door for an attacker, but it could be useful as part of the enumeration or in a wider attack, the internal IP address might be very useful.</p>
+<p>This vulnerability is usually found in conjunction with <a class="link" href="https://www.tenable.com/plugins/nessus/10759"  target="_blank" rel="noopener"
+    >Web Server HTTP Header Internal IP Disclosure</a>, which returns the internal IP in the location field. However, a previous audit had found that and I&rsquo;d remediated it. I wonder how come this first audit didn&rsquo;t find the Microsoft Exchange Client Access Server Information Disclosure vulnerability? Hmm.</p>
+<p>In both of these &lsquo;vulnerabilities&rsquo;, an attacker can send an IIS webserver a specially-crafted HTTP 1.0 GET request, without any host header set. This causes the server to return its internal IP address in the reply. The reason for this is that the HTTP 1.0 protocol does not require the host header to be set by the client in the request. The HTTP 1.1 protocol requires the client to specify a host in the header, so is not affected.</p>
+<p>Once I sorted out <em>what</em> I was looking for, it was time to replicate the findings, so that I can self-test that the &lsquo;vulnerability&rsquo; has been remediated.</p>
+<p>I love the <a class="link" href="https://chocolatey.org"  target="_blank" rel="noopener"
+    >chocolatey</a> package manager for Powershell, especially since Windows doesn&rsquo;t ship with anything useful. (WinGet seems to be what Microsoft is positioning as their Package Manager, but it&rsquo;s far behind chocolatey at this point). In any case, since I have chocolatey already installed, let&rsquo;s use it to download and install the openssl package:</p>
+<p><code>choco install openssl</code></p>
+<p>Wow, that was pretty easy, right? Let&rsquo;s get started by opening a connection to the Exchange server using SSL/TLS:</p>
+<pre tabindex="0"><code>C:\Program Files\OpenSSL-Win64\bin&gt;openssl s_client -host 206.98.14.28 -port 443
+
+CONNECTED(00000130)
+Can&#39;t use SSL_get_servername
+depth=1 C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+verify return:1
+---
+Certificate chain
+ 0 s:OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+   i:C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+ 1 s:C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+   i:C = US, ST = New Jersey, L = Jersey City, O = The USERTRUST Network, CN = USERTrust RSA Certification Authority
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIGkzCCBXugAwIBAgIQeMhcbdyCJZhuKNK1eI9BnDANBgkqhkiG9w0BAQsFADCB
+jzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G
+A1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTcwNQYDVQQD
+Ey5TZWN0aWdvIFJTQSBEb21haW4gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENB
+MB4XDTE5MTEwNTAwMDAwMFoXDTIxMTEwNDIzNTk1OVowZTEhMB8GA1UECxMYRG9t
+YWluIENvbnRyb2wgVmFsaWRhdGVkMSEwHwYDVQQLExhQb3NpdGl2ZVNTTCBNdWx0
+aS1Eb21haW4xHTAbBgNVBAMTFHdlYm1haWwuYWdyaWNvcnAuY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AM11BCgKCAQEAzkoRlNCs5fI4iiNvh2YcaV3y3KynScoj
+F7sk8frQY1iYBrQ4oLfDI2h+Np7a21kvdMyYufLzWeAz1n0EDu29/kkp8QBIVaDU
+CgCNdsocnvwC41E7Qyc9wumBRNWbz0c4B7tyDvhImgBfl6IIXUe+cy/KsrqWb3Tq
+mJKJ7acSBNzRcPgK8qUbUCdtNixhBRruWKjnQ7qwmzLwsRozFZGExUCms5/MX4Od
+uZ5UHWGYZed+w30vu86Hy1/jf0VWeDGSAsiPUySLq55fvwClyRftN1aS9bwROrvE
+sTJ1rAkR26wUFNyQi9ijkOEPCh2TqyclQNvRnokSI346ZMKKkaPpFwIDAQABo4ID
+EjCCAw4wHwYDVR0jBBgwFoAUjYxexFStiuF36Zv5mwXhuAGNYeEwHQYDVR0OBBYE
+FKb+bHu4DBzyNq5bUYs8Ppfr2EXFMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBJBgNVHSAEQjBAMDQG
+CysGAQQBsjEBAgIHMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20v
+Q1BTMAgGBmeBDAECATCBhAYIKwYBBQUHAQEEeDB2ME8GCCsGAQUFBzAChkNodHRw
+Oi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29SU0FEb21haW5WYWxpZGF0aW9uU2Vj
+dXJlU2VydmVyQ0EuY3J0MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdv
+LmNvbTA6BgNVHREEMzAxghR3ZWJtYWlsLmFncmljb3JwLmNvbYIZYXV0b2Rpc2Nv
+dmVyLmFncmljb3JwLmNvbTCCAX8GCisGAQQB1nkCBAIEggFvBIIBawFpAHYAfT7y
++I//iFVoJMLAyp5SiXkrxQ54CX8uapdomX4i8NcAAAFuPDgr2gAABAMARzBFAiAi
+1bJ3H3IUyTUswT99xLn8P2xHsFjAm4FjcuqpbSdgxAIhAPZOftlPa1H1jQPQ1ESb
+IMox3lbDRSrPOOESq+oGMCPZAHcARJRlLrDuzq/EQAfYqP4owNrmgr7YyzG1P9Mz
+lrW2gagAAAFuPDgrzgAABAMASDBGAiEAgNOhZoOzgj8DwuR516eWmpms/RmaQ61x
+5z8CAnfYOL0CIQD5ODhJYisT5s7oRmqXgEzCg84dWeysi5/DjYzWvlqzFQB2AFWB
+1MIWkDYBSuoLm1c8U/DA5Dh4cCUIFy+jqh0HE9MMAAABbjw4K5wAAAQDAEcwRQIg
+adxDdH5iWyGh6tReXl/1t0zLEBcPwXe24St5WYnSwlcCIQC5RKhMAD63eyKpojIo
+6fJocT/P6SBsfAykYhwThDFIPDANBgkqhkiG9w0BAQsFAAOCAQEAnUwWuOimEN5k
+zzXFVVDFdwRYmTdnW7fzOgXnQKVmtkqAXiL0Qp05OnUq7qPJuTaOR+KaGPS0nnLN
+b3/U3SimzH+tukkDZWcVch7tFzrEzpmWzighsQrzdCO0fv7SL3un7aKxQzf/u+se
+iCZ5F8W40+YmZq8mW7LUdYINbtR/vGgays/7xzjWioWVjbgNsWiFdpmZ/Fch1H9q
+m7UoFGNcTPDQrsg5rI2fKU/JBxWWqaUlWQ6DClhzwBp55DY3MGCoPesiiIU0HN/7
+GyqwDIklkHOX6pRRmlXb5ZEK31Bo4qvwv/yolil83NL1q/Lk3C64jLmPEtH5rJy1
+JaY6tu+MsA==
+-----END CERTIFICATE-----
+subject=OU = Domain Control Validated, OU = PositiveSSL Multi-Domain, CN = webmail.company.com
+
+issuer=C = GB, ST = Greater Manchester, L = Salford, O = Sectigo Limited, CN = Sectigo RSA Domain Validation Secure Server CA
+
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 3885 bytes and written 683 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 20 (unable to get local issuer certificate)
+---
+</code></pre><p>At this point, openssl has successfully established the connection and is awaiting a case-sensitive command. Let&rsquo;s send the HTTP 1.0 packet to the autodiscover URL. You may need to press ENTER a couple of times:</p>
+<pre tabindex="0"><code>GET /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 401 Unauthorized
+Server: Microsoft-IIS/10.0
+request-id: e1722265-bc09-4d32-a25e-02bf98f7d8f9
+X-SOAP-Enabled: True
+X-WSSecurity-Enabled: True
+X-WSSecurity-For: None
+X-OAuth-Enabled: True
+X-OWA-Version: 15.1.2308.14
+WWW-Authenticate: Negotiate
+WWW-Authenticate: NTLM
+X-Powered-By: ASP.NET
+X-FEServer: EXCHANGE02
+WWW-Authenticate: Basic realm=&#34;10.1.0.31&#34;
+Date: Fri, 17 Sep 2021 19:04:53 GMT
+Connection: keep-alive
+Content-Length: 0
+Strict-Transport-Security: max-age=15552000
+
+closed
+</code></pre><p>And there it is! The internal server name and IP, in black and white. Thanks for nothing, IIS.</p>
+<p>Alright, let&rsquo;s go about fixing this. Instead of fixing this in IIS with the URL-Rewrite module, I decided to use Netscaler.</p>
+<ul>
+<li>The same change is made on just 2 Netscaler devices, vs. 5 Exchange servers</li>
+<li>The changes are not dependant on IIS, which may possibly be reset by patches or other installed software</li>
+<li>Netscaler is where I generally do this sort of thing (consistency leads to ease of administration)</li>
+</ul>
+<p>In any case, this is what Netscaler will do:</p>
+<ul>
+<li>Any replies from the Webmail object are inspected for the WWW-Authenticate header.</li>
+<li>If it’s found, the WWW-Authenticate header is deleted as well as any X-FEServer header.</li>
+</ul>
+<p>I accomplished this with a couple of Responder Policies in Netscaler:</p>
+<pre tabindex="0"><code>add rewrite action RW_ACTION_OWA_FEServer delete_http_header X-FEServer
+add rewrite action RW_ACTION_OWA_WWWAuthenticate delete_http_header WWW-Authenticate
+add rewrite policy RW_POLICY_OWA_FEServer &#34;HTTP.RES.HEADER(\&#34;X-FEServer\&#34;).EXISTS&#34; RW_ACTION_OWA_FEServer NOREWRITE
+add rewrite policy RW_POLICY_OWA_WWWAuthenticate &#34;HTTP.RES.HEADER(\&#34;WWW-Authenticate\&#34;).EXISTS&#34; RW_ACTION_OWA_WWWAuthenticate NOREWRITE
+
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_WWWAuthenticate -priority 100 -gotoPriorityExpression NEXT -type RESPONSE
+bind lb vserver VSRV-Exchange-OWA-External -policyName RW_POLICY_OWA_FEServer -priority 110 -gotoPriorityExpression END -type RESPONSE
+</code></pre><p>Let&rsquo;s repeat the test and make sure that the internal information is no longer returned:</p>
+<pre tabindex="0"><code>get /autodiscover/autodiscover.xml HTTP/1.0
+
+HTTP/1.1 401 Unauthorized
+Server: Microsoft-IIS/10.0
+request-id: 068763fb-67ff-4f09-8ca9-02139957f4c2
+X-SOAP-Enabled: True
+X-WSSecurity-Enabled: True
+X-WSSecurity-For: None
+X-OAuth-Enabled: True
+X-OWA-Version: 15.1.2308.14
+X-Powered-By: ASP.NET
+Date: Fri, 17 Sep 2021 19:16:43 GMT
+Connection: keep-alive
+Content-Length: 0
+Strict-Transport-Security: max-age=15552000
+
+closed
+</code></pre>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/netscaler/">Netscaler</a>
+        
+            <a href="/tags/exchange/">Exchange</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/rewrite-http/1.0-requests-to-http/1.1-with-netscaler/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Rewrite HTTP/1.0 requests to HTTP/1.1 with Netscaler</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

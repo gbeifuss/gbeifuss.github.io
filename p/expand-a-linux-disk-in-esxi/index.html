@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Adding storage to an existing VM">
+<title>Expand a Linux Disk in ESXi</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Expand a Linux Disk in ESXi">
+<meta property='og:description' content="Adding storage to an existing VM">
+<meta property='og:url' content='https://gbeifuss.github.io/p/expand-a-linux-disk-in-esxi/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='VMWare' /><meta property='article:tag' content='Linux' /><meta property='article:published_time' content='2022-05-11T10:51:54-04:00'/><meta property='article:modified_time' content='2022-05-11T10:51:54-04:00'/>
+<meta name="twitter:title" content="Expand a Linux Disk in ESXi">
+<meta name="twitter:description" content="Adding storage to an existing VM">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/expand-a-linux-disk-in-esxi/">Expand a Linux Disk in ESXi</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Adding storage to an existing VM
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 11, 2022</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I came across a Linux Database VM at work that desperately needed more disk space. The DBA outlined how they wanted the storage to be allocated, so I set about with the work!</p>
+<p>First, I added new disks in ESXi to match the disk space requested. I added space in 500 or 1000 GB blocks to give flexibility with storage and vmotion. Disks were balanced across SCSI controllers as well.</p>
+<p>Then, I logged into the linux VM with admin credentials.</p>
+<p>At a high-level, I&rsquo;ll:</p>
+<ul>
+<li>Capture the existing disk statistics &amp; configuration for reference:
+<pre tabindex="0"><code>fdisk -l
+lvs
+df -TH | grep Disk
+lsblk
+</code></pre></li>
+<li>Add space to the disk group, then expand the logical volume to make use of that space:
+<pre tabindex="0"><code>sudo vgextend oralogvg /dev/sdaa
+sudo pvresize /dev/sdaa
+sudo lvextend -l+100%FREE /dev/oralogvg/oraloglv
+sudo xfs_growfs /dev/oralogvg/oraloglv
+</code></pre></li>
+</ul>
+<p>VMWare has an article outlining this process (<a class="link" href="https://kb.vmware.com/s/article/1006371"  target="_blank" rel="noopener"
+    >Extending a logical volume in a virtual machine running Red Hat or Cent OS</a>), but it  assumes the creation of a disk partition prior to adding it to the disk group. The existing disks I dealt with aren&rsquo;t configured like that, so I didn&rsquo;t want to deviate from what&rsquo;s already in place.</p>
+<p>I dumped the current disks to determine how Linux has labelled the new disks that I added in ESXi. They should be at the end of the list and not be mapped to any logical volumes or disk groups:</p>
+<pre tabindex="0"><code>[admin@DB030035 ~]$ lsblk
+NAME                                            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                                               8:0    0   68G  0 disk
+├─sda1                                            8:1    0    1M  0 part
+├─sda2                                            8:2    0    1G  0 part /boot
+└─sda3                                            8:3    0   62G  0 part
+├─vg00-LogVol00_root                          253:0    0    5G  0 lvm  /
+├─vg00-LogVol00_swap                          253:1    0   22G  0 lvm  [SWAP]
+├─vg00-LogVol00_usr                           253:2    0   10G  0 lvm  /usr
+├─vg00-LogVol00_vlogaudit                     253:10   0    2G  0 lvm  /var/log/audit
+├─vg00-LogVol00_vlog                          253:11   0    2G  0 lvm  /var/log
+├─vg00-LogVol00_vtmp                          253:12   0    2G  0 lvm  /var/tmp
+├─vg00-LogVol00_tmp                           253:13   0    5G  0 lvm  /tmp
+├─vg00-LogVol00_var                           253:14   0    5G  0 lvm  /var
+├─vg00-LogVol00_opt                           253:15   0    6G  0 lvm  /opt
+└─vg00-LogVol00_home                          253:16   0    2G  0 lvm  /home
+sdb                                               8:16   0  220G  0 disk
+└─oraredo1vg-oraredo1lv                         253:20   0  370G  0 lvm  /oraredo1
+sdc                                               8:32   0   12G  0 disk
+└─oratempvg-oratemplv                           253:5    0   12G  0 lvm  /oratemp
+sdd                                               8:48   0   10G  0 disk
+└─flash_recovery_area_vg-flash_recovery_area_lv 253:6    0   10G  0 lvm  /flash_recovery_area
+sde                                               8:64   0  256G  0 disk
+└─oraredo3vg-oraredo3lv                         253:4    0  406G  0 lvm  /oraredo3
+sdf                                               8:80   0  257G  0 disk
+└─oraredo4vg-oraredo4lv                         253:18   0  407G  0 lvm  /oraredo4
+sdg                                               8:96   0   70G  0 disk
+└─oraclevg-oraclelv                             253:21   0   70G  0 lvm  /oracle
+sdh                                               8:112  0   30G  0 disk
+└─oradatavg-oradatalv                           253:17   0   30G  0 lvm  /oradata
+sdi                                               8:128  0  220G  0 disk
+└─oraredo2vg-oraredo2lv                         253:19   0  370G  0 lvm  /oraredo2
+sdj                                               8:144  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdk                                               8:160  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdl                                               8:176  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdm                                               8:192  0   20G  0 disk
+└─oraidxvg-oraidxlv                             253:9    0   20G  0 lvm  /oraidx
+sdn                                               8:208  0   22G  0 disk
+└─oralogvg-oraloglv                             253:7    0   22G  0 lvm  /oralog
+sdo                                               8:224  0   25G  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sdp                                               8:240  0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdq                                              65:0    0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdr                                              65:16   0  1.4T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sds                                              65:32   0 1000G  0 disk
+└─sds1                                           65:33   0 1000G  0 part
+└─oradata1vg-oradata1lv                       253:8    0   11T  0 lvm  /oradata1
+sdt                                              65:48   0  1.5T  0 disk
+└─oradata1vg-oradata1lv                         253:8    0   11T  0 lvm  /oradata1
+sdu                                              65:64   0  1.5T  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sdv                                              65:80   0  150G  0 disk
+└─oraredo1vg-oraredo1lv                         253:20   0  370G  0 lvm  /oraredo1
+sdw                                              65:96   0  150G  0 disk
+└─oraredo2vg-oraredo2lv                         253:19   0  370G  0 lvm  /oraredo2
+sdx                                              65:112  0  150G  0 disk
+└─oraredo3vg-oraredo3lv                         253:4    0  406G  0 lvm  /oraredo3
+sdy                                              65:128  0  150G  0 disk
+└─oraredo4vg-oraredo4lv                         253:18   0  407G  0 lvm  /oraredo4
+sdz                                              65:144  0  1.2T  0 disk
+└─oraexportvg-oraexportlv                       253:3    0  2.7T  0 lvm  /oraexport
+sr0                                              11:0    1 1024M  0 rom
+sdaa                                             65:160  0  1.5T  0 disk
+sdab                                             65:176  0  1.5T  0 disk
+[admin@DB030035 ~]$
+</code></pre><p>Next, extend the existing group to include the new disk:</p>
+<pre tabindex="0"><code>[admin@DB030035 ~]$ sudo vgextend oralogvg /dev/sdaa
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &#34;/dev/sdaa&#34; successfully created.
+Volume group &#34;oralogvg&#34; successfully extended
+[admin@DB030035 ~]$ sudo vgextend oralogvg /dev/sdab
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &#34;/dev/sdab&#34; successfully created.
+Volume group &#34;oralogvg&#34; successfully extended
+</code></pre><p>Then, resize the physical volume:</p>
+<pre tabindex="0"><code>[admin@DB030035 ~]$ sudo pvresize /dev/sdaa
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &#34;/dev/sdaa&#34; changed
+1 physical volume(s) resized or updated / 0 physical volume(s) not resized
+[admin@DB030035 ~]$ sudo pvresize /dev/sdab
+WARNING: Device for PV ovZDIW-axwB-1YVM-rZVF-V90Y-5cMl-tdyU3m not found or rejected by a filter.
+Physical volume &#34;/dev/sdab&#34; changed
+1 physical volume(s) resized or updated / 0 physical volume(s) not resized
+</code></pre><p>Extend the logical volume to consume 100% of the free space in the disk group:</p>
+<pre tabindex="0"><code>[admin@DB030035 ~]$ sudo lvextend -l+100%FREE /dev/oralogvg/oraloglv
+Size of logical volume oralogvg/oraloglv changed from &lt;22.00 GiB (5631 extents) to 2.95 TiB (773629 extents).
+Logical volume oralogvg/oraloglv successfully resized.
+</code></pre><p>Finally, resize the file system to consume all the new space in the logical volume:</p>
+<pre tabindex="0"><code>[admin@DB030035 ~]$ sudo xfs_growfs /dev/oralogvg/oraloglv
+meta-data=/dev/mapper/oralogvg-oraloglv isize=512    agcount=4, agsize=1441536 blks
+= sectsz=512   attr=2, projid32bit=1
+= crc=1        finobt=0 spinodes=0
+data = bsize=4096   blocks=5766144, imaxpct=25
+= sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=2815, version=2
+= sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 5766144 to 792196096
+</code></pre><p>At this point, the new space should be available on the volume. Run <code>fdisk</code> to confirm the new size of the mount point:</p>
+<pre tabindex="0"><code>[admin@DB030035 ~]$ sudo fdisk -l | grep &#34;Disk /dev/mapper/oralogvg-oraloglv&#34;
+Disk /dev/mapper/oralogvg-oraloglv: 3244.8 GB, 3244835209216 bytes, 6337568768 sectors
+</code></pre>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/vmware/">VMWare</a>
+        
+            <a href="/tags/linux/">Linux</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
