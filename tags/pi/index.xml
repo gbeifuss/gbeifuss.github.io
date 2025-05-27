@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Pi on Greg Beifuss</title>
+        <link>https://gbeifuss.github.io/tags/pi/</link>
+        <description>Recent content in Pi on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Thu, 22 May 2025 12:50:59 -0400</lastBuildDate><atom:link href="https://gbeifuss.github.io/tags/pi/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Setting up a new Raspberry Pi 5</title>
+        <link>https://gbeifuss.github.io/p/setting-up-a-new-raspberry-pi-5/</link>
+        <pubDate>Thu, 22 May 2025 12:50:59 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/setting-up-a-new-raspberry-pi-5/</guid>
+        <description>&lt;p&gt;I recently received a Rasberry Pi5 (via. &lt;a class=&#34;link&#34; href=&#34;www.canakit.com&#34; &gt;Canakit&lt;/a&gt; through an &lt;a class=&#34;link&#34; href=&#34;www.auvik.com&#34; &gt;Auvik&lt;/a&gt; trial), so I had to go through the process of getting it setup.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Install the hardware. Assemble all the components correctly.&lt;/li&gt;
+&lt;li&gt;Use my Windows 11 laptop to download/run the latest version of &lt;a class=&#34;link&#34; href=&#34;https://downloads.raspberrypi.org/imager/imager_latest.exe&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Raspberry Pi&amp;rsquo;s official imager&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Select the PiOS x64 headless, as I&amp;rsquo;m going to use this as a server, not a day-to-day workstation (with a monitor).&lt;/li&gt;
+&lt;li&gt;use ssh-keygen on my Windows 11 laptop to create private/public key for Pi5. I kept the default key location, which was &lt;code&gt;c:\users\greg\.ssh\&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;add name, wifi &amp;amp; ssh settings to image&lt;/li&gt;
+&lt;li&gt;flash the image to the microSD card. My laptop has a microSD port, which made it easy to flash without any adapters.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Create a DHCP reservation for the Pi on my home network. This way, I know the IP that it&amp;rsquo;ll get, plus I can use the hostname to refer to it, not just the IP.&lt;/li&gt;
+&lt;li&gt;Insert the microSD card in the Pi, connect all external Pi cables, and power on&lt;/li&gt;
+&lt;li&gt;Ping &amp;lsquo;pi5&amp;rsquo; until it starts replying, showing that it&amp;rsquo;s booted properly. Open an SSH session from Terminal. The SSH keys that were imported into the setup program should allow you to seamlessly connect.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Patch the OS:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ sudo apt update &amp;amp;&amp;amp; sudo apt full-upgrade
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian-security bookworm-security InRelease
+Hit:3 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:4 http://archive.raspberrypi.com/debian bookworm InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Calculating upgrade... Done
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;Check that the firmware is fully up-to-date, and patch it:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ sudo rpi-eeprom-update
+*** UPDATE AVAILABLE ***
+
+Run &amp;#34;sudo rpi-eeprom-update -a&amp;#34; to install this update now.
+
+To configure the bootloader update policy run &amp;#34;sudo raspi-config&amp;#34;
+
+BOOTLOADER: update available
+   CURRENT: Mon 23 Sep 13:02:56 UTC 2024 (1727096576)
+    LATEST: Mon 10 Mar 17:10:37 UTC 2025 (1741626637)
+   RELEASE: default (/usr/lib/firmware/raspberrypi/bootloader-2712/default)
+            Use raspi-config to change the release.
+greg@pi5:~ $ sudo raspi-config
+*** CREATED UPDATE /usr/lib/firmware/raspberrypi/bootloader-2712//latest/pieeprom-2025-03-19.bin  ***
+
+   CURRENT: Mon 23 Sep 13:02:56 UTC 2024 (1727096576)
+    UPDATE: Wed 19 Mar 13:41:26 UTC 2025 (1742391686)
+    BOOTFS: /boot/firmware
+&amp;#39;/tmp/tmp.CjIIzhsHuR&amp;#39; -&amp;gt; &amp;#39;/boot/firmware/pieeprom.upd&amp;#39;
+
+UPDATING bootloader. This could take up to a minute. Please wait
+
+*** Do not disconnect the power until the update is complete ***
+
+If a problem occurs then the Raspberry Pi Imager may be used to create
+a bootloader rescue SD card image which restores the default bootloader image.
+
+flashrom -p linux_spi:dev=/dev/spidev10.0,spispeed=16000 -w /boot/firmware/pieeprom.upd
+Verifying update
+VERIFY: SUCCESS
+UPDATE SUCCESSFUL
+greg@pi5:~ $
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;Some articles I referenced when figuring this out were:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.picocluster.com/blogs/picocluster-dev/how-to-install-docker-on-a-raspberry-pi-5-a-step-by-step-guide&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.picocluster.com/blogs/picocluster-dev/how-to-install-docker-on-a-raspberry-pi-5-a-step-by-step-guide&lt;/a&gt;&lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://pimylifeup.com/raspberry-pi-pi-hole/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://pimylifeup.com/raspberry-pi-pi-hole/&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Setup a Raspberry Pi as a USB-over-IP Server</title>
+        <link>https://gbeifuss.github.io/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/</link>
+        <pubDate>Thu, 22 May 2025 12:16:52 -0400</pubDate>
+        
+        <guid>https://gbeifuss.github.io/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/</guid>
+        <description>&lt;p&gt;I recently received a pi5 (through an &lt;a class=&#34;link&#34; href=&#34;www.auvik.com&#34; &gt;Auvik&lt;/a&gt; trial), and I&amp;rsquo;ve had great fun &lt;a class=&#34;link&#34; href=&#34;https://gbeifuss.github.io/p/setting-up-a-new-raspberry-pi-5/&#34; &gt;getting it setup&lt;/a&gt;. Right now I have it running CUPS and pihole, but I decided that I want to turbocharge CUPS - we have a Brother DCP-7040 USB printer/scanner, and while CUPS lets me print over the network, I really want to be able to access the &lt;em&gt;scanner&lt;/em&gt; over the network. Otherwise, I have to disconnect the device from the Pi everytime I want to scan, then hook it back up again afterwards. Ugh!&lt;/p&gt;
+&lt;p&gt;I discovered that what I want is USB-over-IP capability, so I found a github project that will install a client portion on my Pi, and a client on my Windows 11 laptop: &lt;a class=&#34;link&#34; href=&#34;https://github.com/vadimgrn/usbip-win2&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/vadimgrn/usbip-win2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s get to installing! First of all, make sure that the printer is attached to the pi and turned on.&lt;/p&gt;
+&lt;p&gt;Install required packages for Raspberry Pi:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-linux&#34; data-lang=&#34;linux&#34;&gt;greg@pi5:~ $ sudo apt install usbip hwdata usbutils
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+usbutils is already the newest version (1:014-1+deb12u1).
+The following NEW packages will be installed:
+  hwdata usb.ids usbip
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Need to get 1,205 kB of archives.
+After this operation, 1,978 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian bookworm/main arm64 usb.ids all 2024.07.04-0+deb12u1 [208 kB]
+Get:2 http://deb.debian.org/debian bookworm/main arm64 hwdata all 0.368-1 [26.5 kB]
+Get:3 http://archive.raspberrypi.com/debian bookworm/main arm64 usbip arm64 1:2.0+6.12.25-1+rpt1 [970 kB]
+Fetched 1,205 kB in 1s (1,217 kB/s)
+Selecting previously unselected package usb.ids.
+(Reading database ... 58667 files and directories currently installed.)
+Preparing to unpack .../usb.ids_2024.07.04-0+deb12u1_all.deb ...
+Unpacking usb.ids (2024.07.04-0+deb12u1) ...
+Selecting previously unselected package hwdata.
+Preparing to unpack .../hwdata_0.368-1_all.deb ...
+Unpacking hwdata (0.368-1) ...
+Selecting previously unselected package usbip.
+Preparing to unpack .../usbip_1%3a2.0+6.12.25-1+rpt1_arm64.deb ...
+Unpacking usbip (1:2.0+6.12.25-1+rpt1) ...
+Setting up usb.ids (2024.07.04-0+deb12u1) ...
+Setting up usbip (1:2.0+6.12.25-1+rpt1) ...
+Setting up hwdata (0.368-1) ...
+Processing triggers for man-db (2.11.2-2) ...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Load modules and run the daemon:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ sudo modprobe -a usbip-core usbip-host
+greg@pi5:~ $ sudo usbipd -D
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;List attached USB devices:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ lsusb
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 004: ID 04f9:01e9 Brother Industries, Ltd DCP-7040
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+greg@pi5:~ $ usbip list -l
+ - busid 3-2 (04f9:01e9)
+   Brother Industries, Ltd : DCP-7040 (04f9:01e9)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Bind to the printer:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ sudo usbip bind -b 3-2
+usbip: info: bind device on busid 3-2: complete
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Now, configure my Windows 11 laptop!&lt;/p&gt;
+&lt;p&gt;Download and install the latest client &lt;a class=&#34;link&#34; href=&#34;https://github.com/vadimgrn/usbip-win2/releases/download/v.0.9.7.2/USBip-0.9.7.2-x64-release.exe&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;0.9.7.2&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;List the USB-over-IP devices available on the Pi:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg&amp;gt;usbip list -r pi5
+Exportable USB devices
+======================
+    3-2    : Brother Industries, Ltd : DCP-7040 (04f9:01e9)
+           : /sys/devices/platform/axi/1000120000.pcie/1f00300000.usb/xhci-hcd.1/usb3/3-2
+           : (Defined at Interface level) (00/00/00)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Finally, attach the remote device to your computer. The USB-over-IP driver will make it look like a local device attached to a USB port:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg&amp;gt;usbip.exe attach -r pi5 -b 3-2
+succesfully attached to port 1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Of course, the problem is that whenever the printer is powered off, the device obviously is unreachable, but when it&amp;rsquo;s powered back on, Linux doesn&amp;rsquo;t automatically bind it again. Fortunately, we can use &lt;code&gt;udev&lt;/code&gt; to run an action whenever it detects the printer.&lt;/p&gt;
+&lt;p&gt;First, use dmesg to find out where the printer is connected:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ dmesg
+...
+[708387.363296] veth50c9534 (unregistering): left promiscuous mode
+[708387.363299] docker0: port 1(veth50c9534) entered disabled state
+[708430.656914] usb 3-2: new full-speed USB device number 6 using xhci-hcd
+[708430.809591] usb 3-2: New USB device found, idVendor=04f9, idProduct=01e9, bcdDevice= 1.00
+[708430.809596] usb 3-2: New USB device strings: Mfr=0, Product=0, SerialNumber=3
+[708430.809599] usb 3-2: SerialNumber: 000F8N333004
+[708430.814635] usblp 3-2:1.0: usblp0: USB Bidirectional printer dev 6 if 0 alt 0 proto 2 vid 0x04F9 pid 0x01E9
+[708447.412092] docker0: port 1(veth353fe11) entered blocking state
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;My printer is connected to &lt;code&gt;/dev/usb/lp0&lt;/code&gt;, so let&amp;rsquo;s grab some information from that device. I&amp;rsquo;ll find the serial number that it&amp;rsquo;s reporting, which I&amp;rsquo;ll use to create a rule.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ udevadm info -a -p  $(udevadm info -q path -n /dev/usb/lp0) | grep serial
+    ATTRS{serial}==&amp;#34;000F8N333004&amp;#34;
+    ATTRS{serial}==&amp;#34;xhci-hcd.1&amp;#34;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The serial number is &lt;code&gt;000F8N333004&lt;/code&gt;. Let&amp;rsquo;s see which udev rules exist on my Pi already:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;greg@pi5:~ $ ls /etc/udev/rules.d -al
+total 16
+drwxr-xr-x 2 root root 4096 May 22 15:58 .
+drwxr-xr-x 4 root root 4096 May  6 09:23 ..
+-rw-r--r-- 1 root root 2535 Apr 23 09:09 99-com.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Only a rule with ID #99. I&amp;rsquo;ll create a rule to run before Rule 99: &lt;code&gt;sudo nano /etc/udev/rules.d/20-brother.rules&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;I only need 1 line for the rule: &lt;code&gt;ACTION==&amp;quot;add&amp;quot;, ATTRS{serial}==&amp;quot;000F8N333004&amp;quot;, RUN+=&amp;quot;/bin/sh -c &#39;sudo usbip bind -b 3-2&#39;&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Basically, everytime udev sees that a device with Serial=000F8N333004 is ADDed, run the command &amp;lsquo;sudo usbip bind -b 3-2&amp;rsquo;, which will use usbip to bind to busid 3-2.
+I tested this a couple of times by turning the printer off, then on, and it&amp;rsquo;s properly bound each time.&lt;/p&gt;
+&lt;p&gt;Now, I pair this with a powershell script on my laptop that runs every few minutes via. Task Scheduler.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$output&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;C:\Program Files\USBip\usbip.exe&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;list&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-r&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pi5&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;$targetLine&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;    3-2    : Brother Industries, Ltd : DCP-7040 (04f9:01e9)&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;foreach&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;in&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$output&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$line&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-eq&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$targetLine&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&amp;amp;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;C:\Program Files\USBip\usbip.exe&amp;#34;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;attach&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-r&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pi5&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;-b&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;break&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Whenever the printer is turned on, within 5 minutes my laptop will attach it and it&amp;rsquo;ll appear as a directly-connected USB printer/scanner.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Users\Greg\OneDrive&amp;gt;usbip port
+Imported USB devices
+====================
+Port 01: device in use at Full Speed(12Mbps)
+         Brother Industries, Ltd : DCP-7040 (04f9:01e9)
+           -&amp;gt; usbip://pi5:3240/3-2
+           -&amp;gt; remote bus/dev 003/011
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;references&#34;&gt;References
+&lt;/h2&gt;&lt;p&gt;An article I referenced when figuring this out was:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://news.sparkfun.com/2332&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://news.sparkfun.com/2332&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

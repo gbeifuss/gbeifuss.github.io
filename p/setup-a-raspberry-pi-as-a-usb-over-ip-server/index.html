@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Sharing my USB printer/scanner over the network">
+<title>Setup a Raspberry Pi as a USB-over-IP Server</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/'>
+
+<link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Setup a Raspberry Pi as a USB-over-IP Server">
+<meta property='og:description' content="Sharing my USB printer/scanner over the network">
+<meta property='og:url' content='https://gbeifuss.github.io/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='pi' /><meta property='article:published_time' content='2025-05-22T12:16:52-04:00'/><meta property='article:modified_time' content='2025-05-22T12:16:52-04:00'/>
+<meta name="twitter:title" content="Setup a Raspberry Pi as a USB-over-IP Server">
+<meta name="twitter:description" content="Sharing my USB printer/scanner over the network">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/">Setup a Raspberry Pi as a USB-over-IP Server</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Sharing my USB printer/scanner over the network
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 22, 2025</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I recently received a pi5 (through an <a class="link" href="www.auvik.com" >Auvik</a> trial), and I&rsquo;ve had great fun <a class="link" href="https://gbeifuss.github.io/p/setting-up-a-new-raspberry-pi-5/" >getting it setup</a>. Right now I have it running CUPS and pihole, but I decided that I want to turbocharge CUPS - we have a Brother DCP-7040 USB printer/scanner, and while CUPS lets me print over the network, I really want to be able to access the <em>scanner</em> over the network. Otherwise, I have to disconnect the device from the Pi everytime I want to scan, then hook it back up again afterwards. Ugh!</p>
+<p>I discovered that what I want is USB-over-IP capability, so I found a github project that will install a client portion on my Pi, and a client on my Windows 11 laptop: <a class="link" href="https://github.com/vadimgrn/usbip-win2"  target="_blank" rel="noopener"
+    >https://github.com/vadimgrn/usbip-win2</a></p>
+<p>Let&rsquo;s get to installing! First of all, make sure that the printer is attached to the pi and turned on.</p>
+<p>Install required packages for Raspberry Pi:</p>
+<pre tabindex="0"><code class="language-linux" data-lang="linux">greg@pi5:~ $ sudo apt install usbip hwdata usbutils
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+usbutils is already the newest version (1:014-1+deb12u1).
+The following NEW packages will be installed:
+  hwdata usb.ids usbip
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Need to get 1,205 kB of archives.
+After this operation, 1,978 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian bookworm/main arm64 usb.ids all 2024.07.04-0+deb12u1 [208 kB]
+Get:2 http://deb.debian.org/debian bookworm/main arm64 hwdata all 0.368-1 [26.5 kB]
+Get:3 http://archive.raspberrypi.com/debian bookworm/main arm64 usbip arm64 1:2.0+6.12.25-1+rpt1 [970 kB]
+Fetched 1,205 kB in 1s (1,217 kB/s)
+Selecting previously unselected package usb.ids.
+(Reading database ... 58667 files and directories currently installed.)
+Preparing to unpack .../usb.ids_2024.07.04-0+deb12u1_all.deb ...
+Unpacking usb.ids (2024.07.04-0+deb12u1) ...
+Selecting previously unselected package hwdata.
+Preparing to unpack .../hwdata_0.368-1_all.deb ...
+Unpacking hwdata (0.368-1) ...
+Selecting previously unselected package usbip.
+Preparing to unpack .../usbip_1%3a2.0+6.12.25-1+rpt1_arm64.deb ...
+Unpacking usbip (1:2.0+6.12.25-1+rpt1) ...
+Setting up usb.ids (2024.07.04-0+deb12u1) ...
+Setting up usbip (1:2.0+6.12.25-1+rpt1) ...
+Setting up hwdata (0.368-1) ...
+Processing triggers for man-db (2.11.2-2) ...
+</code></pre><p>Load modules and run the daemon:</p>
+<pre tabindex="0"><code>greg@pi5:~ $ sudo modprobe -a usbip-core usbip-host
+greg@pi5:~ $ sudo usbipd -D
+</code></pre><p>List attached USB devices:</p>
+<pre tabindex="0"><code>greg@pi5:~ $ lsusb
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 004: ID 04f9:01e9 Brother Industries, Ltd DCP-7040
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+greg@pi5:~ $ usbip list -l
+ - busid 3-2 (04f9:01e9)
+   Brother Industries, Ltd : DCP-7040 (04f9:01e9)
+</code></pre><p>Bind to the printer:</p>
+<pre tabindex="0"><code>greg@pi5:~ $ sudo usbip bind -b 3-2
+usbip: info: bind device on busid 3-2: complete
+</code></pre><p>Now, configure my Windows 11 laptop!</p>
+<p>Download and install the latest client <a class="link" href="https://github.com/vadimgrn/usbip-win2/releases/download/v.0.9.7.2/USBip-0.9.7.2-x64-release.exe"  target="_blank" rel="noopener"
+    >0.9.7.2</a></p>
+<p>List the USB-over-IP devices available on the Pi:</p>
+<pre tabindex="0"><code>C:\Users\Greg&gt;usbip list -r pi5
+Exportable USB devices
+======================
+    3-2    : Brother Industries, Ltd : DCP-7040 (04f9:01e9)
+           : /sys/devices/platform/axi/1000120000.pcie/1f00300000.usb/xhci-hcd.1/usb3/3-2
+           : (Defined at Interface level) (00/00/00)
+</code></pre><p>Finally, attach the remote device to your computer. The USB-over-IP driver will make it look like a local device attached to a USB port:</p>
+<pre tabindex="0"><code>C:\Users\Greg&gt;usbip.exe attach -r pi5 -b 3-2
+succesfully attached to port 1
+</code></pre><p>Of course, the problem is that whenever the printer is powered off, the device obviously is unreachable, but when it&rsquo;s powered back on, Linux doesn&rsquo;t automatically bind it again. Fortunately, we can use <code>udev</code> to run an action whenever it detects the printer.</p>
+<p>First, use dmesg to find out where the printer is connected:</p>
+<pre tabindex="0"><code>greg@pi5:~ $ dmesg
+...
+[708387.363296] veth50c9534 (unregistering): left promiscuous mode
+[708387.363299] docker0: port 1(veth50c9534) entered disabled state
+[708430.656914] usb 3-2: new full-speed USB device number 6 using xhci-hcd
+[708430.809591] usb 3-2: New USB device found, idVendor=04f9, idProduct=01e9, bcdDevice= 1.00
+[708430.809596] usb 3-2: New USB device strings: Mfr=0, Product=0, SerialNumber=3
+[708430.809599] usb 3-2: SerialNumber: 000F8N333004
+[708430.814635] usblp 3-2:1.0: usblp0: USB Bidirectional printer dev 6 if 0 alt 0 proto 2 vid 0x04F9 pid 0x01E9
+[708447.412092] docker0: port 1(veth353fe11) entered blocking state
+...
+</code></pre><p>My printer is connected to <code>/dev/usb/lp0</code>, so let&rsquo;s grab some information from that device. I&rsquo;ll find the serial number that it&rsquo;s reporting, which I&rsquo;ll use to create a rule.</p>
+<pre tabindex="0"><code>greg@pi5:~ $ udevadm info -a -p  $(udevadm info -q path -n /dev/usb/lp0) | grep serial
+    ATTRS{serial}==&#34;000F8N333004&#34;
+    ATTRS{serial}==&#34;xhci-hcd.1&#34;
+</code></pre><p>The serial number is <code>000F8N333004</code>. Let&rsquo;s see which udev rules exist on my Pi already:</p>
+<pre tabindex="0"><code>greg@pi5:~ $ ls /etc/udev/rules.d -al
+total 16
+drwxr-xr-x 2 root root 4096 May 22 15:58 .
+drwxr-xr-x 4 root root 4096 May  6 09:23 ..
+-rw-r--r-- 1 root root 2535 Apr 23 09:09 99-com.rules
+</code></pre><p>Only a rule with ID #99. I&rsquo;ll create a rule to run before Rule 99: <code>sudo nano /etc/udev/rules.d/20-brother.rules</code></p>
+<p>I only need 1 line for the rule: <code>ACTION==&quot;add&quot;, ATTRS{serial}==&quot;000F8N333004&quot;, RUN+=&quot;/bin/sh -c 'sudo usbip bind -b 3-2'&quot;</code></p>
+<p>Basically, everytime udev sees that a device with Serial=000F8N333004 is ADDed, run the command &lsquo;sudo usbip bind -b 3-2&rsquo;, which will use usbip to bind to busid 3-2.
+I tested this a couple of times by turning the printer off, then on, and it&rsquo;s properly bound each time.</p>
+<p>Now, I pair this with a powershell script on my laptop that runs every few minutes via. Task Scheduler.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$output</span> <span class="p">=</span> <span class="p">&amp;</span> <span class="s2">&#34;C:\Program Files\USBip\usbip.exe&#34;</span> <span class="n">list</span> <span class="n">-r</span> <span class="n">pi5</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$targetLine</span> <span class="p">=</span> <span class="s2">&#34;    3-2    : Brother Industries, Ltd : DCP-7040 (04f9:01e9)&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$line</span> <span class="k">in</span> <span class="nv">$output</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nv">$line</span> <span class="o">-eq</span> <span class="nv">$targetLine</span><span class="p">)</span> <span class="p">{&amp;</span> <span class="s2">&#34;C:\Program Files\USBip\usbip.exe&#34;</span> <span class="n">attach</span> <span class="n">-r</span> <span class="n">pi5</span> <span class="n">-b</span> <span class="mf">3</span><span class="p">-</span><span class="mf">2</span> <span class="p">;</span> <span class="k">break</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Whenever the printer is turned on, within 5 minutes my laptop will attach it and it&rsquo;ll appear as a directly-connected USB printer/scanner.</p>
+<pre tabindex="0"><code>C:\Users\Greg\OneDrive&gt;usbip port
+Imported USB devices
+====================
+Port 01: device in use at Full Speed(12Mbps)
+         Brother Industries, Ltd : DCP-7040 (04f9:01e9)
+           -&gt; usbip://pi5:3240/3-2
+           -&gt; remote bus/dev 003/011
+</code></pre><h2 id="references">References
+</h2><p>An article I referenced when figuring this out was:</p>
+<p><a class="link" href="https://news.sparkfun.com/2332"  target="_blank" rel="noopener"
+    >https://news.sparkfun.com/2332</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pi/">Pi</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

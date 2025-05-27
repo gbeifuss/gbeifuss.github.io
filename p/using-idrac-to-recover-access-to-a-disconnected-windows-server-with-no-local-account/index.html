@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Using the OS media to recover a local account">
+<title>Using iDRAC to recover access to a disconnected Windows server with no local account</title>
+
+<link rel='canonical' href='http://localhost:1313/p/using-idrac-to-recover-access-to-a-disconnected-windows-server-with-no-local-account/'>
+
+<link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Using iDRAC to recover access to a disconnected Windows server with no local account">
+<meta property='og:description' content="Using the OS media to recover a local account">
+<meta property='og:url' content='http://localhost:1313/p/using-idrac-to-recover-access-to-a-disconnected-windows-server-with-no-local-account/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='windows' /><meta property='article:tag' content='idrac' /><meta property='article:published_time' content='2025-05-27T07:17:18-04:00'/><meta property='article:modified_time' content='2025-05-27T07:17:18-04:00'/>
+<meta name="twitter:title" content="Using iDRAC to recover access to a disconnected Windows server with no local account">
+<meta name="twitter:description" content="Using the OS media to recover a local account">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/using-idrac-to-recover-access-to-a-disconnected-windows-server-with-no-local-account/">Using iDRAC to recover access to a disconnected Windows server with no local account</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Using the OS media to recover a local account
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 27, 2025</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I had to re-IP a couple of remote servers last night, as our organization changed the network scheme at the site. In the process, I managed to mistype the network portion of the address - typing &lsquo;10.80.11.173&rsquo; instead of &lsquo;10.81.11.187&rsquo; - for both the IP and the gateway. That left me with a server that was connected to the network, but unreachable. I logged into the iDRAC and launched the console, but the local credentials stored in our vault weren&rsquo;t correct, and domain credentials didn&rsquo;t work because:</p>
+<ul>
+<li>there was no reachable AD controller to authenticate them, AND</li>
+<li>our organization uses a GPO to block cached credentials</li>
+</ul>
+<p>I then tried <a class="link" href="https://pogostick.net/~pnh/ntpasswd/"  target="_blank" rel="noopener"
+    >ntpasswd</a>, an excellent (if somewhat dated) utility that can reset local user passwords, add users to the administrators group, and unlock\enable accounts including the built-in administrator account. I downloaded the ISO, mounted it as virtual media, selected it from the UEFI boot sequence (press F11 when prompted) and booted from it. After about 30 seconds, the server responded with a notice that the boot media wasn&rsquo;t valid.</p>
+<p>I decided that I&rsquo;d have to use the utilman.exe trick - basically, replace the utilman.exe file with a copy of cmd.exe so that when I click the accessibility button on the login screen, a command prompt will load.<br>
+I connected the iDRAC virtual media to the Windows 2008 R2 (x64).iso on my laptop, then rebooted the server. When the BIOS boot screen appeared, I pressed F11 and selected &lsquo;virtual disc&rsquo; from the UEFI boot choices; when prompted to &lsquo;press any key to boot from this CD/DVD&rsquo;, I did. The Dell server started loading the Windows setup program, which went much faster than I anticipated, considering it&rsquo;s a 2.9GB image and I was remotely connected to a site several timezones away. I clicked on System Recovery Options from the first GUI screen, which will let me access a command prompt.</p>
+<p>DENIED! &ldquo;This version of System Recovery Options is not compatible with the version of Windows that you are trying to repair. Try using a recovery disk that is compatible with this version of Windows.&rdquo; Um, I was using the correct recovery disk. A quick search revealed that this message is due to the setup program not being able to find the Windows installation&hellip; because drivers for the RAID controller aren&rsquo;t included on the Windows DVD. Leaving that error message on the screen, I looked for the drivers.<br>
+I went to the Dell site and downloaded drivers for the PERC H710 mini. After extracting them, I used powerISO to create an ISO image of the files and directories. Back in the setup GUI, I started a Windows install. NOTE: I did not re-install the OS! After picking the OS version to install (Windows 2008 Enterprise with GUI), I accepted the EULA,  clicked <em>Custom Install</em>, then clicked &lsquo;Add Drivers&rsquo;. At this screen I unmounted the Windows.iso, and mounted my drivers.iso via. the Virtual Media option in iDRAC. I browsed to the virtual DVD, and selected my driver before clicking NEXT. Windows was then able to correctly mount/discover the drives attached to the RAID controller. <em>DO NOT CLICK NEXT</em>* or you&rsquo;ll start installing overtop of your existing installation. Use the blue back arrow in the GUI to go back a few screens (just to be safe), then click the X in the upper right to close the setup program. At this point, I was back at the first screen, when I could choose to &lsquo;Repair your Computer&rsquo;. This time, Windows presented me with options to repair, as it could find my Windows installation. I picked &lsquo;Use Recovery Tools&hellip;.&rsquo;, then clicked through until I could load &lsquo;Command Prompt&rsquo; to replace utilman with cmd.exe</p>
+<pre tabindex="0"><code>X:\Sources&gt; g:
+G:\&gt; cd windows\system32
+G:\Windows\System32&gt; copy utilman.exe utilman.exe.bak
+    1 file(s) copied.
+G:\Windows\System32&gt; copy cmd.exe utilman.exe
+    1 file(s) copied.
+</code></pre><p>At this point, I rebooted, unmounted the Virtual Media and let the server come up normally. At the login screen, I clicked on the Accessibility icon, and a command prompt loaded. Success!
+<!-- raw HTML omitted -->
+<img src="/img/accessibility.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Accessibility/Ease-of-Use Icon"
+	
+	
+></p>
+<p>Now, I needed to give myself administrator access. I decided to create a new user and add it to the Administrators group, just in case the local administrator account is used by a process - I don&rsquo;t want to reset the password and cause an outage!</p>
+<pre tabindex="0"><code>C:\Windows\System32&gt; net user /add greg *
+The command completed successfully.
+C:\Windows\System32&gt; net localgroup administrators greg /add
+The command completed successfully.
+</code></pre><p>I logged in with my new account and fixed the IP typo. After the server started responding via. ping, I logged in via. Remote Desktop and a domain account, then deleted my temporary administrative account &lsquo;greg&rsquo;.</p>
+<h2 id="references">References
+</h2><p>A site I visited when trying to figure this out was:<br>
+<a class="link" href="https://www.kettlewell.it/this-version-of-system-recovery-options-is-not-compatible/"  target="_blank" rel="noopener"
+    >This version of System Recovery Options is not compatible with this version of windows</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/windows/">Windows</a>
+        
+            <a href="/tags/idrac/">Idrac</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

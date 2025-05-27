@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Pi 5 from unboxing to configured and patched">
+<title>Setting up a new Raspberry Pi 5</title>
+
+<link rel='canonical' href='https://gbeifuss.github.io/p/setting-up-a-new-raspberry-pi-5/'>
+
+<link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Setting up a new Raspberry Pi 5">
+<meta property='og:description' content="Pi 5 from unboxing to configured and patched">
+<meta property='og:url' content='https://gbeifuss.github.io/p/setting-up-a-new-raspberry-pi-5/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='pi' /><meta property='article:published_time' content='2025-05-22T12:50:59-04:00'/><meta property='article:modified_time' content='2025-05-22T12:50:59-04:00'/>
+<meta name="twitter:title" content="Setting up a new Raspberry Pi 5">
+<meta name="twitter:description" content="Pi 5 from unboxing to configured and patched">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/setting-up-a-new-raspberry-pi-5/">Setting up a new Raspberry Pi 5</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Pi 5 from unboxing to configured and patched
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 22, 2025</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I recently received a Rasberry Pi5 (via. <a class="link" href="www.canakit.com" >Canakit</a> through an <a class="link" href="www.auvik.com" >Auvik</a> trial), so I had to go through the process of getting it setup.</p>
+<ol>
+<li>Install the hardware. Assemble all the components correctly.</li>
+<li>Use my Windows 11 laptop to download/run the latest version of <a class="link" href="https://downloads.raspberrypi.org/imager/imager_latest.exe"  target="_blank" rel="noopener"
+    >Raspberry Pi&rsquo;s official imager</a>.</li>
+</ol>
+<ul>
+<li>Select the PiOS x64 headless, as I&rsquo;m going to use this as a server, not a day-to-day workstation (with a monitor).</li>
+<li>use ssh-keygen on my Windows 11 laptop to create private/public key for Pi5. I kept the default key location, which was <code>c:\users\greg\.ssh\</code>.</li>
+<li>add name, wifi &amp; ssh settings to image</li>
+<li>flash the image to the microSD card. My laptop has a microSD port, which made it easy to flash without any adapters.</li>
+</ul>
+<ol start="3">
+<li>Create a DHCP reservation for the Pi on my home network. This way, I know the IP that it&rsquo;ll get, plus I can use the hostname to refer to it, not just the IP.</li>
+<li>Insert the microSD card in the Pi, connect all external Pi cables, and power on</li>
+<li>Ping &lsquo;pi5&rsquo; until it starts replying, showing that it&rsquo;s booted properly. Open an SSH session from Terminal. The SSH keys that were imported into the setup program should allow you to seamlessly connect.</li>
+</ol>
+<ul>
+<li>Patch the OS:</li>
+</ul>
+<pre tabindex="0"><code>greg@pi5:~ $ sudo apt update &amp;&amp; sudo apt full-upgrade
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian-security bookworm-security InRelease
+Hit:3 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:4 http://archive.raspberrypi.com/debian bookworm InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Calculating upgrade... Done
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+</code></pre><ul>
+<li>Check that the firmware is fully up-to-date, and patch it:</li>
+</ul>
+<pre tabindex="0"><code>greg@pi5:~ $ sudo rpi-eeprom-update
+*** UPDATE AVAILABLE ***
+
+Run &#34;sudo rpi-eeprom-update -a&#34; to install this update now.
+
+To configure the bootloader update policy run &#34;sudo raspi-config&#34;
+
+BOOTLOADER: update available
+   CURRENT: Mon 23 Sep 13:02:56 UTC 2024 (1727096576)
+    LATEST: Mon 10 Mar 17:10:37 UTC 2025 (1741626637)
+   RELEASE: default (/usr/lib/firmware/raspberrypi/bootloader-2712/default)
+            Use raspi-config to change the release.
+greg@pi5:~ $ sudo raspi-config
+*** CREATED UPDATE /usr/lib/firmware/raspberrypi/bootloader-2712//latest/pieeprom-2025-03-19.bin  ***
+
+   CURRENT: Mon 23 Sep 13:02:56 UTC 2024 (1727096576)
+    UPDATE: Wed 19 Mar 13:41:26 UTC 2025 (1742391686)
+    BOOTFS: /boot/firmware
+&#39;/tmp/tmp.CjIIzhsHuR&#39; -&gt; &#39;/boot/firmware/pieeprom.upd&#39;
+
+UPDATING bootloader. This could take up to a minute. Please wait
+
+*** Do not disconnect the power until the update is complete ***
+
+If a problem occurs then the Raspberry Pi Imager may be used to create
+a bootloader rescue SD card image which restores the default bootloader image.
+
+flashrom -p linux_spi:dev=/dev/spidev10.0,spispeed=16000 -w /boot/firmware/pieeprom.upd
+Verifying update
+VERIFY: SUCCESS
+UPDATE SUCCESSFUL
+greg@pi5:~ $
+</code></pre><h2 id="references">References
+</h2><p>Some articles I referenced when figuring this out were:</p>
+<p><a class="link" href="https://www.picocluster.com/blogs/picocluster-dev/how-to-install-docker-on-a-raspberry-pi-5-a-step-by-step-guide"  target="_blank" rel="noopener"
+    >https://www.picocluster.com/blogs/picocluster-dev/how-to-install-docker-on-a-raspberry-pi-5-a-step-by-step-guide</a><br>
+<a class="link" href="https://pimylifeup.com/raspberry-pi-pi-hole/"  target="_blank" rel="noopener"
+    >https://pimylifeup.com/raspberry-pi-pi-hole/</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/pi/">Pi</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

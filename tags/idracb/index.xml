@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>IDRACB on Greg Beifuss</title>
+        <link>http://localhost:1313/tags/idracb/</link>
+        <description>Recent content in IDRACB on Greg Beifuss</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 27 May 2025 07:17:18 -0400</lastBuildDate><atom:link href="http://localhost:1313/tags/idracb/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Using iDRAC to recover access to a disconnected Windows server with no local account</title>
+        <link>http://localhost:1313/p/using-idrac-to-recover-access-to-a-disconnected-windows-server-with-no-local-account/</link>
+        <pubDate>Tue, 27 May 2025 07:17:18 -0400</pubDate>
+        
+        <guid>http://localhost:1313/p/using-idrac-to-recover-access-to-a-disconnected-windows-server-with-no-local-account/</guid>
+        <description>&lt;p&gt;I had to re-IP a couple of remote servers last night, as our organization changed the network scheme at the site. In the process, I managed to mistype the network portion of the address - typing &amp;lsquo;10.80.11.173&amp;rsquo; instead of &amp;lsquo;10.81.11.187&amp;rsquo; - for both the IP and the gateway. That left me with a server that was connected to the network, but unreachable. I logged into the iDRAC and launched the console, but the local credentials stored in our vault weren&amp;rsquo;t correct, and domain credentials didn&amp;rsquo;t work because:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;there was no reachable AD controller to authenticate them, AND&lt;/li&gt;
+&lt;li&gt;our organization uses a GPO to block cached credentials&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I then tried &lt;a class=&#34;link&#34; href=&#34;https://pogostick.net/~pnh/ntpasswd/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ntpasswd&lt;/a&gt;, an excellent (if somewhat dated) utility that can reset local user passwords, add users to the administrators group, and unlock\enable accounts including the built-in administrator account. I downloaded the ISO, mounted it as virtual media, selected it from the UEFI boot sequence (press F11 when prompted) and booted from it. After about 30 seconds, the server responded with a notice that the boot media wasn&amp;rsquo;t valid.&lt;/p&gt;
+&lt;p&gt;I decided that I&amp;rsquo;d have to use the utilman.exe trick - basically, replace the utilman.exe file with a copy of cmd.exe so that when I click the accessibility button on the login screen, a command prompt will load.&lt;br&gt;
+I connected the iDRAC virtual media to the Windows 2008 R2 (x64).iso on my laptop, then rebooted the server. When the BIOS boot screen appeared, I pressed F11 and selected &amp;lsquo;virtual disc&amp;rsquo; from the UEFI boot choices; when prompted to &amp;lsquo;press any key to boot from this CD/DVD&amp;rsquo;, I did. The Dell server started loading the Windows setup program, which went much faster than I anticipated, considering it&amp;rsquo;s a 2.9GB image and I was remotely connected to a site several timezones away. I clicked on System Recovery Options from the first GUI screen, which will let me access a command prompt.&lt;/p&gt;
+&lt;p&gt;DENIED! &amp;ldquo;This version of System Recovery Options is not compatible with the version of Windows that you are trying to repair. Try using a recovery disk that is compatible with this version of Windows.&amp;rdquo; Um, I was using the correct recovery disk. A quick search revealed that this message is due to the setup program not being able to find the Windows installation&amp;hellip; because drivers for the RAID controller aren&amp;rsquo;t included on the Windows DVD. Leaving that error message on the screen, I looked for the drivers.&lt;br&gt;
+I went to the Dell site and downloaded drivers for the PERC H710 mini. After extracting them, I used powerISO to create an ISO image of the files and directories. Back in the setup GUI, I started a Windows install. NOTE: I did not re-install the OS! After picking the OS version to install (Windows 2008 Enterprise with GUI), I accepted the EULA,  clicked &lt;em&gt;Custom Install&lt;/em&gt;, then clicked &amp;lsquo;Add Drivers&amp;rsquo;. At this screen I unmounted the Windows.iso, and mounted my drivers.iso via. the Virtual Media option in iDRAC. I browsed to the virtual DVD, and selected my driver before clicking NEXT. Windows was then able to correctly mount/discover the drives attached to the RAID controller. &lt;em&gt;DO NOT CLICK NEXT&lt;/em&gt;* or you&amp;rsquo;ll start installing overtop of your existing installation. Use the blue back arrow in the GUI to go back a few screens (just to be safe), then click the X in the upper right to close the setup program. At this point, I was back at the first screen, when I could choose to &amp;lsquo;Repair your Computer&amp;rsquo;. This time, Windows presented me with options to repair, as it could find my Windows installation. I picked &amp;lsquo;Use Recovery Tools&amp;hellip;.&amp;rsquo;, then clicked through until I could load &amp;lsquo;Command Prompt&amp;rsquo; to replace utilman with cmd.exe&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;X:\Sources&amp;gt; g:
+G:\&amp;gt; cd windows\system32
+G:\Windows\System32&amp;gt; copy utilman.exe utilman.exe.bak
+    1 file(s) copied.
+G:\Windows\System32&amp;gt; copy cmd.exe utilman.exe
+    1 file(s) copied.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;At this point, I rebooted, unmounted the Virtual Media and let the server come up normally. At the login screen, I clicked on the Accessibility icon, and a command prompt loaded. Success!&lt;/p&gt;
+&lt;p&gt;Now, I needed to give myself administrator access. I decided to create a new user and add it to the Administrators group, just in case the local administrator account is used by a process - I don&amp;rsquo;t want to reset the password and cause an outage!&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\Windows\System32&amp;gt; net user /add greg *
+The command completed successfully.
+C:\Windows\System32&amp;gt; net localgroup administrators greg /add
+The command completed successfully.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I logged in with my new account and fixed the IP typo. After the server started responding via. ping, I logged in via. Remote Desktop and a domain account, then deleted my temporary administrative account &amp;lsquo;greg&amp;rsquo;.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
