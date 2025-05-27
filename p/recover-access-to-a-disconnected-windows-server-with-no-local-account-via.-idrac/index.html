@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Sharing my USB printer/scanner over the network">
-<title>Setup a Raspberry Pi as a USB-over-IP Server</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Using the OS media and utilman.exe to remotely recover access to a local Windows account... the long way">
+<title>Recover access to a disconnected Windows server with no local account via. iDRAC</title>
 
-<link rel='canonical' href='https://gbeifuss.github.io/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/'>
+<link rel='canonical' href='https://gbeifuss.github.io/p/recover-access-to-a-disconnected-windows-server-with-no-local-account-via.-idrac/'>
 
-<link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Setup a Raspberry Pi as a USB-over-IP Server">
-<meta property='og:description' content="Sharing my USB printer/scanner over the network">
-<meta property='og:url' content='https://gbeifuss.github.io/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/'>
+<link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Recover access to a disconnected Windows server with no local account via. iDRAC">
+<meta property='og:description' content="Using the OS media and utilman.exe to remotely recover access to a local Windows account... the long way">
+<meta property='og:url' content='https://gbeifuss.github.io/p/recover-access-to-a-disconnected-windows-server-with-no-local-account-via.-idrac/'>
 <meta property='og:site_name' content='Greg Beifuss'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='pi' /><meta property='article:published_time' content='2025-05-22T12:16:52-04:00'/><meta property='article:modified_time' content='2025-05-22T12:16:52-04:00'/>
-<meta name="twitter:title" content="Setup a Raspberry Pi as a USB-over-IP Server">
-<meta name="twitter:description" content="Sharing my USB printer/scanner over the network">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='windows' /><meta property='article:tag' content='idrac' /><meta property='article:published_time' content='2025-05-27T07:17:18-04:00'/><meta property='article:modified_time' content='2025-05-27T07:17:18-04:00'/>
+<meta name="twitter:title" content="Recover access to a disconnected Windows server with no local account via. iDRAC">
+<meta name="twitter:description" content="Using the OS media and utilman.exe to remotely recover access to a local Windows account... the long way">
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -179,12 +179,12 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/setup-a-raspberry-pi-as-a-usb-over-ip-server/">Setup a Raspberry Pi as a USB-over-IP Server</a>
+            <a href="/p/recover-access-to-a-disconnected-windows-server-with-no-local-account-via.-idrac/">Recover access to a disconnected Windows server with no local account via. iDRAC</a>
         </h2>
     
         
         <h3 class="article-subtitle">
-            Sharing my USB printer/scanner over the network
+            Using the OS media and utilman.exe to remotely recover access to a local Windows account... the long way
         </h3>
         
     </div>
@@ -205,7 +205,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">May 22, 2025</time>
+                <time class="article-time--published">May 27, 2025</time>
             </div>
         
 
@@ -221,115 +221,43 @@
     <section class="article-content">
     
     
-    <p>I recently received a pi5 (through an <a class="link" href="www.auvik.com" >Auvik</a> trial), and I&rsquo;ve had great fun <a class="link" href="https://gbeifuss.github.io/p/setting-up-a-new-raspberry-pi-5/" >getting it setup</a>. Right now I have it running CUPS and pihole, but I decided that I want to turbocharge CUPS - we have a Brother DCP-7040 USB printer/scanner, and while CUPS lets me print over the network, I really want to be able to access the <em>scanner</em> over the network. Otherwise, I have to disconnect the device from the Pi everytime I want to scan, then hook it back up again afterwards. Ugh!</p>
-<p>I discovered that what I want is USB-over-IP capability, so I found a github project that will install a client portion on my Pi, and a client on my Windows 11 laptop: <a class="link" href="https://github.com/vadimgrn/usbip-win2"  target="_blank" rel="noopener"
-    >https://github.com/vadimgrn/usbip-win2</a></p>
-<p>Let&rsquo;s get to installing! First of all, make sure that the printer is attached to the pi and turned on.</p>
-<p>Install required packages for Raspberry Pi:</p>
-<pre tabindex="0"><code class="language-linux" data-lang="linux">greg@pi5:~ $ sudo apt install usbip hwdata usbutils
-Reading package lists... Done
-Building dependency tree... Done
-Reading state information... Done
-usbutils is already the newest version (1:014-1+deb12u1).
-The following NEW packages will be installed:
-  hwdata usb.ids usbip
-0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
-Need to get 1,205 kB of archives.
-After this operation, 1,978 kB of additional disk space will be used.
-Get:1 http://deb.debian.org/debian bookworm/main arm64 usb.ids all 2024.07.04-0+deb12u1 [208 kB]
-Get:2 http://deb.debian.org/debian bookworm/main arm64 hwdata all 0.368-1 [26.5 kB]
-Get:3 http://archive.raspberrypi.com/debian bookworm/main arm64 usbip arm64 1:2.0+6.12.25-1+rpt1 [970 kB]
-Fetched 1,205 kB in 1s (1,217 kB/s)
-Selecting previously unselected package usb.ids.
-(Reading database ... 58667 files and directories currently installed.)
-Preparing to unpack .../usb.ids_2024.07.04-0+deb12u1_all.deb ...
-Unpacking usb.ids (2024.07.04-0+deb12u1) ...
-Selecting previously unselected package hwdata.
-Preparing to unpack .../hwdata_0.368-1_all.deb ...
-Unpacking hwdata (0.368-1) ...
-Selecting previously unselected package usbip.
-Preparing to unpack .../usbip_1%3a2.0+6.12.25-1+rpt1_arm64.deb ...
-Unpacking usbip (1:2.0+6.12.25-1+rpt1) ...
-Setting up usb.ids (2024.07.04-0+deb12u1) ...
-Setting up usbip (1:2.0+6.12.25-1+rpt1) ...
-Setting up hwdata (0.368-1) ...
-Processing triggers for man-db (2.11.2-2) ...
-</code></pre><p>Load modules and run the daemon:</p>
-<pre tabindex="0"><code>greg@pi5:~ $ sudo modprobe -a usbip-core usbip-host
-greg@pi5:~ $ sudo usbipd -D
-</code></pre><p>List attached USB devices:</p>
-<pre tabindex="0"><code>greg@pi5:~ $ lsusb
-Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 003 Device 004: ID 04f9:01e9 Brother Industries, Ltd DCP-7040
-Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-greg@pi5:~ $ usbip list -l
- - busid 3-2 (04f9:01e9)
-   Brother Industries, Ltd : DCP-7040 (04f9:01e9)
-</code></pre><p>Bind to the printer:</p>
-<pre tabindex="0"><code>greg@pi5:~ $ sudo usbip bind -b 3-2
-usbip: info: bind device on busid 3-2: complete
-</code></pre><p>Now, configure my Windows 11 laptop!</p>
-<p>Download and install the latest client <a class="link" href="https://github.com/vadimgrn/usbip-win2/releases/download/v.0.9.7.2/USBip-0.9.7.2-x64-release.exe"  target="_blank" rel="noopener"
-    >0.9.7.2</a></p>
-<p>List the USB-over-IP devices available on the Pi:</p>
-<pre tabindex="0"><code>C:\Users\Greg&gt;usbip list -r pi5
-Exportable USB devices
-======================
-    3-2    : Brother Industries, Ltd : DCP-7040 (04f9:01e9)
-           : /sys/devices/platform/axi/1000120000.pcie/1f00300000.usb/xhci-hcd.1/usb3/3-2
-           : (Defined at Interface level) (00/00/00)
-</code></pre><p>Finally, attach the remote device to your computer. The USB-over-IP driver will make it look like a local device attached to a USB port:</p>
-<pre tabindex="0"><code>C:\Users\Greg&gt;usbip.exe attach -r pi5 -b 3-2
-succesfully attached to port 1
-</code></pre><p>Of course, the problem is that whenever the printer is powered off, the device obviously is unreachable, but when it&rsquo;s powered back on, Linux doesn&rsquo;t automatically bind it again. Fortunately, we can use <code>udev</code> to run an action whenever it detects the printer.</p>
-<p>First, use dmesg to find out where the printer is connected:</p>
-<pre tabindex="0"><code>greg@pi5:~ $ dmesg
-...
-[708387.363296] veth50c9534 (unregistering): left promiscuous mode
-[708387.363299] docker0: port 1(veth50c9534) entered disabled state
-[708430.656914] usb 3-2: new full-speed USB device number 6 using xhci-hcd
-[708430.809591] usb 3-2: New USB device found, idVendor=04f9, idProduct=01e9, bcdDevice= 1.00
-[708430.809596] usb 3-2: New USB device strings: Mfr=0, Product=0, SerialNumber=3
-[708430.809599] usb 3-2: SerialNumber: 000F8N333004
-[708430.814635] usblp 3-2:1.0: usblp0: USB Bidirectional printer dev 6 if 0 alt 0 proto 2 vid 0x04F9 pid 0x01E9
-[708447.412092] docker0: port 1(veth353fe11) entered blocking state
-...
-</code></pre><p>My printer is connected to <code>/dev/usb/lp0</code>, so let&rsquo;s grab some information from that device. I&rsquo;ll find the serial number that it&rsquo;s reporting, which I&rsquo;ll use to create a rule.</p>
-<pre tabindex="0"><code>greg@pi5:~ $ udevadm info -a -p  $(udevadm info -q path -n /dev/usb/lp0) | grep serial
-    ATTRS{serial}==&#34;000F8N333004&#34;
-    ATTRS{serial}==&#34;xhci-hcd.1&#34;
-</code></pre><p>The serial number is <code>000F8N333004</code>. Let&rsquo;s see which udev rules exist on my Pi already:</p>
-<pre tabindex="0"><code>greg@pi5:~ $ ls /etc/udev/rules.d -al
-total 16
-drwxr-xr-x 2 root root 4096 May 22 15:58 .
-drwxr-xr-x 4 root root 4096 May  6 09:23 ..
--rw-r--r-- 1 root root 2535 Apr 23 09:09 99-com.rules
-</code></pre><p>Only a rule with ID #99. I&rsquo;ll create a rule to run before Rule 99: <code>sudo nano /etc/udev/rules.d/20-brother.rules</code></p>
-<p>I only need 1 line for the rule: <code>ACTION==&quot;add&quot;, ATTRS{serial}==&quot;000F8N333004&quot;, RUN+=&quot;/bin/sh -c 'sudo usbip bind -b 3-2'&quot;</code></p>
-<p>Basically, everytime udev sees that a device with Serial=000F8N333004 is ADDed, run the command &lsquo;sudo usbip bind -b 3-2&rsquo;, which will use usbip to bind to busid 3-2.
-I tested this a couple of times by turning the printer off, then on, and it&rsquo;s properly bound each time.</p>
-<p>Now, I pair this with a powershell script on my laptop that runs every few minutes via. Task Scheduler. The only hiccup that I&rsquo;ve found is that full-screen applications (like DOSBox or Dawn Of War) exit full-screen mode when the script runs.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$output</span> <span class="p">=</span> <span class="p">&amp;</span> <span class="s2">&#34;C:\Program Files\USBip\usbip.exe&#34;</span> <span class="n">list</span> <span class="n">-r</span> <span class="n">pi5</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nv">$targetLine</span> <span class="p">=</span> <span class="s2">&#34;    3-2    : Brother Industries, Ltd : DCP-7040 (04f9:01e9)&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">foreach</span> <span class="p">(</span><span class="nv">$line</span> <span class="k">in</span> <span class="nv">$output</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nv">$line</span> <span class="o">-eq</span> <span class="nv">$targetLine</span><span class="p">)</span> <span class="p">{&amp;</span> <span class="s2">&#34;C:\Program Files\USBip\usbip.exe&#34;</span> <span class="n">attach</span> <span class="n">-r</span> <span class="n">pi5</span> <span class="n">-b</span> <span class="mf">3</span><span class="p">-</span><span class="mf">2</span> <span class="p">;</span> <span class="k">break</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Whenever the printer is turned on, within 5 minutes my laptop will attach it and it&rsquo;ll appear as a directly-connected USB printer/scanner.</p>
-<pre tabindex="0"><code>C:\Users\Greg\OneDrive&gt;usbip port
-Imported USB devices
-====================
-Port 01: device in use at Full Speed(12Mbps)
-         Brother Industries, Ltd : DCP-7040 (04f9:01e9)
-           -&gt; usbip://pi5:3240/3-2
-           -&gt; remote bus/dev 003/011
-</code></pre><h2 id="references">References
-</h2><p>An article I referenced when figuring this out was:</p>
-<p><a class="link" href="https://news.sparkfun.com/2332"  target="_blank" rel="noopener"
-    >https://news.sparkfun.com/2332</a></p>
+    <p>I had to re-IP a couple of remote servers last night, as our organization changed the network scheme at the site. In the process, I managed to mistype the network portion of the address - typing &lsquo;10.80.11.173&rsquo; instead of &lsquo;10.81.11.187&rsquo; - for both the IP and the gateway. That left me with a server that was connected to the network, but unreachable. I logged into the iDRAC and launched the console, but the local credentials stored in our vault weren&rsquo;t correct, and domain credentials didn&rsquo;t work because:</p>
+<ul>
+<li>there was no reachable AD controller to authenticate them, AND</li>
+<li>our organization uses a GPO to block cached credentials</li>
+</ul>
+<p>In cases like this, I usually use <a class="link" href="https://pogostick.net/~pnh/ntpasswd/"  target="_blank" rel="noopener"
+    >ntpasswd</a>, an excellent (if somewhat dated) utility that can reset local user passwords, add users to the administrators group, and unlock\enable accounts including the built-in administrator account. I downloaded the ISO, mounted it as virtual media, selected it from the UEFI boot sequence (press F11 when prompted) and booted from it. After about 30 seconds, the server responded with a notice that the boot media wasn&rsquo;t valid. Time for Plan B!</p>
+<p>I decided that I&rsquo;d have to use the utilman.exe trick - basically, replace the utilman.exe file with a copy of cmd.exe so that when I click the accessibility button on the login screen, a command prompt will load.<br>
+I connected the iDRAC virtual media to the Windows 2008 R2 (x64).iso on my laptop, then rebooted the server. When the BIOS boot screen appeared, I pressed F11 and selected &lsquo;virtual disc&rsquo; from the UEFI boot choices; when prompted to &lsquo;press any key to boot from this CD/DVD&rsquo;, I did. The Dell server started loading the Windows setup program, which went much faster than I anticipated, considering it&rsquo;s a 2.9GB image and I was remotely connected to a site several timezones away. I clicked on System Recovery Options from the first GUI screen, which will let me access a command prompt.</p>
+<p>DENIED! &ldquo;This version of System Recovery Options is not compatible with the version of Windows that you are trying to repair. Try using a recovery disk that is compatible with this version of Windows.&rdquo; Um, I was using the correct recovery disk. A quick search revealed that this message is due to the setup program not being able to find the Windows installation&hellip; because drivers for the RAID controller aren&rsquo;t included on the Windows DVD. Leaving that error message on the screen, I looked for the drivers.<br>
+I went to the Dell site and downloaded drivers for the PERC H710 mini. After extracting them, I used powerISO to create an ISO image of the files and directories. Back in the setup GUI, I started a Windows install. NOTE: I did not re-install the OS! After picking the OS version to install (Windows 2008 Enterprise with GUI), I accepted the EULA,  clicked <em>Custom Install</em>, then clicked &lsquo;Add Drivers&rsquo;. At this screen I unmounted the Windows.iso, and mounted my drivers.iso via. the Virtual Media option in iDRAC. I browsed to the virtual DVD, and selected my driver before clicking NEXT. Windows was then able to correctly mount/discover the drives attached to the RAID controller. <strong>DO NOT CLICK NEXT</strong> or you&rsquo;ll start installing overtop of your existing installation. Use the blue back arrow in the GUI to go back a few screens (just to be safe), then click the X in the upper right to close the setup program. At this point, I was back at the first screen, when I could choose to &lsquo;Repair your Computer&rsquo;. This time, Windows presented me with options to repair, as it could find my Windows installation. I picked &lsquo;Use Recovery Tools&hellip;.&rsquo;, then clicked through until I could load &lsquo;Command Prompt&rsquo; to replace utilman with cmd.exe</p>
+<pre tabindex="0"><code>X:\Sources&gt; g:
+G:\&gt; cd windows\system32
+G:\Windows\System32&gt; copy utilman.exe utilman.exe.bak
+    1 file(s) copied.
+G:\Windows\System32&gt; copy cmd.exe utilman.exe
+    1 file(s) copied.
+</code></pre><p>At this point, I rebooted, unmounted the Virtual Media and let the server come up normally. At the login screen, I clicked on the Accessibility icon <img src="/img/accessibility.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Accessibility/Ease-of-Use Icon"
+	
+	
+>, and a command prompt loaded. Success!</p>
+<p>Now, I needed to give myself administrator access. I decided to create a new user and add it to the Administrators group, just in case the local administrator account is used by a process - I don&rsquo;t want to reset the password and cause an outage!</p>
+<pre tabindex="0"><code>C:\Windows\System32&gt; net user /add greg *
+The command completed successfully.
+C:\Windows\System32&gt; net localgroup administrators greg /add
+The command completed successfully.
+</code></pre><p>I logged in with my new account and fixed the IP typo. After the server started responding via. ping, I logged in via. Remote Desktop and a domain account, then deleted my temporary administrative account &lsquo;greg&rsquo;.</p>
+<h2 id="references">References
+</h2><p>A site I visited when trying to figure this out was:<br>
+<a class="link" href="https://www.kettlewell.it/this-version-of-system-recovery-options-is-not-compatible/"  target="_blank" rel="noopener"
+    >This version of System Recovery Options is not compatible with this version of windows</a></p>
 
 </section>
 
@@ -338,7 +266,9 @@ Port 01: device in use at Full Speed(12Mbps)
     
     <section class="article-tags">
         
-            <a href="/tags/pi/">Pi</a>
+            <a href="/tags/windows/">Windows</a>
+        
+            <a href="/tags/idrac/">Idrac</a>
         
     </section>
 

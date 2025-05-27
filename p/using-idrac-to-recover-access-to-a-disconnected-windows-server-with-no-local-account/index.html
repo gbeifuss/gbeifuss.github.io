@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Using the OS media to recover a local account">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Using the OS media and utilman.exe to remotely recover access to a local Windows account">
 <title>Using iDRAC to recover access to a disconnected Windows server with no local account</title>
 
 <link rel='canonical' href='http://localhost:1313/p/using-idrac-to-recover-access-to-a-disconnected-windows-server-with-no-local-account/'>
 
 <link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Using iDRAC to recover access to a disconnected Windows server with no local account">
-<meta property='og:description' content="Using the OS media to recover a local account">
+<meta property='og:description' content="Using the OS media and utilman.exe to remotely recover access to a local Windows account">
 <meta property='og:url' content='http://localhost:1313/p/using-idrac-to-recover-access-to-a-disconnected-windows-server-with-no-local-account/'>
 <meta property='og:site_name' content='Greg Beifuss'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='windows' /><meta property='article:tag' content='idrac' /><meta property='article:published_time' content='2025-05-27T07:17:18-04:00'/><meta property='article:modified_time' content='2025-05-27T07:17:18-04:00'/>
 <meta name="twitter:title" content="Using iDRAC to recover access to a disconnected Windows server with no local account">
-<meta name="twitter:description" content="Using the OS media to recover a local account">
+<meta name="twitter:description" content="Using the OS media and utilman.exe to remotely recover access to a local Windows account">
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
@@ -184,7 +184,7 @@
     
         
         <h3 class="article-subtitle">
-            Using the OS media to recover a local account
+            Using the OS media and utilman.exe to remotely recover access to a local Windows account
         </h3>
         
     </div>
@@ -231,16 +231,14 @@
 <p>I decided that I&rsquo;d have to use the utilman.exe trick - basically, replace the utilman.exe file with a copy of cmd.exe so that when I click the accessibility button on the login screen, a command prompt will load.<br>
 I connected the iDRAC virtual media to the Windows 2008 R2 (x64).iso on my laptop, then rebooted the server. When the BIOS boot screen appeared, I pressed F11 and selected &lsquo;virtual disc&rsquo; from the UEFI boot choices; when prompted to &lsquo;press any key to boot from this CD/DVD&rsquo;, I did. The Dell server started loading the Windows setup program, which went much faster than I anticipated, considering it&rsquo;s a 2.9GB image and I was remotely connected to a site several timezones away. I clicked on System Recovery Options from the first GUI screen, which will let me access a command prompt.</p>
 <p>DENIED! &ldquo;This version of System Recovery Options is not compatible with the version of Windows that you are trying to repair. Try using a recovery disk that is compatible with this version of Windows.&rdquo; Um, I was using the correct recovery disk. A quick search revealed that this message is due to the setup program not being able to find the Windows installation&hellip; because drivers for the RAID controller aren&rsquo;t included on the Windows DVD. Leaving that error message on the screen, I looked for the drivers.<br>
-I went to the Dell site and downloaded drivers for the PERC H710 mini. After extracting them, I used powerISO to create an ISO image of the files and directories. Back in the setup GUI, I started a Windows install. NOTE: I did not re-install the OS! After picking the OS version to install (Windows 2008 Enterprise with GUI), I accepted the EULA,  clicked <em>Custom Install</em>, then clicked &lsquo;Add Drivers&rsquo;. At this screen I unmounted the Windows.iso, and mounted my drivers.iso via. the Virtual Media option in iDRAC. I browsed to the virtual DVD, and selected my driver before clicking NEXT. Windows was then able to correctly mount/discover the drives attached to the RAID controller. <em>DO NOT CLICK NEXT</em>* or you&rsquo;ll start installing overtop of your existing installation. Use the blue back arrow in the GUI to go back a few screens (just to be safe), then click the X in the upper right to close the setup program. At this point, I was back at the first screen, when I could choose to &lsquo;Repair your Computer&rsquo;. This time, Windows presented me with options to repair, as it could find my Windows installation. I picked &lsquo;Use Recovery Tools&hellip;.&rsquo;, then clicked through until I could load &lsquo;Command Prompt&rsquo; to replace utilman with cmd.exe</p>
+I went to the Dell site and downloaded drivers for the PERC H710 mini. After extracting them, I used powerISO to create an ISO image of the files and directories. Back in the setup GUI, I started a Windows install. NOTE: I did not re-install the OS! After picking the OS version to install (Windows 2008 Enterprise with GUI), I accepted the EULA,  clicked <em>Custom Install</em>, then clicked &lsquo;Add Drivers&rsquo;. At this screen I unmounted the Windows.iso, and mounted my drivers.iso via. the Virtual Media option in iDRAC. I browsed to the virtual DVD, and selected my driver before clicking NEXT. Windows was then able to correctly mount/discover the drives attached to the RAID controller. <strong>DO NOT CLICK NEXT</strong> or you&rsquo;ll start installing overtop of your existing installation. Use the blue back arrow in the GUI to go back a few screens (just to be safe), then click the X in the upper right to close the setup program. At this point, I was back at the first screen, when I could choose to &lsquo;Repair your Computer&rsquo;. This time, Windows presented me with options to repair, as it could find my Windows installation. I picked &lsquo;Use Recovery Tools&hellip;.&rsquo;, then clicked through until I could load &lsquo;Command Prompt&rsquo; to replace utilman with cmd.exe</p>
 <pre tabindex="0"><code>X:\Sources&gt; g:
 G:\&gt; cd windows\system32
 G:\Windows\System32&gt; copy utilman.exe utilman.exe.bak
     1 file(s) copied.
 G:\Windows\System32&gt; copy cmd.exe utilman.exe
     1 file(s) copied.
-</code></pre><p>At this point, I rebooted, unmounted the Virtual Media and let the server come up normally. At the login screen, I clicked on the Accessibility icon, and a command prompt loaded. Success!
-<!-- raw HTML omitted -->
-<img src="/img/accessibility.jpg"
+</code></pre><p>At this point, I rebooted, unmounted the Virtual Media and let the server come up normally. At the login screen, I clicked on the Accessibility icon <img src="/img/accessibility.jpg"
 	
 	
 	
@@ -249,7 +247,7 @@ G:\Windows\System32&gt; copy cmd.exe utilman.exe
 		alt="Accessibility/Ease-of-Use Icon"
 	
 	
-></p>
+>, and a command prompt loaded. Success!</p>
 <p>Now, I needed to give myself administrator access. I decided to create a new user and add it to the Administrators group, just in case the local administrator account is used by a process - I don&rsquo;t want to reset the password and cause an outage!</p>
 <pre tabindex="0"><code>C:\Windows\System32&gt; net user /add greg *
 The command completed successfully.
