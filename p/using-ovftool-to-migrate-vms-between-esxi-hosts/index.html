@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/'>
 
-<link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Using ovftool to migrate VMs between ESXi hosts">
+<link rel="stylesheet" href="/scss/style.min.b1a5b48e9268da293f0e82d09fd1299e5ecbd5ea47ba1f408b3687d520ce0c2b.css"><meta property='og:title' content="Using ovftool to migrate VMs between ESXi hosts">
 <meta property='og:description' content="Trying to move VMs from ESXi 5.0 to 7.0">
 <meta property='og:url' content='https://gbeifuss.github.io/p/using-ovftool-to-migrate-vms-between-esxi-hosts/'>
 <meta property='og:site_name' content='Greg Beifuss'>
@@ -16,7 +16,7 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
       <script>
         var doNotTrack = false;
-        if ( false ) {
+        if ( true ) {
           var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
           var doNotTrack = (dnt == "1" || dnt == "yes");
         }
@@ -242,7 +242,7 @@ Error: Found wrong kind of object (Folder). Possible completions are:
   site/
 Completed with errors
 </code></pre><p>Clearly I need to add &lsquo;site/&rsquo; to the destination server path, so that OVFTool knows where to create the file. Note that I need to add &ldquo;host/&rdquo; too:</p>
-<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Enter login information for target vi://destination.server.hostname/
@@ -252,7 +252,7 @@ Error: Found wrong kind of object (Folder). Possible completions are:
   site-vxrail/
 Completed with errors
 </code></pre><p><em>sigh</em> another folder to add to the destination server path. Your path may differ based on the heirarchy of your ESXi cluster. ovftool will continue generating an error about the Folder if you&rsquo;re not at the final path:</p>
-<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host/site-vxrail/
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Enter login information for target vi://destination.server.hostname/
@@ -263,11 +263,11 @@ Error: No network mapping specified. OVF networks:   VM Network. Target networks
 Completed with errors
 </code></pre><p>Oh, this is finally promising!
 I need to add the network mapping to the command, so I pick the appropriate target network (in this case, site-VLAN210)</p>
-<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/ -nw=site-VLAN210
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host/site-vxrail/ -nw=site-VLAN210
 Error: Unexpected option: -nw=site-VLAN210
 Completed with errors
 </code></pre><p>Grrrr&hellip; foiled again by the order of the information I provide. One more time!</p>
-<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 -nw=site-VLAN210 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+<pre tabindex="0"><code>C:\apps\ovftool&gt;ovftool.exe -ds=vxrail-vsan1 -nw=site-VLAN210 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host/site-vxrail/
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Enter login information for target vi://destination.server.hostname/
@@ -326,7 +326,7 @@ C:\apps\ovftool&gt;
         
             2020 - 
         
-        2025 Greg Beifuss
+        2026 Greg Beifuss
     </section>
     
     <section class="powerby">

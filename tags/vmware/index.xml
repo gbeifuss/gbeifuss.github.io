@@ -177,7 +177,7 @@ Error: Found wrong kind of object (Folder). Possible completions are:
   site/
 Completed with errors
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Clearly I need to add &amp;lsquo;site/&amp;rsquo; to the destination server path, so that OVFTool knows where to create the file. Note that I need to add &amp;ldquo;host/&amp;rdquo; too:&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Enter login information for target vi://destination.server.hostname/
@@ -187,7 +187,7 @@ Error: Found wrong kind of object (Folder). Possible completions are:
   site-vxrail/
 Completed with errors
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;em&gt;sigh&lt;/em&gt; another folder to add to the destination server path. Your path may differ based on the heirarchy of your ESXi cluster. ovftool will continue generating an error about the Folder if you&amp;rsquo;re not at the final path:&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host/site-vxrail/
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Enter login information for target vi://destination.server.hostname/
@@ -198,11 +198,11 @@ Error: No network mapping specified. OVF networks:   VM Network. Target networks
 Completed with errors
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Oh, this is finally promising!
 I need to add the network mapping to the command, so I pick the appropriate target network (in this case, site-VLAN210)&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/ -nw=site-VLAN210
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host/site-vxrail/ -nw=site-VLAN210
 Error: Unexpected option: -nw=site-VLAN210
 Completed with errors
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Grrrr&amp;hellip; foiled again by the order of the information I provide. One more time!&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 -nw=site-VLAN210 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://h488735a@global.ds.honeywell.com@destination.server.hostname/site/host/site-vxrail/
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;C:\apps\ovftool&amp;gt;ovftool.exe -ds=vxrail-vsan1 -nw=site-VLAN210 vi://root:password@source.server.hostname/AMT-1800.BuildServer vi://username:password@destination.server.hostname/site/host/site-vxrail/
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Opening VI source: vi://root@ip.address:443/AMT-1800.BuildServer
 Enter login information for target vi://destination.server.hostname/

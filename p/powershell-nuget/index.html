@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="I was issued a new work laptop and had to go about the business of installing all my applications and configuring everything all over again. I use VMWare&rsquo;s PowerCLI cmdlets in Powershell sometimes, so I had to go about reinstalling them:\nPS C:\\Users\\Greg&gt; Install-Module VCF.PowerCLI NuGet provider is required to continue Powershell requires NuGet provider version &#39;2.8.5.201&#39; or newer to interact with NuGet-based repositories. The NuGet provider must be available in &#39;C:\\Program Files\\PacakageManagement\\ProviderAssemblies&#39; or &#39;C:\\Users\\Greg\\AppData\\Local\\PackageManagement\\ProviderAssemblies&#39;. You can also install the NuGet provider by running &#39;Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5..201 -Force&#39;. Doy you want PowerShellGet to install and import the NuGet provider now? [Y] Yes [N] No [S] Suspend [?] Help (default is &#34;Y&#34;): y WARNING: Unable to download from URI &#39;https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll&#39; to &#39;&#39;. PackageManagement\\Install-PackageProvider : Failed to bootstrap provider &#39;https://cdn.oneget.org/providers/nuget-2.8.5.208.package.swidtag&#39;. ... I decided to try downloading the file manually, only to find that it&rsquo;s being blocked by our IT security group at work via. zScaler. Offline installation is one of the great IT downfalls in our current age of cloud/internet delivery - it&rsquo;s often difficult to install software that relies on internet servers (and have dependencies that require internet downloads) unless you go piece by piece.\n">
+<title>Powershell NuGet</title>
+
+<link rel='canonical' href='http://localhost:1313/p/powershell-nuget/'>
+
+<link rel="stylesheet" href="/scss/style.min.cfa5b1b0e78d61c00a14173992a1f3fa3b5c1b9fa34d023de959af564e7b19dd.css"><meta property='og:title' content="Powershell NuGet">
+<meta property='og:description' content="I was issued a new work laptop and had to go about the business of installing all my applications and configuring everything all over again. I use VMWare&rsquo;s PowerCLI cmdlets in Powershell sometimes, so I had to go about reinstalling them:\nPS C:\\Users\\Greg&gt; Install-Module VCF.PowerCLI NuGet provider is required to continue Powershell requires NuGet provider version &#39;2.8.5.201&#39; or newer to interact with NuGet-based repositories. The NuGet provider must be available in &#39;C:\\Program Files\\PacakageManagement\\ProviderAssemblies&#39; or &#39;C:\\Users\\Greg\\AppData\\Local\\PackageManagement\\ProviderAssemblies&#39;. You can also install the NuGet provider by running &#39;Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5..201 -Force&#39;. Doy you want PowerShellGet to install and import the NuGet provider now? [Y] Yes [N] No [S] Suspend [?] Help (default is &#34;Y&#34;): y WARNING: Unable to download from URI &#39;https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll&#39; to &#39;&#39;. PackageManagement\\Install-PackageProvider : Failed to bootstrap provider &#39;https://cdn.oneget.org/providers/nuget-2.8.5.208.package.swidtag&#39;. ... I decided to try downloading the file manually, only to find that it&rsquo;s being blocked by our IT security group at work via. zScaler. Offline installation is one of the great IT downfalls in our current age of cloud/internet delivery - it&rsquo;s often difficult to install software that relies on internet servers (and have dependencies that require internet downloads) unless you go piece by piece.\n">
+<meta property='og:url' content='http://localhost:1313/p/powershell-nuget/'>
+<meta property='og:site_name' content='Greg Beifuss'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Powershell' /><meta property='article:tag' content='ESXi' /><meta property='article:published_time' content='2025-07-11T10:33:04-04:00'/><meta property='article:modified_time' content='2025-07-11T10:33:04-04:00'/>
+<meta name="twitter:title" content="Powershell NuGet">
+<meta name="twitter:description" content="I was issued a new work laptop and had to go about the business of installing all my applications and configuring everything all over again. I use VMWare&rsquo;s PowerCLI cmdlets in Powershell sometimes, so I had to go about reinstalling them:\nPS C:\\Users\\Greg&gt; Install-Module VCF.PowerCLI NuGet provider is required to continue Powershell requires NuGet provider version &#39;2.8.5.201&#39; or newer to interact with NuGet-based repositories. The NuGet provider must be available in &#39;C:\\Program Files\\PacakageManagement\\ProviderAssemblies&#39; or &#39;C:\\Users\\Greg\\AppData\\Local\\PackageManagement\\ProviderAssemblies&#39;. You can also install the NuGet provider by running &#39;Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5..201 -Force&#39;. Doy you want PowerShellGet to install and import the NuGet provider now? [Y] Yes [N] No [S] Suspend [?] Help (default is &#34;Y&#34;): y WARNING: Unable to download from URI &#39;https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll&#39; to &#39;&#39;. PackageManagement\\Install-PackageProvider : Failed to bootstrap provider &#39;https://cdn.oneget.org/providers/nuget-2.8.5.208.package.swidtag&#39;. ... I decided to try downloading the file manually, only to find that it&rsquo;s being blocked by our IT security group at work via. zScaler. Offline installation is one of the great IT downfalls in our current age of cloud/internet delivery - it&rsquo;s often difficult to install software that relies on internet servers (and have dependencies that require internet downloads) unless you go piece by piece.\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HMPKE841CT"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HMPKE841CT');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    <img src="/img/thundercats.png" width="300" height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Greg Beifuss</a></h1>
+            <h2 class="site-description">... managing risk 24/7</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/powershell-nuget/">Powershell NuGet</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 11, 2025</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>I was issued a new work laptop and had to go about the business of installing all my applications and configuring everything all over again. I use VMWare&rsquo;s PowerCLI cmdlets in Powershell sometimes, so I had to go about reinstalling them:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">Greg</span><span class="p">&gt;</span> <span class="nb">Install-Module</span> <span class="n">VCF</span><span class="p">.</span><span class="py">PowerCLI</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">NuGet</span> <span class="n">provider</span> <span class="n">is</span> <span class="n">required</span> <span class="n">to</span> <span class="k">continue</span>
+</span></span><span class="line"><span class="cl"><span class="n">Powershell</span> <span class="n">requires</span> <span class="n">NuGet</span> <span class="n">provider</span> <span class="n">version</span> <span class="s1">&#39;2.8.5.201&#39;</span> <span class="n">or</span> <span class="n">newer</span> <span class="n">to</span> <span class="n">interact</span> <span class="n">with</span> <span class="nb">NuGet-based</span> <span class="n">repositories</span><span class="p">.</span> <span class="n">The</span> <span class="n">NuGet</span> <span class="n">provider</span> <span class="n">must</span> <span class="n">be</span> <span class="n">available</span> <span class="k">in</span> <span class="s1">&#39;C:\Program Files\PacakageManagement\ProviderAssemblies&#39;</span> <span class="n">or</span> <span class="s1">&#39;C:\Users\Greg\AppData\Local\PackageManagement\ProviderAssemblies&#39;</span><span class="p">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">also</span> <span class="n">install</span> <span class="n">the</span> <span class="n">NuGet</span> <span class="n">provider</span> <span class="n">by</span> <span class="n">running</span> <span class="s1">&#39;Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5..201 -Force&#39;</span><span class="p">.</span> <span class="n">Doy</span> <span class="n">you</span> <span class="n">want</span> <span class="n">PowerShellGet</span> <span class="n">to</span> <span class="n">install</span> <span class="n">and</span> <span class="n">import</span> <span class="n">the</span> <span class="n">NuGet</span> <span class="n">provider</span> <span class="n">now</span><span class="p">?</span>
+</span></span><span class="line"><span class="cl"> <span class="p">[</span><span class="no">Y] Yes [N] No [S</span><span class="p">]</span> <span class="n">Suspend</span> <span class="p">[?]</span> <span class="n">Help</span> <span class="p">(</span><span class="k">default</span> <span class="n">is</span> <span class="s2">&#34;Y&#34;</span><span class="p">)</span><span class="err">:</span> <span class="n">y</span>
+</span></span><span class="line"><span class="cl"> <span class="n">WARNING</span><span class="err">:</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">download</span> <span class="n">from</span> <span class="n">URI</span> <span class="s1">&#39;https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll&#39;</span> <span class="n">to</span> <span class="s1">&#39;&#39;</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="n">PackageManagement</span><span class="p">\</span><span class="nb">Install-PackageProvider</span> <span class="err">:</span> <span class="n">Failed</span> <span class="n">to</span> <span class="n">bootstrap</span> <span class="n">provider</span> <span class="s1">&#39;https://cdn.oneget.org/providers/nuget-2.8.5.208.package.swidtag&#39;</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="p">...</span>
+</span></span></code></pre></div><p>I decided to try downloading the file manually, only to find that it&rsquo;s being blocked by our IT security group at work via. zScaler. Offline installation is one of the great IT downfalls in our current age of cloud/internet delivery - it&rsquo;s often difficult to install software that relies on internet servers (and have dependencies that require internet downloads) unless you go piece by piece.</p>
+<p>It turns out that the installation of NuGet is <em>really</em> easy for an offline machine:</p>
+<ul>
+<li>Download <a class="link" href="https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll"  target="_blank" rel="noopener"
+    >https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll</a> from an internet-connected machine. Be sure to unblock the file (via. file properties &gt; Unblock)</li>
+<li>Copy the .dll to C:\Program Files\PackageManagement\ProviderAssemblies on the offline machine</li>
+<li>Restart Powershell</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/powershell/">Powershell</a>
+        
+            <a href="/tags/esxi/">ESXi</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Greg Beifuss
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.30.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f24f1d1c0fbc455054d357e9a19f39081e2333e8eda54d7007e11e60aff30130.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
